@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION_ENDPOINT = "https://admin.streamsuites.app/version.json";
+  const VERSION_ENDPOINT = "/runtime/exports/version.json";
   const CACHE = {
     promise: null,
     data: null
@@ -13,6 +13,8 @@
   };
 
   function normalizeValue(value) {
+    if (value === null || value === undefined) return null;
+    if (typeof value === "number") return String(value);
     if (typeof value !== "string") return null;
     const trimmed = value.trim();
     return trimmed ? trimmed : null;
@@ -20,27 +22,22 @@
 
   function normalizePayload(payload) {
     if (!payload || typeof payload !== "object") return null;
-    const version =
-      normalizeValue(payload.version) ||
-      normalizeValue(payload.release) ||
-      normalizeValue(payload.tag) ||
-      normalizeValue(payload.app_version);
-    const build =
-      normalizeValue(payload.build) ||
-      normalizeValue(payload.build_id) ||
-      normalizeValue(payload.commit) ||
-      normalizeValue(payload.sha);
-    const label = normalizeValue(payload.label) || normalizeValue(payload.name);
-    const timestamp =
-      normalizeValue(payload.timestamp) ||
-      normalizeValue(payload.built_at) ||
-      normalizeValue(payload.date);
+    const project = normalizeValue(payload.project);
+    const version = normalizeValue(payload.version);
+    const build = normalizeValue(payload.build);
+    const generatedAt = normalizeValue(payload.generated_at);
+    const source = normalizeValue(payload.source);
+
+    if (!project && !version && !build && !generatedAt && !source) {
+      return null;
+    }
 
     return {
+      project,
       version,
       build,
-      label,
-      timestamp,
+      generated_at: generatedAt,
+      source,
       raw: payload
     };
   }
@@ -102,9 +99,22 @@
     });
   }
 
+  function applyUnavailable(selector) {
+    if (!selector) return;
+    const elements = document.querySelectorAll(selector);
+    elements.forEach((el) => {
+      el.textContent =
+        el.getAttribute("data-version-unavailable") || "Version unavailable";
+    });
+  }
+
   async function applyVersionToElements(options = {}) {
     const data = await fetchVersionData();
-    if (!data) return null;
+    if (!data) {
+      applyUnavailable(options.version);
+      applyUnavailable(options.build);
+      return null;
+    }
 
     const formattedVersion = formatVersion(data.version);
     const values = {
