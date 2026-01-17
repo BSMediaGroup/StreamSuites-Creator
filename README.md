@@ -2,16 +2,16 @@
 Creator dashboard for StreamSuites™.
 
 ## About
-This repository hosts the **creator-facing dashboard** deployed via GitHub Pages to
-https://creator.streamsuites.app. The dashboard is a **read-only surface** that consumes
-runtime exports (for example, JSON snapshots under `data/` and runtime-provided feeds) and
-intentionally avoids admin-only mutation endpoints.
+This repository hosts the **creator-only dashboard** deployed via GitHub Pages from the
+repository root to https://creator.streamsuites.app. The dashboard is a **read-only
+surface** that consumes runtime exports (for example, JSON snapshots under `data/` and
+runtime-provided feeds) and intentionally avoids admin-only mutation endpoints.
 
 Root-absolute asset loading is required (`/css/...`, `/js/...`, `/assets/...`), and all CSS,
 JS, and static assets referenced by the Creator dashboard must live in this repository for
 local completeness. Version/build metadata is sourced from the Admin dashboard at
-https://admin.streamsuites.app/docs/version.json and displayed here for visibility only.
-The creator dashboard is read-only and does not mutate admin data.
+https://admin.streamsuites.app/version.json and displayed here for visibility only. The
+creator dashboard is read-only and does not mutate admin data.
 
 Creator-facing links that point to other StreamSuites surfaces always use absolute URLs:
 - Public site: https://streamsuites.app

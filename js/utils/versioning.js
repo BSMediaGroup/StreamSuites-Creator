@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION_ENDPOINT = "https://admin.streamsuites.app/docs/version.json";
+  const VERSION_ENDPOINT = "https://admin.streamsuites.app/version.json";
   const CACHE = {
     promise: null,
     data: null
