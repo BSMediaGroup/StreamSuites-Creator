@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!-- ===================================================================== -->
+<!-- StreamSuites™ Dashboard — Creator Login                               -->
+<!-- ===================================================================== -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StreamSuites — Creator Login</title>
+  <meta name="description" content="Creator login for StreamSuites — sign in with OAuth or a magic link." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/overrides.css" />
+  <link rel="stylesheet" href="/css/theme-dark.css" />
+  <link rel="stylesheet" href="/css/updates.css" />
+</head>
+<body>
+  <div class="auth-shell">
+    <header class="ss-header auth-header">
+      <div class="ss-header-left">
+        <h1 class="ss-title">StreamSuites</h1>
+        <span class="ss-subtitle">Creator Login</span>
+      </div>
+      <div class="ss-header-right">
+        <span class="muted">Creator-only access</span>
+      </div>
+    </header>
+
+    <main class="auth-main">
+      <section class="ss-panel auth-panel">
+        <header class="ss-panel-header auth-panel-header">
+          <div class="ss-panel-header-main">
+            <h2>Creator Login</h2>
+            <p class="muted">Authenticate with OAuth or request a magic link.</p>
+          </div>
+          <div class="ss-panel-header-actions">
+            <span class="ss-chip auth-tier-pill">Tier: OPEN</span>
+          </div>
+        </header>
+
+        <div class="ss-panel-body auth-panel-body">
+          <div class="auth-section">
+            <p class="section-kicker">Sign in with</p>
+            <div class="auth-provider-grid">
+              <a class="ss-btn ss-btn-primary" data-auth-oauth="google" href="#">Google</a>
+              <a class="ss-btn ss-btn-primary" data-auth-oauth="github" href="#">GitHub</a>
+              <a class="ss-btn ss-btn-primary" data-auth-oauth="discord" href="#">Discord</a>
+            </div>
+          </div>
+
+          <div class="auth-divider">
+            <span>or</span>
+          </div>
+
+          <div class="auth-section">
+            <p class="section-kicker">Email magic link</p>
+            <form class="auth-form" data-auth-magic-form>
+              <div class="ss-form-row">
+                <label for="auth-email">Email address</label>
+                <input
+                  id="auth-email"
+                  type="email"
+                  class="ss-input"
+                  data-auth-email-input
+                  placeholder="creator@streamsuites.app"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+              <div class="auth-actions">
+                <button class="ss-btn ss-btn-primary" type="submit" data-auth-magic-submit>
+                  Send magic link
+                </button>
+                <span class="muted auth-status" data-auth-status aria-live="polite"></span>
+              </div>
+              <div class="ss-alert auth-hint" data-auth-hint hidden></div>
+              <div class="ss-alert ss-alert-danger auth-error" data-auth-error hidden></div>
+              <div class="ss-alert auth-success" data-auth-success hidden></div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ss-footer auth-footer">
+      <span class="muted">StreamSuites Creator Dashboard · Authenticated access required.</span>
+    </footer>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

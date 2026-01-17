@@ -99,3 +99,119 @@
 .creator-footer .footer-divider {
   opacity: 0.6;
 }
+
+/* ----------------------------------------------------------------------
+   Creator Auth Layout + Header Status
+   ---------------------------------------------------------------------- */
+
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at top, rgba(20, 28, 40, 0.85), rgba(8, 10, 14, 0.98));
+}
+
+.auth-header {
+  background: rgba(10, 12, 16, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.auth-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.auth-panel {
+  width: min(720px, 100%);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+.auth-panel-header {
+  align-items: center;
+}
+
+.auth-panel-body {
+  display: grid;
+  gap: 24px;
+}
+
+.auth-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.auth-divider {
+  position: relative;
+  text-align: center;
+}
+
+.auth-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.auth-divider span {
+  position: relative;
+  padding: 0 12px;
+  background: rgba(12, 15, 20, 0.9);
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.auth-status {
+  font-size: 12px;
+}
+
+.auth-hint,
+.auth-success {
+  background: rgba(90, 132, 255, 0.12);
+  border-color: rgba(90, 132, 255, 0.35);
+  color: rgba(214, 226, 255, 0.9);
+}
+
+.auth-tier-pill {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.auth-footer {
+  padding: 18px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(6, 8, 12, 0.8);
+}
+
+.ss-auth-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.public-auth-summary {
+  margin-left: auto;
+}
+
+.auth-chip {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}

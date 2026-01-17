@@ -7,6 +7,12 @@ repository root to https://creator.streamsuites.app. The dashboard is a **read-o
 surface** that consumes runtime exports (for example, JSON snapshots under `data/` and
 runtime-provided feeds) and intentionally avoids admin-only mutation endpoints.
 
+Creator authentication is handled via the central StreamSuites Auth API
+(`https://api.streamsuites.app`) using **cookie-based sessions**. All creator dashboard
+surfaces require authentication and allow `creator` and `admin` roles. Login supports
+OAuth providers (Google, GitHub, Discord) plus email magic-link sign-in. Tier scaffolding
+is present for `OPEN`, `GOLD`, and `PRO`, with `OPEN` as the default.
+
 Root-absolute asset loading is required (`/css/...`, `/js/...`, `/assets/...`), and all CSS,
 JS, and static assets referenced by the Creator dashboard must live in this repository for
 local completeness. Version/build metadata is sourced from the Admin dashboard at
@@ -21,6 +27,9 @@ Future tier scaffolding (Open / Gold / Pro) is intentional and remains inactive 
 
 ## Repo Structure:
 ```StreamSuites-Creator/
+├── auth/
+│   ├── login.html
+│   └── success.html
 ├── index.html
 ├── views/
 │   ├── creators.html
@@ -35,6 +44,7 @@ Future tier scaffolding (Open / Gold / Pro) is intentional and remains inactive 
 │   └── platforms/
 │       └── *.html
 ├── js/
+│   ├── auth.js
 │   ├── app.js
 │   ├── creators.js
 │   ├── jobs.js
