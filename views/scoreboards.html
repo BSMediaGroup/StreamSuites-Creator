@@ -1,0 +1,158 @@
+<!-- ========================================================= -->
+<!-- StreamSuites — Scoreboards (CONSOLIDATED VIEW PARTIAL) -->
+<!-- Viewer snapshot + configuration placeholders (read-only) -->
+<!-- ========================================================= -->
+
+<header class="ss-header">
+  <div class="ss-header-left">
+    <h1 class="ss-title">StreamSuites</h1>
+    <span class="ss-subtitle">Scoreboards</span>
+  </div>
+</header>
+
+<main class="ss-main">
+
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <div class="ss-panel-header-main">
+        <h2>Unified Scoreboards</h2>
+        <p class="muted">Viewer-facing visibility plus configuration placeholders in one surface.</p>
+      </div>
+      <div class="ss-panel-header-actions">
+        <a class="ss-btn ss-btn-primary" href="https://bsmediagroup.github.io/StreamSuites-Dashboard/scoreboards.html" target="_blank" rel="noopener">
+          Public scoreboard snapshot
+        </a>
+      </div>
+    </header>
+    <div class="ss-panel-body">
+      <p class="muted">
+        Scoreboard visibility and admin scaffolding now live together. Execution,
+        resets, and data handling remain runtime-owned; this dashboard page
+        centralizes read-only previews and planned controls without duplicating
+        navigation.
+      </p>
+      <div class="ss-grid two-cols" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;align-items:start;">
+        <div class="ss-tile">
+          <h3>Runtime authority</h3>
+          <p class="muted">Runtime handles scoreboard mutation, tally resets, and exports. This view surfaces placeholders only.</p>
+        </div>
+        <div class="ss-tile">
+          <h3>Viewer surface</h3>
+          <p class="muted">Public overlays and galleries are read-only snapshots. No write paths are exposed here.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>Viewer snapshot</h2>
+    </header>
+    <div class="ss-panel-body">
+      <p class="muted">Shareable leaderboard visualization powered by runtime exports.</p>
+      <div class="ss-form-row" style="max-width: 360px;">
+        <label for="scoreboard-creator-select">Creator</label>
+        <select id="scoreboard-creator-select" disabled>
+          <option selected>Choose a creator (placeholder)</option>
+        </select>
+        <p class="muted" style="margin-top: 4px;">
+          Creator selector placeholder — wired to runtime snapshots when published.
+        </p>
+      </div>
+
+      <div class="ss-panel" style="margin-top: 16px;">
+        <header class="ss-panel-header">
+          <h3>Scoreboard</h3>
+        </header>
+        <div class="ss-panel-body">
+          <table class="ss-table">
+            <thead>
+              <tr>
+                <th>Viewer</th>
+                <th>Score</th>
+                <th>Last Activity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="3" class="muted" style="text-align: center;">
+                  Public scoreboard visualization placeholder — populated from runtime exports only.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>Configuration scaffolding</h2>
+    </header>
+    <div class="ss-panel-body">
+      <p class="muted">
+        Admin and creator-aligned placeholders for enabling, disabling, and resetting scoreboards. Actions defer to runtime enforcement.
+      </p>
+      <div class="ss-grid two-cols" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;align-items:start;">
+        <div class="ss-tile">
+          <h3>Manage scoreboards</h3>
+          <p class="muted">
+            Placeholder controls for enabling, disabling, and reviewing scoreboards per creator. Runtime APIs will enforce changes; this UI stays read-only until contracts are published.
+          </p>
+          <button class="ss-btn ss-btn-secondary" disabled>
+            Edit selected scoreboard (placeholder)
+          </button>
+        </div>
+
+        <div class="ss-tile">
+          <h3>Reset tallies</h3>
+          <p class="muted">
+            Placeholder reset action for monthly or ad-hoc scoreboard clears. Execution will be handled by the runtime; this control will trigger visible status only once wiring is available.
+          </p>
+          <button class="ss-btn ss-btn-secondary" disabled>
+            Reset tallies (placeholder)
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>Import / Export</h2>
+    </header>
+    <div class="ss-panel-body">
+      <p class="muted">
+        JSON and CSV pipelines will be exposed via runtime once schemas are finalized. Buttons remain disabled placeholders.
+      </p>
+      <div class="ss-inline" style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="ss-btn ss-btn-secondary" disabled>
+          Import JSON / CSV
+        </button>
+        <button class="ss-btn ss-btn-secondary" disabled>
+          Export JSON / CSV
+        </button>
+      </div>
+      <div class="ss-panel" style="margin-top: 16px;">
+        <header class="ss-panel-header">
+          <h3>Visibility only</h3>
+        </header>
+        <div class="ss-panel-body">
+          <ul class="ss-list muted">
+            <li>Configuration-first view — no live scoreboard mutation.</li>
+            <li>Import/export and reset flows defer to runtime enforcement.</li>
+            <li>Designed for registered creators and system admins.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ss-footer">
+  <span class="muted">
+    Scoreboards combines viewer snapshots and admin scaffolding. Runtime executes all changes; dashboard remains read-only.
+  </span>
+</footer>

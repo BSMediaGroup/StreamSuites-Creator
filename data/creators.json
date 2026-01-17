@@ -1,0 +1,80 @@
+{
+  "schema": "streamsuites.creators.v1",
+  "meta": {
+    "note": "Placeholder creators dataset for admin view"
+  },
+  "creators": [
+    {
+      "creator_id": "daniel",
+      "display_name": "Daniel",
+      "notes": "Seed creator imported from runtime state.",
+      "disabled": false,
+      "status": "active",
+      "created_at": "2024-12-01T00:00:00Z",
+      "platforms_enabled": {
+        "youtube": false,
+        "twitch": false,
+        "kick": true,
+        "pilled": false,
+        "rumble": true,
+        "discord": true
+      },
+      "platforms": {
+        "youtube": { "enabled": false },
+        "twitch": { "enabled": false },
+        "kick": { "enabled": true, "channel": "daniel_live" },
+        "pilled": { "enabled": false },
+        "rumble": { "enabled": true, "watch_url": "https://rumble.com/v73i5cg-news-hangout-friday-december-26-2025.html" },
+        "discord": { "enabled": true }
+      }
+    },
+    {
+      "creator_id": "lyra",
+      "display_name": "Lyra",
+      "notes": "Experimental onboarding cohort.",
+      "disabled": false,
+      "status": "active",
+      "created_at": "2024-12-05T00:00:00Z",
+      "platforms_enabled": {
+        "youtube": true,
+        "twitch": true,
+        "kick": false,
+        "pilled": false,
+        "rumble": false,
+        "discord": true
+      },
+      "platforms": {
+        "youtube": { "enabled": true },
+        "twitch": { "enabled": true },
+        "kick": { "enabled": false },
+        "pilled": { "enabled": false },
+        "rumble": { "enabled": false },
+        "discord": { "enabled": true }
+      }
+    },
+    {
+      "creator_id": "skyler",
+      "display_name": "Skyler",
+      "notes": "Runs community polls and highlights.",
+      "disabled": false,
+      "status": "active",
+      "created_at": "2024-12-10T00:00:00Z",
+      "platforms_enabled": {
+        "youtube": true,
+        "twitch": false,
+        "kick": false,
+        "pilled": true,
+        "rumble": true,
+        "discord": false
+      },
+      "platforms": {
+        "youtube": { "enabled": true },
+        "twitch": { "enabled": false },
+        "kick": { "enabled": false },
+        "pilled": { "enabled": true },
+        "rumble": { "enabled": true },
+        "discord": { "enabled": false }
+      }
+    }
+  ]
+}

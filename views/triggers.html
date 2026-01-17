@@ -1,0 +1,207 @@
+<!-- ========================================================= -->
+<!-- StreamSuites — Chat Triggers (VIEW PARTIAL) -->
+<!-- NOTE: CSS and app bootstrap are loaded by index.html -->
+<!-- ========================================================= -->
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+<header class="ss-header">
+  <div class="ss-header-left">
+    <h1 class="ss-title">StreamSuites</h1>
+    <span class="ss-subtitle">Creator Triggers</span>
+  </div>
+</header>
+
+<!-- =========================================================
+     HONESTY BANNER
+     ========================================================= -->
+<div id="triggers-banner" class="ss-alert"></div>
+
+<!-- =========================================================
+     TRIGGERS PANEL
+     ========================================================= -->
+<section class="ss-panel">
+  <div class="ss-toolbar">
+    <div class="ss-toolbar-left">
+      <button id="btn-add-trigger" class="ss-btn ss-btn-primary">
+        + Add Trigger
+      </button>
+
+      <button id="btn-refresh-triggers" class="ss-btn ss-btn-secondary">
+        Refresh from runtime
+      </button>
+    </div>
+
+    <div class="ss-toolbar-right">
+      <button id="btn-save-triggers" class="ss-btn ss-btn-primary">
+        Save triggers.json
+      </button>
+    </div>
+  </div>
+
+  <div class="ss-panel-body">
+    <div id="triggers-runtime-state" class="muted">Loaded from runtime snapshot.</div>
+    <div id="triggers-runtime-missing" class="ss-empty hidden">
+      Runtime not reporting triggers.
+    </div>
+    <div id="triggers-actions-missing" class="ss-alert ss-alert-danger hidden">
+      Runtime not reporting trigger actions; editing is disabled until actions are available.
+    </div>
+
+    <div class="ss-meta-row">
+      <div class="ss-chip">Creator: <span id="triggers-creator-label">—</span></div>
+      <div class="ss-chip">Snapshot: <span id="triggers-snapshot-label">—</span></div>
+    </div>
+
+    <div id="triggers-message" class="ss-alert hidden"></div>
+
+    <table class="ss-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Match</th>
+          <th>Mode</th>
+          <th>Action</th>
+          <th>Creator</th>
+          <th class="align-right">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="triggers-table-body">
+        <!-- populated dynamically -->
+      </tbody>
+    </table>
+
+    <div id="triggers-empty" class="ss-empty hidden">
+      No triggers configured yet for this creator.
+    </div>
+  </div>
+</section>
+
+<div id="triggers-save-notice" class="ss-alert hidden" style="margin: 12px 0;">
+  Trigger changes apply on next runtime restart.
+</div>
+
+<!-- =========================================================
+     RECENT TRIGGER ACTIVITY
+     ========================================================= -->
+<section class="ss-panel">
+  <header class="ss-panel-header">
+    <div class="ss-panel-header-main">
+      <h2>Recent Trigger Activity</h2>
+      <p class="muted" style="margin:6px 0 0;">
+        Viewer-triggered commands captured from runtime exports (read-only).
+      </p>
+    </div>
+  </header>
+
+  <div class="ss-toolbar">
+    <div class="ss-toolbar-left">
+      <button id="btn-refresh-trigger-activity" class="ss-btn ss-btn-secondary ss-btn-small">
+        Refresh activity
+      </button>
+      <span id="triggers-activity-status" class="muted">Waiting for exports…</span>
+    </div>
+  </div>
+
+  <div class="ss-panel-body">
+    <div id="triggers-activity-error" class="ss-alert ss-alert-danger hidden"></div>
+
+    <div class="ss-meta-row">
+      <div><strong>Last export:</strong> <span id="triggers-activity-exported">—</span></div>
+    </div>
+
+    <ul id="triggers-activity-list" class="ss-list muted"></ul>
+
+    <div id="triggers-activity-empty" class="ss-empty hidden">
+      No trigger activity exported yet.
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     TRIGGER EDITOR
+     ========================================================= -->
+<section id="trigger-editor" class="ss-panel hidden">
+  <header class="ss-panel-header">
+    <div class="ss-panel-header-main">
+      <h2 id="trigger-editor-title">Add Trigger</h2>
+      <span class="muted">Creator: <span id="trigger-editor-creator">—</span></span>
+    </div>
+  </header>
+
+  <div class="ss-panel-body">
+    <form id="trigger-form" autocomplete="off">
+      <div class="ss-form-row">
+        <label class="inline-label switch-button" aria-label="Trigger enabled">
+          <div class="switch-scale">
+            <div class="switch-outer">
+              <input type="checkbox" id="trigger-enabled" checked />
+              <div class="ss-switch-inner">
+                <span class="ss-switch-toggle"></span>
+                <span class="ss-switch-indicator"></span>
+              </div>
+            </div>
+          </div>
+          <span class="sr-only">Enabled (applies on restart)</span>
+        </label>
+      </div>
+
+      <div class="ss-form-row">
+        <label for="trigger-match">Match pattern</label>
+        <input
+          type="text"
+          id="trigger-match"
+          placeholder="e.g. !ping"
+          required
+        />
+      </div>
+
+      <div class="ss-form-row">
+        <label for="trigger-match-mode">Match mode</label>
+        <select id="trigger-match-mode">
+          <option value="equals_icase">Equals (case-insensitive)</option>
+          <option value="contains_icase">Contains (case-insensitive)</option>
+        </select>
+      </div>
+
+      <div class="ss-form-row">
+        <label for="trigger-action">Action</label>
+        <select id="trigger-action"></select>
+        <p class="muted">
+          Actions are provided by the runtime. Execution internals remain hidden
+          here; selections only change the next exported triggers.json.
+        </p>
+      </div>
+
+      <div class="ss-form-actions">
+        <button type="submit" class="ss-btn ss-btn-primary">
+          Save Trigger
+        </button>
+
+        <button
+          type="button"
+          id="btn-cancel-trigger"
+          class="ss-btn ss-btn-secondary"
+        >
+          Cancel
+        </button>
+      </div>
+
+      <p class="muted" style="margin-top: 8px;">
+        Trigger changes are staged only. Export to docs/shared/state/admin/triggers.json
+        and restart StreamSuites to apply.
+      </p>
+    </form>
+  </div>
+</section>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="ss-footer">
+  <span class="muted">
+    Triggers are scoped to a single creator and apply on the next runtime restart.
+  </span>
+</footer>

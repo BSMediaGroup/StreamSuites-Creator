@@ -1,0 +1,47 @@
+{
+  "schema": "streamsuites.platforms.v1",
+  "platforms": {
+    "youtube": {
+      "enabled": true,
+      "telemetry_enabled": true,
+      "replay_supported": true,
+      "overlay_supported": true,
+      "notes": "Primary VOD + live ingestion."
+    },
+    "twitch": {
+      "enabled": false,
+      "telemetry_enabled": true,
+      "replay_supported": false,
+      "overlay_supported": false,
+      "notes": "Enable when Twitch credentials are provisioned."
+    },
+    "rumble": {
+      "enabled": true,
+      "telemetry_enabled": true,
+      "replay_supported": true,
+      "overlay_supported": true,
+      "notes": "SSE-preferred chat ingest with DOM/API fallbacks; live testing complete."
+    },
+    "kick": {
+      "enabled": true,
+      "telemetry_enabled": true,
+      "replay_supported": false,
+      "overlay_supported": false,
+      "notes": "Scaffolded ingestion with export parity planned; dashboard wiring is read-only and hydrates runtime exports when present."
+    },
+    "pilled": {
+      "enabled": false,
+      "telemetry_enabled": false,
+      "replay_supported": false,
+      "overlay_supported": false,
+      "notes": "Planned ingest / replay-only platform; dashboard renders placeholders only until the runtime collector ships."
+    },
+    "discord": {
+      "enabled": true,
+      "telemetry_enabled": true,
+      "replay_supported": false,
+      "overlay_supported": false,
+      "notes": "Control-plane routing for admin commands."
+    }
+  }
+}

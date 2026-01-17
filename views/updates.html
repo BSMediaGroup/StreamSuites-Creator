@@ -1,0 +1,161 @@
+<!-- ================================================================ -->
+<!-- StreamSuites — Updates (Latest GitHub commits) -->
+<!-- Read-only, informational view -->
+<!-- ================================================================ -->
+
+<header class="ss-header">
+  <div class="ss-header-left">
+    <h1 class="ss-title">StreamSuites</h1>
+    <span class="ss-subtitle">Updates</span>
+  </div>
+  <div class="ss-header-right">
+    <span class="muted">Latest commits from GitHub (read-only)</span>
+  </div>
+</header>
+
+<main class="ss-main">
+
+  <!-- Introductory context -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>What&apos;s new</h2>
+    </header>
+    <div class="ss-panel-body">
+      <p>
+        The Updates view surfaces the most recent commit for both StreamSuites
+        runtime and the StreamSuites Dashboard repositories. Data is fetched
+        directly from the public GitHub API without authentication and is
+        displayed for awareness only.
+      </p>
+      <p class="muted" style="margin-bottom: 0;">
+        No write actions are performed. The diff preview is truncated for
+        readability and may omit large patches.
+      </p>
+
+      <div class="updates-actions">
+        <div class="updates-status">
+          <div class="muted" id="updates-cache-message">No cached update data. Click Refresh to fetch latest commits.</div>
+          <div class="updates-last-updated" id="updates-last-updated">Last updated: never</div>
+        </div>
+        <button type="button" class="ss-btn ss-btn-primary" id="updates-refresh-btn">Refresh updates</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Runtime updates -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>StreamSuites Runtime Updates</h2>
+    </header>
+    <div class="ss-panel-body">
+
+      <div class="updates-meta">
+        <div>
+          <div class="updates-label">Repository</div>
+          <div class="updates-value">StreamSuites</div>
+        </div>
+        <div>
+          <div class="updates-label">Latest commit title</div>
+          <div class="updates-value" id="updates-runtime-title">Fetching…</div>
+        </div>
+        <div>
+          <div class="updates-label">Author</div>
+          <div class="updates-value">
+            <div class="updates-author">
+              <span class="updates-avatar" id="updates-runtime-avatar" aria-hidden="true"></span>
+              <span class="updates-author-name" id="updates-runtime-author">—</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="updates-label">Timestamp</div>
+          <div class="updates-value" id="updates-runtime-date">—</div>
+        </div>
+        <div>
+          <div class="updates-label">Commit</div>
+          <div class="updates-value">
+            <a class="updates-link" id="updates-runtime-link" href="#" target="_blank" rel="noopener noreferrer">—</a>
+          </div>
+        </div>
+        <div>
+          <div class="updates-label">SHA</div>
+          <div class="updates-value" id="updates-runtime-sha">—</div>
+        </div>
+      </div>
+
+      <div class="updates-description" id="updates-runtime-description">
+        Loading commit details…
+      </div>
+
+      <div class="updates-diff-summary" id="updates-runtime-summary">
+        Diff summary unavailable
+      </div>
+
+      <ul class="updates-file-list" id="updates-runtime-files"></ul>
+
+      <div class="updates-diff" id="updates-runtime-diff">
+        <p class="updates-empty">Loading diff preview…</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Dashboard updates -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>StreamSuites Dashboard Updates</h2>
+    </header>
+    <div class="ss-panel-body">
+
+      <div class="updates-meta">
+        <div>
+          <div class="updates-label">Repository</div>
+          <div class="updates-value">StreamSuites-Dashboard</div>
+        </div>
+        <div>
+          <div class="updates-label">Latest commit title</div>
+          <div class="updates-value" id="updates-dashboard-title">Fetching…</div>
+        </div>
+        <div>
+          <div class="updates-label">Author</div>
+          <div class="updates-value">
+            <div class="updates-author">
+              <span class="updates-avatar" id="updates-dashboard-avatar" aria-hidden="true"></span>
+              <span class="updates-author-name" id="updates-dashboard-author">—</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="updates-label">Timestamp</div>
+          <div class="updates-value" id="updates-dashboard-date">—</div>
+        </div>
+        <div>
+          <div class="updates-label">Commit</div>
+          <div class="updates-value">
+            <a class="updates-link" id="updates-dashboard-link" href="#" target="_blank" rel="noopener noreferrer">—</a>
+          </div>
+        </div>
+        <div>
+          <div class="updates-label">SHA</div>
+          <div class="updates-value" id="updates-dashboard-sha">—</div>
+        </div>
+      </div>
+
+      <div class="updates-description" id="updates-dashboard-description">
+        Loading commit details…
+      </div>
+
+      <div class="updates-diff-summary" id="updates-dashboard-summary">
+        Diff summary unavailable
+      </div>
+
+      <ul class="updates-file-list" id="updates-dashboard-files"></ul>
+
+      <div class="updates-diff" id="updates-dashboard-diff">
+        <p class="updates-empty">Loading diff preview…</p>
+      </div>
+
+    </div>
+  </section>
+
+</main>

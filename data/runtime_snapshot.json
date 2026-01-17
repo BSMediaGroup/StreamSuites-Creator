@@ -1,0 +1,55 @@
+{
+  "generated_at": "2025-05-20T15:30:00Z",
+  "system": {
+    "platform_polling_enabled": true
+  },
+  "platforms": {
+    "youtube": {
+      "status": "running",
+      "heartbeat_at": "2025-05-20T15:29:45Z",
+      "last_error": null,
+      "counters": {
+        "messages_processed": 1842,
+        "triggers_fired": 76
+      }
+    },
+    "twitch": {
+      "status": "running",
+      "heartbeat_at": "2025-05-20T15:29:30Z",
+      "last_error": null,
+      "counters": {
+        "messages_processed": 956,
+        "triggers_fired": 42
+      }
+    },
+    "rumble": {
+      "status": "paused",
+      "heartbeat_at": "2025-05-20T15:28:00Z",
+      "paused_reason": "Runtime ingest paused for controlled redeploy",
+      "last_error": "ingest paused by operator",
+      "counters": {
+        "messages_processed": 0,
+        "triggers_fired": 0
+      }
+    },
+    "discord": {
+      "status": "running",
+      "heartbeat_at": "2025-05-20T15:29:15Z",
+      "last_error": null
+    }
+  },
+  "restart_intent": {
+    "required": true,
+    "pending": {
+      "system": true,
+      "creators": false,
+      "triggers": true,
+      "platforms": true
+    },
+    "notes": [
+      "System settings changed",
+      "Triggers updated",
+      "Platform enablement staged"
+    ]
+  }
+}

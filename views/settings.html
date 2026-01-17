@@ -1,0 +1,787 @@
+<!-- ========================================================= -->
+<!-- StreamSuites — Settings (VIEW PARTIAL) -->
+<!-- NOTE:
+     - PHASE 0 structural placeholder
+     - NO logic, NO wiring, NO schema enforcement
+     - CSS and app bootstrap are loaded by index.html
+   ========================================================= -->
+
+<!-- ========================================================= -->
+<!-- HEADER -->
+<!-- ========================================================= -->
+<header class="ss-header">
+  <div class="ss-header-left">
+    <h1 class="ss-title">StreamSuites</h1>
+    <span class="ss-subtitle">Settings</span>
+  </div>
+</header>
+
+<!-- ========================================================= -->
+<!-- MAIN -->
+<!-- ========================================================= -->
+<main class="ss-main">
+
+  <div class="ss-alert ss-alert-warning">
+    Settings can also be updated from Desktop Admin or other control surfaces. Refresh before editing to ensure you have the latest values.
+  </div>
+
+  <!-- --------------------------------------------------------- -->
+  <!-- PENDING CHANGES / RESTART QUEUE -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <div class="ss-panel-header-main">
+        <h2>Pending Changes / Restart Queue</h2>
+        <p class="muted">
+          Monitor restart-applied updates and avoid assuming live runtime changes.
+        </p>
+      </div>
+      <div class="ss-badge" id="restart-required-flag">Loading…</div>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <div class="ss-alert ss-alert-warning">
+        Changes will take effect when StreamSuites is restarted. This dashboard will never trigger a restart for you.
+      </div>
+
+      <div class="ss-pending-grid" aria-live="polite">
+        <div class="ss-pending-item">
+          <div class="ss-pending-label">System settings</div>
+          <div class="ss-pending-value" id="restart-pending-system">
+            <span class="ss-pending-chip">Loading…</span>
+          </div>
+        </div>
+
+        <div class="ss-pending-item">
+          <div class="ss-pending-label">Creator configuration</div>
+          <div class="ss-pending-value" id="restart-pending-creators">
+            <span class="ss-pending-chip">Loading…</span>
+          </div>
+        </div>
+
+        <div class="ss-pending-item">
+          <div class="ss-pending-label">Triggers</div>
+          <div class="ss-pending-value" id="restart-pending-triggers">
+            <span class="ss-pending-chip">Loading…</span>
+          </div>
+        </div>
+
+        <div class="ss-pending-item">
+          <div class="ss-pending-label">Platform enable flags</div>
+          <div class="ss-pending-value" id="restart-pending-platforms">
+            <span class="ss-pending-chip">Loading…</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ss-restart-summary" id="restart-change-summary">
+        <div class="muted">Restart intent summary will appear here.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- -->
+  <!-- SYSTEM SETTINGS -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>System</h2>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <div class="ss-form-row">
+        <label>Dashboard Mode</label>
+        <select disabled>
+          <option>Local (Development)</option>
+          <option>Production</option>
+        </select>
+      </div>
+
+      <div class="ss-form-row">
+        <label>Auto-save Interval</label>
+        <input type="number" placeholder="seconds" disabled />
+      </div>
+
+      <div class="ss-form-row checkbox-row">
+        <label class="ss-checkbox-wrapper ss-checkbox-disabled">
+          <input type="checkbox" disabled />
+          <div class="ss-checkbox"></div>
+          <span class="ss-checkbox-text">Enable verbose logging</span>
+        </label>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- -->
+  <!-- PLATFORM POLLING CONTROL -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <div class="ss-panel-header-main">
+        <h2>Platform Polling</h2>
+        <p class="muted">Monitor runtime state and stage restart-applied polling changes.</p>
+      </div>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <p class="muted">
+        This setting is applied when the runtime starts. Restart StreamSuites for changes to take
+        effect.
+      </p>
+
+      <div class="ss-form-row checkbox-row">
+        <label class="ss-checkbox-wrapper">
+          <input type="checkbox" id="platform-polling-toggle" />
+          <div class="ss-checkbox"></div>
+          <span class="ss-checkbox-text">Platform polling enabled (applies on restart)</span>
+        </label>
+      </div>
+
+      <div class="ss-inline-status-row">
+        <div class="ss-inline-status-block">
+          <div class="label">Runtime reporting</div>
+          <div class="value" id="platform-polling-runtime-state">Loading…</div>
+        </div>
+        <div class="ss-inline-status-block">
+          <div class="label">Next launch intent</div>
+          <div class="value" id="platform-polling-draft-state">Loading…</div>
+        </div>
+      </div>
+
+      <div class="ss-restart-note" id="platform-polling-restart">
+        Restart required. Platform polling changes apply after StreamSuites restarts.
+      </div>
+
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- -->
+  <!-- GLOBAL PLATFORM SERVICES -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>Global Platform Services</h2>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <p class="muted">
+        Enable or disable platform runtimes globally. Changes require a full StreamSuites runtime restart to take effect and are
+        captured in a small intent file when toggled.
+      </p>
+
+      <div class="ss-alert ss-alert-warning">
+        Platform enable changes require restart. Runtime pickup occurs on the next launch only.
+      </div>
+
+      <table class="ss-table ss-table-compact" id="platforms-config">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th class="align-right">Enabled</th>
+            <th class="align-right">Telemetry</th>
+            <th class="align-right">Restart status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- YouTube -->
+          <tr data-platform-row="youtube">
+            <td>YouTube</td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="YouTube service toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-service="youtube" data-field="enabled" />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">YouTube Service Enabled</span>
+              <div class="ss-toggle-note">Applies on next restart</div>
+            </td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="YouTube telemetry toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-field="telemetry_enabled" />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">YouTube telemetry enabled</span>
+            </td>
+            <td class="align-right">
+              <span class="muted" data-platform-status="youtube">Awaiting telemetry</span>
+            </td>
+            <td>
+              <textarea
+                class="ss-input"
+                rows="2"
+                data-field="notes"
+                placeholder="Operational notes for YouTube runtime"
+              ></textarea>
+            </td>
+          </tr>
+
+          <!-- Twitch -->
+          <tr data-platform-row="twitch">
+            <td>Twitch</td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Twitch service toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-service="twitch" data-field="enabled" />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Twitch Service Enabled</span>
+              <div class="ss-toggle-note">Applies on next restart</div>
+            </td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Twitch telemetry toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-field="telemetry_enabled" />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Twitch telemetry enabled</span>
+            </td>
+            <td class="align-right">
+              <span class="muted" data-platform-status="twitch">Awaiting telemetry</span>
+            </td>
+            <td>
+              <textarea
+                class="ss-input"
+                rows="2"
+                data-field="notes"
+                placeholder="Operational notes for Twitch runtime"
+              ></textarea>
+            </td>
+          </tr>
+
+          <!-- Kick -->
+          <tr data-platform-row="kick">
+            <td>Kick</td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Kick service toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-service="kick" data-field="enabled" />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Kick Service Enabled</span>
+              <div class="ss-toggle-note">Applies on next restart</div>
+            </td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Kick telemetry toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-field="telemetry_enabled" />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Kick telemetry enabled</span>
+            </td>
+            <td class="align-right">
+              <span class="muted" data-platform-status="kick">Awaiting telemetry</span>
+            </td>
+            <td>
+              <textarea
+                class="ss-input"
+                rows="2"
+                data-field="notes"
+                placeholder="Operational notes for Kick runtime"
+              ></textarea>
+            </td>
+          </tr>
+
+          <!-- Pilled -->
+          <tr data-platform-row="pilled">
+            <td>Pilled (Planned)</td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Pilled service toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input
+                      type="checkbox"
+                      data-service="pilled"
+                      data-field="enabled"
+                      data-locked="true"
+                      disabled
+                    />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Pilled Service Enabled</span>
+              <div class="ss-toggle-note">Planned ingest-only; locked</div>
+            </td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Pilled telemetry toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-field="telemetry_enabled" disabled />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Pilled telemetry enabled</span>
+            </td>
+            <td class="align-right">
+              <span class="muted" data-platform-status="pilled">Planned</span>
+            </td>
+            <td>
+              <textarea
+                class="ss-input"
+                rows="2"
+                data-field="notes"
+                placeholder="Planned ingest-only platform; dashboard visibility only"
+                disabled
+              ></textarea>
+            </td>
+          </tr>
+
+          <!-- Rumble -->
+          <tr data-platform-row="rumble">
+            <td>Rumble</td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Rumble service toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input
+                      type="checkbox"
+                      data-service="rumble"
+                      data-field="enabled"
+                      data-locked="true"
+                      disabled
+                    />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Rumble Service Enabled</span>
+              <div class="ss-toggle-note paused">Paused (runtime-controlled)</div>
+            </td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Rumble telemetry toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-field="telemetry_enabled" data-locked="true" disabled />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Rumble telemetry enabled</span>
+            </td>
+            <td class="align-right">
+              <span class="muted" data-platform-status="rumble">Awaiting telemetry</span>
+            </td>
+            <td>
+              <textarea
+                class="ss-input"
+                rows="2"
+                data-field="notes"
+                placeholder="Operational notes for Rumble runtime"
+              ></textarea>
+            </td>
+          </tr>
+
+          <!-- Twitter -->
+          <tr>
+            <td>Twitter</td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Twitter service toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" disabled data-service="twitter" />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Twitter Service Enabled</span>
+            </td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Twitter telemetry toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" disabled />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Twitter telemetry enabled</span>
+            </td>
+            <td class="align-right">
+              <span class="muted" data-platform-status="twitter">Runtime-owned</span>
+            </td>
+            <td>
+              <textarea
+                class="ss-input"
+                rows="2"
+                placeholder="Control-plane telemetry for Twitter coming later"
+                disabled
+              ></textarea>
+            </td>
+          </tr>
+
+          <!-- Discord -->
+          <tr data-platform-row="discord" data-discord-locked data-discord-guild-locked>
+            <td>
+              Discord
+              <span class="muted">(control-plane)</span>
+            </td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Discord service toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-service="discord" data-field="enabled" />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Discord Service Enabled</span>
+              <div class="ss-toggle-note">Applies on next restart</div>
+            </td>
+            <td class="align-right">
+              <label class="switch-button" aria-label="Discord telemetry toggle">
+                <div class="switch-scale">
+                  <div class="switch-outer">
+                    <input type="checkbox" data-field="telemetry_enabled" />
+                    <div class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <span class="sr-only">Discord telemetry enabled</span>
+            </td>
+            <td class="align-right">
+              <span class="muted" data-platform-status="discord">Awaiting telemetry</span>
+            </td>
+            <td>
+              <textarea
+                class="ss-input"
+                rows="2"
+                data-field="notes"
+                placeholder="Operational notes for Discord control-plane"
+              ></textarea>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- -->
+  <!-- DISCORD BOT (PER-GUILD SETTINGS) -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel" data-discord-locked data-discord-guild-locked>
+    <header class="ss-panel-header">
+      <div class="ss-panel-header-main">
+        <h2>Discord Bot</h2>
+        <p class="muted">
+          Per-guild logging and notification channels sourced from exported runtime config.
+        </p>
+      </div>
+    </header>
+
+    <div class="ss-panel-body">
+      <div class="ss-alert ss-alert-warning discord-guild-message" data-state="missing">
+        Select a Discord guild to manage settings.
+      </div>
+      <div class="ss-alert ss-alert-danger discord-guild-message" data-state="unauthorized">
+        The selected guild is not authorized for this Discord login. Choose a different guild.
+      </div>
+
+      <div class="ss-alert ss-alert-warning">
+        Channel IDs must match Discord snowflake format. Invalid IDs are flagged and will export
+        as-is until corrected.
+      </div>
+
+      <div id="discord-bot-empty" class="ss-empty-state hidden">
+        <p id="discord-bot-empty-title">No guild selected.</p>
+        <p id="discord-bot-empty-subtitle" class="muted">
+          Select an eligible guild to view or edit per-guild settings.
+        </p>
+      </div>
+
+      <div id="discord-bot-guilds"></div>
+
+      <template id="discord-bot-guild-template">
+        <fieldset class="ss-fieldset discord-guild-card">
+          <legend>
+            <span data-guild-label>Discord Guild</span>
+          </legend>
+
+          <div class="ss-form-row">
+            <label>Guild ID</label>
+            <input type="text" class="ss-input" data-field="guild-id" placeholder="Not set" />
+            <span class="pill pill-default" data-status="guild-id">Not set</span>
+          </div>
+
+          <p class="muted" style="margin: 0 0 8px;">Logging</p>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper">
+              <input type="checkbox" data-field="logging-enabled" />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Logging enabled</span>
+            </label>
+          </div>
+
+          <div class="ss-form-row">
+            <label>Logging channel ID</label>
+            <input type="text" class="ss-input" data-field="logging-channel" placeholder="Not set" />
+            <span class="pill pill-default" data-status="logging-channel">Not set</span>
+          </div>
+
+          <p class="muted" style="margin: 0 0 8px;">Notifications</p>
+
+          <div class="ss-form-row">
+            <label>General notifications channel</label>
+            <input type="text" class="ss-input" data-field="general-channel" placeholder="Not set" />
+            <span class="pill pill-default" data-status="general-channel">Not set</span>
+          </div>
+
+          <div class="ss-form-row">
+            <label>Rumble clips channel</label>
+            <input type="text" class="ss-input" data-field="rumble-channel" placeholder="Not set" />
+            <span class="pill pill-default" data-status="rumble-channel">Not set</span>
+          </div>
+
+          <div class="ss-form-row">
+            <label>YouTube clips channel</label>
+            <input type="text" class="ss-input" data-field="youtube-channel" placeholder="Not set" />
+            <span class="pill pill-default" data-status="youtube-channel">Not set</span>
+          </div>
+
+          <div class="ss-form-row">
+            <label>Kick clips channel</label>
+            <input type="text" class="ss-input" data-field="kick-channel" placeholder="Not set" />
+            <span class="pill pill-default" data-status="kick-channel">Not set</span>
+          </div>
+
+          <div class="ss-form-row">
+            <label>Pilled clips channel</label>
+            <input type="text" class="ss-input" data-field="pilled-channel" placeholder="Not set" />
+            <span class="pill pill-default" data-status="pilled-channel">Not set</span>
+          </div>
+
+          <div class="ss-form-row">
+            <label>Twitch clips channel</label>
+            <input type="text" class="ss-input" data-field="twitch-channel" placeholder="Not set" />
+            <span class="pill pill-default" data-status="twitch-channel">Not set</span>
+          </div>
+        </fieldset>
+      </template>
+    </div>
+  </section>
+
+</main>
+
+
+
+
+  <!-- --------------------------------------------------------- -->
+  <!-- EXPORT / IMPORT -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>Configuration Import / Export</h2>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <p class="muted">
+        Export or import complete dashboard configuration snapshots.
+      </p>
+
+      <div class="ss-form-actions">
+        <button class="ss-btn ss-btn-secondary" id="btn-export-config">
+          Export All Config
+        </button>
+
+        <button class="ss-btn ss-btn-secondary" id="btn-import-config">
+          Import Config
+        </button>
+      </div>
+
+      <p class="muted" style="margin-top:0.5rem;">
+        Draft source: <span id="dashboard-config-state">Loading…</span>
+        <br />
+        Last export: <span id="dashboard-export-state">Not exported yet</span>
+      </p>
+
+      <input
+        type="file"
+        id="config-import-file"
+        accept="application/json"
+        class="hidden"
+      />
+
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- -->
+  <!-- PLATFORM DEFAULTS -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>Platform Defaults</h2>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <!-- Platform definitions cover streaming and control-plane runtimes. Discord appears here as a control-plane runtime only when deployed; the dashboard remains read-only and must not assume Discord is enabled. -->
+
+      <div class="ss-form-row">
+        <label>Default Chat Cooldown</label>
+        <input type="number" placeholder="seconds" disabled />
+      </div>
+
+      <div class="ss-form-row">
+        <label>Default Response Mode</label>
+        <select disabled>
+          <option>Equals (case-insensitive)</option>
+          <option>Contains (case-insensitive)</option>
+        </select>
+      </div>
+
+      <div class="ss-form-row checkbox-row">
+        <label class="ss-checkbox-wrapper ss-checkbox-disabled">
+          <input type="checkbox" disabled />
+          <div class="ss-checkbox"></div>
+          <span class="ss-checkbox-text">Enable global chat responses</span>
+        </label>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- -->
+  <!-- SECURITY / ACCESS -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>Security & Access</h2>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <div class="ss-form-row checkbox-row">
+        <label class="ss-checkbox-wrapper ss-checkbox-disabled">
+          <input type="checkbox" disabled />
+          <div class="ss-checkbox"></div>
+          <span class="ss-checkbox-text">Require confirmation for destructive actions</span>
+        </label>
+      </div>
+
+      <div class="ss-form-row checkbox-row">
+        <label class="ss-checkbox-wrapper ss-checkbox-disabled">
+          <input type="checkbox" disabled />
+          <div class="ss-checkbox"></div>
+          <span class="ss-checkbox-text">Lock dashboard to read-only mode</span>
+        </label>
+      </div>
+
+      <p class="muted">
+        Authentication and permissions will be implemented in a later phase.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- -->
+  <!-- ADVANCED / DEBUG -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>Advanced</h2>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <div class="ss-form-row">
+        <label>Runtime Export Format</label>
+        <select disabled>
+          <option>creators.json (default)</option>
+        </select>
+      </div>
+
+      <div class="ss-form-row">
+        <label>Schema Version</label>
+        <input type="text" value="v1 (draft)" disabled />
+      </div>
+
+      <div class="ss-placeholder">
+        Advanced settings are not yet configurable.
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ========================================================= -->
+<!-- FOOTER -->
+<!-- ========================================================= -->
+<footer class="ss-footer">
+  <span class="muted">
+    Settings are not yet active — placeholders reflect planned configuration surface.
+  </span>
+</footer>

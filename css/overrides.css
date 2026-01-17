@@ -1,0 +1,101 @@
+/* ======================================================================
+   StreamSuites — Page-level overrides
+   Creator dashboard alignment and layout refinements
+   ====================================================================== */
+
+/* Creator header: maintain parity with public surfaces while tightening nav spacing */
+.creator-topbar .public-nav {
+  gap: 12px;
+}
+
+.creator-topbar .public-nav a[aria-current="page"] {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  padding-bottom: 4px;
+}
+
+/* Hero and shell spacing to accommodate fixed footer */
+.creator-shell {
+  padding-bottom: calc(var(--public-footer-height) + 36px);
+}
+
+.creator-hero {
+  margin-top: 18px;
+}
+
+/* Platform and automation grids */
+.creator-platforms .info-card,
+.creator-automation .info-card,
+.creator-summary .info-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: radial-gradient(circle at 10% 10%, rgba(140, 199, 54, 0.04), rgba(10, 12, 18, 0.9)),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+}
+
+.creator-platforms .status-row h3 {
+  margin: 0;
+}
+
+/* Footer parity with dashboard grid alignment */
+.creator-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  justify-content: stretch;
+  column-gap: 16px;
+  flex-wrap: wrap;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  padding: 14px
+    max(var(--public-shell-gutter), calc((100vw - var(--public-shell-max)) / 2 + var(--public-shell-gutter)));
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(12, 17, 26, 0.9);
+  box-sizing: border-box;
+  z-index: 20;
+}
+
+.creator-footer .footer-left,
+.creator-footer .footer-center,
+.creator-footer .footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.creator-footer .footer-left {
+  justify-self: start;
+}
+
+.creator-footer .footer-center {
+  justify-self: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.creator-footer .footer-right {
+  justify-self: end;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.creator-footer a {
+  color: #e7f1ff;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.creator-footer a:hover {
+  text-decoration: underline;
+}
+
+.creator-footer .discord-icon {
+  height: 18px;
+  width: auto;
+  opacity: 0.9;
+}
+
+.creator-footer .footer-divider {
+  opacity: 0.6;
+}

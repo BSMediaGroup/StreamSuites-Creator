@@ -1,0 +1,81 @@
+<section class="ss-panel">
+  <header class="ss-panel-header">
+    <h2>Job Activity</h2>
+  </header>
+
+  <div class="ss-panel-body">
+
+    <div id="jobs-error" class="ss-alert ss-alert-danger hidden"></div>
+
+    <p class="muted">Job enablement is exported for visibility only. Toggles apply after a restart and cannot be changed from this dashboard.</p>
+
+    <div class="ss-metrics-grid">
+      <div class="ss-metric">
+        <span class="label">Total Jobs</span>
+        <span id="jobs-total" class="value">—</span>
+      </div>
+      <div class="ss-metric">
+        <span class="label">Enabled</span>
+        <span id="jobs-enabled-total" class="value">—</span>
+      </div>
+      <div class="ss-metric">
+        <span class="label">Disabled</span>
+        <span id="jobs-disabled-total" class="value">—</span>
+      </div>
+      <div class="ss-metric">
+        <span class="label">Restart pending</span>
+        <span id="jobs-restart-total" class="value">—</span>
+      </div>
+    </div>
+
+    <h3>Enablement Snapshot</h3>
+    <div class="muted">Read-only indicator of job availability. Restart is required for any queued enable/disable changes.</div>
+    <table class="ss-table">
+      <thead>
+        <tr>
+          <th>Job</th>
+          <th>Type</th>
+          <th>Enablement</th>
+          <th>Restart</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody id="jobs-enable-table"></tbody>
+    </table>
+    <div class="muted hidden" id="jobs-enable-empty">No enablement details exported yet.</div>
+
+    <h3>By Status</h3>
+    <table class="ss-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody id="jobs-by-status"></tbody>
+    </table>
+
+    <h3>By Type</h3>
+    <table class="ss-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody id="jobs-by-type"></tbody>
+    </table>
+
+    <h3>By Creator</h3>
+    <table class="ss-table">
+      <thead>
+        <tr>
+          <th>Creator</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody id="jobs-by-creator"></tbody>
+    </table>
+
+  </div>
+</section>

@@ -1,0 +1,362 @@
+<!-- ========================================================= -->
+<!-- StreamSuites — Creators (VIEW PARTIAL) -->
+<!-- NOTE: CSS and app bootstrap are loaded by index.html -->
+<!-- ========================================================= -->
+
+<!-- ========================================================= -->
+<!-- APP HEADER -->
+<!-- ========================================================= -->
+<header class="ss-header">
+  <div class="ss-header-left">
+    <h1 class="ss-title">StreamSuites</h1>
+    <span class="ss-subtitle">Creators</span>
+  </div>
+
+  <div class="ss-header-right" data-scope="admin">
+    <button id="btn-import-creators" class="ss-btn ss-btn-secondary">
+      Import
+    </button>
+    <button id="btn-export-creators" class="ss-btn ss-btn-secondary">
+      Export
+    </button>
+    <button id="btn-refresh-creators" class="ss-btn ss-btn-secondary">
+      Refresh
+    </button>
+    <button id="btn-add-creator" class="ss-btn ss-btn-primary">
+      Add Creator
+    </button>
+  </div>
+</header>
+
+<!-- ========================================================= -->
+<!-- MAIN CONTENT -->
+<!-- ========================================================= -->
+<main class="ss-main">
+
+  <!-- --------------------------------------------------------- -->
+  <!-- CREATOR LIST -->
+  <!-- --------------------------------------------------------- -->
+  <section class="ss-panel" data-scope="creator">
+    <header class="ss-panel-header">
+      <h2>Registered Creators</h2>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <!-- Import error message -->
+      <div id="creators-import-error" class="ss-alert ss-alert-danger hidden">
+        <span id="creators-import-error-text"></span>
+      </div>
+
+      <!-- Empty state -->
+      <div id="creators-empty" class="ss-empty-state hidden">
+        <p>No creators configured.</p>
+        <p class="muted">
+          Add a creator to begin managing livestream automation.
+        </p>
+      </div>
+
+      <!-- Creator table -->
+      <table id="creators-table" class="ss-table">
+        <thead>
+          <tr>
+            <th>Creator ID</th>
+            <th>Display Name</th>
+            <th>Platforms</th>
+            <th>Status</th>
+            <th>Notes</th>
+            <th class="align-right">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="creators-table-body">
+          <!-- populated dynamically -->
+        </tbody>
+      </table>
+
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- -->
+  <!-- CREATOR DETAIL / EDIT PANEL -->
+  <!-- --------------------------------------------------------- -->
+  <section id="creator-editor" class="ss-panel hidden" data-scope="admin">
+    <header class="ss-panel-header">
+      <h2 id="creator-editor-title">Edit Creator</h2>
+    </header>
+
+    <div class="ss-panel-body">
+
+      <form id="creator-form" autocomplete="off">
+
+        <!-- BASIC INFO -->
+        <fieldset class="ss-fieldset">
+          <legend>Basic Information</legend>
+
+          <div class="ss-form-row">
+            <label for="creator-id">Creator ID</label>
+            <input type="text" id="creator-id" name="creator_id" required />
+          </div>
+
+          <div class="ss-form-row">
+            <label for="creator-name">Display Name</label>
+            <input type="text" id="creator-name" name="display_name" />
+          </div>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper">
+              <input type="checkbox" id="creator-active" checked />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Creator enabled (soft-disable only)</span>
+            </label>
+          </div>
+
+          <div class="ss-form-row">
+            <label for="creator-notes">Admin Notes</label>
+            <textarea
+              id="creator-notes"
+              name="creator_notes"
+              rows="2"
+              placeholder="Internal notes about this creator (not exported publicly)"
+            ></textarea>
+          </div>
+        </fieldset>
+
+        <!-- PLATFORM CONFIG -->
+        <fieldset class="ss-fieldset">
+          <legend>Platforms</legend>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper">
+              <input type="checkbox" id="platform-youtube" />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">YouTube</span>
+            </label>
+          </div>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper">
+              <input type="checkbox" id="platform-twitch" />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Twitch</span>
+            </label>
+          </div>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper ss-checkbox-disabled">
+              <input type="checkbox" id="platform-kick" disabled />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Kick (scaffold — locked)</span>
+            </label>
+          </div>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper ss-checkbox-disabled">
+              <input type="checkbox" id="platform-pilled" disabled />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Pilled (ingest-only / planned)</span>
+            </label>
+          </div>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper">
+              <input type="checkbox" id="platform-rumble" />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Rumble</span>
+            </label>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- RUMBLE CONFIG (SCHEMA-COMPLETE PLACEHOLDERS) -->
+          <!-- ===================================================== -->
+          <div id="rumble-config" class="ss-subpanel hidden">
+
+            <div class="ss-form-row">
+              <label for="rumble-watch-url">Rumble Watch URL</label>
+              <input type="url" id="rumble-watch-url" />
+            </div>
+
+            <div class="ss-form-row">
+              <label for="rumble-api-key">Livestream API Key</label>
+              <input
+                type="text"
+                id="rumble-api-key"
+                placeholder="Loaded from .env at runtime"
+                disabled
+              />
+            </div>
+
+            <div class="ss-form-row">
+              <label for="rumble-channel-url">Rumble Channel URL</label>
+              <input
+                type="url"
+                id="rumble-channel-url"
+                placeholder="https://rumble.com/c/YourChannel"
+                disabled
+              />
+              <small class="muted">
+                Required for channel association (runtime uses this value).
+              </small>
+            </div>
+
+            <div class="ss-form-row">
+              <label for="rumble-manual-watch-url">Manual Watch URL</label>
+              <input
+                type="url"
+                id="rumble-manual-watch-url"
+                placeholder="https://rumble.com/vXXXX-live.html"
+                disabled
+              />
+              <small class="muted">
+                Optional manual livestream override.
+              </small>
+            </div>
+
+            <div class="ss-form-row">
+              <label for="rumble-api-env-key">Livestream API Env Key</label>
+              <input
+                type="text"
+                id="rumble-api-env-key"
+                placeholder="RUMBLE_LIVESTREAM_KEY_NAME"
+                disabled
+              />
+              <small class="muted">
+                Read-only. Resolved from <code>.env</code> at runtime.
+              </small>
+            </div>
+
+          </div>
+
+          <div class="ss-form-row checkbox-row" data-discord-locked data-discord-guild-locked>
+            <label class="ss-checkbox-wrapper">
+              <input type="checkbox" id="platform-discord" />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Discord (control-plane)</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- DISCORD SETTINGS -->
+        <fieldset class="ss-fieldset">
+          <legend>Discord Settings</legend>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper">
+              <input type="checkbox" id="discord-enabled" />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Discord features enabled</span>
+            </label>
+          </div>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper">
+              <input type="checkbox" id="discord-allow-commands" />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Allow Discord commands</span>
+            </label>
+          </div>
+
+          <div class="ss-form-row checkbox-row">
+            <label class="ss-checkbox-wrapper">
+              <input type="checkbox" id="discord-allow-notifications" />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Allow Discord notifications</span>
+            </label>
+          </div>
+
+        </fieldset>
+
+        <!-- ADMIN / TIER CONFIG -->
+        <fieldset class="ss-fieldset hidden" id="creator-tier-admin">
+          <legend>Tier (Admin Only)</legend>
+
+          <div class="ss-form-row">
+            <label for="creator-tier">Tier</label>
+            <select id="creator-tier" name="tier">
+              <option value="open">Open</option>
+              <option value="gold">Gold</option>
+              <option value="pro">Pro</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <!-- ACTIONS -->
+        <div class="ss-form-actions">
+          <button
+            type="button"
+            id="btn-cancel-edit"
+            class="ss-btn ss-btn-secondary"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="ss-btn ss-btn-primary">
+            Save Creator
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ========================================================= -->
+<!-- FOOTER -->
+<!-- ========================================================= -->
+<footer class="ss-footer">
+  <span class="muted">StreamSuites Dashboard — Beta</span>
+</footer>
+
+<!-- ========================================================= -->
+<!-- HIDDEN FILE INPUT -->
+<!-- ========================================================= -->
+<input
+  type="file"
+  id="creators-import-file"
+  accept="application/json"
+  class="hidden"
+/>
+
+<!-- ========================================================= -->
+<!-- VIEW-SCOPED WIRING (creators.js already loaded globally) -->
+<!-- ========================================================= -->
+<script>
+(function () {
+  const btnImport = document.getElementById("btn-import-creators");
+  const btnExport = document.getElementById("btn-export-creators");
+  const fileInput = document.getElementById("creators-import-file");
+
+  const errorBox = document.getElementById("creators-import-error");
+  const errorText = document.getElementById("creators-import-error-text");
+
+  function showError(msg) {
+    errorText.textContent = msg;
+    errorBox.classList.remove("hidden");
+  }
+
+  function clearError() {
+    errorBox.classList.add("hidden");
+    errorText.textContent = "";
+  }
+
+  btnExport.addEventListener("click", () => {
+    clearError();
+    window.CreatorsView?.exportCreators();
+  });
+
+  btnImport.addEventListener("click", () => {
+    clearError();
+    fileInput.value = "";
+    fileInput.click();
+  });
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    window.CreatorsView?.importCreatorsFromFile(file, showError);
+  });
+})();
+</script>

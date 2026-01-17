@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "schema": "streamsuites.jobs.v1",
+    "note": "Placeholder job queue snapshot"
+  },
+  "items": [
+    {
+      "id": "job-001",
+      "type": "clip-export",
+      "state": "idle",
+      "enabled": true,
+      "last_run": "2025-01-12T22:00:00Z",
+      "next_run": "2025-01-13T22:00:00Z"
+    },
+    {
+      "id": "job-002",
+      "type": "poll-rollup",
+      "state": "running",
+      "enabled": false,
+      "restart_required": true,
+      "reason": "Paused intentionally until runtime restart",
+      "last_run": "2025-01-13T12:30:00Z",
+      "next_run": "2025-01-13T13:30:00Z"
+    },
+    {
+      "id": "job-003",
+      "type": "scoreboard-publish",
+      "state": "paused",
+      "enabled": true,
+      "restart_required": false,
+      "reason": "Runtime will keep this enabled after the next restart",
+      "last_run": "2025-01-12T16:00:00Z",
+      "next_run": "2025-01-14T16:00:00Z"
+    }
+  ]
+}
