@@ -13,6 +13,11 @@ surfaces require authentication and allow `creator` and `admin` roles. Login sup
 OAuth providers (Google, GitHub, Discord) plus email magic-link sign-in. Tier scaffolding
 is present for `OPEN`, `GOLD`, and `PRO`, with `OPEN` as the default.
 
+The creator dashboard now includes a **soft-gated, resumable onboarding flow** that runs
+after authentication. Onboarding progress is persisted server-side, resumes at the last
+incomplete step, and scaffolds tier awareness for `OPEN`, `GOLD`, and `PRO` alongside
+placeholder integrations.
+
 Root-absolute asset loading is required (`/css/...`, `/js/...`, `/assets/...`), and all CSS,
 JS, and static assets referenced by the Creator dashboard must live in this repository for
 local completeness. Version/build metadata is sourced from the Admin dashboard at
@@ -46,6 +51,7 @@ Future tier scaffolding (Open / Gold / Pro) is intentional and remains inactive 
 ├── js/
 │   ├── auth.js
 │   ├── app.js
+│   ├── onboarding.js
 │   ├── creators.js
 │   ├── jobs.js
 │   ├── platforms.js

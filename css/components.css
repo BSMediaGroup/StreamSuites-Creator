@@ -2249,3 +2249,193 @@ button.public-btn:active::after {
 .telemetry-error-active {
   background: rgba(217, 83, 79, 0.06);
 }
+
+/* ----------------------------------------------------------------------
+   Creator onboarding (modal + banner)
+   ---------------------------------------------------------------------- */
+
+.ss-onboarding-banner {
+  margin: 18px auto 0;
+  max-width: 1100px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ss-onboarding-banner-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ss-onboarding-banner-copy p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.ss-onboarding-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ss-onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 14, 0.72);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 9999;
+}
+
+.ss-onboarding-overlay.is-open {
+  display: flex;
+}
+
+.ss-onboarding-modal {
+  width: min(720px, 100%);
+  background: var(--bg-panel);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+}
+
+.ss-onboarding-header h2 {
+  margin: 0;
+  font-family: "RechargeBd", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.ss-onboarding-subtitle {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.ss-onboarding-progress {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ss-onboarding-progress-step {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.ss-onboarding-progress-step.is-current {
+  border-color: rgba(140, 199, 54, 0.85);
+  color: #d5f7b6;
+  background: rgba(140, 199, 54, 0.12);
+}
+
+.ss-onboarding-progress-step.is-complete {
+  border-color: rgba(87, 186, 120, 0.6);
+  color: #c8f4d8;
+  background: rgba(87, 186, 120, 0.12);
+}
+
+.ss-onboarding-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--text-primary);
+}
+
+.ss-onboarding-lead {
+  margin: 0;
+  font-size: 14px;
+}
+
+.ss-onboarding-copy {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.ss-onboarding-list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.ss-onboarding-link {
+  color: var(--accent-blue, #8ab4f8);
+  font-size: 13px;
+}
+
+.ss-onboarding-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ss-onboarding-checkbox input {
+  accent-color: #8cc736;
+}
+
+.ss-onboarding-error {
+  margin: 0;
+  color: #ffb3b0;
+  font-size: 12px;
+}
+
+.ss-onboarding-tier {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.ss-onboarding-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px 14px;
+}
+
+.ss-onboarding-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ss-onboarding-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ss-onboarding-footer .ss-btn {
+  min-width: 120px;
+}
