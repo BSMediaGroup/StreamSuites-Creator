@@ -4,7 +4,7 @@
    StreamSuites Dashboard — components.css
    Purpose:
    - Component-level styles for SS view modules (ss-*)
-   - Works inside dynamically injected views (docs/views/*.html)
+   - Works inside dynamically injected views (views/*.html)
    - Dark-theme compatible by default (uses theme-dark.css variables)
    ====================================================================== */
 
@@ -895,7 +895,7 @@
 
 /* ----------------------------------------------------------------------
    Chat window (live/replay) reference styles
-   Mirrors docs/views/chat_window.html for design showcase
+   Mirrors views/chat_window.html for design showcase
    ---------------------------------------------------------------------- */
 
 .chat-window-sample {

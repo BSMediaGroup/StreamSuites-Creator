@@ -858,7 +858,7 @@
    CONFIG STATE LAYER (LOCAL + JSON DATA FALLBACKS)
    - Provides normalized access to creators, platforms, and dashboard state
    - Uses localStorage as a staging layer
-   - Falls back to docs/data/*.json when no draft is present
+   - Falls back to data/*.json when no draft is present
    - Exposed as window.ConfigState
    ===================================================================== */
 
