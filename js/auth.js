@@ -59,11 +59,6 @@
       return { authenticated: false };
     }
 
-    const authenticated = payload.authenticated === true;
-    if (!authenticated) {
-      return { authenticated: false };
-    }
-
     const emailCandidate =
       typeof payload.email === "string"
         ? payload.email
