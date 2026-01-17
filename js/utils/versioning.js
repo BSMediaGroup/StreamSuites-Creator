@@ -1,7 +1,10 @@
 (() => {
   "use strict";
 
-  const VERSION_ENDPOINT = "/runtime/exports/version.json";
+  const VERSION_ENDPOINT = new URL(
+    "/runtime/exports/version.json",
+    window.location.origin
+  ).href;
   const CACHE = {
     promise: null,
     data: null
@@ -61,10 +64,17 @@
           signal: controller.signal
         });
         if (!response.ok) {
+          console.warn(
+            "[Versioning] Version metadata request failed",
+            response.status
+          );
           return null;
         }
         const payload = await response.json();
         const normalized = normalizePayload(payload);
+        if (!normalized) {
+          console.warn("[Versioning] Version metadata payload was empty");
+        }
         CACHE.data = normalized;
         return normalized;
       } catch (err) {
@@ -86,15 +96,15 @@
     return output;
   }
 
-  function applyToElements(selector, values) {
+  function applyToElements(selector, values, fallbackKey) {
     if (!selector) return;
     const elements = document.querySelectorAll(selector);
     elements.forEach((el) => {
       const template = el.getAttribute("data-version-format");
       if (template) {
         el.textContent = applyTemplate(template, values);
-      } else if (values.version) {
-        el.textContent = values.version;
+      } else if (fallbackKey && values[fallbackKey]) {
+        el.textContent = values[fallbackKey];
       }
     });
   }
@@ -111,8 +121,12 @@
   async function applyVersionToElements(options = {}) {
     const data = await fetchVersionData();
     if (!data) {
+      console.warn(
+        "[Versioning] Version metadata unavailable; showing fallback"
+      );
       applyUnavailable(options.version);
       applyUnavailable(options.build);
+      document.documentElement.dataset.versionStatus = "unavailable";
       return null;
     }
 
@@ -128,9 +142,10 @@
     if (data.build) {
       document.documentElement.dataset.build = data.build;
     }
+    document.documentElement.dataset.versionStatus = "available";
 
-    applyToElements(options.version, values);
-    applyToElements(options.build, values);
+    applyToElements(options.version, values, "version");
+    applyToElements(options.build, values, "build");
 
     return data;
   }
