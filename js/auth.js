@@ -425,12 +425,45 @@
       }
     }
 
+    if (session?.authenticated && !isPublic) {
+      loadOnboarding(session);
+    }
+
     if (isPublic) {
       if (session?.error && !new URLSearchParams(window.location.search).get("reason")) {
         window.StreamSuitesAuth.loginHint = "Auth service is unreachable. Please try again.";
       }
       wireLoginForm();
     }
+  }
+
+  function loadOnboarding(session) {
+    if (!session?.authenticated) return;
+
+    if (window.StreamSuitesOnboarding?.init) {
+      window.StreamSuitesOnboarding.init(session);
+      return;
+    }
+
+    const existing = document.querySelector("script[data-onboarding-script]");
+    if (existing) {
+      existing.addEventListener("load", () => {
+        window.StreamSuitesOnboarding?.init?.(session);
+      });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "/js/onboarding.js";
+    script.defer = true;
+    script.dataset.onboardingScript = "true";
+    script.addEventListener("load", () => {
+      window.StreamSuitesOnboarding?.init?.(session);
+    });
+    script.addEventListener("error", () => {
+      console.warn("[Dashboard][Auth] Failed to load onboarding module.");
+    });
+    document.body.appendChild(script);
   }
 
   window.StreamSuitesAuth = {
