@@ -11,12 +11,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StreamSuites — Creator Dashboard</title>
   <meta name="description" content="Creator-facing dashboard for StreamSuites — monitor overlays, review outputs, and jump into clips, polls, tallies, and scoreboards." />
-  <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
-  <link rel="stylesheet" href="./css/theme-dark.css" />
-  <link rel="stylesheet" href="./css/components.css" />
-  <link rel="stylesheet" href="./css/public-pages.css" />
-  <link rel="stylesheet" href="./css/overrides.css" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/overrides.css" />
+  <link rel="stylesheet" href="/css/theme-dark.css" />
+  <link rel="stylesheet" href="/css/updates.css" />
 </head>
 <body>
   <div class="public-bg" aria-hidden="true"></div>
@@ -24,7 +26,7 @@
     <div class="public-shell creator-shell">
       <header class="public-topbar creator-topbar">
         <a class="public-brand" href="https://streamsuites.app">
-          <img src="./assets/logos/logo.png" alt="StreamSuites" />
+          <img src="/assets/logos/logo.png" alt="StreamSuites" />
           <div>
             <h1>StreamSuites™</h1>
             <p class="brand-subtitle">Creator dashboard</p>
@@ -40,7 +42,7 @@
             </svg>
           </label>
           <div class="public-nav">
-            <span class="version-pill version-badge">Loading version…</span>
+            <span class="version-pill version-badge" data-version-format="{{version}}">Loading version…</span>
             <a href="/" aria-current="page">Dashboard</a>
             <a href="./clips.html">Clips</a>
             <a href="./polls.html">Polls</a>
@@ -276,11 +278,11 @@
 
       <footer class="public-footer creator-footer">
         <div class="footer-left">
-          <img src="./assets/icons/discord-silver.svg" alt="Discord" class="discord-icon" />
+          <img src="/assets/icons/discord-silver.svg" alt="Discord" class="discord-icon" />
           <a href="https://support.streamsuites.app" target="_blank" rel="noopener noreferrer">Support server</a>
         </div>
         <div class="footer-center">
-          <span id="footer-version" class="footer-version">StreamSuites Dashboard v0.2.2-alpha</span>
+          <span id="footer-version" class="footer-version" data-version-format="StreamSuites Dashboard {{version}}">StreamSuites Dashboard v0.2.2-alpha</span>
           <span class="footer-divider" aria-hidden="true">•</span>
           <span>Creator workspace</span>
         </div>
@@ -291,12 +293,10 @@
     </div>
   </div>
 
-  <script src="./js/utils/versioning.js"></script>
-  <script src="./js/utils/version-stamp.js"></script>
-  <script>
-    if (window.Versioning) {
-      Versioning.applyVersionToElements({ version: ".version-badge, .footer-version" });
-    }
-  </script>
+  <script src="/js/app.js"></script>
+  <script src="/js/state.js"></script>
+  <script src="/js/render.js"></script>
+  <script src="/js/utils/versioning.js"></script>
+  <script src="/js/utils/version-stamp.js"></script>
 </body>
 </html>
