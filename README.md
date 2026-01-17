@@ -20,9 +20,10 @@ placeholder integrations.
 
 Root-absolute asset loading is required (`/css/...`, `/js/...`, `/assets/...`), and all CSS,
 JS, and static assets referenced by the Creator dashboard must live in this repository for
-local completeness. Version/build metadata is sourced from the Admin dashboard at
-https://admin.streamsuites.app/version.json and displayed here for visibility only. The
-creator dashboard is read-only and does not mutate admin data.
+local completeness. Version/build metadata is consumed from the runtime export at
+`/runtime/exports/version.json`; this repository does not define version/build values and
+only displays the runtime-provided metadata. The creator dashboard is read-only and does
+not mutate admin data.
 
 Creator-facing links that point to other StreamSuites surfaces always use absolute URLs:
 - Public site: https://streamsuites.app
