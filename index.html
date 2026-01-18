@@ -10,7 +10,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StreamSuites — Creator Dashboard</title>
-  <meta name="description" content="Creator-facing dashboard for StreamSuites — monitor overlays, review outputs, and jump into clips, polls, tallies, and scoreboards." />
+  <meta
+    name="description"
+    content="Creator-facing dashboard for StreamSuites — monitor overlays, review outputs, and jump into clips, polls, tallies, and scoreboards."
+  />
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
   <link rel="stylesheet" href="/css/base.css" />
@@ -30,71 +33,73 @@
           <h1>StreamSuites</h1>
         </div>
       </div>
-      <div class="creator-user" data-auth-summary="true">
+      <div class="creator-account" data-auth-summary="true">
         <img
           class="creator-avatar"
           src="/assets/icons/ui/profile.svg"
           alt="Creator avatar"
           data-auth-avatar="true"
         />
-        <div class="creator-user-meta">
-          <span class="creator-user-label">Creator account</span>
-          <span class="creator-user-name" data-auth-email="true">Signed out</span>
+        <div class="creator-account-meta">
+          <span class="creator-account-label">StreamSuites account</span>
+          <span class="creator-account-name" data-auth-name="true" data-auth-email="true">Signed out</span>
         </div>
         <span class="creator-tier" data-auth-tier="true">OPEN</span>
-        <button class="creator-logout" type="button" data-auth-logout="true">Logout</button>
+        <div class="creator-account-actions">
+          <button class="creator-account-button" type="button" data-auth-settings="true" disabled>
+            Account Settings
+          </button>
+          <button class="creator-account-button secondary" type="button" data-auth-logout="true">
+            Logout
+          </button>
+        </div>
       </div>
     </header>
 
     <section class="creator-lockout" data-creator-lockout hidden>
       <div class="lockout-card">
         <span class="lockout-pill">Creator access required</span>
-        <h2>You're signed in, but this workspace is creator-only.</h2>
+        <h2>Your account does not have creator access.</h2>
         <p>
-          Switch to a creator account to access overlays, clips, polls, and scoreboard tools.
-          If you believe this is a mistake, reach out to StreamSuites support.
+          This workspace is reserved for creator accounts. Sign in with a different account or
+          return to the public StreamSuites site.
         </p>
         <div class="lockout-actions">
-          <a
-            class="lockout-button"
-            href="https://api.streamsuites.app/auth/login?surface=creator&redirect=https://creator.streamsuites.app/index.html"
-          >
-            Log in as Creator
-          </a>
-          <a class="lockout-link" href="https://support.streamsuites.app" target="_blank" rel="noopener noreferrer">
-            Contact support
-          </a>
+          <a class="lockout-button" href="/auth/login.html">Login with a different account</a>
+          <a class="lockout-button secondary" href="https://streamsuites.app">Return to Public Site</a>
         </div>
       </div>
     </section>
 
     <div class="creator-layout" data-creator-content>
       <aside class="creator-nav">
-        <span class="creator-nav-title">Workspace</span>
+        <span class="creator-nav-title">Navigation</span>
         <nav>
           <a href="#overview">Overview</a>
-          <a href="#platforms">Platform overview</a>
-          <div class="creator-nav-group">
-            <span class="creator-nav-label">Platforms</span>
-            <a href="/views/platforms/youtube.html">YouTube</a>
-            <a href="/views/platforms/twitch.html">Twitch</a>
-            <a href="/views/platforms/rumble.html">Rumble</a>
-            <a href="/views/platforms/kick.html">Kick</a>
-            <a href="/views/platforms/pilled.html">Pilled</a>
-            <a href="/views/platforms/twitter.html">Twitter</a>
-            <a href="/views/platforms/discord.html">Discord</a>
-          </div>
-          <a href="#clips">Clips</a>
-          <a href="#polls">Polls</a>
-          <a href="#tallies">Tallies</a>
-          <a href="#scoreboards">Scoreboards</a>
-          <a href="#settings">Settings &amp; Onboarding</a>
+          <a href="#platforms">Platforms</a>
+          <a href="#toolkit">Creator toolkit</a>
+          <a href="#operations">Operations</a>
         </nav>
+        <div class="creator-nav-group">
+          <span class="creator-nav-label">Platforms</span>
+          <a href="/views/platforms/youtube.html">YouTube</a>
+          <a href="/views/platforms/twitch.html">Twitch</a>
+          <a href="/views/platforms/rumble.html">Rumble</a>
+          <a href="/views/platforms/kick.html">Kick</a>
+          <a href="/views/platforms/pilled.html">Pilled</a>
+        </div>
+        <div class="creator-nav-group">
+          <span class="creator-nav-label">Workspace</span>
+          <a href="/views/overview.html">Workspace summary</a>
+          <a href="/views/settings.html">Settings &amp; onboarding</a>
+          <a href="/views/updates.html">Activity updates</a>
+          <a href="/views/support.html">Support desk</a>
+        </div>
         <div class="creator-nav-footer">
           <span class="creator-nav-label">Quick links</span>
-          <a href="/views/overview.html">Workspace summary →</a>
-          <a href="/views/settings.html">Workspace settings →</a>
-          <a href="/views/support.html">Support desk →</a>
+          <a href="https://streamsuites.app">Public site</a>
+          <a href="https://streamsuites.app/clips">Clips gallery</a>
+          <a href="https://streamsuites.app/scoreboards">Scoreboards</a>
         </div>
       </aside>
 
@@ -116,15 +121,24 @@
               </span>
             </div>
           </div>
+          <div class="creator-hero">
+            <div>
+              <h3>Welcome back to your StreamSuites workspace</h3>
+              <p>
+                Monitor creator-facing automation, review export health, and jump into platform
+                configuration when you are ready to connect additional channels.
+              </p>
+            </div>
+            <div class="creator-hero-actions">
+              <a class="creator-button primary" href="/views/settings.html">Review settings</a>
+              <a class="creator-button ghost" href="/views/updates.html">View recent activity</a>
+            </div>
+          </div>
           <div class="card-grid overview-grid">
             <article class="card highlight">
               <h3>Live workspace pulse</h3>
               <p>Snapshot of your creator runtime, automation, and publish queues.</p>
               <div class="stat-grid">
-                <div>
-                  <span class="stat-label">Active overlays</span>
-                  <span class="stat-value">4 modules</span>
-                </div>
                 <div>
                   <span class="stat-label">Automation health</span>
                   <span class="stat-value">Healthy</span>
@@ -137,8 +151,12 @@
                   <span class="stat-label">Polls running</span>
                   <span class="stat-value">2 live</span>
                 </div>
+                <div>
+                  <span class="stat-label">Export status</span>
+                  <span class="stat-value">Up to date</span>
+                </div>
               </div>
-              <a href="/views/updates.html">Review activity →</a>
+              <a href="/views/overview.html">Review workspace summary →</a>
             </article>
             <article class="card">
               <h3>Next broadcast checklist</h3>
@@ -148,7 +166,7 @@
                 <li>Verify clip queue for your channel</li>
                 <li>Confirm current poll overlays</li>
               </ul>
-              <a href="/views/overview.html">Open overview →</a>
+              <a href="/views/overview.html">Open checklist →</a>
             </article>
             <article class="card">
               <h3>Onboarding status</h3>
@@ -156,7 +174,7 @@
               <ul>
                 <li>Confirm creator tier</li>
                 <li>Review terms and support resources</li>
-                <li>See upcoming integrations</li>
+                <li>Stage future platform integrations</li>
               </ul>
               <a href="/views/settings.html">Open onboarding →</a>
             </article>
@@ -179,7 +197,7 @@
               <span class="section-kicker">Platforms</span>
               <h2>Connected channels</h2>
             </div>
-            <p class="section-subtext">Monitor the status of creator-facing destinations and overlays.</p>
+            <p class="section-subtext">Manage destination status, onboarding, and creator metrics.</p>
           </div>
           <div class="card-grid platform-grid">
             <article class="card platform-card">
@@ -191,11 +209,14 @@
                 </span>
               </div>
               <p>Live overlays, clip drops, and automation mapped to your primary channel.</p>
-              <ul>
-                <li>Overlay sync: Scoreboards, polls, tallies</li>
-                <li>Chat mirror: Commands synced</li>
-              </ul>
-              <a href="/views/platforms/youtube.html">Open YouTube view →</a>
+              <div class="platform-metrics">
+                <span>Last sync: 2 min ago</span>
+                <span>Overlay pack: Ready</span>
+              </div>
+              <div class="platform-actions">
+                <a class="creator-button ghost" href="/views/platforms/youtube.html">Open YouTube view</a>
+                <button class="creator-button" type="button" disabled>Configure</button>
+              </div>
             </article>
             <article class="card platform-card">
               <div class="card-top">
@@ -206,11 +227,14 @@
                 </span>
               </div>
               <p>Streaming overlays and clip triggers mapped to Twitch scene stacks.</p>
-              <ul>
-                <li>Chat triggers active</li>
-                <li>Scene overlays ready</li>
-              </ul>
-              <a href="/views/platforms/twitch.html">Open Twitch view →</a>
+              <div class="platform-metrics">
+                <span>Chat triggers: Active</span>
+                <span>Scene status: Ready</span>
+              </div>
+              <div class="platform-actions">
+                <a class="creator-button ghost" href="/views/platforms/twitch.html">Open Twitch view</a>
+                <button class="creator-button" type="button" disabled>Configure</button>
+              </div>
             </article>
             <article class="card platform-card">
               <div class="card-top">
@@ -221,181 +245,109 @@
                 </span>
               </div>
               <p>Live ingest tracking and stream health checks for Rumble broadcasts.</p>
-              <ul>
-                <li>Ingest status visible</li>
-                <li>Clip export staged</li>
-              </ul>
-              <a href="/views/platforms/rumble.html">Open Rumble view →</a>
+              <div class="platform-metrics">
+                <span>Ingest status: Visible</span>
+                <span>Clip export: Staged</span>
+              </div>
+              <div class="platform-actions">
+                <a class="creator-button ghost" href="/views/platforms/rumble.html">Open Rumble view</a>
+                <button class="creator-button" type="button" disabled>Connect</button>
+              </div>
             </article>
             <article class="card platform-card">
               <div class="card-top">
                 <h3>Kick</h3>
                 <span class="status-pill warning">
                   <span class="status-dot"></span>
-                  Standby
+                  Disabled
                 </span>
               </div>
               <p>Kick automation is staged but disabled pending runtime enablement.</p>
-              <ul>
-                <li>Triggers queued</li>
-                <li>Overlay pack ready</li>
-              </ul>
-              <a href="/views/platforms/kick.html">Open Kick view →</a>
+              <div class="platform-metrics">
+                <span>Triggers: Queued</span>
+                <span>Overlay pack: Ready</span>
+              </div>
+              <div class="platform-actions">
+                <a class="creator-button ghost" href="/views/platforms/kick.html">Open Kick view</a>
+                <button class="creator-button" type="button" disabled>Connect</button>
+              </div>
             </article>
             <article class="card platform-card">
               <div class="card-top">
                 <h3>Pilled</h3>
                 <span class="status-pill warning">
                   <span class="status-dot"></span>
-                  Staging
+                  Disabled
                 </span>
               </div>
-              <p>Pilled ingest is configured for read-only monitoring.</p>
-              <ul>
-                <li>Ingest logs monitored</li>
-                <li>Alerts routed to ops</li>
-              </ul>
-              <a href="/views/platforms/pilled.html">Open Pilled view →</a>
-            </article>
-            <article class="card platform-card">
-              <div class="card-top">
-                <h3>Twitter</h3>
-                <span class="status-pill subtle">
-                  <span class="status-dot"></span>
-                  Listening
-                </span>
+              <p>Pilled ingest is staged for onboarding once the platform is enabled.</p>
+              <div class="platform-metrics">
+                <span>Onboarding: Planned</span>
+                <span>Metrics: Pending</span>
               </div>
-              <p>Social clips and updates auto-post through creator social queues.</p>
-              <ul>
-                <li>Clip share queue ready</li>
-                <li>Announcement cadence set</li>
-              </ul>
-              <a href="/views/platforms/twitter.html">Open Twitter view →</a>
-            </article>
-            <article class="card platform-card">
-              <div class="card-top">
-                <h3>Discord</h3>
-                <span class="status-pill subtle">
-                  <span class="status-dot"></span>
-                  Monitoring
-                </span>
+              <div class="platform-actions">
+                <a class="creator-button ghost" href="/views/platforms/pilled.html">Open Pilled view</a>
+                <button class="creator-button" type="button" disabled>Connect</button>
               </div>
-              <p>Community updates and clip alerts mirror into Discord channels.</p>
-              <ul>
-                <li>Automation updates visible</li>
-                <li>Clips notifications queued</li>
-              </ul>
-              <a href="/views/platforms/discord.html">Open Discord view →</a>
             </article>
           </div>
         </section>
 
-        <section id="clips" class="creator-section">
+        <section id="toolkit" class="creator-section">
           <div class="section-header">
             <div>
-              <span class="section-kicker">Clips</span>
-              <h2>Media highlights</h2>
+              <span class="section-kicker">Creator toolkit</span>
+              <h2>Publish-ready surfaces</h2>
             </div>
-            <p class="section-subtext">Keep your highlight reels on schedule and aligned to runtime exports.</p>
+            <p class="section-subtext">Jump into the public-facing surfaces when you need them.</p>
           </div>
           <div class="card-grid">
             <article class="card">
-              <h3>Clip queue</h3>
+              <h3>Clips</h3>
               <p>Review queued clips and confirm publishing order before you go live.</p>
               <a href="https://streamsuites.app/clips">Open clips gallery →</a>
             </article>
             <article class="card">
-              <h3>Clip delivery status</h3>
-              <p>Monitor recent uploads and the latest runtime sync events.</p>
-              <a href="/views/updates.html">Review clip activity →</a>
-            </article>
-          </div>
-        </section>
-
-        <section id="polls" class="creator-section">
-          <div class="section-header">
-            <div>
-              <span class="section-kicker">Polls</span>
-              <h2>Interactive voting</h2>
-            </div>
-            <p class="section-subtext">Launch polls and track engagement results from the creator workspace.</p>
-          </div>
-          <div class="card-grid">
-            <article class="card">
-              <h3>Live polls</h3>
-              <p>Keep tabs on active polls and make sure overlays are broadcast ready.</p>
+              <h3>Polls</h3>
+              <p>Launch polls and track engagement results from the creator workspace.</p>
               <a href="https://streamsuites.app/polls">Open polls gallery →</a>
             </article>
             <article class="card">
-              <h3>Poll templates</h3>
-              <p>Review the templates connected to your runtime export feeds.</p>
-              <a href="/views/overview.html">Review templates →</a>
-            </article>
-          </div>
-        </section>
-
-        <section id="tallies" class="creator-section">
-          <div class="section-header">
-            <div>
-              <span class="section-kicker">Tallies</span>
-              <h2>Real-time tallies</h2>
-            </div>
-            <p class="section-subtext">Track tally overlays and ensure live data stays in sync.</p>
-          </div>
-          <div class="card-grid">
-            <article class="card">
-              <h3>Active tallies</h3>
-              <p>Review tally overlays and confirm score accumulation for live sessions.</p>
+              <h3>Tallies</h3>
+              <p>Track tally overlays and ensure live data stays in sync.</p>
               <a href="https://streamsuites.app/tallies">Open tallies →</a>
             </article>
             <article class="card">
-              <h3>Tally presets</h3>
-              <p>Keep tally presets aligned with scoreboard and poll workflows.</p>
-              <a href="/views/overview.html">Review tally presets →</a>
-            </article>
-          </div>
-        </section>
-
-        <section id="scoreboards" class="creator-section">
-          <div class="section-header">
-            <div>
-              <span class="section-kicker">Scoreboards</span>
-              <h2>Match &amp; event overlays</h2>
-            </div>
-            <p class="section-subtext">Update scoreboard presets and share overlay-ready views.</p>
-          </div>
-          <div class="card-grid">
-            <article class="card">
-              <h3>Scoreboard gallery</h3>
-              <p>Review scoreboard presets and confirm live overlays are ready.</p>
+              <h3>Scoreboards</h3>
+              <p>Update scoreboard presets and share overlay-ready views.</p>
               <a href="https://streamsuites.app/scoreboards">Open scoreboards →</a>
             </article>
-            <article class="card">
-              <h3>Shared views</h3>
-              <p>Share overlay-ready links with your production collaborators.</p>
-              <a href="/views/overview.html">View shareable links →</a>
-            </article>
           </div>
         </section>
 
-        <section id="settings" class="creator-section">
+        <section id="operations" class="creator-section">
           <div class="section-header">
             <div>
-              <span class="section-kicker">Settings &amp; Onboarding</span>
-              <h2>Workspace configuration</h2>
+              <span class="section-kicker">Operations</span>
+              <h2>Workspace health</h2>
             </div>
-            <p class="section-subtext">Manage creator settings and revisit onboarding guidance anytime.</p>
+            <p class="section-subtext">Keep creator-facing automation stable and aligned.</p>
           </div>
           <div class="card-grid">
             <article class="card">
-              <h3>Workspace settings</h3>
-              <p>Review settings and runtime metadata for your creator workspace.</p>
-              <a href="/views/settings.html">Open settings →</a>
+              <h3>Export health</h3>
+              <p>Runtime exports update daily and surface new automation states.</p>
+              <a href="/views/updates.html">Review export history →</a>
             </article>
             <article class="card">
-              <h3>Onboarding checklist</h3>
-              <p>Resume onboarding steps and revisit tier guidance.</p>
-              <a href="/views/overview.html">Open onboarding overview →</a>
+              <h3>Support touchpoints</h3>
+              <p>Need help? Access documentation, escalation paths, and workspace guides.</p>
+              <a href="/views/support.html">Open support →</a>
+            </article>
+            <article class="card">
+              <h3>Workspace settings</h3>
+              <p>Manage onboarding progress, tier guidance, and workspace preferences.</p>
+              <a href="/views/settings.html">Open settings →</a>
             </article>
           </div>
         </section>
@@ -405,11 +357,19 @@
     <footer class="creator-footer">
       <div>
         <span class="footer-title">StreamSuites Creator Workspace</span>
-        <span id="footer-version" class="footer-version" data-version-format="Dashboard {{version}} • build {{build}}">Loading version…</span>
+        <span
+          id="footer-version"
+          class="footer-version"
+          data-version-format="Dashboard {{version}} • build {{build}}"
+        >
+          Loading version…
+        </span>
       </div>
       <div class="footer-links">
         <a href="https://support.streamsuites.app" target="_blank" rel="noopener noreferrer">Support</a>
-        <a href="mailto:creator@streamsuites.app" target="_blank" rel="noopener noreferrer">creator@streamsuites.app</a>
+        <a href="mailto:creator@streamsuites.app" target="_blank" rel="noopener noreferrer"
+          >creator@streamsuites.app</a
+        >
       </div>
     </footer>
   </div>

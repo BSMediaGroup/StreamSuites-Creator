@@ -21,8 +21,6 @@
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
 
   const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/auth/login.html`;
-  const SESSION_CACHE_KEY = "streamsuites.creator.session";
-  const SESSION_CACHE_TTL = 1000 * 60 * 15;
 
   const sessionState = {
     value: null,
@@ -66,6 +64,19 @@
       return { authenticated: false };
     }
 
+    const displayNameCandidate =
+      typeof payload.name === "string"
+        ? payload.name
+        : typeof payload.user?.name === "string"
+          ? payload.user.name
+          : typeof payload.user?.display_name === "string"
+            ? payload.user.display_name
+            : typeof payload.user?.displayName === "string"
+              ? payload.user.displayName
+              : typeof payload.user?.username === "string"
+                ? payload.user.username
+                : "";
+
     const emailCandidate =
       typeof payload.email === "string"
         ? payload.email
@@ -85,9 +96,24 @@
       return { authenticated: false };
     }
 
+    const avatarCandidate =
+      typeof payload.avatar === "string"
+        ? payload.avatar
+        : typeof payload.avatar_url === "string"
+          ? payload.avatar_url
+          : typeof payload.user?.avatar === "string"
+            ? payload.user.avatar
+            : typeof payload.user?.avatar_url === "string"
+              ? payload.user.avatar_url
+              : typeof payload.user?.image === "string"
+                ? payload.user.image
+                : "";
+
     return {
       authenticated: true,
       email: emailCandidate.trim() || "Signed in",
+      name: displayNameCandidate.trim() || "",
+      avatar: avatarCandidate.trim() || "",
       role,
       tier: normalizeTier(payload.tier || payload.user?.tier)
     };
@@ -147,50 +173,14 @@
     return data;
   }
 
-  function readCachedSession() {
-    try {
-      const raw = sessionStorage.getItem(SESSION_CACHE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (!parsed || typeof parsed !== "object") return null;
-      if (!parsed.session) return null;
-      if (typeof parsed.savedAt !== "number") return null;
-      if (Date.now() - parsed.savedAt > SESSION_CACHE_TTL) {
-        sessionStorage.removeItem(SESSION_CACHE_KEY);
-        return null;
-      }
-      return parsed.session;
-    } catch (err) {
-      return null;
-    }
-  }
-
-  function writeCachedSession(session) {
-    try {
-      sessionStorage.setItem(
-        SESSION_CACHE_KEY,
-        JSON.stringify({ session, savedAt: Date.now() })
-      );
-    } catch (err) {
-      // Ignore cache errors (private mode, quota, etc.)
-    }
-  }
-
   async function loadSession() {
     if (sessionState.loading) return sessionState.value;
     if (sessionState.value) return sessionState.value;
-
-    const cachedSession = readCachedSession();
-    if (cachedSession?.authenticated) {
-      sessionState.value = cachedSession;
-      return sessionState.value;
-    }
 
     sessionState.loading = true;
     try {
       const payload = await fetchJson(AUTH_ENDPOINTS.session, {}, 5000);
       sessionState.value = normalizeSessionPayload(payload);
-      writeCachedSession(sessionState.value);
     } catch (err) {
       sessionState.value = { authenticated: false, error: err };
     } finally {
@@ -205,6 +195,8 @@
     window.App.session = {
       authenticated: !!session?.authenticated,
       email: session?.email || "",
+      name: session?.name || "",
+      avatar: session?.avatar || "",
       role: session?.role || "",
       tier: session?.tier || ""
     };
@@ -215,15 +207,38 @@
     wrapper.className = "ss-auth-summary";
     wrapper.dataset.authSummary = "true";
 
-    const email = document.createElement("span");
-    email.className = "ss-chip auth-chip auth-email";
-    email.dataset.authEmail = "true";
-    email.textContent = "Signed out";
+    const avatar = document.createElement("img");
+    avatar.className = "ss-auth-avatar";
+    avatar.dataset.authAvatar = "true";
+    avatar.alt = "Account avatar";
+    avatar.src = "/assets/icons/ui/profile.svg";
+
+    const meta = document.createElement("div");
+    meta.className = "ss-auth-meta";
+
+    const label = document.createElement("span");
+    label.className = "ss-auth-label";
+    label.textContent = "StreamSuites account";
+
+    const name = document.createElement("span");
+    name.className = "ss-auth-name";
+    name.dataset.authName = "true";
+    name.dataset.authEmail = "true";
+    name.textContent = "Signed out";
+
+    meta.append(label, name);
 
     const tier = document.createElement("span");
     tier.className = "ss-chip auth-chip auth-tier";
     tier.dataset.authTier = "true";
     tier.textContent = "OPEN";
+
+    const settings = document.createElement("button");
+    settings.type = "button";
+    settings.className = "ss-btn ss-btn-secondary ss-btn-small auth-settings";
+    settings.dataset.authSettings = "true";
+    settings.textContent = "Account Settings";
+    settings.disabled = true;
 
     const logout = document.createElement("button");
     logout.type = "button";
@@ -231,7 +246,7 @@
     logout.dataset.authLogout = "true";
     logout.textContent = "Logout";
 
-    wrapper.append(email, tier, logout);
+    wrapper.append(avatar, meta, tier, settings, logout);
     return wrapper;
   }
 
@@ -260,45 +275,47 @@
     const summaries = document.querySelectorAll("[data-auth-summary]");
     summaries.forEach((summary) => {
       const emailEl = summary.querySelector("[data-auth-email]");
+      const nameEl = summary.querySelector("[data-auth-name]");
       const tierEl = summary.querySelector("[data-auth-tier]");
       const logoutEl = summary.querySelector("[data-auth-logout]");
+      const settingsEl = summary.querySelector("[data-auth-settings]");
+      const avatarEl = summary.querySelector("[data-auth-avatar]");
 
       if (!emailEl || !tierEl || !logoutEl) return;
 
       if (!session?.authenticated) {
         emailEl.textContent = "Signed out";
+        if (nameEl) {
+          nameEl.textContent = "Signed out";
+        }
         tierEl.hidden = true;
         logoutEl.hidden = true;
+        if (settingsEl) settingsEl.hidden = true;
+        if (avatarEl) avatarEl.src = "/assets/icons/ui/profile.svg";
         return;
       }
 
-      emailEl.textContent = session.email || "Signed in";
+      const displayName = session.name || session.email || "Signed in";
+      emailEl.textContent = displayName;
+      if (nameEl) {
+        nameEl.textContent = displayName;
+      }
       tierEl.textContent = session.tier || "OPEN";
       tierEl.hidden = false;
       logoutEl.hidden = false;
+      if (settingsEl) settingsEl.hidden = false;
+      if (avatarEl) {
+        avatarEl.src = session.avatar || "/assets/icons/ui/profile.svg";
+      }
     });
   }
 
   async function logout() {
     try {
-      await fetchJson(
-        AUTH_ENDPOINTS.logout,
-        { method: "POST" },
-        5000
-      );
-    } catch (err) {
-      try {
-        await fetchJson(
-          AUTH_ENDPOINTS.logout,
-          { method: "GET" },
-          5000
-        );
-      } catch (fallbackErr) {
-        // Ignore logout failures; we still fail closed by redirecting.
-      }
+      await fetchJson(AUTH_ENDPOINTS.logout, { method: "POST" }, 5000);
     } finally {
       clearLocalSessionState();
-      window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=logout`);
+      window.location.assign("/auth/login.html?reason=logout");
     }
   }
 
@@ -307,11 +324,6 @@
     updateAppSession(sessionState.value);
     if (window.App?.state) {
       window.App.state = {};
-    }
-    try {
-      sessionStorage.removeItem(SESSION_CACHE_KEY);
-    } catch (err) {
-      // ignore
     }
   }
 
@@ -444,18 +456,63 @@
     });
   }
 
+  function buildCreatorLockout() {
+    const lockout = document.createElement("section");
+    lockout.className = "creator-lockout";
+    lockout.dataset.creatorLockout = "true";
+
+    lockout.innerHTML = `
+      <div class="lockout-card">
+        <span class="lockout-pill">Creator access required</span>
+        <h2>Your account does not have creator access.</h2>
+        <p>
+          This workspace is reserved for creator accounts. Sign in with a different
+          account or return to the public StreamSuites site.
+        </p>
+        <div class="lockout-actions">
+          <a class="lockout-button" href="/auth/login.html">Login with a different account</a>
+          <a class="lockout-button secondary" href="https://streamsuites.app">Return to Public Site</a>
+        </div>
+      </div>
+    `;
+
+    return lockout;
+  }
+
   function toggleCreatorLockout(show) {
-    const lockout = document.querySelector("[data-creator-lockout]");
+    let lockout = document.querySelector("[data-creator-lockout]");
     const content = document.querySelector("[data-creator-content]");
+    if (!lockout && show) {
+      lockout = buildCreatorLockout();
+      document.body.prepend(lockout);
+    }
     if (!lockout) return false;
 
     if (show) {
       lockout.hidden = false;
-      if (content) content.hidden = true;
+      if (content) {
+        content.hidden = true;
+      } else {
+        Array.from(document.body.children).forEach((child) => {
+          if (child === lockout) return;
+          if (child.hasAttribute("data-lockout-hidden")) return;
+          child.setAttribute("data-lockout-hidden", "true");
+          child.hidden = true;
+        });
+      }
       document.body.classList.add("creator-lockout-active");
     } else {
       lockout.hidden = true;
-      if (content) content.hidden = false;
+      if (content) {
+        content.hidden = false;
+      } else {
+        document
+          .querySelectorAll("[data-lockout-hidden=\"true\"]")
+          .forEach((child) => {
+            child.hidden = false;
+            child.removeAttribute("data-lockout-hidden");
+          });
+      }
       document.body.classList.remove("creator-lockout-active");
     }
     return true;
@@ -474,17 +531,14 @@
     updateAuthSummary(session);
 
     if (!session?.authenticated && !isPublic) {
-      window.location.assign(AUTH_ENDPOINTS.login);
+      window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=expired`);
       return;
     }
 
     if (session?.authenticated) {
       const role = normalizeRole(session.role);
       if (role !== CREATOR_ROLE) {
-        const locked = toggleCreatorLockout(true);
-        if (!locked) {
-          window.location.assign(AUTH_ENDPOINTS.login);
-        }
+        toggleCreatorLockout(true);
         return;
       }
     }

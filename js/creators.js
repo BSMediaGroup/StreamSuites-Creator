@@ -16,7 +16,7 @@
   "use strict";
 
   const ADMIN_DEFAULT_TIER = "open";
-  const PLATFORM_KEYS = ["youtube", "twitch", "kick", "pilled", "rumble", "discord"];
+  const PLATFORM_KEYS = ["youtube", "twitch", "kick", "pilled", "rumble"];
 
   const el = {};
 
@@ -90,13 +90,6 @@
     el.checkboxKick = document.getElementById("platform-kick");
     el.checkboxPilled = document.getElementById("platform-pilled");
     el.checkboxRumble = document.getElementById("platform-rumble");
-    el.checkboxDiscord = document.getElementById("platform-discord");
-    el.checkboxDiscordEnabled = document.getElementById("discord-enabled");
-    el.checkboxDiscordAllowCommands = document.getElementById("discord-allow-commands");
-    el.checkboxDiscordAllowNotifications = document.getElementById(
-      "discord-allow-notifications"
-    );
-
     el.rumbleConfig = document.getElementById("rumble-config");
     el.inputRumbleWatchUrl = document.getElementById("rumble-watch-url");
     el.inputRumbleChannelUrl = document.getElementById("rumble-channel-url");
@@ -271,12 +264,6 @@
       el.checkboxActive.checked = creator.disabled !== true;
 
       setPlatformCheckboxes(creator.platforms_enabled);
-      const discordSettings = normalizeDiscordSettings(creator);
-      el.checkboxDiscord.checked = discordSettings.control_plane_enabled;
-      el.checkboxDiscordEnabled.checked = discordSettings.enabled;
-      el.checkboxDiscordAllowCommands.checked = discordSettings.allow_commands;
-      el.checkboxDiscordAllowNotifications.checked =
-        discordSettings.allow_notifications;
 
       const rumble = creator.platforms?.rumble;
       el.checkboxRumble.checked = !!rumble?.enabled;
@@ -295,9 +282,6 @@
       el.inputCreatorId.disabled = false;
       el.checkboxActive.checked = true;
       setPlatformCheckboxes(null);
-      el.checkboxDiscordEnabled.checked = false;
-      el.checkboxDiscordAllowCommands.checked = false;
-      el.checkboxDiscordAllowNotifications.checked = false;
       el.rumbleConfig?.classList.add("hidden");
     }
   }
@@ -315,24 +299,6 @@
     el.checkboxKick.checked = !!flags.kick;
     el.checkboxPilled.checked = !!flags.pilled;
     el.checkboxRumble.checked = !!flags.rumble;
-    el.checkboxDiscord.checked = !!flags.discord;
-  }
-
-  function normalizeDiscordSettings(creator) {
-    const discord = creator?.discord && typeof creator.discord === "object"
-      ? creator.discord
-      : {};
-    const fallbackEnabled = Boolean(
-      creator?.platforms?.discord?.enabled || creator?.platforms_enabled?.discord
-    );
-    const controlPlaneEnabled =
-      discord.control_plane_enabled ?? fallbackEnabled;
-    return {
-      enabled: discord.enabled ?? controlPlaneEnabled,
-      allow_commands: discord.allow_commands ?? false,
-      allow_notifications: discord.allow_notifications ?? false,
-      control_plane_enabled: controlPlaneEnabled
-    };
   }
 
   /* ------------------------------------------------------------
@@ -370,15 +336,7 @@
       twitch: el.checkboxTwitch.checked,
       kick: el.checkboxKick.checked,
       pilled: el.checkboxPilled.checked,
-      rumble: el.checkboxRumble.checked,
-      discord: el.checkboxDiscord.checked
-    };
-
-    const discordSettings = {
-      enabled: el.checkboxDiscordEnabled?.checked ?? false,
-      allow_commands: el.checkboxDiscordAllowCommands?.checked ?? false,
-      allow_notifications: el.checkboxDiscordAllowNotifications?.checked ?? false,
-      control_plane_enabled: el.checkboxDiscord?.checked ?? false
+      rumble: el.checkboxRumble.checked
     };
 
     const payload = {
@@ -388,7 +346,6 @@
       disabled: !el.checkboxActive.checked,
       tier: ADMIN_DEFAULT_TIER,
       platforms_enabled: platformsEnabled,
-      discord: discordSettings,
       platforms: {
         youtube: { enabled: platformsEnabled.youtube },
         twitch: { enabled: platformsEnabled.twitch },
@@ -397,8 +354,7 @@
         rumble: {
           enabled: platformsEnabled.rumble,
           watch_url: el.inputRumbleWatchUrl?.value.trim() || ""
-        },
-        discord: { enabled: platformsEnabled.discord }
+        }
       }
     };
 

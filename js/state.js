@@ -865,7 +865,7 @@
 (() => {
   "use strict";
 
-  const PLATFORM_KEYS = ["youtube", "twitch", "kick", "pilled", "rumble", "discord"];
+  const PLATFORM_KEYS = ["youtube", "twitch", "kick", "pilled", "rumble"];
 
   const DATA_PATHS = {
     creators: "data/creators.json",

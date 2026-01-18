@@ -49,7 +49,11 @@ Future tier scaffolding (Open / Gold / Pro) is intentional and remains inactive 
 │   ├── support.html
 │   ├── updates.html
 │   └── platforms/
-│       └── *.html
+│       ├── kick.html
+│       ├── pilled.html
+│       ├── rumble.html
+│       ├── twitch.html
+│       └── youtube.html
 ├── js/
 │   ├── auth.js
 │   ├── app.js
