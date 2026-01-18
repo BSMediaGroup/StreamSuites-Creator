@@ -21,6 +21,9 @@
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
 
   const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/auth/login.html`;
+  const LOGOUT_REASON = "logout";
+  const REDIRECT_GUARD_KEY = "streamsuites.creator.loginRedirected";
+  const LOGOUT_GUARD_KEY = "streamsuites.creator.loggedOut";
 
   const sessionState = {
     value: null,
@@ -182,7 +185,11 @@
       const payload = await fetchJson(AUTH_ENDPOINTS.session, {}, 5000);
       sessionState.value = normalizeSessionPayload(payload);
     } catch (err) {
-      sessionState.value = { authenticated: false, error: err };
+      sessionState.value = {
+        authenticated: false,
+        error: err,
+        errorStatus: err?.status ?? null
+      };
     } finally {
       sessionState.loading = false;
     }
@@ -233,20 +240,13 @@
     tier.dataset.authTier = "true";
     tier.textContent = "OPEN";
 
-    const settings = document.createElement("button");
-    settings.type = "button";
-    settings.className = "ss-btn ss-btn-secondary ss-btn-small auth-settings";
-    settings.dataset.authSettings = "true";
-    settings.textContent = "Account Settings";
-    settings.disabled = true;
-
     const logout = document.createElement("button");
     logout.type = "button";
     logout.className = "ss-btn ss-btn-secondary ss-btn-small auth-logout";
     logout.dataset.authLogout = "true";
     logout.textContent = "Logout";
 
-    wrapper.append(avatar, meta, tier, settings, logout);
+    wrapper.append(avatar, meta, tier, logout);
     return wrapper;
   }
 
@@ -278,7 +278,6 @@
       const nameEl = summary.querySelector("[data-auth-name]");
       const tierEl = summary.querySelector("[data-auth-tier]");
       const logoutEl = summary.querySelector("[data-auth-logout]");
-      const settingsEl = summary.querySelector("[data-auth-settings]");
       const avatarEl = summary.querySelector("[data-auth-avatar]");
 
       if (!emailEl || !tierEl || !logoutEl) return;
@@ -290,7 +289,6 @@
         }
         tierEl.hidden = true;
         logoutEl.hidden = true;
-        if (settingsEl) settingsEl.hidden = true;
         if (avatarEl) avatarEl.src = "/assets/icons/ui/profile.svg";
         return;
       }
@@ -303,7 +301,6 @@
       tierEl.textContent = session.tier || "OPEN";
       tierEl.hidden = false;
       logoutEl.hidden = false;
-      if (settingsEl) settingsEl.hidden = false;
       if (avatarEl) {
         avatarEl.src = session.avatar || "/assets/icons/ui/profile.svg";
       }
@@ -315,7 +312,12 @@
       await fetchJson(AUTH_ENDPOINTS.logout, { method: "POST" }, 5000);
     } finally {
       clearLocalSessionState();
-      window.location.assign("/auth/login.html?reason=logout");
+      try {
+        sessionStorage.setItem(LOGOUT_GUARD_KEY, "true");
+      } catch (err) {
+        console.warn("[Dashboard][Auth] Failed to set logout guard", err);
+      }
+      window.location.assign(`/auth/login.html?reason=${LOGOUT_REASON}`);
     }
   }
 
@@ -464,14 +466,20 @@
     lockout.innerHTML = `
       <div class="lockout-card">
         <span class="lockout-pill">Creator access required</span>
-        <h2>Your account does not have creator access.</h2>
+        <h2>This area requires creator access.</h2>
         <p>
-          This workspace is reserved for creator accounts. Sign in with a different
-          account or return to the public StreamSuites site.
+          Your StreamSuites account is authenticated, but creator access is not enabled.
         </p>
         <div class="lockout-actions">
-          <a class="lockout-button" href="/auth/login.html">Login with a different account</a>
-          <a class="lockout-button secondary" href="https://streamsuites.app">Return to Public Site</a>
+          <a
+            class="lockout-button"
+            href="https://api.streamsuites.app/auth/login/google?surface=creator"
+          >
+            Login as Creator
+          </a>
+          <button class="lockout-button secondary" type="button" data-auth-logout="true">
+            Sign out
+          </button>
         </div>
       </div>
     `;
@@ -518,6 +526,42 @@
     return true;
   }
 
+  function getLoginReason() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("reason");
+  }
+
+  function shouldSkipSessionFetch(isPublic) {
+    if (!isPublic) return false;
+    const reason = getLoginReason();
+    if (reason === LOGOUT_REASON) return true;
+    try {
+      return sessionStorage.getItem(LOGOUT_GUARD_KEY) === "true";
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function clearRedirectGuards() {
+    try {
+      sessionStorage.removeItem(REDIRECT_GUARD_KEY);
+      sessionStorage.removeItem(LOGOUT_GUARD_KEY);
+    } catch (err) {
+      console.warn("[Dashboard][Auth] Failed to clear guard flags", err);
+    }
+  }
+
+  function redirectToLogin(reason = "expired") {
+    if (getPathname().startsWith("/auth/")) return;
+    try {
+      if (sessionStorage.getItem(REDIRECT_GUARD_KEY) === "true") return;
+      sessionStorage.setItem(REDIRECT_GUARD_KEY, "true");
+    } catch (err) {
+      console.warn("[Dashboard][Auth] Failed to set redirect guard", err);
+    }
+    window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=${reason}`);
+  }
+
   async function initAuth() {
     const pathname = getPathname();
     const isPublic = isPublicPath(pathname);
@@ -526,12 +570,30 @@
     wireLogoutButtons();
     wireOauthButtons();
 
+    if (shouldSkipSessionFetch(isPublic)) {
+      sessionState.value = { authenticated: false };
+      updateAppSession(sessionState.value);
+      updateAuthSummary(sessionState.value);
+      if (isPublic) {
+        wireLoginForm();
+      }
+      return;
+    }
+
     const session = await loadSession();
     updateAppSession(session);
     updateAuthSummary(session);
 
+    if (session?.authenticated) {
+      clearRedirectGuards();
+    }
+
     if (!session?.authenticated && !isPublic) {
-      window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=expired`);
+      if (session?.errorStatus === 401) {
+        redirectToLogin("expired");
+        return;
+      }
+      redirectToLogin(session?.errorStatus ? "unavailable" : "expired");
       return;
     }
 

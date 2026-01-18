@@ -243,3 +243,68 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+
+.ss-platform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.ss-platform-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-decoration: none;
+  background: var(--bg-panel-alt);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.ss-platform-card:hover {
+  border-color: rgba(123, 140, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.ss-platform-card.is-disabled {
+  opacity: 0.7;
+}
+
+.ss-platform-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ss-platform-link {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+  color: var(--text-secondary);
+}
+
+.ss-chip-status {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+}
+
+.ss-chip-status.success {
+  color: #7be49f;
+  border-color: rgba(123, 228, 159, 0.4);
+  background: rgba(123, 228, 159, 0.12);
+}
+
+.ss-chip-status.warning {
+  color: #ffda9e;
+  border-color: rgba(255, 218, 158, 0.45);
+  background: rgba(255, 218, 158, 0.15);
+}
+
+.ss-chip-status.subtle {
+  color: rgba(214, 226, 255, 0.7);
+}
