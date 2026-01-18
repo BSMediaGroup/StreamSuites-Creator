@@ -46,9 +46,6 @@
         </div>
         <span class="creator-tier" data-auth-tier="true">OPEN</span>
         <div class="creator-account-actions">
-          <button class="creator-account-button" type="button" data-auth-settings="true" disabled>
-            Account Settings
-          </button>
           <button class="creator-account-button secondary" type="button" data-auth-logout="true">
             Logout
           </button>
@@ -59,41 +56,36 @@
     <section class="creator-lockout" data-creator-lockout hidden>
       <div class="lockout-card">
         <span class="lockout-pill">Creator access required</span>
-        <h2>Your account does not have creator access.</h2>
-        <p>
-          This workspace is reserved for creator accounts. Sign in with a different account or
-          return to the public StreamSuites site.
-        </p>
+        <h2>This area requires creator access.</h2>
+        <p>Your StreamSuites account is authenticated, but creator access is not enabled.</p>
         <div class="lockout-actions">
-          <a class="lockout-button" href="/auth/login.html">Login with a different account</a>
-          <a class="lockout-button secondary" href="https://streamsuites.app">Return to Public Site</a>
+          <a
+            class="lockout-button"
+            href="https://api.streamsuites.app/auth/login/google?surface=creator"
+          >
+            Login as Creator
+          </a>
+          <button class="lockout-button secondary" type="button" data-auth-logout="true">
+            Sign out
+          </button>
         </div>
       </div>
     </section>
 
     <div class="creator-layout" data-creator-content>
       <aside class="creator-nav">
-        <span class="creator-nav-title">Navigation</span>
-        <nav>
-          <a href="#overview">Overview</a>
-          <a href="#platforms">Platforms</a>
-          <a href="#toolkit">Creator toolkit</a>
-          <a href="#operations">Operations</a>
+        <span class="creator-nav-title">Creator navigation</span>
+        <nav class="creator-nav-main">
+          <a href="/index.html" class="is-active">Overview</a>
+          <a href="/views/settings.html">Settings / Preferences</a>
         </nav>
         <div class="creator-nav-group">
           <span class="creator-nav-label">Platforms</span>
+          <a href="/views/platforms/rumble.html">Rumble</a>
           <a href="/views/platforms/youtube.html">YouTube</a>
           <a href="/views/platforms/twitch.html">Twitch</a>
-          <a href="/views/platforms/rumble.html">Rumble</a>
           <a href="/views/platforms/kick.html">Kick</a>
-          <a href="/views/platforms/pilled.html">Pilled</a>
-        </div>
-        <div class="creator-nav-group">
-          <span class="creator-nav-label">Workspace</span>
-          <a href="/views/overview.html">Workspace summary</a>
-          <a href="/views/settings.html">Settings &amp; onboarding</a>
-          <a href="/views/updates.html">Activity updates</a>
-          <a href="/views/support.html">Support desk</a>
+          <a class="is-disabled" href="/views/platforms/pilled.html" aria-disabled="true">Pilled</a>
         </div>
         <div class="creator-nav-footer">
           <span class="creator-nav-label">Quick links</span>
@@ -200,7 +192,7 @@
             <p class="section-subtext">Manage destination status, onboarding, and creator metrics.</p>
           </div>
           <div class="card-grid platform-grid">
-            <article class="card platform-card">
+            <a class="card platform-card" href="/views/platforms/youtube.html">
               <div class="card-top">
                 <h3>YouTube</h3>
                 <span class="status-pill success">
@@ -213,12 +205,9 @@
                 <span>Last sync: 2 min ago</span>
                 <span>Overlay pack: Ready</span>
               </div>
-              <div class="platform-actions">
-                <a class="creator-button ghost" href="/views/platforms/youtube.html">Open YouTube view</a>
-                <button class="creator-button" type="button" disabled>Configure</button>
-              </div>
-            </article>
-            <article class="card platform-card">
+              <span class="platform-link">Open YouTube view →</span>
+            </a>
+            <a class="card platform-card" href="/views/platforms/twitch.html">
               <div class="card-top">
                 <h3>Twitch</h3>
                 <span class="status-pill success">
@@ -231,12 +220,9 @@
                 <span>Chat triggers: Active</span>
                 <span>Scene status: Ready</span>
               </div>
-              <div class="platform-actions">
-                <a class="creator-button ghost" href="/views/platforms/twitch.html">Open Twitch view</a>
-                <button class="creator-button" type="button" disabled>Configure</button>
-              </div>
-            </article>
-            <article class="card platform-card">
+              <span class="platform-link">Open Twitch view →</span>
+            </a>
+            <a class="card platform-card" href="/views/platforms/rumble.html">
               <div class="card-top">
                 <h3>Rumble</h3>
                 <span class="status-pill subtle">
@@ -249,12 +235,9 @@
                 <span>Ingest status: Visible</span>
                 <span>Clip export: Staged</span>
               </div>
-              <div class="platform-actions">
-                <a class="creator-button ghost" href="/views/platforms/rumble.html">Open Rumble view</a>
-                <button class="creator-button" type="button" disabled>Connect</button>
-              </div>
-            </article>
-            <article class="card platform-card">
+              <span class="platform-link">Open Rumble view →</span>
+            </a>
+            <a class="card platform-card" href="/views/platforms/kick.html">
               <div class="card-top">
                 <h3>Kick</h3>
                 <span class="status-pill warning">
@@ -267,12 +250,9 @@
                 <span>Triggers: Queued</span>
                 <span>Overlay pack: Ready</span>
               </div>
-              <div class="platform-actions">
-                <a class="creator-button ghost" href="/views/platforms/kick.html">Open Kick view</a>
-                <button class="creator-button" type="button" disabled>Connect</button>
-              </div>
-            </article>
-            <article class="card platform-card">
+              <span class="platform-link">Open Kick view →</span>
+            </a>
+            <a class="card platform-card is-disabled" href="/views/platforms/pilled.html" aria-disabled="true">
               <div class="card-top">
                 <h3>Pilled</h3>
                 <span class="status-pill warning">
@@ -285,11 +265,8 @@
                 <span>Onboarding: Planned</span>
                 <span>Metrics: Pending</span>
               </div>
-              <div class="platform-actions">
-                <a class="creator-button ghost" href="/views/platforms/pilled.html">Open Pilled view</a>
-                <button class="creator-button" type="button" disabled>Connect</button>
-              </div>
-            </article>
+              <span class="platform-link">Open Pilled view →</span>
+            </a>
           </div>
         </section>
 
