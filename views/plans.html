@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!-- ===================================================================== -->
+<!-- StreamSuites™ Dashboard — Creator Plans & Tiers                        -->
+<!-- ===================================================================== -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StreamSuites — Creator Plans</title>
+  <meta
+    name="description"
+    content="Review StreamSuites creator plans and tier placeholders."
+  />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/theme-dark.css" />
+  <link rel="stylesheet" href="/css/creator-dashboard.css" />
+</head>
+<body>
+  <div class="creator-app">
+    <header class="creator-header">
+      <div class="creator-brand">
+        <a href="https://streamsuites.app" class="creator-logo">
+          <img src="/assets/logos/logo.png" alt="StreamSuites" />
+        </a>
+        <div>
+          <p class="creator-kicker">Creator Dashboard</p>
+          <h1>StreamSuites</h1>
+        </div>
+      </div>
+      <div class="creator-account" data-auth-summary="true">
+        <img
+          class="creator-avatar"
+          src="/assets/icons/ui/profile.svg"
+          alt="Creator avatar"
+          data-auth-avatar="true"
+        />
+        <div class="creator-account-meta">
+          <span class="creator-account-label">StreamSuites account</span>
+          <span class="creator-account-name" data-auth-name="true" data-auth-email="true">Signed out</span>
+        </div>
+        <span class="creator-tier" data-auth-tier="true">OPEN</span>
+        <div class="creator-account-actions">
+          <a class="creator-account-button secondary" href="/views/plans.html">Upgrade</a>
+          <button class="creator-account-button secondary" type="button" data-auth-logout="true">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <section class="creator-lockout" data-creator-lockout hidden>
+      <div class="lockout-card">
+        <span class="lockout-pill">Creator access required</span>
+        <h2>This area requires creator access.</h2>
+        <p>Your StreamSuites account is authenticated, but creator access is not enabled.</p>
+        <div class="lockout-actions">
+          <a
+            class="lockout-button"
+            href="https://api.streamsuites.app/auth/login/google?surface=creator"
+          >
+            Login as Creator
+          </a>
+          <button class="lockout-button secondary" type="button" data-auth-logout="true">
+            Sign out
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="creator-layout" data-creator-content>
+      <aside class="creator-nav">
+        <span class="creator-nav-title">Creator navigation</span>
+        <nav class="creator-nav-main">
+          <a href="/index.html">Overview</a>
+          <a href="/views/plans.html" class="is-active">Plans &amp; Tiers</a>
+          <a href="/views/settings.html">Settings / Preferences</a>
+        </nav>
+        <div class="creator-nav-group">
+          <span class="creator-nav-label">Platforms</span>
+          <a href="/views/platforms/rumble.html">Rumble</a>
+          <a href="/views/platforms/youtube.html">YouTube</a>
+          <a href="/views/platforms/twitch.html">Twitch</a>
+          <a href="/views/platforms/kick.html">Kick</a>
+          <a class="is-disabled" href="/views/platforms/pilled.html" aria-disabled="true">Pilled</a>
+        </div>
+        <div class="creator-nav-footer">
+          <span class="creator-nav-label">Quick links</span>
+          <a href="https://streamsuites.app">Public site</a>
+          <a href="https://streamsuites.app/clips">Clips gallery</a>
+          <a href="https://streamsuites.app/scoreboards">Scoreboards</a>
+        </div>
+      </aside>
+
+      <main class="creator-main">
+        <section class="creator-section">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Plans</span>
+              <h2>Creator tiers</h2>
+            </div>
+            <p class="section-subtext">
+              Upgrades are visible but disabled until GOLD and PRO launch.
+            </p>
+          </div>
+
+          <div class="card-grid plan-grid">
+            <article class="card tier-card is-active">
+              <div class="card-top">
+                <h3>OPEN</h3>
+                <span class="status-pill success">Current</span>
+              </div>
+              <p>Free creator access with runtime exports and dashboards.</p>
+              <div class="tier-price">Free</div>
+              <button class="creator-button ghost" type="button" disabled>Current tier</button>
+            </article>
+            <article class="card tier-card is-disabled">
+              <div class="card-top">
+                <h3>GOLD</h3>
+                <span class="status-pill warning">Coming soon</span>
+              </div>
+              <p>Expanded automation and premium creator queues.</p>
+              <div class="tier-price">$5 / month</div>
+              <button class="creator-button ghost" type="button" disabled>Upgrade</button>
+            </article>
+            <article class="card tier-card is-disabled">
+              <div class="card-top">
+                <h3>PRO</h3>
+                <span class="status-pill warning">Coming soon</span>
+              </div>
+              <p>Advanced integrations and priority creator support.</p>
+              <div class="tier-price">$15 / month</div>
+              <button class="creator-button ghost" type="button" disabled>Upgrade</button>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

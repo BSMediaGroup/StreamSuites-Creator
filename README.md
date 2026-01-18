@@ -46,7 +46,9 @@ Future tier scaffolding (Open / Gold / Pro) is intentional and remains inactive 
 │   ├── creators.html
 │   ├── design.html
 │   ├── jobs.html
+│   ├── onboarding.html
 │   ├── overview.html
+│   ├── plans.html
 │   ├── tallies.html
 │   ├── scoreboards.html
 │   ├── settings.html
@@ -62,6 +64,7 @@ Future tier scaffolding (Open / Gold / Pro) is intentional and remains inactive 
 │   ├── auth.js
 │   ├── app.js
 │   ├── onboarding.js
+│   ├── onboarding-page.js
 │   ├── creators.js
 │   ├── jobs.js
 │   ├── platforms.js

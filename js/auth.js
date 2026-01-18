@@ -3,12 +3,11 @@
 
   const AUTH_BASE_URL = "https://api.streamsuites.app";
   const CREATOR_ORIGIN = "https://creator.streamsuites.app";
-  const CREATOR_LOGIN_REDIRECT = `${CREATOR_ORIGIN}/index.html`;
   const AUTH_ENDPOINTS = Object.freeze({
     session: `${AUTH_BASE_URL}/auth/session`,
     logout: `${AUTH_BASE_URL}/auth/logout`,
-    login: `${AUTH_BASE_URL}/auth/login?surface=creator&redirect=${encodeURIComponent(CREATOR_LOGIN_REDIRECT)}`,
-    magicLink: `${AUTH_BASE_URL}/auth/magic-link`,
+    emailLogin: `${AUTH_BASE_URL}/auth/login`,
+    signup: `${AUTH_BASE_URL}/auth/signup`,
     oauth: Object.freeze({
       google: `${AUTH_BASE_URL}/auth/google`,
       github: `${AUTH_BASE_URL}/auth/github`,
@@ -21,6 +20,7 @@
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
 
   const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/auth/login.html`;
+  const CREATOR_ONBOARDING_PAGE = `${CREATOR_ORIGIN}/views/onboarding.html`;
   const LOGOUT_REASON = "logout";
   const REDIRECT_GUARD_KEY = "streamsuites.creator.loginRedirected";
   const LOGOUT_GUARD_KEY = "streamsuites.creator.loggedOut";
@@ -112,13 +112,19 @@
                 ? payload.user.image
                 : "";
 
+    const onboardingRequired =
+      payload.onboarding_required === true ||
+      payload.user?.onboarding_required === true ||
+      payload.onboardingRequired === true;
+
     return {
       authenticated: true,
       email: emailCandidate.trim() || "Signed in",
       name: displayNameCandidate.trim() || "",
       avatar: avatarCandidate.trim() || "",
       role,
-      tier: normalizeTier(payload.tier || payload.user?.tier)
+      tier: normalizeTier(payload.tier || payload.user?.tier),
+      onboardingRequired
     };
   }
 
@@ -205,7 +211,8 @@
       name: session?.name || "",
       avatar: session?.avatar || "",
       role: session?.role || "",
-      tier: session?.tier || ""
+      tier: session?.tier || "",
+      onboardingRequired: session?.onboardingRequired === true
     };
   }
 
@@ -361,83 +368,217 @@
     }
   }
 
-  async function requestMagicLink(email) {
-    const payload = { email };
+  async function requestPasswordLogin(payload) {
     return fetchJson(
-      AUTH_ENDPOINTS.magicLink,
+      AUTH_ENDPOINTS.emailLogin,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          ...payload,
+          surface: "creator"
+        })
       },
       8000
     );
   }
 
-  function wireLoginForm() {
-    const form = document.querySelector("[data-auth-magic-form]");
-    if (!form) return;
+  async function requestSignup(payload) {
+    return fetchJson(
+      AUTH_ENDPOINTS.signup,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          ...payload,
+          surface: "creator"
+        })
+      },
+      8000
+    );
+  }
 
-    const emailInput = form.querySelector("[data-auth-email-input]");
-    const submitButton = form.querySelector("[data-auth-magic-submit]");
-    const status = form.querySelector("[data-auth-status]");
-    const error = form.querySelector("[data-auth-error]");
-    const success = form.querySelector("[data-auth-success]");
-    const hint = form.querySelector("[data-auth-hint]");
+  function resolvePostAuthRedirect(session) {
+    const needsOnboarding = session?.onboardingRequired === true;
+    return needsOnboarding ? CREATOR_ONBOARDING_PAGE : `${CREATOR_ORIGIN}/index.html`;
+  }
 
-    const initialHint = resolveLoginReason() || window.StreamSuitesAuth?.loginHint || "";
-    if (hint && initialHint) {
-      hint.textContent = initialHint;
-      hint.hidden = false;
+  async function routeAfterAuth(payload = null) {
+    if (payload && typeof payload === "object") {
+      const sessionFromPayload = normalizeSessionPayload(payload);
+      if (sessionFromPayload.authenticated) {
+        window.location.assign(resolvePostAuthRedirect(sessionFromPayload));
+        return;
+      }
     }
 
-    function setState(state, message = "") {
-      form.dataset.authState = state;
-      if (status) {
-        status.textContent = message;
+    const session = await loadSession();
+    if (session?.authenticated) {
+      window.location.assign(resolvePostAuthRedirect(session));
+    }
+  }
+
+  function setAuthView(view) {
+    const modal = document.querySelector("[data-auth-modal]");
+    if (!modal) return;
+    const safeView = view === "signup" ? "signup" : "login";
+    modal.dataset.authView = safeView;
+
+    const title = modal.querySelector("[data-auth-title]");
+    const subtitle = modal.querySelector("[data-auth-subtitle]");
+    const loginPanel = modal.querySelector("[data-auth-view-panel=\"login\"]");
+    const signupPanel = modal.querySelector("[data-auth-view-panel=\"signup\"]");
+
+    if (loginPanel) loginPanel.hidden = safeView !== "login";
+    if (signupPanel) signupPanel.hidden = safeView !== "signup";
+    if (title) title.textContent = safeView === "login" ? "Creator Login" : "Creator Signup";
+    if (subtitle) {
+      subtitle.textContent =
+        safeView === "login"
+          ? "Authenticate with OAuth or email/password."
+          : "Create your creator account with OAuth or email/password.";
+    }
+  }
+
+  function wireAuthToggle() {
+    const modal = document.querySelector("[data-auth-modal]");
+    if (!modal) return;
+
+    const initialView = modal.dataset.authView || "login";
+    setAuthView(initialView);
+
+    modal.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const toggle = target.closest("[data-auth-switch]");
+      if (!toggle) return;
+      event.preventDefault();
+      setAuthView(toggle.getAttribute("data-auth-switch"));
+    });
+  }
+
+  function wirePasswordForms() {
+    const loginForm = document.querySelector("[data-auth-login-form]");
+    const signupForm = document.querySelector("[data-auth-signup-form]");
+
+    const initialHint = resolveLoginReason() || window.StreamSuitesAuth?.loginHint || "";
+
+    function setFormState(form, options = {}) {
+      if (!form) return;
+      const { state = "idle", message = "", errorMessage = "" } = options;
+      const status = form.querySelector("[data-auth-login-status], [data-auth-signup-status]");
+      const error = form.querySelector("[data-auth-login-error], [data-auth-signup-error]");
+      const hint = form.querySelector("[data-auth-login-hint], [data-auth-signup-hint]");
+      const inputs = form.querySelectorAll("input, button");
+
+      if (status) status.textContent = message;
+      if (hint) {
+        hint.hidden = !(state === "hint" && message);
+        if (state === "hint") hint.textContent = message;
       }
       if (error) {
         error.hidden = state !== "error";
         if (state === "error") {
-          error.textContent = message || "Unable to send magic link.";
+          error.textContent = errorMessage || message || "Unable to authenticate.";
         }
       }
-      if (success) {
-        success.hidden = state !== "sent";
-        if (state === "sent") {
-          success.textContent = message || "Check your email for your sign-in link.";
-        }
-      }
+
       const isLoading = state === "loading";
-      if (emailInput) emailInput.disabled = isLoading;
-      if (submitButton) submitButton.disabled = isLoading;
+      inputs.forEach((input) => {
+        input.disabled = isLoading;
+      });
     }
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!emailInput) return;
-
-      const email = emailInput.value.trim();
-      if (!isValidEmail(email)) {
-        setState("error", "Enter a valid email to receive your magic link.");
-        return;
+    if (loginForm) {
+      const loginHint = loginForm.querySelector("[data-auth-login-hint]");
+      if (loginHint && initialHint) {
+        loginHint.textContent = initialHint;
+        loginHint.hidden = false;
       }
 
-      setState("loading", "Sending magic link…");
+      loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const emailInput = loginForm.querySelector("[data-auth-login-email]");
+        const passwordInput = loginForm.querySelector("[data-auth-login-password]");
+        if (!(emailInput instanceof HTMLInputElement)) return;
+        if (!(passwordInput instanceof HTMLInputElement)) return;
 
-      try {
-        await requestMagicLink(email);
-        setState("sent", "Check your email for your sign-in link.");
-      } catch (err) {
-        const message =
-          typeof err?.payload?.message === "string"
-            ? err.payload.message
-            : "Unable to send magic link. Try again.";
-        setState("error", message);
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!isValidEmail(email)) {
+          setFormState(loginForm, { state: "error", errorMessage: "Enter a valid email address." });
+          return;
+        }
+        if (!password) {
+          setFormState(loginForm, { state: "error", errorMessage: "Enter your password to log in." });
+          return;
+        }
+
+        setFormState(loginForm, { state: "loading", message: "Signing in…" });
+
+        try {
+          const payload = await requestPasswordLogin({ email, password });
+          await routeAfterAuth(payload);
+        } catch (err) {
+          const message =
+            typeof err?.payload?.message === "string"
+              ? err.payload.message
+              : "Unable to sign in. Check your credentials and try again.";
+          setFormState(loginForm, { state: "error", errorMessage: message });
+        }
+      });
+    }
+
+    if (signupForm) {
+      const signupHint = signupForm.querySelector("[data-auth-signup-hint]");
+      if (signupHint) {
+        signupHint.textContent = "Accounts are created at runtime when eligible.";
+        signupHint.hidden = false;
       }
-    });
+
+      signupForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const emailInput = signupForm.querySelector("[data-auth-signup-email]");
+        const passwordInput = signupForm.querySelector("[data-auth-signup-password]");
+        if (!(emailInput instanceof HTMLInputElement)) return;
+        if (!(passwordInput instanceof HTMLInputElement)) return;
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!isValidEmail(email)) {
+          setFormState(signupForm, { state: "error", errorMessage: "Enter a valid email address." });
+          return;
+        }
+        if (password.length < 6) {
+          setFormState(signupForm, {
+            state: "error",
+            errorMessage: "Passwords must be at least 6 characters long."
+          });
+          return;
+        }
+
+        setFormState(signupForm, { state: "loading", message: "Creating account…" });
+
+        try {
+          const payload = await requestSignup({ email, password });
+          await routeAfterAuth(payload);
+        } catch (err) {
+          const message =
+            typeof err?.payload?.message === "string"
+              ? err.payload.message
+              : err?.status === 409
+                ? "An account already exists for this email. Log in instead."
+                : "Unable to create account. Try again or use OAuth.";
+          setFormState(signupForm, { state: "error", errorMessage: message });
+        }
+      });
+    }
   }
 
   function wireOauthButtons() {
@@ -565,18 +706,18 @@
   async function initAuth() {
     const pathname = getPathname();
     const isPublic = isPublicPath(pathname);
+    const isOnboarding = pathname === "/views/onboarding.html";
 
     ensureAuthSummaryMounts();
     wireLogoutButtons();
     wireOauthButtons();
+    wireAuthToggle();
+    wirePasswordForms();
 
     if (shouldSkipSessionFetch(isPublic)) {
       sessionState.value = { authenticated: false };
       updateAppSession(sessionState.value);
       updateAuthSummary(sessionState.value);
-      if (isPublic) {
-        wireLoginForm();
-      }
       return;
     }
 
@@ -607,51 +748,33 @@
 
     if (session?.authenticated && !isPublic) {
       toggleCreatorLockout(false);
-      loadOnboarding(session);
     }
 
-    if (isPublic) {
-      if (session?.error && !new URLSearchParams(window.location.search).get("reason")) {
-        window.StreamSuitesAuth.loginHint = "Auth service is unreachable. Please try again.";
+    if (session?.authenticated) {
+      if (session?.onboardingRequired && !isOnboarding) {
+        window.location.assign(CREATOR_ONBOARDING_PAGE);
+        return;
       }
-      wireLoginForm();
-    }
-  }
-
-  function loadOnboarding(session) {
-    if (!session?.authenticated) return;
-
-    if (window.StreamSuitesOnboarding?.init) {
-      window.StreamSuitesOnboarding.init(session);
-      return;
+      if (!session?.onboardingRequired && isOnboarding) {
+        window.location.assign(`${CREATOR_ORIGIN}/index.html`);
+        return;
+      }
+      if (isPublic) {
+        await routeAfterAuth(session);
+        return;
+      }
     }
 
-    const existing = document.querySelector("script[data-onboarding-script]");
-    if (existing) {
-      existing.addEventListener("load", () => {
-        window.StreamSuitesOnboarding?.init?.(session);
-      });
-      return;
+    if (isPublic && session?.error && !new URLSearchParams(window.location.search).get("reason")) {
+      window.StreamSuitesAuth.loginHint = "Auth service is unreachable. Please try again.";
     }
-
-    const script = document.createElement("script");
-    script.src = "/js/onboarding.js";
-    script.defer = true;
-    script.dataset.onboardingScript = "true";
-    script.addEventListener("load", () => {
-      window.StreamSuitesOnboarding?.init?.(session);
-    });
-    script.addEventListener("error", () => {
-      console.warn("[Dashboard][Auth] Failed to load onboarding module.");
-    });
-    document.body.appendChild(script);
   }
 
   window.StreamSuitesAuth = {
     endpoints: AUTH_ENDPOINTS,
     loadSession,
     logout,
-    requestMagicLink
+    routeAfterAuth
   };
 
   document.addEventListener("DOMContentLoaded", () => {
