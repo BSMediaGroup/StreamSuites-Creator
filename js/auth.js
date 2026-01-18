@@ -13,7 +13,7 @@
     })
   });
 
-  const ALLOWED_ROLES = new Set(["creator", "admin"]);
+  const CREATOR_ROLE = "creator";
   const TIER_OPTIONS = new Set(["OPEN", "GOLD", "PRO"]);
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
 
@@ -74,7 +74,7 @@
           : "";
 
     const role = normalizeRole(roleCandidate);
-    if (!role || !ALLOWED_ROLES.has(role)) {
+    if (!role) {
       return { authenticated: false };
     }
 
@@ -254,9 +254,16 @@
         // Ignore logout failures; we still fail closed by redirecting.
       }
     } finally {
-      sessionState.value = { authenticated: false };
-      updateAppSession(sessionState.value);
+      clearLocalSessionState();
       window.location.assign("/auth/login.html?reason=logout");
+    }
+  }
+
+  function clearLocalSessionState() {
+    sessionState.value = { authenticated: false };
+    updateAppSession(sessionState.value);
+    if (window.App?.state) {
+      window.App.state = {};
     }
   }
 
@@ -389,6 +396,23 @@
     });
   }
 
+  function toggleCreatorLockout(show) {
+    const lockout = document.querySelector("[data-creator-lockout]");
+    const content = document.querySelector("[data-creator-content]");
+    if (!lockout) return false;
+
+    if (show) {
+      lockout.hidden = false;
+      if (content) content.hidden = true;
+      document.body.classList.add("creator-lockout-active");
+    } else {
+      lockout.hidden = true;
+      if (content) content.hidden = false;
+      document.body.classList.remove("creator-lockout-active");
+    }
+    return true;
+  }
+
   async function initAuth() {
     const pathname = getPathname();
     const isPublic = isPublicPath(pathname);
@@ -414,13 +438,17 @@
 
     if (session?.authenticated) {
       const role = normalizeRole(session.role);
-      if (!role || !ALLOWED_ROLES.has(role)) {
-        window.location.assign("/auth/login.html?reason=unauthorized");
+      if (role !== CREATOR_ROLE) {
+        const locked = toggleCreatorLockout(true);
+        if (!locked) {
+          window.location.assign("/auth/login.html?reason=unauthorized");
+        }
         return;
       }
     }
 
     if (session?.authenticated && !isPublic) {
+      toggleCreatorLockout(false);
       loadOnboarding(session);
     }
 

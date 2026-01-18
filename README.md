@@ -9,9 +9,10 @@ runtime-provided feeds) and intentionally avoids admin-only mutation endpoints.
 
 Creator authentication is handled via the central StreamSuites Auth API
 (`https://api.streamsuites.app`) using **cookie-based sessions**. All creator dashboard
-surfaces require authentication and allow `creator` and `admin` roles. Login supports
-OAuth providers (Google, GitHub, Discord) plus email magic-link sign-in. Tier scaffolding
-is present for `OPEN`, `GOLD`, and `PRO`, with `OPEN` as the default.
+surfaces require authentication and are restricted to the `creator` role, with lockout
+UX shown for any other authenticated role. Login supports OAuth providers (Google,
+GitHub, Discord) plus email magic-link sign-in. Tier scaffolding is present for `OPEN`,
+`GOLD`, and `PRO`, with `OPEN` as the default.
 
 The creator dashboard now includes a **soft-gated, resumable onboarding flow** that runs
 after authentication. Onboarding progress is persisted server-side, resumes at the last
@@ -66,6 +67,7 @@ Future tier scaffolding (Open / Gold / Pro) is intentional and remains inactive 
 │   ├── base.css
 │   ├── layout.css
 │   ├── components.css
+│   ├── creator-dashboard.css
 │   ├── overrides.css
 │   ├── theme-dark.css
 │   └── updates.css
