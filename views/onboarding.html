@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!-- ===================================================================== -->
+<!-- StreamSuites™ Dashboard — Creator Onboarding                           -->
+<!-- ===================================================================== -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StreamSuites — Creator Onboarding</title>
+  <meta
+    name="description"
+    content="Complete creator onboarding for StreamSuites."
+  />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/theme-dark.css" />
+  <link rel="stylesheet" href="/css/creator-dashboard.css" />
+</head>
+<body>
+  <div class="creator-app creator-onboarding-page">
+    <header class="creator-header">
+      <div class="creator-brand">
+        <a href="https://streamsuites.app" class="creator-logo">
+          <img src="/assets/logos/logo.png" alt="StreamSuites" />
+        </a>
+        <div>
+          <p class="creator-kicker">Creator Dashboard</p>
+          <h1>StreamSuites</h1>
+        </div>
+      </div>
+      <div class="creator-account" data-auth-summary="true">
+        <img
+          class="creator-avatar"
+          src="/assets/icons/ui/profile.svg"
+          alt="Creator avatar"
+          data-auth-avatar="true"
+        />
+        <div class="creator-account-meta">
+          <span class="creator-account-label">StreamSuites account</span>
+          <span class="creator-account-name" data-auth-name="true" data-auth-email="true">Signed out</span>
+        </div>
+        <span class="creator-tier" data-auth-tier="true">OPEN</span>
+        <div class="creator-account-actions">
+          <button class="creator-account-button secondary" type="button" data-auth-logout="true">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="creator-main creator-onboarding">
+      <section class="creator-onboarding-card">
+        <span class="section-kicker">Onboarding</span>
+        <h2>Welcome to StreamSuites Creator</h2>
+        <p class="creator-onboarding-copy">
+          Confirm your current tier and continue to your creator dashboard. Upgrades will become
+          available once GOLD and PRO tiers launch.
+        </p>
+
+        <div class="creator-onboarding-tier">
+          Current tier: <strong data-onboarding-tier>OPEN</strong>
+        </div>
+
+        <div class="creator-tier-grid">
+          <article class="creator-tier-card is-active" data-tier="OPEN">
+            <div class="creator-tier-header">
+              <h3>OPEN</h3>
+              <span class="creator-tier-pill">Active</span>
+            </div>
+            <p>Core creator workspace with runtime exports.</p>
+            <button class="creator-button ghost" type="button" disabled>Current tier</button>
+          </article>
+          <article class="creator-tier-card is-disabled" data-tier="GOLD">
+            <div class="creator-tier-header">
+              <h3>GOLD</h3>
+              <span class="creator-tier-price">$5/mo</span>
+            </div>
+            <p>Automation boosters and premium creator queues.</p>
+            <button class="creator-button ghost" type="button" disabled>Coming soon</button>
+          </article>
+          <article class="creator-tier-card is-disabled" data-tier="PRO">
+            <div class="creator-tier-header">
+              <h3>PRO</h3>
+              <span class="creator-tier-price">$15/mo</span>
+            </div>
+            <p>Advanced integrations and priority creator support.</p>
+            <button class="creator-button ghost" type="button" disabled>Coming soon</button>
+          </article>
+        </div>
+
+        <div class="creator-onboarding-actions">
+          <button class="creator-button primary" type="button" data-onboarding-continue>
+            Continue
+          </button>
+          <span class="muted" data-onboarding-status aria-live="polite"></span>
+        </div>
+        <div class="ss-alert ss-alert-danger" data-onboarding-error hidden></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/onboarding-page.js"></script>
+</body>
+</html>

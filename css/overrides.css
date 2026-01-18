@@ -138,6 +138,34 @@
   gap: 24px;
 }
 
+.auth-view {
+  display: grid;
+  gap: 20px;
+}
+
+.auth-switch {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(214, 226, 255, 0.72);
+}
+
+.auth-switch-link {
+  border: none;
+  background: transparent;
+  color: rgba(90, 132, 255, 0.95);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.auth-switch-link:hover {
+  text-decoration: underline;
+}
+
+.auth-form .ss-form-row {
+  margin-bottom: 12px;
+}
+
 .auth-provider-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

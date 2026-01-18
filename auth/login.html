@@ -6,8 +6,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StreamSuites — Creator Login</title>
-  <meta name="description" content="Creator login for StreamSuites — sign in with OAuth or a magic link." />
+  <title>StreamSuites — Creator Access</title>
+  <meta name="description" content="Creator access for StreamSuites — log in or sign up with OAuth or email." />
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
   <link rel="stylesheet" href="/css/base.css" />
@@ -30,11 +30,13 @@
     </header>
 
     <main class="auth-main">
-      <section class="ss-panel auth-panel">
+      <section class="ss-panel auth-panel" data-auth-modal data-auth-view="login">
         <header class="ss-panel-header auth-panel-header">
           <div class="ss-panel-header-main">
-            <h2>Creator Login</h2>
-            <p class="muted">Authenticate with OAuth or request a magic link.</p>
+            <h2 data-auth-title>Creator Login</h2>
+            <p class="muted" data-auth-subtitle>
+              Authenticate with OAuth or email/password.
+            </p>
           </div>
           <div class="ss-panel-header-actions">
             <span class="ss-chip auth-tier-pill">Tier: OPEN</span>
@@ -42,54 +44,120 @@
         </header>
 
         <div class="ss-panel-body auth-panel-body">
-          <div class="auth-section">
-            <p class="section-kicker">StreamSuites login</p>
-            <a
-              class="ss-btn ss-btn-primary"
-              href="https://api.streamsuites.app/auth/login?surface=creator&redirect=https://creator.streamsuites.app/index.html"
-            >
-              Continue to Creator Login
-            </a>
-          </div>
-
-          <div class="auth-section">
-            <p class="section-kicker">Sign in with</p>
-            <div class="auth-provider-grid">
-              <a class="ss-btn ss-btn-primary" data-auth-oauth="google" href="#">Google</a>
-              <a class="ss-btn ss-btn-primary" data-auth-oauth="github" href="#">GitHub</a>
-              <a class="ss-btn ss-btn-primary" data-auth-oauth="discord" href="#">Discord</a>
+          <div class="auth-view" data-auth-view-panel="login">
+            <div class="auth-section">
+              <p class="section-kicker">Sign in with</p>
+              <div class="auth-provider-grid">
+                <a class="ss-btn ss-btn-primary" data-auth-oauth="google" href="#">Google</a>
+                <a class="ss-btn ss-btn-primary" data-auth-oauth="github" href="#">GitHub</a>
+                <a class="ss-btn ss-btn-primary" data-auth-oauth="discord" href="#">Discord</a>
+              </div>
             </div>
+
+            <div class="auth-divider">
+              <span>or</span>
+            </div>
+
+            <div class="auth-section">
+              <p class="section-kicker">Email login</p>
+              <form class="auth-form" data-auth-login-form>
+                <div class="ss-form-row">
+                  <label for="auth-login-email">Email address</label>
+                  <input
+                    id="auth-login-email"
+                    type="email"
+                    class="ss-input"
+                    data-auth-login-email
+                    placeholder="creator@streamsuites.app"
+                    autocomplete="email"
+                    required
+                  />
+                </div>
+                <div class="ss-form-row">
+                  <label for="auth-login-password">Password</label>
+                  <input
+                    id="auth-login-password"
+                    type="password"
+                    class="ss-input"
+                    data-auth-login-password
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                  />
+                </div>
+                <div class="auth-actions">
+                  <button class="ss-btn ss-btn-primary" type="submit" data-auth-login-submit>
+                    Log in
+                  </button>
+                  <span class="muted auth-status" data-auth-login-status aria-live="polite"></span>
+                </div>
+                <div class="ss-alert auth-hint" data-auth-login-hint hidden></div>
+                <div class="ss-alert ss-alert-danger auth-error" data-auth-login-error hidden></div>
+              </form>
+            </div>
+
+            <p class="auth-switch">
+              Don’t have an account yet?
+              <button type="button" class="auth-switch-link" data-auth-switch="signup">Sign up</button>
+            </p>
           </div>
 
-          <div class="auth-divider">
-            <span>or</span>
-          </div>
+          <div class="auth-view" data-auth-view-panel="signup" hidden>
+            <div class="auth-section">
+              <p class="section-kicker">Sign up with</p>
+              <div class="auth-provider-grid">
+                <a class="ss-btn ss-btn-primary" data-auth-oauth="google" href="#">Google</a>
+                <a class="ss-btn ss-btn-primary" data-auth-oauth="github" href="#">GitHub</a>
+                <a class="ss-btn ss-btn-primary" data-auth-oauth="discord" href="#">Discord</a>
+              </div>
+            </div>
 
-          <div class="auth-section">
-            <p class="section-kicker">Email magic link</p>
-            <form class="auth-form" data-auth-magic-form>
-              <div class="ss-form-row">
-                <label for="auth-email">Email address</label>
-                <input
-                  id="auth-email"
-                  type="email"
-                  class="ss-input"
-                  data-auth-email-input
-                  placeholder="creator@streamsuites.app"
-                  autocomplete="email"
-                  required
-                />
-              </div>
-              <div class="auth-actions">
-                <button class="ss-btn ss-btn-primary" type="submit" data-auth-magic-submit>
-                  Send magic link
-                </button>
-                <span class="muted auth-status" data-auth-status aria-live="polite"></span>
-              </div>
-              <div class="ss-alert auth-hint" data-auth-hint hidden></div>
-              <div class="ss-alert ss-alert-danger auth-error" data-auth-error hidden></div>
-              <div class="ss-alert auth-success" data-auth-success hidden></div>
-            </form>
+            <div class="auth-divider">
+              <span>or</span>
+            </div>
+
+            <div class="auth-section">
+              <p class="section-kicker">Email signup</p>
+              <form class="auth-form" data-auth-signup-form>
+                <div class="ss-form-row">
+                  <label for="auth-signup-email">Email address</label>
+                  <input
+                    id="auth-signup-email"
+                    type="email"
+                    class="ss-input"
+                    data-auth-signup-email
+                    placeholder="creator@streamsuites.app"
+                    autocomplete="email"
+                    required
+                  />
+                </div>
+                <div class="ss-form-row">
+                  <label for="auth-signup-password">Password</label>
+                  <input
+                    id="auth-signup-password"
+                    type="password"
+                    class="ss-input"
+                    data-auth-signup-password
+                    placeholder="Create a password"
+                    autocomplete="new-password"
+                    required
+                  />
+                </div>
+                <div class="auth-actions">
+                  <button class="ss-btn ss-btn-primary" type="submit" data-auth-signup-submit>
+                    Create account
+                  </button>
+                  <span class="muted auth-status" data-auth-signup-status aria-live="polite"></span>
+                </div>
+                <div class="ss-alert auth-hint" data-auth-signup-hint hidden></div>
+                <div class="ss-alert ss-alert-danger auth-error" data-auth-signup-error hidden></div>
+              </form>
+            </div>
+
+            <p class="auth-switch">
+              Already have an account?
+              <button type="button" class="auth-switch-link" data-auth-switch="login">Log in</button>
+            </p>
           </div>
         </div>
       </section>
