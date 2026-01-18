@@ -1,211 +1,81 @@
 <!-- ========================================================= -->
 <!-- StreamSuites — Rumble Platform (VIEW PARTIAL) -->
-<!-- Static, read-only scaffold (no runtime binding) -->
-<!-- Mirrors Twitch/YouTube layout for visual consistency -->
+<!-- Creator-facing platform overview (read-only) -->
 <!-- ========================================================= -->
 
-<!-- ========================================================= -->
-<!-- HEADER -->
-<!-- ========================================================= -->
 <header class="ss-header">
   <div class="ss-header-left">
     <h1 class="ss-title">StreamSuites</h1>
-    <span class="ss-subtitle">Rumble Platform (Paused)</span>
+    <span class="ss-subtitle">Rumble Platform</span>
   </div>
-
   <div class="ss-header-right">
-    <span id="rumble-foundation-status" class="status-indicator idle">
-      ● Rumble chat: Paused (read-only)
-    </span>
+    <span class="status-indicator idle">● Status: Monitoring</span>
   </div>
 </header>
 
-<!-- ========================================================= -->
-<!-- MAIN -->
-<!-- ========================================================= -->
 <main class="ss-main" data-scope="creator">
-
-  <!-- ------------------------------------------------------- -->
-  <!-- GLOBAL PLATFORM SERVICE -->
-  <!-- ------------------------------------------------------- -->
-  <section class="ss-panel" data-scope="admin">
+  <section class="ss-panel">
     <header class="ss-panel-header">
-      <h2>Global Service Status</h2>
+      <h2>Connection status</h2>
     </header>
-
     <div class="ss-panel-body">
-
       <p class="muted">
-        This toggle reflects whether the Rumble platform runtime is enabled
-        globally. The ingest pipeline is paused at the runtime while SSE and
-        fallbacks are stabilized. Status surfaces remain visible for parity.
+        Rumble ingest monitoring is staged. Connect flow will unlock once the
+        platform is enabled for your workspace.
       </p>
-
-      <!-- Compact horizontal layout (matches Settings / YouTube / Twitch) -->
-      <table class="ss-table ss-table-compact">
-        <tbody>
-          <tr>
-            <td>Rumble Service Enabled</td>
-            <td class="align-right">
-              <label class="switch-button" aria-label="Rumble global service toggle">
-                <div class="switch-scale">
-                  <div class="switch-outer">
-                    <input
-                      type="checkbox"
-                      disabled
-                      data-service="rumble"
-                    />
-                    <div class="ss-switch-inner">
-                      <span class="ss-switch-toggle"></span>
-                      <span class="ss-switch-indicator"></span>
-                    </div>
-                  </div>
-                </div>
-              </label>
-              <span class="sr-only">Rumble service enabled</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
+      <button class="ss-btn ss-btn-secondary" type="button" disabled>
+        Connect Rumble (coming soon)
+      </button>
     </div>
   </section>
 
-</main>
-
-
-  <!-- ------------------------------------------------------- -->
-  <!-- RUNTIME CONNECTIVITY (STATIC PLACEHOLDER) -->
-  <!-- ------------------------------------------------------- -->
-  <section class="ss-panel" data-scope="admin">
+  <section class="ss-panel">
     <header class="ss-panel-header">
-      <h2>Runtime Connectivity</h2>
+      <h2>Snapshot metrics</h2>
     </header>
-
-    <div class="ss-panel-body">
-      <div id="rumble-runtime-banner" class="ss-alert ss-alert-warning">
-        Rumble ingest is paused. This panel mirrors exported runtime snapshots only.
-      </div>
-
-      <table class="ss-table ss-table-compact">
-        <tbody>
-          <tr>
-            <td>Platform Status</td>
-            <td id="rumble-runtime-status" class="align-right muted">
-              deferred
-            </td>
-          </tr>
-          <tr>
-            <td>Last Update</td>
-            <td id="rumble-runtime-updated" class="align-right muted">
-              waiting for runtime export
-            </td>
-          </tr>
-          <tr>
-            <td>Last Error</td>
-            <td id="rumble-runtime-error" class="align-right muted">
-              none reported
-            </td>
-          </tr>
-          <tr>
-            <td>Messages Processed</td>
-            <td id="rumble-runtime-messages" class="align-right muted">
-              —
-            </td>
-          </tr>
-          <tr>
-            <td>Triggers Fired</td>
-            <td id="rumble-runtime-triggers" class="align-right muted">
-              —
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p class="muted" style="margin-top: 0.5rem;">
-        Runtime visibility is optional and provided by the StreamSuites runtime repo when exported.
-        Dashboard binding polls runtime-exported JSON snapshots while the ingest pipeline remains paused for runtime-side work.
-      </p>
-    </div>
-  </section>
-
-  <!-- ------------------------------------------------------- -->
-  <!-- LOCAL CONFIGURATION VISIBILITY -->
-  <!-- ------------------------------------------------------- -->
-  <section class="ss-panel" data-scope="admin">
-    <header class="ss-panel-header">
-      <h2>Local Configuration</h2>
-    </header>
-
     <div class="ss-panel-body">
       <table class="ss-table ss-table-compact">
         <tbody>
           <tr>
-            <td>Enabled</td>
-            <td id="rumble-config-enabled" class="align-right muted">
-              not configured
-            </td>
+            <td>Ingest status</td>
+            <td class="align-right muted">Visible</td>
           </tr>
           <tr>
-            <td>Channel / Handle</td>
-            <td id="rumble-config-channel" class="align-right muted">
-              not configured
-            </td>
+            <td>Clip export</td>
+            <td class="align-right muted">Staged</td>
           </tr>
           <tr>
-            <td>Bot Identity</td>
-            <td id="rumble-config-bot" class="align-right muted">
-              not configured
-            </td>
+            <td>Last update</td>
+            <td class="align-right muted">Awaiting runtime export</td>
           </tr>
           <tr>
-            <td>Source</td>
-            <td id="rumble-config-source" class="align-right muted">
-              local storage (if provided)
-            </td>
+            <td>Automation status</td>
+            <td class="align-right muted">Pending enablement</td>
           </tr>
         </tbody>
       </table>
-
-      <p class="muted" style="margin-top: 0.5rem;">
-        Configuration is read from local storage exports (creators/services).
-        The runtime remains authoritative.
+      <p class="muted" style="margin-top: 12px;">
+        Metrics hydrate from runtime exports when available. This view is read-only.
       </p>
     </div>
   </section>
 
-  <!-- ------------------------------------------------------- -->
-  <!-- MODULE STATUS PLACEHOLDER -->
-  <!-- ------------------------------------------------------- -->
-  <section class="ss-panel" data-scope="admin">
+  <section class="ss-panel">
     <header class="ss-panel-header">
-      <h2>Rumble Modules (Planned)</h2>
+      <h2>Next steps</h2>
     </header>
-
     <div class="ss-panel-body">
       <ul class="ss-list muted">
-        <li id="rumble-trigger-placeholder">
-          Trigger registry groundwork will surface here.
-        </li>
-        <li>
-          Chat visibility will hydrate from exported snapshots when available.
-        </li>
-        <li>
-          Clip and poll support remain deferred to the runtime repository.
-        </li>
+        <li>Prepare channel details for the Rumble connect flow.</li>
+        <li>Stage overlay assets for upcoming broadcasts.</li>
+        <li>Monitor ingest readiness in the updates feed.</li>
       </ul>
     </div>
   </section>
-
 </main>
 
-<!-- ========================================================= -->
-<!-- FOOTER -->
-<!-- ========================================================= -->
 <footer class="ss-footer">
-  <span class="muted">
-    Rumble chat architecture is SSE-first with DOM/API fallbacks; dashboard remains scaffolded and read-only.
-  </span>
+  <span class="muted">Rumble overview is read-only and sourced from runtime exports.</span>
 </footer>
 
 <script src="/js/auth.js"></script>

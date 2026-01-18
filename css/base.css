@@ -2,9 +2,8 @@
 
 @font-face {
   font-family: "RechargeBd";
-  src:
-    url("/assets/fonts/RechargeBd.woff2") format("woff2"),
-    url("/assets/fonts/RechargeBd.woff") format("woff");
+  src: url("https://raw.githubusercontent.com/BSMediaGroup/Resources/master/FONTS/Recharge%20Bd.otf")
+    format("opentype");
   font-style: normal;
   font-weight: 700;
   font-display: swap;
@@ -12,9 +11,8 @@
 
 @font-face {
   font-family: "SuiGenerisRg";
-  src:
-    url("/assets/fonts/SuiGenerisRg.woff2") format("woff2"),
-    url("/assets/fonts/SuiGenerisRg.woff") format("woff");
+  src: url("https://raw.githubusercontent.com/BSMediaGroup/Resources/master/FONTS/Sui%20Generis%20Rg.otf")
+    format("opentype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;

@@ -83,32 +83,33 @@ h3 {
   letter-spacing: 0.04em;
 }
 
-.creator-user {
+.creator-account {
   display: flex;
   align-items: center;
   gap: 14px;
   background: rgba(18, 25, 36, 0.65);
   border: 1px solid var(--creator-border);
   border-radius: 999px;
-  padding: 8px 14px 8px 10px;
+  padding: 10px 16px 10px 12px;
+  flex-wrap: wrap;
 }
 
 .creator-avatar {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 8px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.12);
-  filter: brightness(1.5) saturate(0);
+  filter: brightness(1.4) saturate(0);
 }
 
-.creator-user-meta {
+.creator-account-meta {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.creator-user-label {
+.creator-account-label {
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -116,7 +117,7 @@ h3 {
   font-family: var(--creator-heading);
 }
 
-.creator-user-name {
+.creator-account-name {
   font-size: 14px;
   font-weight: 600;
 }
@@ -132,20 +133,36 @@ h3 {
   border: 1px solid rgba(123, 140, 255, 0.4);
 }
 
-.creator-logout {
-  border: none;
+.creator-account-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.creator-account-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--creator-text);
   background: rgba(255, 255, 255, 0.08);
   padding: 8px 14px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-family: var(--creator-heading);
   cursor: pointer;
 }
 
-.creator-logout:hover {
+.creator-account-button.secondary {
+  border-color: rgba(123, 140, 255, 0.4);
+  background: rgba(123, 140, 255, 0.2);
+}
+
+.creator-account-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.creator-account-button:hover:not(:disabled) {
   background: rgba(123, 140, 255, 0.2);
 }
 
@@ -281,6 +298,68 @@ h3 {
   gap: 8px;
 }
 
+.creator-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  background: rgba(12, 17, 26, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.creator-hero h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.creator-hero p {
+  margin: 0;
+  color: var(--creator-muted);
+}
+
+.creator-hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.creator-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--creator-text);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--creator-heading);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.creator-button.primary {
+  background: var(--creator-accent);
+  color: #0b0f16;
+  border-color: transparent;
+}
+
+.creator-button.ghost {
+  background: transparent;
+  border-color: rgba(123, 140, 255, 0.4);
+  color: var(--creator-accent-strong);
+}
+
+.creator-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .status-pill {
   font-size: 11px;
   letter-spacing: 0.12em;
@@ -376,6 +455,21 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+}
+
+.platform-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--creator-muted);
+}
+
+.platform-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: auto;
 }
 
 .stat-grid {
@@ -493,9 +587,10 @@ h3 {
   font-family: var(--creator-heading);
 }
 
-.lockout-link {
+.lockout-button.secondary {
+  background: transparent;
+  border: 1px solid rgba(123, 140, 255, 0.4);
   color: var(--creator-accent-strong);
-  text-decoration: none;
 }
 
 body.creator-lockout-active .creator-layout,
@@ -523,8 +618,13 @@ body.creator-lockout-active .creator-lockout {
     align-items: flex-start;
   }
 
-  .creator-user {
+  .creator-account {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .creator-hero {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

@@ -206,6 +206,34 @@
   flex-wrap: wrap;
 }
 
+.ss-auth-avatar {
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  filter: brightness(1.4) saturate(0);
+}
+
+.ss-auth-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ss-auth-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(214, 226, 255, 0.7);
+  font-family: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+}
+
+.ss-auth-name {
+  font-size: 13px;
+  color: #f1f5ff;
+}
+
 .public-auth-summary {
   margin-left: auto;
 }

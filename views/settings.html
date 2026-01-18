@@ -22,7 +22,7 @@
 <main class="ss-main">
 
   <div class="ss-alert ss-alert-warning">
-    Settings can also be updated from Desktop Admin or other control surfaces. Refresh before editing to ensure you have the latest values.
+    Settings can also be updated from internal control surfaces. Refresh before editing to ensure you have the latest values.
   </div>
 
   <!-- --------------------------------------------------------- -->
@@ -429,206 +429,9 @@
             </td>
           </tr>
 
-          <!-- Twitter -->
-          <tr>
-            <td>Twitter</td>
-            <td class="align-right">
-              <label class="switch-button" aria-label="Twitter service toggle">
-                <div class="switch-scale">
-                  <div class="switch-outer">
-                    <input type="checkbox" disabled data-service="twitter" />
-                    <div class="ss-switch-inner">
-                      <span class="ss-switch-toggle"></span>
-                      <span class="ss-switch-indicator"></span>
-                    </div>
-                  </div>
-                </div>
-              </label>
-              <span class="sr-only">Twitter Service Enabled</span>
-            </td>
-            <td class="align-right">
-              <label class="switch-button" aria-label="Twitter telemetry toggle">
-                <div class="switch-scale">
-                  <div class="switch-outer">
-                    <input type="checkbox" disabled />
-                    <div class="ss-switch-inner">
-                      <span class="ss-switch-toggle"></span>
-                      <span class="ss-switch-indicator"></span>
-                    </div>
-                  </div>
-                </div>
-              </label>
-              <span class="sr-only">Twitter telemetry enabled</span>
-            </td>
-            <td class="align-right">
-              <span class="muted" data-platform-status="twitter">Runtime-owned</span>
-            </td>
-            <td>
-              <textarea
-                class="ss-input"
-                rows="2"
-                placeholder="Control-plane telemetry for Twitter coming later"
-                disabled
-              ></textarea>
-            </td>
-          </tr>
-
-          <!-- Discord -->
-          <tr data-platform-row="discord" data-discord-locked data-discord-guild-locked>
-            <td>
-              Discord
-              <span class="muted">(control-plane)</span>
-            </td>
-            <td class="align-right">
-              <label class="switch-button" aria-label="Discord service toggle">
-                <div class="switch-scale">
-                  <div class="switch-outer">
-                    <input type="checkbox" data-service="discord" data-field="enabled" />
-                    <div class="ss-switch-inner">
-                      <span class="ss-switch-toggle"></span>
-                      <span class="ss-switch-indicator"></span>
-                    </div>
-                  </div>
-                </div>
-              </label>
-              <span class="sr-only">Discord Service Enabled</span>
-              <div class="ss-toggle-note">Applies on next restart</div>
-            </td>
-            <td class="align-right">
-              <label class="switch-button" aria-label="Discord telemetry toggle">
-                <div class="switch-scale">
-                  <div class="switch-outer">
-                    <input type="checkbox" data-field="telemetry_enabled" />
-                    <div class="ss-switch-inner">
-                      <span class="ss-switch-toggle"></span>
-                      <span class="ss-switch-indicator"></span>
-                    </div>
-                  </div>
-                </div>
-              </label>
-              <span class="sr-only">Discord telemetry enabled</span>
-            </td>
-            <td class="align-right">
-              <span class="muted" data-platform-status="discord">Awaiting telemetry</span>
-            </td>
-            <td>
-              <textarea
-                class="ss-input"
-                rows="2"
-                data-field="notes"
-                placeholder="Operational notes for Discord control-plane"
-              ></textarea>
-            </td>
-          </tr>
-
         </tbody>
       </table>
 
-    </div>
-  </section>
-
-  <!-- --------------------------------------------------------- -->
-  <!-- DISCORD BOT (PER-GUILD SETTINGS) -->
-  <!-- --------------------------------------------------------- -->
-  <section class="ss-panel" data-discord-locked data-discord-guild-locked>
-    <header class="ss-panel-header">
-      <div class="ss-panel-header-main">
-        <h2>Discord Bot</h2>
-        <p class="muted">
-          Per-guild logging and notification channels sourced from exported runtime config.
-        </p>
-      </div>
-    </header>
-
-    <div class="ss-panel-body">
-      <div class="ss-alert ss-alert-warning discord-guild-message" data-state="missing">
-        Select a Discord guild to manage settings.
-      </div>
-      <div class="ss-alert ss-alert-danger discord-guild-message" data-state="unauthorized">
-        The selected guild is not authorized for this Discord login. Choose a different guild.
-      </div>
-
-      <div class="ss-alert ss-alert-warning">
-        Channel IDs must match Discord snowflake format. Invalid IDs are flagged and will export
-        as-is until corrected.
-      </div>
-
-      <div id="discord-bot-empty" class="ss-empty-state hidden">
-        <p id="discord-bot-empty-title">No guild selected.</p>
-        <p id="discord-bot-empty-subtitle" class="muted">
-          Select an eligible guild to view or edit per-guild settings.
-        </p>
-      </div>
-
-      <div id="discord-bot-guilds"></div>
-
-      <template id="discord-bot-guild-template">
-        <fieldset class="ss-fieldset discord-guild-card">
-          <legend>
-            <span data-guild-label>Discord Guild</span>
-          </legend>
-
-          <div class="ss-form-row">
-            <label>Guild ID</label>
-            <input type="text" class="ss-input" data-field="guild-id" placeholder="Not set" />
-            <span class="pill pill-default" data-status="guild-id">Not set</span>
-          </div>
-
-          <p class="muted" style="margin: 0 0 8px;">Logging</p>
-
-          <div class="ss-form-row checkbox-row">
-            <label class="ss-checkbox-wrapper">
-              <input type="checkbox" data-field="logging-enabled" />
-              <div class="ss-checkbox"></div>
-              <span class="ss-checkbox-text">Logging enabled</span>
-            </label>
-          </div>
-
-          <div class="ss-form-row">
-            <label>Logging channel ID</label>
-            <input type="text" class="ss-input" data-field="logging-channel" placeholder="Not set" />
-            <span class="pill pill-default" data-status="logging-channel">Not set</span>
-          </div>
-
-          <p class="muted" style="margin: 0 0 8px;">Notifications</p>
-
-          <div class="ss-form-row">
-            <label>General notifications channel</label>
-            <input type="text" class="ss-input" data-field="general-channel" placeholder="Not set" />
-            <span class="pill pill-default" data-status="general-channel">Not set</span>
-          </div>
-
-          <div class="ss-form-row">
-            <label>Rumble clips channel</label>
-            <input type="text" class="ss-input" data-field="rumble-channel" placeholder="Not set" />
-            <span class="pill pill-default" data-status="rumble-channel">Not set</span>
-          </div>
-
-          <div class="ss-form-row">
-            <label>YouTube clips channel</label>
-            <input type="text" class="ss-input" data-field="youtube-channel" placeholder="Not set" />
-            <span class="pill pill-default" data-status="youtube-channel">Not set</span>
-          </div>
-
-          <div class="ss-form-row">
-            <label>Kick clips channel</label>
-            <input type="text" class="ss-input" data-field="kick-channel" placeholder="Not set" />
-            <span class="pill pill-default" data-status="kick-channel">Not set</span>
-          </div>
-
-          <div class="ss-form-row">
-            <label>Pilled clips channel</label>
-            <input type="text" class="ss-input" data-field="pilled-channel" placeholder="Not set" />
-            <span class="pill pill-default" data-status="pilled-channel">Not set</span>
-          </div>
-
-          <div class="ss-form-row">
-            <label>Twitch clips channel</label>
-            <input type="text" class="ss-input" data-field="twitch-channel" placeholder="Not set" />
-            <span class="pill pill-default" data-status="twitch-channel">Not set</span>
-          </div>
-        </fieldset>
-      </template>
     </div>
   </section>
 
@@ -687,7 +490,6 @@
 
     <div class="ss-panel-body">
 
-      <!-- Platform definitions cover streaming and control-plane runtimes. Discord appears here as a control-plane runtime only when deployed; the dashboard remains read-only and must not assume Discord is enabled. -->
 
       <div class="ss-form-row">
         <label>Default Chat Cooldown</label>

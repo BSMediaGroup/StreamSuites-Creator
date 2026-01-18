@@ -421,11 +421,12 @@
     const header = document.createElement("div");
     header.className = "ss-onboarding-card-header";
     header.innerHTML =
-      "<strong>Discord bot</strong><span class=\"pill pill-warning\">Coming soon</span>";
+      "<strong>Platform integrations</strong><span class=\"pill pill-warning\">Coming soon</span>";
 
     const body = document.createElement("p");
     body.className = "muted";
-    body.textContent = "Connect the StreamSuites Discord bot to announce overlays and sync commands.";
+    body.textContent =
+      "Connect YouTube, Twitch, Rumble, Kick, and Pilled to unlock creator automation once onboarding is complete.";
 
     card.append(header, body);
 
@@ -438,7 +439,11 @@
           ...(currentState?.metadata || {}),
           integrations: {
             ...(currentState?.metadata?.integrations || {}),
-            discord: "coming_soon"
+            youtube: "coming_soon",
+            twitch: "coming_soon",
+            rumble: "coming_soon",
+            kick: "coming_soon",
+            pilled: "coming_soon"
           }
         },
         onboarding_state: "in_progress",
