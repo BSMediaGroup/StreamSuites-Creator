@@ -2,9 +2,12 @@
   "use strict";
 
   const AUTH_BASE_URL = "https://api.streamsuites.app";
+  const CREATOR_ORIGIN = "https://creator.streamsuites.app";
+  const CREATOR_LOGIN_REDIRECT = `${CREATOR_ORIGIN}/index.html`;
   const AUTH_ENDPOINTS = Object.freeze({
     session: `${AUTH_BASE_URL}/auth/session`,
     logout: `${AUTH_BASE_URL}/auth/logout`,
+    login: `${AUTH_BASE_URL}/auth/login?surface=creator&redirect=${encodeURIComponent(CREATOR_LOGIN_REDIRECT)}`,
     magicLink: `${AUTH_BASE_URL}/auth/magic-link`,
     oauth: Object.freeze({
       google: `${AUTH_BASE_URL}/auth/google`,
@@ -16,6 +19,10 @@
   const CREATOR_ROLE = "creator";
   const TIER_OPTIONS = new Set(["OPEN", "GOLD", "PRO"]);
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
+
+  const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/auth/login.html`;
+  const SESSION_CACHE_KEY = "streamsuites.creator.session";
+  const SESSION_CACHE_TTL = 1000 * 60 * 15;
 
   const sessionState = {
     value: null,
@@ -140,14 +147,50 @@
     return data;
   }
 
+  function readCachedSession() {
+    try {
+      const raw = sessionStorage.getItem(SESSION_CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object") return null;
+      if (!parsed.session) return null;
+      if (typeof parsed.savedAt !== "number") return null;
+      if (Date.now() - parsed.savedAt > SESSION_CACHE_TTL) {
+        sessionStorage.removeItem(SESSION_CACHE_KEY);
+        return null;
+      }
+      return parsed.session;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function writeCachedSession(session) {
+    try {
+      sessionStorage.setItem(
+        SESSION_CACHE_KEY,
+        JSON.stringify({ session, savedAt: Date.now() })
+      );
+    } catch (err) {
+      // Ignore cache errors (private mode, quota, etc.)
+    }
+  }
+
   async function loadSession() {
     if (sessionState.loading) return sessionState.value;
     if (sessionState.value) return sessionState.value;
+
+    const cachedSession = readCachedSession();
+    if (cachedSession?.authenticated) {
+      sessionState.value = cachedSession;
+      return sessionState.value;
+    }
 
     sessionState.loading = true;
     try {
       const payload = await fetchJson(AUTH_ENDPOINTS.session, {}, 5000);
       sessionState.value = normalizeSessionPayload(payload);
+      writeCachedSession(sessionState.value);
     } catch (err) {
       sessionState.value = { authenticated: false, error: err };
     } finally {
@@ -255,7 +298,7 @@
       }
     } finally {
       clearLocalSessionState();
-      window.location.assign("/auth/login.html?reason=logout");
+      window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=logout`);
     }
   }
 
@@ -264,6 +307,11 @@
     updateAppSession(sessionState.value);
     if (window.App?.state) {
       window.App.state = {};
+    }
+    try {
+      sessionStorage.removeItem(SESSION_CACHE_KEY);
+    } catch (err) {
+      // ignore
     }
   }
 
@@ -425,14 +473,8 @@
     updateAppSession(session);
     updateAuthSummary(session);
 
-    if (session?.authenticated && isPublic) {
-      window.location.assign("/index.html");
-      return;
-    }
-
     if (!session?.authenticated && !isPublic) {
-      const reason = session?.error ? "unavailable" : "expired";
-      window.location.assign(`/auth/login.html?reason=${reason}`);
+      window.location.assign(AUTH_ENDPOINTS.login);
       return;
     }
 
@@ -441,7 +483,7 @@
       if (role !== CREATOR_ROLE) {
         const locked = toggleCreatorLockout(true);
         if (!locked) {
-          window.location.assign("/auth/login.html?reason=unauthorized");
+          window.location.assign(AUTH_ENDPOINTS.login);
         }
         return;
       }
