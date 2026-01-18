@@ -12,7 +12,8 @@
   --creator-success: #5bcf73;
   --creator-radius: 18px;
   --creator-shadow: 0 24px 60px rgba(4, 8, 20, 0.55);
-  --creator-font: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --creator-font: "SuiGenerisRg", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --creator-heading: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
 }
 
 * {
@@ -25,6 +26,13 @@ body {
   background: radial-gradient(circle at top, rgba(40, 56, 88, 0.35), transparent 55%),
     linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
   color: var(--creator-text);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--creator-heading);
+  font-weight: 700;
 }
 
 .creator-app {
@@ -66,6 +74,7 @@ body {
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--creator-muted);
+  font-family: var(--creator-heading);
 }
 
 .creator-brand h1 {
@@ -104,6 +113,7 @@ body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--creator-muted);
+  font-family: var(--creator-heading);
 }
 
 .creator-user-name {
@@ -131,6 +141,7 @@ body {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  font-family: var(--creator-heading);
   cursor: pointer;
 }
 
@@ -165,6 +176,7 @@ body {
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--creator-muted);
+  font-family: var(--creator-heading);
 }
 
 .creator-nav nav {
@@ -200,6 +212,21 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-size: 11px;
+  font-family: var(--creator-heading);
+}
+
+.creator-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.creator-nav-group a {
+  font-size: 13px;
+  padding-left: 18px;
 }
 
 .creator-nav-footer a {
@@ -234,6 +261,7 @@ body {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--creator-muted);
+  font-family: var(--creator-heading);
 }
 
 .section-header h2 {
@@ -261,6 +289,10 @@ body {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.06);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--creator-heading);
 }
 
 .status-pill.subtle {
@@ -273,10 +305,32 @@ body {
   background: rgba(91, 207, 115, 0.15);
 }
 
+.status-pill.warning {
+  color: #ffe3b0;
+  border-color: rgba(255, 190, 92, 0.4);
+  background: rgba(255, 190, 92, 0.15);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
+}
+
+.overview-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.platform-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .card {
@@ -314,6 +368,7 @@ body {
   color: var(--creator-accent-strong);
   text-decoration: none;
   margin-top: auto;
+  font-family: var(--creator-heading);
 }
 
 .card-top {
@@ -362,6 +417,7 @@ body {
   letter-spacing: 0.16em;
   color: var(--creator-muted);
   margin-bottom: 6px;
+  font-family: var(--creator-heading);
 }
 
 .footer-version {
@@ -407,6 +463,7 @@ body {
   color: var(--creator-accent-strong);
   border: 1px solid rgba(123, 140, 255, 0.4);
   background: rgba(123, 140, 255, 0.12);
+  font-family: var(--creator-heading);
 }
 
 .lockout-card h2 {
@@ -433,6 +490,7 @@ body {
   border-radius: 999px;
   text-decoration: none;
   font-weight: 600;
+  font-family: var(--creator-heading);
 }
 
 .lockout-link {

@@ -1,5 +1,39 @@
 /* Base styles for the StreamSuites Creator dashboard. */
 
+@font-face {
+  font-family: "RechargeBd";
+  src:
+    url("/assets/fonts/RechargeBd.woff2") format("woff2"),
+    url("/assets/fonts/RechargeBd.woff") format("woff");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SuiGenerisRg";
+  src:
+    url("/assets/fonts/SuiGenerisRg.woff2") format("woff2"),
+    url("/assets/fonts/SuiGenerisRg.woff") format("woff");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   color-scheme: dark;
+}
+
+body {
+  font-family: "SuiGenerisRg", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+  font-weight: 700;
 }

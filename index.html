@@ -55,7 +55,12 @@
           If you believe this is a mistake, reach out to StreamSuites support.
         </p>
         <div class="lockout-actions">
-          <a class="lockout-button" href="/auth/login.html?reason=unauthorized">Log in as Creator</a>
+          <a
+            class="lockout-button"
+            href="https://api.streamsuites.app/auth/login?surface=creator&redirect=https://creator.streamsuites.app/index.html"
+          >
+            Log in as Creator
+          </a>
           <a class="lockout-link" href="https://support.streamsuites.app" target="_blank" rel="noopener noreferrer">
             Contact support
           </a>
@@ -68,9 +73,20 @@
         <span class="creator-nav-title">Workspace</span>
         <nav>
           <a href="#overview">Overview</a>
-          <a href="#platforms">Platforms</a>
+          <a href="#platforms">Platform overview</a>
+          <div class="creator-nav-group">
+            <span class="creator-nav-label">Platforms</span>
+            <a href="/views/platforms/youtube.html">YouTube</a>
+            <a href="/views/platforms/twitch.html">Twitch</a>
+            <a href="/views/platforms/rumble.html">Rumble</a>
+            <a href="/views/platforms/kick.html">Kick</a>
+            <a href="/views/platforms/pilled.html">Pilled</a>
+            <a href="/views/platforms/twitter.html">Twitter</a>
+            <a href="/views/platforms/discord.html">Discord</a>
+          </div>
           <a href="#clips">Clips</a>
           <a href="#polls">Polls</a>
+          <a href="#tallies">Tallies</a>
           <a href="#scoreboards">Scoreboards</a>
           <a href="#settings">Settings &amp; Onboarding</a>
         </nav>
@@ -90,24 +106,20 @@
               <h2>Creator control center</h2>
             </div>
             <div class="section-actions">
-              <span class="status-pill">Runtime stable</span>
-              <span class="status-pill subtle">Session active</span>
+              <span class="status-pill success">
+                <span class="status-dot"></span>
+                Runtime stable
+              </span>
+              <span class="status-pill subtle">
+                <span class="status-dot"></span>
+                Session active
+              </span>
             </div>
           </div>
-          <div class="card-grid">
-            <article class="card">
-              <h3>Next broadcast checklist</h3>
-              <p>Prepare overlays, queue clips, and confirm scoreboard presets before going live.</p>
-              <ul>
-                <li>Review the latest automation snapshot</li>
-                <li>Verify clip queue for your channel</li>
-                <li>Confirm current poll overlays</li>
-              </ul>
-              <a href="/views/overview.html">Open overview →</a>
-            </article>
+          <div class="card-grid overview-grid">
             <article class="card highlight">
-              <h3>Live workspace status</h3>
-              <p>Stay aligned with the latest runtime exports powering your creator environment.</p>
+              <h3>Live workspace pulse</h3>
+              <p>Snapshot of your creator runtime, automation, and publish queues.</p>
               <div class="stat-grid">
                 <div>
                   <span class="stat-label">Active overlays</span>
@@ -121,8 +133,22 @@
                   <span class="stat-label">Recent clips</span>
                   <span class="stat-value">12 queued</span>
                 </div>
+                <div>
+                  <span class="stat-label">Polls running</span>
+                  <span class="stat-value">2 live</span>
+                </div>
               </div>
               <a href="/views/updates.html">Review activity →</a>
+            </article>
+            <article class="card">
+              <h3>Next broadcast checklist</h3>
+              <p>Prepare overlays, queue clips, and confirm scoreboard presets before going live.</p>
+              <ul>
+                <li>Review the latest automation snapshot</li>
+                <li>Verify clip queue for your channel</li>
+                <li>Confirm current poll overlays</li>
+              </ul>
+              <a href="/views/overview.html">Open overview →</a>
             </article>
             <article class="card">
               <h3>Onboarding status</h3>
@@ -133,6 +159,16 @@
                 <li>See upcoming integrations</li>
               </ul>
               <a href="/views/settings.html">Open onboarding →</a>
+            </article>
+            <article class="card">
+              <h3>Creator ops cadence</h3>
+              <p>Stay ahead of weekly automation and partner sync windows.</p>
+              <ul>
+                <li>Next sync: Friday 3 PM ET</li>
+                <li>Auto exports: Daily 6 AM</li>
+                <li>Support SLA: 2 hours</li>
+              </ul>
+              <a href="/views/support.html">Reach support →</a>
             </article>
           </div>
         </section>
@@ -145,42 +181,111 @@
             </div>
             <p class="section-subtext">Monitor the status of creator-facing destinations and overlays.</p>
           </div>
-          <div class="card-grid">
-            <article class="card">
+          <div class="card-grid platform-grid">
+            <article class="card platform-card">
               <div class="card-top">
                 <h3>YouTube</h3>
-                <span class="status-pill success">Enabled</span>
+                <span class="status-pill success">
+                  <span class="status-dot"></span>
+                  Enabled
+                </span>
               </div>
-              <p>Live overlays and clips aligned to your primary channel schedule.</p>
+              <p>Live overlays, clip drops, and automation mapped to your primary channel.</p>
               <ul>
                 <li>Overlay sync: Scoreboards, polls, tallies</li>
                 <li>Chat mirror: Commands synced</li>
               </ul>
-              <a href="/views/platforms/youtube.html">View YouTube settings →</a>
+              <a href="/views/platforms/youtube.html">Open YouTube view →</a>
             </article>
-            <article class="card">
+            <article class="card platform-card">
               <div class="card-top">
                 <h3>Twitch</h3>
-                <span class="status-pill success">Enabled</span>
+                <span class="status-pill success">
+                  <span class="status-dot"></span>
+                  Enabled
+                </span>
               </div>
-              <p>Streaming overlays and clip drops mapped to Twitch scenes.</p>
+              <p>Streaming overlays and clip triggers mapped to Twitch scene stacks.</p>
               <ul>
                 <li>Chat triggers active</li>
                 <li>Scene overlays ready</li>
               </ul>
-              <a href="/views/platforms/twitch.html">View Twitch settings →</a>
+              <a href="/views/platforms/twitch.html">Open Twitch view →</a>
             </article>
-            <article class="card">
+            <article class="card platform-card">
+              <div class="card-top">
+                <h3>Rumble</h3>
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>
+                  Monitoring
+                </span>
+              </div>
+              <p>Live ingest tracking and stream health checks for Rumble broadcasts.</p>
+              <ul>
+                <li>Ingest status visible</li>
+                <li>Clip export staged</li>
+              </ul>
+              <a href="/views/platforms/rumble.html">Open Rumble view →</a>
+            </article>
+            <article class="card platform-card">
+              <div class="card-top">
+                <h3>Kick</h3>
+                <span class="status-pill warning">
+                  <span class="status-dot"></span>
+                  Standby
+                </span>
+              </div>
+              <p>Kick automation is staged but disabled pending runtime enablement.</p>
+              <ul>
+                <li>Triggers queued</li>
+                <li>Overlay pack ready</li>
+              </ul>
+              <a href="/views/platforms/kick.html">Open Kick view →</a>
+            </article>
+            <article class="card platform-card">
+              <div class="card-top">
+                <h3>Pilled</h3>
+                <span class="status-pill warning">
+                  <span class="status-dot"></span>
+                  Staging
+                </span>
+              </div>
+              <p>Pilled ingest is configured for read-only monitoring.</p>
+              <ul>
+                <li>Ingest logs monitored</li>
+                <li>Alerts routed to ops</li>
+              </ul>
+              <a href="/views/platforms/pilled.html">Open Pilled view →</a>
+            </article>
+            <article class="card platform-card">
+              <div class="card-top">
+                <h3>Twitter</h3>
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>
+                  Listening
+                </span>
+              </div>
+              <p>Social clips and updates auto-post through creator social queues.</p>
+              <ul>
+                <li>Clip share queue ready</li>
+                <li>Announcement cadence set</li>
+              </ul>
+              <a href="/views/platforms/twitter.html">Open Twitter view →</a>
+            </article>
+            <article class="card platform-card">
               <div class="card-top">
                 <h3>Discord</h3>
-                <span class="status-pill">Monitoring</span>
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>
+                  Monitoring
+                </span>
               </div>
-              <p>Community updates mirror into your Discord channels (read-only).</p>
+              <p>Community updates and clip alerts mirror into Discord channels.</p>
               <ul>
                 <li>Automation updates visible</li>
                 <li>Clips notifications queued</li>
               </ul>
-              <a href="/views/platforms/discord.html">View Discord summary →</a>
+              <a href="/views/platforms/discord.html">Open Discord view →</a>
             </article>
           </div>
         </section>
@@ -197,7 +302,7 @@
             <article class="card">
               <h3>Clip queue</h3>
               <p>Review queued clips and confirm publishing order before you go live.</p>
-              <a href="/clips.html">Open clips gallery →</a>
+              <a href="https://streamsuites.app/clips">Open clips gallery →</a>
             </article>
             <article class="card">
               <h3>Clip delivery status</h3>
@@ -219,12 +324,34 @@
             <article class="card">
               <h3>Live polls</h3>
               <p>Keep tabs on active polls and make sure overlays are broadcast ready.</p>
-              <a href="/polls.html">Open polls gallery →</a>
+              <a href="https://streamsuites.app/polls">Open polls gallery →</a>
             </article>
             <article class="card">
               <h3>Poll templates</h3>
               <p>Review the templates connected to your runtime export feeds.</p>
               <a href="/views/overview.html">Review templates →</a>
+            </article>
+          </div>
+        </section>
+
+        <section id="tallies" class="creator-section">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Tallies</span>
+              <h2>Real-time tallies</h2>
+            </div>
+            <p class="section-subtext">Track tally overlays and ensure live data stays in sync.</p>
+          </div>
+          <div class="card-grid">
+            <article class="card">
+              <h3>Active tallies</h3>
+              <p>Review tally overlays and confirm score accumulation for live sessions.</p>
+              <a href="https://streamsuites.app/tallies">Open tallies →</a>
+            </article>
+            <article class="card">
+              <h3>Tally presets</h3>
+              <p>Keep tally presets aligned with scoreboard and poll workflows.</p>
+              <a href="/views/overview.html">Review tally presets →</a>
             </article>
           </div>
         </section>
@@ -241,7 +368,7 @@
             <article class="card">
               <h3>Scoreboard gallery</h3>
               <p>Review scoreboard presets and confirm live overlays are ready.</p>
-              <a href="/views/scoreboards.html">Open scoreboards →</a>
+              <a href="https://streamsuites.app/scoreboards">Open scoreboards →</a>
             </article>
             <article class="card">
               <h3>Shared views</h3>
