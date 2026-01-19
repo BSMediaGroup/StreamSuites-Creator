@@ -16,19 +16,22 @@
   <link rel="stylesheet" href="/css/overrides.css" />
   <link rel="stylesheet" href="/css/theme-dark.css" />
   <link rel="stylesheet" href="/css/updates.css" />
+  <style>
+    [hidden] {
+      display: none !important;
+    }
+
+    .auth-main {
+      padding: 48px 16px;
+    }
+
+    .auth-panel {
+      width: min(520px, 100%);
+    }
+  </style>
 </head>
 <body>
   <div class="auth-shell">
-    <header class="ss-header auth-header">
-      <div class="ss-header-left">
-        <h1 class="ss-title">StreamSuites</h1>
-        <span class="ss-subtitle">Creator Login</span>
-      </div>
-      <div class="ss-header-right">
-        <span class="muted">Creator-only access</span>
-      </div>
-    </header>
-
     <main class="auth-main">
       <section class="ss-panel auth-panel" data-auth-modal data-auth-view="login">
         <header class="ss-panel-header auth-panel-header">
@@ -40,9 +43,6 @@
             <p class="muted" data-auth-subtitle>
               Authenticate with OAuth or email/password.
             </p>
-          </div>
-          <div class="ss-panel-header-actions">
-            <span class="ss-chip auth-tier-pill">Tier: OPEN</span>
           </div>
         </header>
 
@@ -183,10 +183,6 @@
         </div>
       </section>
     </main>
-
-    <footer class="ss-footer auth-footer">
-      <span class="muted">StreamSuites Creator Dashboard · Authenticated access required.</span>
-    </footer>
   </div>
 
   <script src="/js/app.js"></script>
