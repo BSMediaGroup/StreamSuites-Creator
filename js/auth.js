@@ -429,13 +429,18 @@
     modal.dataset.authView = safeView;
 
     const title = modal.querySelector("[data-auth-title]");
+    const titleText = title?.querySelector("[data-auth-title-text]");
     const subtitle = modal.querySelector("[data-auth-subtitle]");
     const loginPanel = modal.querySelector("[data-auth-view-panel=\"login\"]");
     const signupPanel = modal.querySelector("[data-auth-view-panel=\"signup\"]");
 
     if (loginPanel) loginPanel.hidden = safeView !== "login";
     if (signupPanel) signupPanel.hidden = safeView !== "signup";
-    if (title) title.textContent = safeView === "login" ? "Creator Login" : "Creator Signup";
+    if (titleText) {
+      titleText.textContent = safeView === "login" ? "Creator Login" : "Creator Signup";
+    } else if (title) {
+      title.textContent = safeView === "login" ? "Creator Login" : "Creator Signup";
+    }
     if (subtitle) {
       subtitle.textContent =
         safeView === "login"

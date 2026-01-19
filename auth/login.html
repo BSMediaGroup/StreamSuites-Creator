@@ -33,7 +33,10 @@
       <section class="ss-panel auth-panel" data-auth-modal data-auth-view="login">
         <header class="ss-panel-header auth-panel-header">
           <div class="ss-panel-header-main">
-            <h2 data-auth-title>Creator Login</h2>
+            <h2 class="auth-title" data-auth-title>
+              <img class="auth-title-logo" src="/assets/logos/logocircle.png" alt="StreamSuites logo" />
+              <span data-auth-title-text>Creator Login</span>
+            </h2>
             <p class="muted" data-auth-subtitle>
               Authenticate with OAuth or email/password.
             </p>
@@ -48,9 +51,18 @@
             <div class="auth-section">
               <p class="section-kicker">Sign in with</p>
               <div class="auth-provider-grid">
-                <a class="ss-btn ss-btn-primary" data-auth-oauth="google" href="#">Google</a>
-                <a class="ss-btn ss-btn-primary" data-auth-oauth="github" href="#">GitHub</a>
-                <a class="ss-btn ss-btn-primary" data-auth-oauth="discord" href="#">Discord</a>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="google" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/google.svg" alt="" aria-hidden="true" />
+                  <span>Google</span>
+                </a>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="github" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/github.svg" alt="" aria-hidden="true" />
+                  <span>GitHub</span>
+                </a>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="discord" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/discord.svg" alt="" aria-hidden="true" />
+                  <span>Discord</span>
+                </a>
               </div>
             </div>
 
@@ -86,7 +98,7 @@
                   />
                 </div>
                 <div class="auth-actions">
-                  <button class="ss-btn ss-btn-primary" type="submit" data-auth-login-submit>
+                  <button class="ss-btn ss-btn-primary auth-primary-submit" type="submit" data-auth-login-submit>
                     Log in
                   </button>
                   <span class="muted auth-status" data-auth-login-status aria-live="polite"></span>
@@ -106,9 +118,18 @@
             <div class="auth-section">
               <p class="section-kicker">Sign up with</p>
               <div class="auth-provider-grid">
-                <a class="ss-btn ss-btn-primary" data-auth-oauth="google" href="#">Google</a>
-                <a class="ss-btn ss-btn-primary" data-auth-oauth="github" href="#">GitHub</a>
-                <a class="ss-btn ss-btn-primary" data-auth-oauth="discord" href="#">Discord</a>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="google" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/google.svg" alt="" aria-hidden="true" />
+                  <span>Google</span>
+                </a>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="github" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/github.svg" alt="" aria-hidden="true" />
+                  <span>GitHub</span>
+                </a>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="discord" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/discord.svg" alt="" aria-hidden="true" />
+                  <span>Discord</span>
+                </a>
               </div>
             </div>
 
@@ -144,7 +165,7 @@
                   />
                 </div>
                 <div class="auth-actions">
-                  <button class="ss-btn ss-btn-primary" type="submit" data-auth-signup-submit>
+                  <button class="ss-btn ss-btn-primary auth-primary-submit" type="submit" data-auth-signup-submit>
                     Create account
                   </button>
                   <span class="muted auth-status" data-auth-signup-status aria-live="polite"></span>

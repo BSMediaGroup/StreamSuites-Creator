@@ -133,6 +133,18 @@
   align-items: center;
 }
 
+.auth-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-title-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 .auth-panel-body {
   display: grid;
   gap: 24px;
@@ -172,6 +184,18 @@
   gap: 12px;
 }
 
+.auth-provider-grid .auth-oauth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.auth-oauth-icon {
+  width: 18px;
+  height: 18px;
+}
+
 .auth-divider {
   position: relative;
   text-align: center;
@@ -202,6 +226,10 @@
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.auth-primary-submit {
+  font-family: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
 }
 
 .auth-status {
