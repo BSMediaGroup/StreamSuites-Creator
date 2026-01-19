@@ -170,6 +170,12 @@
   padding: 0 2px;
 }
 
+.auth-view[data-auth-view-panel="login"] .auth-switch-link,
+.auth-view[data-auth-view-panel="signup"] .auth-switch-link {
+  font-family: "SuiGenerisRg", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 400;
+}
+
 .auth-switch-link:hover {
   text-decoration: underline;
 }

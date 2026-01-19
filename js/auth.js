@@ -437,9 +437,10 @@
     if (loginPanel) loginPanel.hidden = safeView !== "login";
     if (signupPanel) signupPanel.hidden = safeView !== "signup";
     if (titleText) {
-      titleText.textContent = safeView === "login" ? "Creator Login" : "Creator Signup";
+      titleText.textContent =
+        safeView === "login" ? "Log in to StreamSuites™" : "Sign up to StreamSuites™";
     } else if (title) {
-      title.textContent = safeView === "login" ? "Creator Login" : "Creator Signup";
+      title.textContent = safeView === "login" ? "Log in to StreamSuites™" : "Sign up to StreamSuites™";
     }
     if (subtitle) {
       subtitle.textContent =
