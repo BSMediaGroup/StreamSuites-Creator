@@ -35,6 +35,8 @@
     loading: false
   };
   let accountMenuWired = false;
+  let isAccountMenuOpen = false;
+  let activeAccountMenu = null;
 
   function ensureAppNamespace() {
     if (!window.App) {
@@ -358,8 +360,8 @@
       if (!emailEl || !tierEl || !logoutEl) return;
 
       if (!session?.authenticated) {
-        emailEl.textContent = "Signed out";
-        if (nameEl) {
+        if (emailEl) emailEl.textContent = "Signed out";
+        if (nameEl && nameEl !== emailEl) {
           nameEl.textContent = "Signed out";
         }
         tierEl.hidden = true;
@@ -369,7 +371,10 @@
       }
 
       const displayName = getDisplayName(session);
-      emailEl.textContent = displayName;
+      const emailValue = getEmailValue(session);
+      if (emailEl) {
+        emailEl.textContent = emailEl === nameEl ? displayName : emailValue;
+      }
       if (nameEl) {
         nameEl.textContent = displayName;
       }
@@ -403,10 +408,7 @@
       }
 
       if (!authenticated) {
-        menu.dataset.accountOpen = "false";
-        if (dropdown) dropdown.hidden = true;
-        if (detailsPanel) detailsPanel.hidden = true;
-        if (editPanel) editPanel.hidden = true;
+        closeAccountMenu(menu);
       }
 
       if (detailName) {
@@ -460,23 +462,36 @@
     });
   }
 
-  function closeAccountMenu(menu) {
-    const dropdown = menu.querySelector("[data-account-dropdown]");
+  function setAccountMenuOpen(menu, open) {
+    if (!menu) return;
     const toggle = menu.querySelector("[data-account-toggle]");
+    menu.classList.toggle("is-account-open", open);
+    menu.dataset.accountOpen = open ? "true" : "false";
+    if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) {
+      isAccountMenuOpen = true;
+      activeAccountMenu = menu;
+    } else if (activeAccountMenu === menu) {
+      activeAccountMenu = null;
+      isAccountMenuOpen = false;
+    }
+  }
+
+  function closeAccountMenu(menu) {
     const detailsPanel = menu.querySelector("[data-account-details-panel]");
     const editPanel = menu.querySelector("[data-account-edit-panel]");
-    if (dropdown) dropdown.hidden = true;
-    if (toggle) toggle.setAttribute("aria-expanded", "false");
     if (detailsPanel) detailsPanel.hidden = true;
     if (editPanel) editPanel.hidden = true;
     setAccountMenuStatus(menu, "");
-    menu.dataset.accountOpen = "false";
+    setAccountMenuOpen(menu, false);
   }
 
   function closeAccountMenus() {
-    document.querySelectorAll("[data-account-menu]").forEach((menu) => {
+    document.querySelectorAll("[data-account-menu].is-account-open").forEach((menu) => {
       closeAccountMenu(menu);
     });
+    isAccountMenuOpen = false;
+    activeAccountMenu = null;
   }
 
   function setAccountMenuStatus(menu, message, state = "idle") {
@@ -542,10 +557,10 @@
   function wireAccountMenus() {
     const menus = document.querySelectorAll("[data-account-menu]");
     if (!menus.length) return;
-    if (accountMenuWired) return;
-    accountMenuWired = true;
 
     menus.forEach((menu) => {
+      if (menu.dataset.menuWired === "true") return;
+      menu.dataset.menuWired = "true";
       const toggle = menu.querySelector("[data-account-toggle]");
       const dropdown = menu.querySelector("[data-account-dropdown]");
       const detailsToggle = menu.querySelector("[data-account-details-toggle]");
@@ -560,13 +575,12 @@
       if (toggle && dropdown) {
         toggle.addEventListener("click", (event) => {
           event.preventDefault();
+          event.stopPropagation();
           if (toggle.disabled) return;
-          const isOpen = menu.dataset.accountOpen === "true";
+          const isOpen = isAccountMenuOpen && activeAccountMenu === menu;
           closeAccountMenus();
           if (!isOpen) {
-            dropdown.hidden = false;
-            toggle.setAttribute("aria-expanded", "true");
-            menu.dataset.accountOpen = "true";
+            setAccountMenuOpen(menu, true);
           }
         });
       }
@@ -667,7 +681,11 @@
       }
     });
 
+    if (accountMenuWired) return;
+    accountMenuWired = true;
+
     document.addEventListener("click", (event) => {
+      if (!isAccountMenuOpen) return;
       const target = event.target;
       if (!(target instanceof HTMLElement)) return;
       if (target.closest("[data-account-menu]")) return;

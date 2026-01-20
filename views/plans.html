@@ -21,37 +21,42 @@
 <body>
   <div class="creator-app">
     <header class="creator-header">
-      <div class="creator-brand">
-        <a href="https://streamsuites.app" class="creator-logo">
-          <img src="/assets/logos/logo.png" alt="StreamSuites" />
+      <div class="creator-header-left">
+        <a href="https://streamsuites.app" class="creator-brand-link">
+          <img class="creator-logo-img" src="/assets/logos/logo.png" alt="StreamSuites" />
+          <h1 class="creator-title">StreamSuites</h1>
+          <span class="dashboard-badge creator-dashboard-badge">CREATOR DASHBOARD</span>
         </a>
-        <div>
-          <p class="creator-kicker">Creator Dashboard</p>
-          <h1>StreamSuites</h1>
-        </div>
       </div>
-      <div class="creator-account" data-auth-summary="true" data-account-menu="true">
-        <button
-          class="creator-account-toggle"
-          type="button"
-          data-account-toggle="true"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          <img
-            class="creator-avatar"
-            src="/assets/icons/ui/profile.svg"
-            alt="Creator avatar"
-            data-auth-avatar="true"
-          />
-          <div class="creator-account-meta">
-            <span class="creator-account-label">StreamSuites account</span>
-            <span class="creator-account-name" data-auth-name="true" data-auth-email="true">Signed out</span>
-          </div>
-          <span class="creator-tier" data-auth-tier="true">OPEN</span>
-          <span class="creator-account-chevron" aria-hidden="true"></span>
-        </button>
-        <div class="creator-account-dropdown" data-account-dropdown="true" role="menu" hidden>
+      <div class="creator-header-right">
+        <div class="creator-account streamsuites-auth" data-auth-summary="true" data-account-menu="true">
+          <button
+            class="creator-account-toggle"
+            type="button"
+            data-account-toggle="true"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <span class="streamsuites-auth-avatar">
+              <img
+                class="creator-avatar"
+                src="/assets/icons/ui/profile.svg"
+                alt="Creator avatar"
+                data-auth-avatar="true"
+              />
+            </span>
+            <span class="streamsuites-auth-meta">
+              <span class="streamsuites-auth-name" data-auth-name="true">Signed out</span>
+              <span class="streamsuites-auth-identity" data-auth-email="true">Signed out</span>
+            </span>
+            <span class="creator-account-chevron" aria-hidden="true"></span>
+          </button>
+          <span class="streamsuites-auth-role">Creator</span>
+          <span class="streamsuites-auth-tier" data-auth-tier="true">OPEN</span>
+          <button class="ss-btn ss-btn-secondary ss-btn-small creator-logout" type="button" data-auth-logout="true">
+            Logout
+          </button>
+          <div class="creator-account-dropdown" data-account-dropdown="true" role="menu">
           <div class="creator-account-details" data-account-details-panel="true" hidden>
             <div class="creator-account-detail">
               <span class="creator-account-detail-label">Display name</span>
