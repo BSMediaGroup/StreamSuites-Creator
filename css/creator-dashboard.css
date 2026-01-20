@@ -92,6 +92,24 @@ h3 {
   border-radius: 999px;
   padding: 10px 16px 10px 12px;
   flex-wrap: wrap;
+  position: relative;
+}
+
+.creator-account-toggle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+.creator-account-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .creator-avatar {
@@ -131,6 +149,140 @@ h3 {
   background: rgba(123, 140, 255, 0.15);
   color: var(--creator-accent-strong);
   border: 1px solid rgba(123, 140, 255, 0.4);
+}
+
+.creator-account-chevron {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--creator-muted);
+  border-bottom: 2px solid var(--creator-muted);
+  transform: rotate(45deg);
+  margin-left: 4px;
+  transition: transform 0.2s ease;
+}
+
+[data-account-open="true"] .creator-account-chevron {
+  transform: rotate(-135deg);
+}
+
+.creator-account-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 260px;
+  background: var(--creator-panel);
+  border: 1px solid var(--creator-border);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: var(--creator-shadow);
+  display: grid;
+  gap: 10px;
+  z-index: 20;
+}
+
+.creator-account-details {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(11, 15, 22, 0.8);
+  display: grid;
+  gap: 8px;
+}
+
+.creator-account-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.creator-account-detail-label {
+  color: var(--creator-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-family: var(--creator-heading);
+  font-size: 10px;
+}
+
+.creator-account-detail-value {
+  color: var(--creator-text);
+  font-weight: 600;
+}
+
+.creator-account-item {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--creator-text);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--creator-heading);
+  cursor: pointer;
+  text-align: left;
+}
+
+.creator-account-item:hover {
+  background: rgba(123, 140, 255, 0.2);
+}
+
+.creator-account-item.primary {
+  background: var(--creator-accent);
+  color: #0b0f16;
+  border-color: transparent;
+  text-align: center;
+}
+
+.creator-account-item.subtle {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--creator-muted);
+  text-align: center;
+}
+
+.creator-account-item.danger {
+  border-color: rgba(255, 138, 138, 0.45);
+  color: #ffb2b2;
+  background: rgba(255, 138, 138, 0.12);
+}
+
+.creator-account-form {
+  display: grid;
+  gap: 8px;
+}
+
+.creator-account-input-label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--creator-muted);
+  font-family: var(--creator-heading);
+}
+
+.creator-account-input {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 14, 20, 0.9);
+  color: var(--creator-text);
+  font-family: var(--creator-font);
+}
+
+.creator-account-form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.creator-account-status {
+  font-size: 12px;
+  color: var(--creator-muted);
+  min-height: 16px;
+}
+
+.creator-account-status[data-state="error"] {
+  color: #ffb2b2;
 }
 
 .creator-account-actions {
@@ -749,6 +901,21 @@ body.creator-lockout-active .creator-lockout {
   .creator-account {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .creator-account-toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .creator-account-dropdown {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  .creator-account-form-actions {
+    grid-template-columns: 1fr;
   }
 
   .creator-hero {

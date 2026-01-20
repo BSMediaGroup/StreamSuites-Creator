@@ -14,6 +14,9 @@
       discord: `${AUTH_BASE_URL}/auth/discord`
     })
   });
+  const ACCOUNT_ENDPOINTS = Object.freeze({
+    me: `${AUTH_BASE_URL}/account/me`
+  });
 
   const CREATOR_ROLE = "creator";
   const TIER_OPTIONS = new Set(["OPEN", "GOLD", "PRO"]);
@@ -31,6 +34,7 @@
     value: null,
     loading: false
   };
+  let accountMenuWired = false;
 
   function ensureAppNamespace() {
     if (!window.App) {
@@ -130,6 +134,14 @@
     };
   }
 
+  function getDisplayName(session) {
+    return session?.name || session?.email || "Signed in";
+  }
+
+  function getEmailValue(session) {
+    return session?.email || "Signed in";
+  }
+
   function getFetchWithTimeout() {
     if (typeof window.fetchWithTimeout === "function") {
       return window.fetchWithTimeout;
@@ -176,6 +188,42 @@
 
     if (!response.ok) {
       const error = new Error("Auth request failed");
+      error.status = response.status;
+      error.payload = data;
+      throw error;
+    }
+
+    return data;
+  }
+
+  async function requestJson(url, options = {}, timeoutMs = 8000) {
+    const fetchWithTimeout = getFetchWithTimeout();
+    const response = await fetchWithTimeout(
+      url,
+      {
+        ...options,
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          ...(options.headers || {})
+        }
+      },
+      timeoutMs
+    );
+
+    const raw = await response.text();
+    let data = null;
+
+    if (raw) {
+      try {
+        data = JSON.parse(raw);
+      } catch (err) {
+        data = null;
+      }
+    }
+
+    if (!response.ok) {
+      const error = new Error("Request failed");
       error.status = response.status;
       error.payload = data;
       throw error;
@@ -320,7 +368,7 @@
         return;
       }
 
-      const displayName = session.name || session.email || "Signed in";
+      const displayName = getDisplayName(session);
       emailEl.textContent = displayName;
       if (nameEl) {
         nameEl.textContent = displayName;
@@ -330,6 +378,45 @@
       logoutEl.hidden = false;
       if (avatarEl) {
         avatarEl.src = session.avatar || "/assets/icons/ui/profile.svg";
+      }
+    });
+    updateAccountMenuState(session);
+  }
+
+  function updateAccountMenuState(session) {
+    const menus = document.querySelectorAll("[data-account-menu]");
+    const authenticated = !!session?.authenticated;
+
+    menus.forEach((menu) => {
+      menu.dataset.authenticated = authenticated ? "true" : "false";
+      const toggle = menu.querySelector("[data-account-toggle]");
+      const dropdown = menu.querySelector("[data-account-dropdown]");
+      const detailsPanel = menu.querySelector("[data-account-details-panel]");
+      const editPanel = menu.querySelector("[data-account-edit-panel]");
+      const detailName = menu.querySelector("[data-account-detail-name]");
+      const detailEmail = menu.querySelector("[data-account-detail-email]");
+      const detailTier = menu.querySelector("[data-account-detail-tier]");
+
+      if (toggle) {
+        toggle.disabled = !authenticated;
+        toggle.setAttribute("aria-expanded", "false");
+      }
+
+      if (!authenticated) {
+        menu.dataset.accountOpen = "false";
+        if (dropdown) dropdown.hidden = true;
+        if (detailsPanel) detailsPanel.hidden = true;
+        if (editPanel) editPanel.hidden = true;
+      }
+
+      if (detailName) {
+        detailName.textContent = authenticated ? getDisplayName(session) : "Signed out";
+      }
+      if (detailEmail) {
+        detailEmail.textContent = authenticated ? getEmailValue(session) : "Signed out";
+      }
+      if (detailTier) {
+        detailTier.textContent = authenticated ? session?.tier || "OPEN" : "OPEN";
       }
     });
   }
@@ -370,6 +457,217 @@
       if (!button) return;
       event.preventDefault();
       logout();
+    });
+  }
+
+  function closeAccountMenu(menu) {
+    const dropdown = menu.querySelector("[data-account-dropdown]");
+    const toggle = menu.querySelector("[data-account-toggle]");
+    const detailsPanel = menu.querySelector("[data-account-details-panel]");
+    const editPanel = menu.querySelector("[data-account-edit-panel]");
+    if (dropdown) dropdown.hidden = true;
+    if (toggle) toggle.setAttribute("aria-expanded", "false");
+    if (detailsPanel) detailsPanel.hidden = true;
+    if (editPanel) editPanel.hidden = true;
+    setAccountMenuStatus(menu, "");
+    menu.dataset.accountOpen = "false";
+  }
+
+  function closeAccountMenus() {
+    document.querySelectorAll("[data-account-menu]").forEach((menu) => {
+      closeAccountMenu(menu);
+    });
+  }
+
+  function setAccountMenuStatus(menu, message, state = "idle") {
+    const status = menu.querySelector("[data-account-status]");
+    if (!status) return;
+    status.textContent = message || "";
+    status.hidden = !message;
+    if (message) {
+      status.dataset.state = state;
+    } else {
+      status.removeAttribute("data-state");
+    }
+  }
+
+  function setAccountMenuBusy(menu, busy) {
+    const inputs = menu.querySelectorAll(
+      "[data-account-display-name], [data-account-save], [data-account-cancel], [data-account-delete]"
+    );
+    inputs.forEach((input) => {
+      if (input instanceof HTMLInputElement || input instanceof HTMLButtonElement) {
+        input.disabled = busy;
+      }
+    });
+  }
+
+  function updateSessionDisplayName(displayName) {
+    if (!sessionState.value) return;
+    sessionState.value = {
+      ...sessionState.value,
+      name: displayName
+    };
+    updateAppSession(sessionState.value);
+    persistLocalSession(sessionState.value);
+    updateAuthSummary(sessionState.value);
+  }
+
+  async function requestDisplayNameUpdate(displayName) {
+    return requestJson(
+      ACCOUNT_ENDPOINTS.me,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          display_name: displayName
+        })
+      },
+      8000
+    );
+  }
+
+  async function requestAccountDelete() {
+    return requestJson(
+      ACCOUNT_ENDPOINTS.me,
+      {
+        method: "DELETE"
+      },
+      8000
+    );
+  }
+
+  function wireAccountMenus() {
+    const menus = document.querySelectorAll("[data-account-menu]");
+    if (!menus.length) return;
+    if (accountMenuWired) return;
+    accountMenuWired = true;
+
+    menus.forEach((menu) => {
+      const toggle = menu.querySelector("[data-account-toggle]");
+      const dropdown = menu.querySelector("[data-account-dropdown]");
+      const detailsToggle = menu.querySelector("[data-account-details-toggle]");
+      const detailsPanel = menu.querySelector("[data-account-details-panel]");
+      const editToggle = menu.querySelector("[data-account-edit-toggle]");
+      const editPanel = menu.querySelector("[data-account-edit-panel]");
+      const input = menu.querySelector("[data-account-display-name]");
+      const save = menu.querySelector("[data-account-save]");
+      const cancel = menu.querySelector("[data-account-cancel]");
+      const deleteButton = menu.querySelector("[data-account-delete]");
+
+      if (toggle && dropdown) {
+        toggle.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (toggle.disabled) return;
+          const isOpen = menu.dataset.accountOpen === "true";
+          closeAccountMenus();
+          if (!isOpen) {
+            dropdown.hidden = false;
+            toggle.setAttribute("aria-expanded", "true");
+            menu.dataset.accountOpen = "true";
+          }
+        });
+      }
+
+      if (detailsToggle && detailsPanel) {
+        detailsToggle.addEventListener("click", (event) => {
+          event.preventDefault();
+          const nextState = detailsPanel.hidden;
+          detailsPanel.hidden = !nextState;
+          if (editPanel) editPanel.hidden = true;
+        });
+      }
+
+      if (editToggle && editPanel) {
+        editToggle.addEventListener("click", (event) => {
+          event.preventDefault();
+          const nextState = editPanel.hidden;
+          editPanel.hidden = !nextState;
+          if (detailsPanel) detailsPanel.hidden = true;
+          if (nextState && input instanceof HTMLInputElement) {
+            input.value = getDisplayName(sessionState.value || window.App?.session || {});
+            input.focus();
+          }
+        });
+      }
+
+      if (cancel && editPanel) {
+        cancel.addEventListener("click", (event) => {
+          event.preventDefault();
+          editPanel.hidden = true;
+          setAccountMenuStatus(menu, "");
+        });
+      }
+
+      if (save && input instanceof HTMLInputElement) {
+        save.addEventListener("click", async (event) => {
+          event.preventDefault();
+          const nextName = input.value.trim();
+          if (!nextName) {
+            setAccountMenuStatus(menu, "Display name cannot be empty.", "error");
+            return;
+          }
+          setAccountMenuBusy(menu, true);
+          setAccountMenuStatus(menu, "Saving display name...");
+          try {
+            await requestDisplayNameUpdate(nextName);
+            updateSessionDisplayName(nextName);
+            setAccountMenuStatus(menu, "Display name updated.");
+            if (editPanel) editPanel.hidden = true;
+          } catch (err) {
+            const message =
+              typeof err?.payload?.message === "string"
+                ? err.payload.message
+                : "Unable to update display name.";
+            setAccountMenuStatus(menu, message, "error");
+          } finally {
+            setAccountMenuBusy(menu, false);
+          }
+        });
+      }
+
+      if (deleteButton) {
+        deleteButton.addEventListener("click", async (event) => {
+          event.preventDefault();
+          const confirmed = window.confirm("This will permanently disable your account");
+          if (!confirmed) return;
+          setAccountMenuBusy(menu, true);
+          setAccountMenuStatus(menu, "Deleting account...");
+          try {
+            await requestAccountDelete();
+            try {
+              await requestJson(AUTH_ENDPOINTS.logout, { method: "POST" }, 5000);
+            } catch (err) {
+              // Best-effort logout before redirect.
+            }
+            clearLocalSessionState();
+            window.location.assign("https://streamsuites.app");
+          } catch (err) {
+            const message =
+              typeof err?.payload?.message === "string"
+                ? err.payload.message
+                : "Unable to delete account.";
+            setAccountMenuStatus(menu, message, "error");
+          } finally {
+            setAccountMenuBusy(menu, false);
+          }
+        });
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (target.closest("[data-account-menu]")) return;
+      closeAccountMenus();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeAccountMenus();
+      }
     });
   }
 
@@ -742,6 +1040,7 @@
 
     ensureAuthSummaryMounts();
     wireLogoutButtons();
+    wireAccountMenus();
     wireOauthButtons();
     wireAuthToggle();
     wirePasswordForms();
