@@ -741,11 +741,31 @@ h3 {
   margin-top: 20px;
 }
 
+.tier-card.is-active {
+  border-color: rgba(123, 140, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(123, 140, 255, 0.2);
+  background: linear-gradient(160deg, rgba(123, 140, 255, 0.16), rgba(15, 20, 30, 0.9));
+}
+
 .tier-card .tier-price {
   font-size: 14px;
   color: var(--creator-accent-strong);
   font-family: var(--creator-heading);
   letter-spacing: 0.04em;
+}
+
+.tier-card .tier-features {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--creator-muted);
+  display: grid;
+  gap: 6px;
+}
+
+.tier-card .tier-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--creator-muted);
 }
 
 .tier-card.is-disabled {
