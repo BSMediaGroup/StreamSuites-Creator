@@ -5,8 +5,12 @@
   <title>StreamSuites · Login Successful</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Public-facing creator styles -->
-  <link rel="stylesheet" href="https://creator.streamsuites.app/assets/css/public.css" />
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/layout.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/overrides.css" />
+  <link rel="stylesheet" href="../css/theme-dark.css" />
+  <link rel="stylesheet" href="../css/updates.css" />
 
   <style>
     body {
@@ -39,6 +43,12 @@
       color: #ff8a80;
       margin-top: 16px;
     }
+    .error-link {
+      color: #ffb5b5;
+      display: inline-block;
+      margin-top: 8px;
+      text-decoration: underline;
+    }
   </style>
 </head>
 
@@ -49,16 +59,22 @@
       Your StreamSuites creator session has been established.<br />
       <span data-auth-status>Finalizing your session...</span>
     </p>
-    <p class="error" data-auth-error hidden></p>
+    <p class="error" data-auth-error hidden>
+      <span data-auth-error-message></span>
+      <a class="error-link" href="/auth/login.html">Return to login</a>
+    </p>
   </div>
-  <script src="/js/auth.js"></script>
   <script>
     (() => {
       "use strict";
 
-      const REDIRECT_URL = "https://creator.streamsuites.app/index.html";
+      const RUNTIME_BASE_URL = "https://api.streamsuites.app";
+      const SESSION_URL = `${RUNTIME_BASE_URL}/auth/session`;
+      const CREATOR_HOME_URL = "/index.html";
+      const ONBOARDING_URL = "/views/onboarding.html";
       const statusEl = document.querySelector("[data-auth-status]");
       const errorEl = document.querySelector("[data-auth-error]");
+      const errorMessageEl = document.querySelector("[data-auth-error-message]");
 
       function setStatus(message) {
         if (statusEl) {
@@ -68,46 +84,55 @@
 
       function showError(message) {
         if (!errorEl) return;
-        errorEl.textContent = message;
+        if (errorMessageEl) {
+          errorMessageEl.textContent = message;
+        } else {
+          errorEl.textContent = message;
+        }
         errorEl.hidden = false;
       }
 
       async function finalizeAuth() {
-        if (!window.StreamSuitesAuth?.loadSession) {
-          showError("Authentication could not be initialized. Please return to login.");
-          return;
-        }
-
         setStatus("Confirming your session...");
 
-        let session;
+        console.log("[Creator][Auth] Session confirmation request sent");
+        let response;
         try {
-          session = await window.StreamSuitesAuth.loadSession();
+          response = await fetch(SESSION_URL, { credentials: "include" });
         } catch (err) {
+          console.log("[Creator][Auth] Session error", err);
           showError("We could not confirm your session. Please try again.");
           return;
         }
 
-        if (!session?.authenticated) {
+        console.log(`[Creator][Auth] Session status: ${response.status}`);
+
+        let payload = null;
+        try {
+          payload = await response.json();
+        } catch (err) {
+          payload = null;
+        }
+
+        const isOk = response.ok === true && payload?.ok === true;
+        console.log(`[Creator][Auth] Session ok: ${isOk ? "ok" : "error"}`);
+
+        if (!isOk || response.status === 401) {
           showError("We could not confirm your session. Please return to login.");
           return;
         }
 
-        try {
-          if (typeof window.StreamSuitesAuth.persistLocalSession === "function") {
-            window.StreamSuitesAuth.persistLocalSession(session);
-          } else if (window.StreamSuitesAuth.storageKeys?.session) {
-            localStorage.setItem(
-              window.StreamSuitesAuth.storageKeys.session,
-              JSON.stringify(session)
-            );
-          }
-        } catch (err) {
-          console.warn("[Creator][Auth] Failed to persist session", err);
+        const onboardingStatus =
+          typeof payload?.onboarding_status === "string"
+            ? payload.onboarding_status.trim().toLowerCase()
+            : "";
+        if (onboardingStatus === "required") {
+          window.location.assign(ONBOARDING_URL);
+          return;
         }
 
         setStatus("Session confirmed. Redirecting...");
-        window.location.assign(REDIRECT_URL);
+        window.location.assign(CREATOR_HOME_URL);
       }
 
       document.addEventListener("DOMContentLoaded", finalizeAuth);

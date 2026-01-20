@@ -142,6 +142,15 @@
     return fetchJson(AUTH_SESSION_ENDPOINT, {}, 5000);
   }
 
+  function extractTier(accountState, session) {
+    const candidate =
+      accountState?.tier ||
+      accountState?.user?.tier ||
+      session?.tier ||
+      "OPEN";
+    return normalizeTier(candidate);
+  }
+
   async function init() {
     ui.tierLabel = document.querySelector("[data-onboarding-tier]");
     ui.tierCards = Array.from(document.querySelectorAll("[data-tier]"));
@@ -149,21 +158,24 @@
     ui.status = document.querySelector("[data-onboarding-status]");
     ui.error = document.querySelector("[data-onboarding-error]");
 
-    if (!ui.continueButton) return;
+    if (ui.continueButton) {
+      ui.continueButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        console.log("Continue clicked");
+        void completeOnboarding();
+      });
+    }
 
-    const session = await window.StreamSuitesAuth?.loadSession?.();
-    if (!session?.authenticated) return;
-
+    let accountState = null;
     try {
-      const accountState = await fetchAccountState();
+      accountState = await fetchAccountState();
       const onboardingStatus =
         typeof accountState?.onboarding_status === "string"
           ? accountState.onboarding_status.toLowerCase()
           : null;
       const onboardingRequired =
         accountState?.onboarding_required === true ||
-        accountState?.onboardingRequired === true ||
-        session?.onboardingRequired === true;
+        accountState?.onboardingRequired === true;
 
       if (onboardingStatus === "completed" || onboardingRequired === false) {
         window.location.assign(`${CREATOR_ORIGIN}/index.html`);
@@ -174,19 +186,19 @@
       setStatus("Unable to verify onboarding status. Please try again.", true);
     }
 
-    if (session?.onboardingRequired === false) {
-      window.location.assign(`${CREATOR_ORIGIN}/index.html`);
-      return;
+    let session = null;
+    try {
+      session = await window.StreamSuitesAuth?.loadSession?.();
+      if (session?.onboardingRequired === false) {
+        window.location.assign(`${CREATOR_ORIGIN}/index.html`);
+        return;
+      }
+    } catch (err) {
+      session = null;
     }
 
-    const tier = normalizeTier(session?.tier || "OPEN");
+    const tier = extractTier(accountState, session);
     updateTierDisplay(tier);
-
-    ui.continueButton.addEventListener("click", (event) => {
-      event.preventDefault();
-      console.log("Continue clicked");
-      void completeOnboarding();
-    });
   }
 
   document.addEventListener("DOMContentLoaded", () => {
