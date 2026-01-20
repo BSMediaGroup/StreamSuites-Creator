@@ -655,6 +655,16 @@
           }
         });
       }
+
+      if (dropdown) {
+        dropdown.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement)) return;
+          const item = target.closest(".creator-account-item");
+          if (!item) return;
+          closeAccountMenu(menu);
+        });
+      }
     });
 
     document.addEventListener("click", (event) => {
