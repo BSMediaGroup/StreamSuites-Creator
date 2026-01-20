@@ -20,20 +20,12 @@
     [hidden] {
       display: none !important;
     }
-
-    .auth-main {
-      padding: 48px 16px;
-    }
-
-    .auth-panel {
-      width: min(520px, 100%);
-    }
   </style>
 </head>
 <body>
   <div class="auth-shell">
     <main class="auth-main">
-      <section class="ss-panel auth-panel" data-auth-modal data-auth-view="login">
+      <section class="ss-panel glass-card auth-panel" data-auth-modal data-auth-view="login">
         <header class="ss-panel-header auth-panel-header">
           <div class="ss-panel-header-main">
             <h2 class="auth-title" data-auth-title>
@@ -170,6 +162,12 @@
                   </button>
                   <span class="muted auth-status" data-auth-signup-status aria-live="polite"></span>
                 </div>
+                <p class="auth-legal">
+                  By signing up, you agree to the StreamSuites
+                  <a href="https://streamsuites.app/terms.html">Terms of Service</a>
+                  and
+                  <a href="https://streamsuites.app/privacy.html">Privacy Policy</a>.
+                </p>
                 <div class="ss-alert auth-hint" data-auth-signup-hint hidden></div>
                 <div class="ss-alert ss-alert-danger auth-error" data-auth-signup-error hidden></div>
               </form>

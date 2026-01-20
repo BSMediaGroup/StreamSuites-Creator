@@ -1,5 +1,54 @@
-/* Dark theme tokens for the StreamSuites Creator dashboard. */
+/* Dark theme tokens for the StreamSuites Creator dashboard (admin parity). */
+
+@font-face {
+  font-family: "RechargeBd";
+  src: url("https://raw.githubusercontent.com/BSMediaGroup/Resources/master/FONTS/Recharge%20Bd.otf")
+       format("opentype");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "SuiGenerisRg";
+  src: url("https://raw.githubusercontent.com/BSMediaGroup/Resources/master/FONTS/Sui%20Generis%20Rg.otf")
+       format("opentype");
+  font-weight: 400;
+}
 
 :root {
   --ss-theme: "dark";
+  --bg-root: #0e0f12;
+  --bg-panel: #14161b;
+  --bg-panel-alt: #1b1e24;
+  --bg-hover: #222632;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text-primary: #e6e8eb;
+  --text-secondary: #a9adb5;
+  --text-muted: #6e737c;
+
+  --accent-primary: #8cc736;
+  --accent-warning: #e1ac1e;
+  --accent-danger: #d9534f;
+  --accent-info: #5bc0de;
+
+  --glow-soft: rgba(140, 199, 54, 0.25);
+  --glow-hard: rgba(140, 199, 54, 0.45);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+
+  --link-accent: #F49900;
+}
+
+body {
+  background-color: var(--bg-root);
+  color: var(--text-primary);
+}
+
+::selection {
+  background: rgba(140, 199, 54, 0.25);
+  color: #fff;
 }

@@ -49,7 +49,7 @@
 
   function renderRuntimeDisconnected() {
     renderUnavailable();
-    showError("Runtime not connected");
+    showError("Runtime not connected. Start the runtime service and refresh.");
   }
 
   async function loadJobs() {
@@ -85,7 +85,7 @@
     } catch (err) {
       console.error("[Dashboard][Jobs]", err);
       renderUnavailable();
-      showError("Failed to load job state");
+      showError("Unable to load job state. Retry in a moment or contact an admin.");
     }
   }
 
