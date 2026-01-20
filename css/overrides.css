@@ -224,15 +224,17 @@
   grid-template-columns: 1fr;
   gap: 10px;
   margin: 16px 0 20px;
+  width: 100%;
 }
 
 .auth-provider-grid .auth-oauth-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
   width: 100%;
   padding: 10px 12px;
+  box-sizing: border-box;
 }
 
 .auth-provider-grid .auth-oauth-btn:not(:first-child) {
