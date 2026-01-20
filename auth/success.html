@@ -8,8 +8,6 @@
   <!-- Public-facing creator styles -->
   <link rel="stylesheet" href="/assets/css/public.css" />
 
-  <meta http-equiv="refresh" content="2; url=https://creator.streamsuites.app/index.html" />
-
   <style>
     body {
       background: #0b0b0b;
@@ -37,6 +35,10 @@
       opacity: 0.85;
       line-height: 1.4;
     }
+    .error {
+      color: #ff8a80;
+      margin-top: 16px;
+    }
   </style>
 </head>
 
@@ -45,9 +47,71 @@
     <h1>Login successful</h1>
     <p>
       Your StreamSuites creator session has been established.<br />
-      Redirecting to your dashboard…
+      <span data-auth-status>Finalizing your session...</span>
     </p>
+    <p class="error" data-auth-error hidden></p>
   </div>
   <script src="/js/auth.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const REDIRECT_URL = "https://creator.streamsuites.app/index.html";
+      const statusEl = document.querySelector("[data-auth-status]");
+      const errorEl = document.querySelector("[data-auth-error]");
+
+      function setStatus(message) {
+        if (statusEl) {
+          statusEl.textContent = message;
+        }
+      }
+
+      function showError(message) {
+        if (!errorEl) return;
+        errorEl.textContent = message;
+        errorEl.hidden = false;
+      }
+
+      async function finalizeAuth() {
+        if (!window.StreamSuitesAuth?.loadSession) {
+          showError("Authentication could not be initialized. Please return to login.");
+          return;
+        }
+
+        setStatus("Confirming your session...");
+
+        let session;
+        try {
+          session = await window.StreamSuitesAuth.loadSession();
+        } catch (err) {
+          showError("We could not confirm your session. Please try again.");
+          return;
+        }
+
+        if (!session?.authenticated) {
+          showError("We could not confirm your session. Please return to login.");
+          return;
+        }
+
+        try {
+          if (typeof window.StreamSuitesAuth.persistLocalSession === "function") {
+            window.StreamSuitesAuth.persistLocalSession(session);
+          } else if (window.StreamSuitesAuth.storageKeys?.session) {
+            localStorage.setItem(
+              window.StreamSuitesAuth.storageKeys.session,
+              JSON.stringify(session)
+            );
+          }
+        } catch (err) {
+          console.warn("[Creator][Auth] Failed to persist session", err);
+        }
+
+        setStatus("Session confirmed. Redirecting...");
+        window.location.assign(REDIRECT_URL);
+      }
+
+      document.addEventListener("DOMContentLoaded", finalizeAuth);
+    })();
+  </script>
 </body>
 </html>

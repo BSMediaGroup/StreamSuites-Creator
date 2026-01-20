@@ -24,6 +24,8 @@
   const LOGOUT_REASON = "logout";
   const REDIRECT_GUARD_KEY = "streamsuites.creator.loginRedirected";
   const LOGOUT_GUARD_KEY = "streamsuites.creator.loggedOut";
+  const LOCAL_SESSION_KEY = "streamsuites.creator.session";
+  const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
 
   const sessionState = {
     value: null,
@@ -216,6 +218,24 @@
     };
   }
 
+  function persistLocalSession(session) {
+    const payload = {
+      authenticated: !!session?.authenticated,
+      email: session?.email || "",
+      name: session?.name || "",
+      avatar: session?.avatar || "",
+      role: session?.role || "",
+      tier: session?.tier || "",
+      onboardingRequired: session?.onboardingRequired === true
+    };
+    try {
+      localStorage.setItem(LOCAL_SESSION_KEY, JSON.stringify(payload));
+      localStorage.setItem(LOCAL_SESSION_UPDATED_AT_KEY, String(Date.now()));
+    } catch (err) {
+      console.warn("[Dashboard][Auth] Failed to persist session", err);
+    }
+  }
+
   function buildAuthSummary() {
     const wrapper = document.createElement("div");
     wrapper.className = "ss-auth-summary";
@@ -333,6 +353,12 @@
     updateAppSession(sessionState.value);
     if (window.App?.state) {
       window.App.state = {};
+    }
+    try {
+      localStorage.removeItem(LOCAL_SESSION_KEY);
+      localStorage.removeItem(LOCAL_SESSION_UPDATED_AT_KEY);
+    } catch (err) {
+      console.warn("[Dashboard][Auth] Failed to clear persisted session", err);
     }
   }
 
@@ -780,7 +806,12 @@
     endpoints: AUTH_ENDPOINTS,
     loadSession,
     logout,
-    routeAfterAuth
+    routeAfterAuth,
+    persistLocalSession,
+    storageKeys: {
+      session: LOCAL_SESSION_KEY,
+      sessionUpdatedAt: LOCAL_SESSION_UPDATED_AT_KEY
+    }
   };
 
   document.addEventListener("DOMContentLoaded", () => {
