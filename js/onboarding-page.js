@@ -1,7 +1,11 @@
 (() => {
   "use strict";
 
+  console.log("Onboarding JS loaded");
+
   const RUNTIME_BASE_URL = "https://api.streamsuites.app";
+  const CREATOR_ORIGIN = "https://creator.streamsuites.app";
+  const AUTH_SESSION_ENDPOINT = `${RUNTIME_BASE_URL}/auth/session`;
   const ONBOARDING_COMPLETE_ENDPOINT = `${RUNTIME_BASE_URL}/account/onboarding/complete`;
 
   const VALID_TIERS = new Set(["OPEN", "GOLD", "PRO"]);
@@ -89,7 +93,7 @@
   function setLoading(isLoading) {
     if (ui.continueButton) ui.continueButton.disabled = isLoading;
     if (ui.continueButton) {
-      ui.continueButton.textContent = isLoading ? "Completing…" : "Continue";
+      ui.continueButton.textContent = isLoading ? "Completing..." : "Continue";
     }
   }
 
@@ -111,13 +115,19 @@
     if (isSubmitting) return;
     isSubmitting = true;
     setLoading(true);
-    setStatus("Saving onboarding status…");
+    setStatus("Saving onboarding status...");
 
     try {
-      await fetchJson(ONBOARDING_COMPLETE_ENDPOINT, { method: "POST" }, 8000);
+      const payload = await fetchJson(ONBOARDING_COMPLETE_ENDPOINT, { method: "POST" }, 8000);
+      if (!payload || payload.success !== true) {
+        const error = new Error("Onboarding completion failed");
+        error.payload = payload;
+        throw error;
+      }
 
-      window.location.assign("/index.html");
+      window.location.assign(`${CREATOR_ORIGIN}/index.html`);
     } catch (err) {
+      console.error("[Onboarding] Completion failed", err);
       const message =
         typeof err?.payload?.message === "string"
           ? err.payload.message
@@ -128,10 +138,14 @@
     }
   }
 
+  async function fetchAccountState() {
+    return fetchJson(AUTH_SESSION_ENDPOINT, {}, 5000);
+  }
+
   async function init() {
     ui.tierLabel = document.querySelector("[data-onboarding-tier]");
     ui.tierCards = Array.from(document.querySelectorAll("[data-tier]"));
-    ui.continueButton = document.querySelector("[data-onboarding-continue]");
+    ui.continueButton = document.getElementById("onboarding-continue");
     ui.status = document.querySelector("[data-onboarding-status]");
     ui.error = document.querySelector("[data-onboarding-error]");
 
@@ -140,15 +154,37 @@
     const session = await window.StreamSuitesAuth?.loadSession?.();
     if (!session?.authenticated) return;
 
+    try {
+      const accountState = await fetchAccountState();
+      const onboardingStatus =
+        typeof accountState?.onboarding_status === "string"
+          ? accountState.onboarding_status.toLowerCase()
+          : null;
+      const onboardingRequired =
+        accountState?.onboarding_required === true ||
+        accountState?.onboardingRequired === true ||
+        session?.onboardingRequired === true;
+
+      if (onboardingStatus === "completed" || onboardingRequired === false) {
+        window.location.assign(`${CREATOR_ORIGIN}/index.html`);
+        return;
+      }
+    } catch (err) {
+      console.error("[Onboarding] Unable to load account state", err);
+      setStatus("Unable to verify onboarding status. Please try again.", true);
+    }
+
     if (session?.onboardingRequired === false) {
-      window.location.assign("/index.html");
+      window.location.assign(`${CREATOR_ORIGIN}/index.html`);
       return;
     }
 
     const tier = normalizeTier(session?.tier || "OPEN");
     updateTierDisplay(tier);
 
-    ui.continueButton.addEventListener("click", () => {
+    ui.continueButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      console.log("Continue clicked");
       void completeOnboarding();
     });
   }
