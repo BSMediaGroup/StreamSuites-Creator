@@ -57,7 +57,7 @@ h3 {
 
 .creator-header-left {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
 }
 
@@ -69,7 +69,7 @@ h3 {
 
 .creator-brand-link {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
   color: inherit;
   text-decoration: none;
@@ -93,6 +93,7 @@ h3 {
   font-size: 20px;
   letter-spacing: 0.5px;
   font-family: var(--creator-heading);
+  line-height: 1;
 }
 
 .dashboard-badge {
@@ -100,6 +101,7 @@ h3 {
   padding: 4px 10px;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
+  line-height: 1;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -131,6 +133,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .streamsuites-auth-avatar img {
@@ -143,6 +146,8 @@ h3 {
   flex-direction: column;
   gap: 2px;
   min-width: 140px;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .streamsuites-auth-name {
@@ -195,6 +200,8 @@ h3 {
   width: 18px;
   height: 18px;
   filter: brightness(1.2) saturate(0);
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .creator-account-chevron {
