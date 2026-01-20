@@ -1,8 +1,8 @@
 (() => {
   "use strict";
 
-  const AUTH_BASE_URL = "https://api.streamsuites.app";
-  const ONBOARDING_ENDPOINT = `${AUTH_BASE_URL}/creator/onboarding`;
+  const RUNTIME_BASE_URL = "https://api.streamsuites.app";
+  const ONBOARDING_COMPLETE_ENDPOINT = `${RUNTIME_BASE_URL}/account/onboarding/complete`;
 
   const VALID_TIERS = new Set(["OPEN", "GOLD", "PRO"]);
 
@@ -105,29 +105,16 @@
     }
   }
 
-  async function completeOnboarding(tier) {
+  let isSubmitting = false;
+
+  async function completeOnboarding() {
+    if (isSubmitting) return;
+    isSubmitting = true;
     setLoading(true);
     setStatus("Saving onboarding status…");
 
     try {
-      await fetchJson(
-        ONBOARDING_ENDPOINT,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            onboarding_state: "complete",
-            onboarding_step: "complete",
-            tier,
-            metadata: {
-              completed_at: new Date().toISOString()
-            }
-          })
-        },
-        8000
-      );
+      await fetchJson(ONBOARDING_COMPLETE_ENDPOINT, { method: "POST" }, 8000);
 
       window.location.assign("/index.html");
     } catch (err) {
@@ -137,6 +124,7 @@
           : "Unable to complete onboarding. Please try again.";
       setStatus(message, true);
       setLoading(false);
+      isSubmitting = false;
     }
   }
 
@@ -161,7 +149,7 @@
     updateTierDisplay(tier);
 
     ui.continueButton.addEventListener("click", () => {
-      void completeOnboarding(tier);
+      void completeOnboarding();
     });
   }
 
