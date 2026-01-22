@@ -694,9 +694,31 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
+  const PASSWORD_MIN_LENGTH = 8;
+
+  function hasSpecialCharacter(value) {
+    return /[^A-Za-z0-9]/.test(value);
+  }
+
+  function evaluatePasswordStrength(password) {
+    if (!password) return { label: "Weak", score: 0 };
+    let score = 0;
+    if (password.length >= PASSWORD_MIN_LENGTH) score += 1;
+    if (password.length >= 12) score += 1;
+    if (hasSpecialCharacter(password)) score += 1;
+    if (/[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password)) score += 1;
+    if (score <= 1) return { label: "Weak", score };
+    if (score <= 3) return { label: "Moderate", score };
+    return { label: "Strong", score };
+  }
+
   function resolveLoginReason() {
     const params = new URLSearchParams(window.location.search);
     const reason = params.get("reason");
+    const verified = params.get("verified");
+    if (verified === "1") {
+      return "Email verified. Log in to continue.";
+    }
     switch (reason) {
       case "expired":
         return "Your session expired. Sign in again to continue.";
@@ -899,25 +921,42 @@
         signupHint.hidden = false;
       }
 
+      const passwordInput = signupForm.querySelector("[data-auth-signup-password]");
+      const strengthEl = signupForm.querySelector("[data-auth-signup-strength]");
+      if (passwordInput instanceof HTMLInputElement && strengthEl) {
+        const updateStrength = () => {
+          const strength = evaluatePasswordStrength(passwordInput.value);
+          strengthEl.textContent = `Strength: ${strength.label}`;
+        };
+        passwordInput.addEventListener("input", updateStrength);
+        updateStrength();
+      }
+
       signupForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         const emailInput = signupForm.querySelector("[data-auth-signup-email]");
-        const passwordInput = signupForm.querySelector("[data-auth-signup-password]");
+        const confirmInput = signupForm.querySelector("[data-auth-signup-confirm]");
         if (!(emailInput instanceof HTMLInputElement)) return;
         if (!(passwordInput instanceof HTMLInputElement)) return;
+        if (!(confirmInput instanceof HTMLInputElement)) return;
 
         const email = emailInput.value.trim();
         const password = passwordInput.value;
+        const confirmPassword = confirmInput.value;
 
         if (!isValidEmail(email)) {
           setFormState(signupForm, { state: "error", errorMessage: "Enter a valid email address." });
           return;
         }
-        if (password.length < 6) {
+        if (password.length < PASSWORD_MIN_LENGTH || !hasSpecialCharacter(password)) {
           setFormState(signupForm, {
             state: "error",
-            errorMessage: "Passwords must be at least 6 characters long."
+            errorMessage: "Passwords must be at least 8 characters and include a special character."
           });
+          return;
+        }
+        if (password !== confirmPassword) {
+          setFormState(signupForm, { state: "error", errorMessage: "Passwords do not match." });
           return;
         }
 
@@ -929,9 +968,12 @@
             await routeAfterAuth(payload);
             return;
           }
+          if (strengthEl) {
+            strengthEl.textContent = "Strength: " + evaluatePasswordStrength(password).label;
+          }
           setFormState(signupForm, {
             state: "hint",
-            message: "Check your email for a magic link to finish signup."
+            message: "Check your email to verify your account before logging in."
           });
         } catch (err) {
           const message =

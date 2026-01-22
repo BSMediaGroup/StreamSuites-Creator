@@ -17,6 +17,8 @@
     status: null,
     error: null
   };
+  const REQUIRED_TIER = "OPEN";
+  let confirmedTier = null;
 
   function normalizeTier(tier) {
     if (typeof tier !== "string") return "OPEN";
@@ -113,6 +115,10 @@
 
   async function completeOnboarding() {
     if (isSubmitting) return;
+    if (confirmedTier !== REQUIRED_TIER) {
+      setStatus("Select the OPEN tier to continue.", true);
+      return;
+    }
     isSubmitting = true;
     setLoading(true);
     setStatus("Saving onboarding status...");
@@ -165,6 +171,20 @@
         void completeOnboarding();
       });
     }
+    if (ui.tierCards) {
+      ui.tierCards.forEach((card) => {
+        card.addEventListener("click", () => {
+          const tier = card.getAttribute("data-tier");
+          if (tier !== REQUIRED_TIER) {
+            setStatus("Only the OPEN tier is available right now.", true);
+            return;
+          }
+          confirmedTier = REQUIRED_TIER;
+          setStatus("");
+          setLoading(false);
+        });
+      });
+    }
 
     let accountState = null;
     try {
@@ -199,6 +219,10 @@
 
     const tier = extractTier(accountState, session);
     updateTierDisplay(tier);
+    if (ui.continueButton) {
+      ui.continueButton.disabled = true;
+    }
+    setStatus("Select the OPEN tier to continue.");
   }
 
   document.addEventListener("DOMContentLoaded", () => {
