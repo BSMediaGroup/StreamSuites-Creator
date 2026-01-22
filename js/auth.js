@@ -6,8 +6,8 @@
   const AUTH_ENDPOINTS = Object.freeze({
     session: `${AUTH_BASE_URL}/auth/session`,
     logout: `${AUTH_BASE_URL}/auth/logout`,
-    emailLogin: `${AUTH_BASE_URL}/auth/login`,
-    signup: `${AUTH_BASE_URL}/auth/signup`,
+    emailLogin: `${AUTH_BASE_URL}/auth/login/password`,
+    signup: `${AUTH_BASE_URL}/auth/signup/email`,
     oauth: Object.freeze({
       google: `${AUTH_BASE_URL}/auth/google`,
       github: `${AUTH_BASE_URL}/auth/github`,
@@ -74,33 +74,28 @@
     if (!payload || typeof payload !== "object") {
       return { authenticated: false };
     }
+    if (payload.authenticated === false) {
+      return { authenticated: false };
+    }
+
+    const sessionSource = payload.user && typeof payload.user === "object" ? payload.user : payload;
 
     const displayNameCandidate =
-      typeof payload.name === "string"
-        ? payload.name
-        : typeof payload.user?.name === "string"
-          ? payload.user.name
-          : typeof payload.user?.display_name === "string"
-            ? payload.user.display_name
-            : typeof payload.user?.displayName === "string"
-              ? payload.user.displayName
-              : typeof payload.user?.username === "string"
-                ? payload.user.username
+      typeof sessionSource.name === "string"
+        ? sessionSource.name
+        : typeof sessionSource.display_name === "string"
+          ? sessionSource.display_name
+          : typeof sessionSource.displayName === "string"
+            ? sessionSource.displayName
+            : typeof sessionSource.username === "string"
+              ? sessionSource.username
                 : "";
 
     const emailCandidate =
-      typeof payload.email === "string"
-        ? payload.email
-        : typeof payload.user?.email === "string"
-          ? payload.user.email
-          : "";
+      typeof sessionSource.email === "string" ? sessionSource.email : "";
 
     const roleCandidate =
-      typeof payload.role === "string"
-        ? payload.role
-        : typeof payload.user?.role === "string"
-          ? payload.user.role
-          : "";
+      typeof sessionSource.role === "string" ? sessionSource.role : "";
 
     const role = normalizeRole(roleCandidate);
     if (!role) {
@@ -108,22 +103,17 @@
     }
 
     const avatarCandidate =
-      typeof payload.avatar === "string"
-        ? payload.avatar
-        : typeof payload.avatar_url === "string"
-          ? payload.avatar_url
-          : typeof payload.user?.avatar === "string"
-            ? payload.user.avatar
-            : typeof payload.user?.avatar_url === "string"
-              ? payload.user.avatar_url
-              : typeof payload.user?.image === "string"
-                ? payload.user.image
-                : "";
+      typeof sessionSource.avatar === "string"
+        ? sessionSource.avatar
+        : typeof sessionSource.avatar_url === "string"
+          ? sessionSource.avatar_url
+          : typeof sessionSource.image === "string"
+            ? sessionSource.image
+            : "";
 
     const onboardingRequired =
-      payload.onboarding_required === true ||
-      payload.user?.onboarding_required === true ||
-      payload.onboardingRequired === true;
+      sessionSource.onboarding_required === true ||
+      sessionSource.onboardingRequired === true;
 
     return {
       authenticated: true,
@@ -131,7 +121,7 @@
       name: displayNameCandidate.trim() || "",
       avatar: avatarCandidate.trim() || "",
       role,
-      tier: normalizeTier(payload.tier || payload.user?.tier),
+      tier: normalizeTier(sessionSource.tier),
       onboardingRequired
     };
   }
@@ -428,6 +418,7 @@
       await fetchJson(AUTH_ENDPOINTS.logout, { method: "POST" }, 5000);
     } finally {
       clearLocalSessionState();
+      setCreatorShellVisible(false);
       try {
         sessionStorage.setItem(LOGOUT_GUARD_KEY, "true");
       } catch (err) {
@@ -738,7 +729,7 @@
   }
 
   async function requestSignup(payload) {
-    return fetchJson(
+    const data = await requestJson(
       AUTH_ENDPOINTS.signup,
       {
         method: "POST",
@@ -752,6 +743,13 @@
       },
       8000
     );
+    if (data?.success === false) {
+      const error = new Error("Signup failed");
+      error.status = 400;
+      error.payload = data;
+      throw error;
+    }
+    return data;
   }
 
   function resolvePostAuthRedirect(session) {
@@ -886,7 +884,9 @@
           const message =
             typeof err?.payload?.message === "string"
               ? err.payload.message
-              : "Unable to sign in. Check your credentials and try again.";
+              : typeof err?.payload?.error === "string"
+                ? err.payload.error
+                : "Unable to sign in. Check your credentials and try again.";
           setFormState(loginForm, { state: "error", errorMessage: message });
         }
       });
@@ -925,11 +925,20 @@
 
         try {
           const payload = await requestSignup({ email, password });
-          await routeAfterAuth(payload);
+          if (payload?.authenticated) {
+            await routeAfterAuth(payload);
+            return;
+          }
+          setFormState(signupForm, {
+            state: "hint",
+            message: "Check your email for a magic link to finish signup."
+          });
         } catch (err) {
           const message =
             typeof err?.payload?.message === "string"
               ? err.payload.message
+              : typeof err?.payload?.error === "string"
+                ? err.payload.error
               : err?.status === 409
                 ? "An account already exists for this email. Log in instead."
                 : "Unable to create account. Try again or use OAuth.";
@@ -1061,6 +1070,21 @@
     window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=${reason}`);
   }
 
+  function setCreatorShellVisible(visible) {
+    const content = document.querySelector("[data-creator-content]");
+    const footer = document.querySelector(".creator-footer");
+    if (content) content.hidden = !visible;
+    if (footer) footer.hidden = !visible;
+  }
+
+  function forceLoginModal() {
+    const modal = document.querySelector("[data-auth-modal]");
+    if (!modal) return false;
+    modal.hidden = false;
+    setAuthView("login");
+    return true;
+  }
+
   async function initAuth() {
     const pathname = getPathname();
     const isPublic = isPublicPath(pathname);
@@ -1077,7 +1101,12 @@
       sessionState.value = { authenticated: false };
       updateAppSession(sessionState.value);
       updateAuthSummary(sessionState.value);
+      setCreatorShellVisible(false);
       return;
+    }
+
+    if (!isPublic) {
+      setCreatorShellVisible(false);
     }
 
     const session = await loadSession();
@@ -1089,6 +1118,11 @@
     }
 
     if (!session?.authenticated && !isPublic) {
+      setCreatorShellVisible(false);
+      const forced = forceLoginModal();
+      if (forced) {
+        return;
+      }
       if (session?.errorStatus === 401) {
         redirectToLogin("expired");
         return;
@@ -1107,6 +1141,7 @@
 
     if (session?.authenticated && !isPublic) {
       toggleCreatorLockout(false);
+      setCreatorShellVisible(true);
     }
 
     if (session?.authenticated) {
