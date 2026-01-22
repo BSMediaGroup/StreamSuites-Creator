@@ -7,6 +7,7 @@
     session: `${AUTH_BASE_URL}/auth/session`,
     logout: `${AUTH_BASE_URL}/auth/logout`,
     emailLogin: `${AUTH_BASE_URL}/auth/login/password`,
+    resendVerify: `${AUTH_BASE_URL}/auth/verify/resend`,
     signup: `${AUTH_BASE_URL}/auth/signup/email`,
     oauth: Object.freeze({
       google: `${AUTH_BASE_URL}/auth/google`,
@@ -712,24 +713,29 @@
     return { label: "Strong", score };
   }
 
-  function resolveLoginReason() {
+  function resolveLoginContext() {
     const params = new URLSearchParams(window.location.search);
     const reason = params.get("reason");
     const verified = params.get("verified");
     if (verified === "1") {
-      return "Email verified. Log in to continue.";
+      return { message: "Email verified. Log in to continue.", showResend: false };
     }
     switch (reason) {
       case "expired":
-        return "Your session expired. Sign in again to continue.";
+        return { message: "Your session expired. Sign in again to continue.", showResend: false };
       case "unauthorized":
-        return "Your account does not have creator access.";
+        return { message: "Your account does not have creator access.", showResend: false };
       case "unavailable":
-        return "Auth service is unreachable. Please try again.";
+        return { message: "Auth service is unreachable. Please try again.", showResend: false };
       case "logout":
-        return "You have been signed out.";
+        return { message: "You have been signed out.", showResend: false };
+      case "verification-expired":
+        return {
+          message: "Your verification link expired. Resend a new email below.",
+          showResend: true
+        };
       default:
-        return "";
+        return { message: "", showResend: false };
     }
   }
 
@@ -772,6 +778,36 @@
       throw error;
     }
     return data;
+  }
+
+  async function requestVerificationResend(email) {
+    const response = await fetch(AUTH_ENDPOINTS.resendVerify, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        surface: "creator"
+      })
+    });
+
+    const raw = await response.text();
+    let payload = null;
+    if (raw) {
+      try {
+        payload = JSON.parse(raw);
+      } catch (err) {
+        payload = null;
+      }
+    }
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      payload
+    };
   }
 
   function resolvePostAuthRedirect(session) {
@@ -843,7 +879,101 @@
     const loginForm = document.querySelector("[data-auth-login-form]");
     const signupForm = document.querySelector("[data-auth-signup-form]");
 
-    const initialHint = resolveLoginReason() || window.StreamSuitesAuth?.loginHint || "";
+    const loginContext = resolveLoginContext();
+    const initialHint = loginContext.message || window.StreamSuitesAuth?.loginHint || "";
+
+    function getResendContainer(form) {
+      return form?.querySelector("[data-auth-login-resend], [data-auth-signup-resend]") || null;
+    }
+
+    function setResendState(form, options = {}) {
+      const { visible = false, message = "", disabled = false } = options;
+      const container = getResendContainer(form);
+      if (!container) return;
+      container.hidden = !visible;
+      const status = container.querySelector("[data-auth-resend-status]");
+      if (status) {
+        status.textContent = message;
+      }
+      const button = container.querySelector("[data-auth-resend-button]");
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = !!disabled;
+      }
+    }
+
+    function setResendEmail(form, email) {
+      if (!form) return;
+      form.dataset.resendEmail = email || "";
+    }
+
+    function getResendEmail(form) {
+      if (!form) return "";
+      const stored = form.dataset.resendEmail || "";
+      const emailInput = form.querySelector("[data-auth-login-email], [data-auth-signup-email]");
+      const value =
+        stored ||
+        (emailInput instanceof HTMLInputElement ? emailInput.value : "");
+      return value.trim();
+    }
+
+    function wireResendButton(form) {
+      const container = getResendContainer(form);
+      if (!container || container.dataset.resendWired === "true") return;
+      container.dataset.resendWired = "true";
+      const button = container.querySelector("[data-auth-resend-button]");
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const email = getResendEmail(form);
+        if (!isValidEmail(email)) {
+          setResendState(form, {
+            visible: true,
+            message: "Enter a valid email to resend the verification link."
+          });
+          return;
+        }
+        setResendState(form, { visible: true, message: "Sending verification email...", disabled: true });
+        try {
+          const result = await requestVerificationResend(email);
+          const payload = result.payload || {};
+          if (result.ok && payload?.status === "already_verified") {
+            setResendState(form, {
+              visible: true,
+              message: "Email already verified. Log in to continue.",
+              disabled: false
+            });
+            return;
+          }
+          if (result.ok) {
+            setResendState(form, {
+              visible: true,
+              message: payload?.message || "Verification email sent.",
+              disabled: false
+            });
+            return;
+          }
+          if (result.status === 429 || payload?.status === "rate_limited") {
+            setResendState(form, {
+              visible: true,
+              message: "Too many resend requests. Please wait and try again.",
+              disabled: false
+            });
+            return;
+          }
+          setResendState(form, {
+            visible: true,
+            message: payload?.error || "Unable to resend verification email.",
+            disabled: false
+          });
+        } catch (err) {
+          setResendState(form, {
+            visible: true,
+            message: "Unable to resend verification email.",
+            disabled: false
+          });
+        }
+      });
+    }
 
     function setFormState(form, options = {}) {
       if (!form) return;
@@ -877,6 +1007,10 @@
         loginHint.textContent = initialHint;
         loginHint.hidden = false;
       }
+      if (loginContext.showResend) {
+        setResendState(loginForm, { visible: true, message: initialHint });
+      }
+      wireResendButton(loginForm);
 
       loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -910,6 +1044,15 @@
                 ? err.payload.error
                 : "Unable to sign in. Check your credentials and try again.";
           setFormState(loginForm, { state: "error", errorMessage: message });
+          const verificationRequired =
+            err?.payload?.verification_required === true ||
+            /not verified/i.test(message);
+          if (verificationRequired) {
+            setResendEmail(loginForm, email);
+            setResendState(loginForm, { visible: true, message: "Need a new link? Resend below." });
+          } else {
+            setResendState(loginForm, { visible: false });
+          }
         }
       });
     }
@@ -975,6 +1118,11 @@
             state: "hint",
             message: "Check your email to verify your account before logging in."
           });
+          setResendEmail(signupForm, email);
+          setResendState(signupForm, {
+            visible: true,
+            message: "Need another verification email? Resend below."
+          });
         } catch (err) {
           const message =
             typeof err?.payload?.message === "string"
@@ -985,8 +1133,10 @@
                 ? "An account already exists for this email. Log in instead."
                 : "Unable to create account. Try again or use OAuth.";
           setFormState(signupForm, { state: "error", errorMessage: message });
+          setResendState(signupForm, { visible: false });
         }
       });
+      wireResendButton(signupForm);
     }
   }
 
