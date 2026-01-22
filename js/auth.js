@@ -1269,6 +1269,29 @@
     if (footer) footer.hidden = !visible;
   }
 
+  function showAuthModalAndHaltAppInit(session) {
+    setCreatorShellVisible(false);
+    toggleCreatorLockout(false);
+
+    if (forceLoginModal()) {
+      return true;
+    }
+
+    const pathname = getPathname();
+    if (pathname === "/auth/login.html") {
+      return true;
+    }
+
+    const reason =
+      session?.errorStatus === 401
+        ? "expired"
+        : session?.errorStatus
+          ? "unavailable"
+          : "expired";
+    window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=${reason}`);
+    return true;
+  }
+
   function forceLoginModal() {
     const modal = document.querySelector("[data-auth-modal]");
     if (!modal) return false;
@@ -1293,7 +1316,7 @@
       sessionState.value = { authenticated: false };
       updateAppSession(sessionState.value);
       updateAuthSummary(sessionState.value);
-      setCreatorShellVisible(false);
+      showAuthModalAndHaltAppInit(sessionState.value);
       return;
     }
 
@@ -1305,22 +1328,16 @@
     updateAppSession(session);
     updateAuthSummary(session);
 
-    if (session?.authenticated) {
-      clearRedirectGuards();
+    if (!session || session.authenticated !== true) {
+      if (isPublic && session?.error && !new URLSearchParams(window.location.search).get("reason")) {
+        window.StreamSuitesAuth.loginHint = "Auth service is unreachable. Please try again.";
+      }
+      showAuthModalAndHaltAppInit(session);
+      return;
     }
 
-    if (!session?.authenticated && !isPublic) {
-      setCreatorShellVisible(false);
-      const forced = forceLoginModal();
-      if (forced) {
-        return;
-      }
-      if (session?.errorStatus === 401) {
-        redirectToLogin("expired");
-        return;
-      }
-      redirectToLogin(session?.errorStatus ? "unavailable" : "expired");
-      return;
+    if (session?.authenticated) {
+      clearRedirectGuards();
     }
 
     if (session?.authenticated) {
