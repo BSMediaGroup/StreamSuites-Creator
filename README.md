@@ -52,7 +52,6 @@ Future tier scaffolding (Open / Gold / Pro) is intentional and remains inactive 
 │   ├── tallies.html
 │   ├── scoreboards.html
 │   ├── settings.html
-│   ├── support.html
 │   ├── updates.html
 │   └── platforms/
 │       ├── kick.html
