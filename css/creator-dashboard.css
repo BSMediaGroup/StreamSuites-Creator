@@ -863,7 +863,7 @@ h3 {
 
 .footer-title {
   display: block;
-  font-size: 13px;
+  font-size: 10.5px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: var(--creator-muted);
@@ -873,13 +873,14 @@ h3 {
 
 .footer-version {
   color: var(--creator-muted);
-  font-size: 13px;
+  font-size: 10.5px;
 }
 
 .footer-links {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  font-size: 10.5px;
 }
 
 .footer-links a {
