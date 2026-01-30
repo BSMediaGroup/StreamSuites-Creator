@@ -20,7 +20,7 @@
   });
 
   const CREATOR_ROLE = "creator";
-  const TIER_OPTIONS = new Set(["OPEN", "GOLD", "PRO"]);
+  const TIER_OPTIONS = new Set(["CORE", "GOLD", "PRO"]);
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
 
   const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/auth/login.html`;
@@ -65,10 +65,10 @@
   }
 
   function normalizeTier(tier) {
-    if (typeof tier !== "string") return "OPEN";
+    if (typeof tier !== "string") return "CORE";
     const trimmed = tier.trim().toUpperCase();
-    if (!trimmed) return "OPEN";
-    return TIER_OPTIONS.has(trimmed) ? trimmed : "OPEN";
+    if (!trimmed) return "CORE";
+    return TIER_OPTIONS.has(trimmed) ? trimmed : "CORE";
   }
 
   function normalizeSessionPayload(payload) {
@@ -306,7 +306,7 @@
     const tier = document.createElement("span");
     tier.className = "ss-chip auth-chip auth-tier";
     tier.dataset.authTier = "true";
-    tier.textContent = "OPEN";
+    tier.textContent = "CORE";
 
     const logout = document.createElement("button");
     logout.type = "button";
@@ -369,7 +369,7 @@
       if (nameEl) {
         nameEl.textContent = displayName;
       }
-      tierEl.textContent = session.tier || "OPEN";
+      tierEl.textContent = session.tier || "CORE";
       tierEl.hidden = false;
       logoutEl.hidden = false;
       if (avatarEl) {
@@ -409,7 +409,7 @@
         detailEmail.textContent = authenticated ? getEmailValue(session) : "Signed out";
       }
       if (detailTier) {
-        detailTier.textContent = authenticated ? session?.tier || "OPEN" : "OPEN";
+        detailTier.textContent = authenticated ? session?.tier || "CORE" : "CORE";
       }
     });
   }

@@ -8,7 +8,7 @@
   const AUTH_SESSION_ENDPOINT = `${RUNTIME_BASE_URL}/auth/session`;
   const ONBOARDING_COMPLETE_ENDPOINT = `${RUNTIME_BASE_URL}/account/onboarding/complete`;
 
-  const VALID_TIERS = new Set(["OPEN", "GOLD", "PRO"]);
+  const VALID_TIERS = new Set(["CORE", "GOLD", "PRO"]);
 
   const ui = {
     tierLabel: null,
@@ -17,13 +17,13 @@
     status: null,
     error: null
   };
-  const REQUIRED_TIER = "OPEN";
+  const REQUIRED_TIER = "CORE";
   let confirmedTier = null;
 
   function normalizeTier(tier) {
-    if (typeof tier !== "string") return "OPEN";
+    if (typeof tier !== "string") return "CORE";
     const normalized = tier.trim().toUpperCase();
-    return VALID_TIERS.has(normalized) ? normalized : "OPEN";
+    return VALID_TIERS.has(normalized) ? normalized : "CORE";
   }
 
   function getFetchWithTimeout() {
@@ -116,7 +116,7 @@
   async function completeOnboarding() {
     if (isSubmitting) return;
     if (confirmedTier !== REQUIRED_TIER) {
-      setStatus("Select the OPEN tier to continue.", true);
+      setStatus("Select the CORE tier to continue.", true);
       return;
     }
     isSubmitting = true;
@@ -153,7 +153,7 @@
       accountState?.tier ||
       accountState?.user?.tier ||
       session?.tier ||
-      "OPEN";
+      "CORE";
     return normalizeTier(candidate);
   }
 
@@ -176,7 +176,7 @@
         card.addEventListener("click", () => {
           const tier = card.getAttribute("data-tier");
           if (tier !== REQUIRED_TIER) {
-            setStatus("Only the OPEN tier is available right now.", true);
+            setStatus("Only the CORE tier is available right now.", true);
             return;
           }
           confirmedTier = REQUIRED_TIER;
@@ -222,7 +222,7 @@
     if (ui.continueButton) {
       ui.continueButton.disabled = true;
     }
-    setStatus("Select the OPEN tier to continue.");
+    setStatus("Select the CORE tier to continue.");
   }
 
   document.addEventListener("DOMContentLoaded", () => {

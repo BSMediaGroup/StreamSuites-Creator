@@ -6,7 +6,7 @@
   const ONBOARDING_CACHE_KEY = "streamsuites.onboarding.cache";
 
   const VALID_STATES = new Set(["not_started", "in_progress", "complete"]);
-  const VALID_TIERS = new Set(["OPEN", "GOLD", "PRO"]);
+  const VALID_TIERS = new Set(["CORE", "GOLD", "PRO"]);
 
   const STEP_DEFINITIONS = [
     {
@@ -45,7 +45,7 @@
     onboarding_state: "not_started",
     onboarding_step: "welcome",
     accepted_terms: false,
-    tier: "OPEN",
+    tier: "CORE",
     metadata: {}
   });
 
@@ -123,9 +123,9 @@
   }
 
   function normalizeTier(tier) {
-    if (typeof tier !== "string") return "OPEN";
+    if (typeof tier !== "string") return "CORE";
     const normalized = tier.trim().toUpperCase();
-    return VALID_TIERS.has(normalized) ? normalized : "OPEN";
+    return VALID_TIERS.has(normalized) ? normalized : "CORE";
   }
 
   function normalizeStep(step) {
@@ -376,7 +376,7 @@
   }
 
   function renderTier() {
-    const tier = normalizeTier(sessionSnapshot?.tier || currentState?.tier || "OPEN");
+    const tier = normalizeTier(sessionSnapshot?.tier || currentState?.tier || "CORE");
 
     const copy = document.createElement("p");
     copy.className = "ss-onboarding-copy";
@@ -466,7 +466,7 @@
       "<li>Terms accepted: <strong>" +
       (currentState?.accepted_terms ? "Yes" : "Not yet") +
       "</strong></li><li>Tier: <strong>" +
-      normalizeTier(currentState?.tier || sessionSnapshot?.tier || "OPEN") +
+      normalizeTier(currentState?.tier || sessionSnapshot?.tier || "CORE") +
       "</strong></li>";
 
     ui.body.append(copy, summary);
