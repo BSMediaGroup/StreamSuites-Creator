@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<!-- ===================================================================== -->
+<!-- StreamSuites Dashboard - Creator Account Settings                     -->
+<!-- ===================================================================== -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StreamSuites - Account Settings</title>
+  <meta
+    name="description"
+    content="Manage creator profile, login methods, platform integrations, and plan details."
+  />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/theme-dark.css" />
+  <link rel="stylesheet" href="/css/creator-dashboard.css" />
+</head>
+<body>
+  <div class="creator-app">
+    <header class="creator-header">
+      <div class="creator-header-left">
+        <a href="https://streamsuites.app" class="creator-brand-link">
+          <img class="creator-logo-img" src="/assets/logos/ssnewcon.webp" alt="StreamSuites" />
+          <h1 class="creator-title">StreamSuites</h1>
+          <span class="dashboard-badge creator-dashboard-badge">CREATOR DASHBOARD</span>
+        </a>
+      </div>
+      <div class="creator-header-right">
+        <div class="creator-account streamsuites-auth" data-auth-summary="true" data-account-menu="true">
+          <button
+            class="creator-account-toggle"
+            type="button"
+            data-account-toggle="true"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <span class="streamsuites-auth-avatar">
+              <img
+                class="creator-avatar"
+                src="/assets/icons/ui/profile.svg"
+                alt="Creator avatar"
+                data-auth-avatar="true"
+              />
+            </span>
+            <span class="streamsuites-auth-meta">
+              <span class="streamsuites-auth-name" data-auth-name="true">Signed out</span>
+              <span class="streamsuites-auth-identity" data-auth-email="true">Signed out</span>
+            </span>
+            <span class="creator-account-chevron" aria-hidden="true"></span>
+          </button>
+          <span class="streamsuites-auth-role">Creator</span>
+          <span class="streamsuites-auth-tier" data-auth-tier="true">CORE</span>
+          <div class="creator-account-dropdown" data-account-dropdown="true" role="menu">
+            <a class="creator-account-item" href="/views/account.html">Account settings</a>
+            <button class="creator-account-item" type="button" data-auth-logout="true">Log out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="creator-lockout" data-creator-lockout hidden>
+      <div class="lockout-card">
+        <span class="lockout-pill">Creator access required</span>
+        <h2>This area requires creator access.</h2>
+        <p>Your StreamSuites account is authenticated, but creator access is not enabled.</p>
+        <div class="lockout-actions">
+          <a
+            class="lockout-button"
+            href="https://api.streamsuites.app/auth/login/google?surface=creator"
+          >
+            Login as Creator
+          </a>
+          <button class="lockout-button secondary" type="button" data-auth-logout="true">
+            Sign out
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="creator-layout" data-creator-content>
+      <aside class="creator-nav">
+        <span class="creator-nav-title">Creator navigation</span>
+        <nav class="creator-nav-main">
+          <a href="/index.html">Overview</a>
+          <a href="/views/account.html" class="is-active">Account settings</a>
+          <a href="/views/plans.html">Plans &amp; Tiers</a>
+          <a href="/views/triggers.html">Chat Triggers</a>
+          <a href="/views/settings.html">Settings / Preferences</a>
+        </nav>
+        <div class="creator-nav-group">
+          <span class="creator-nav-label">Platforms</span>
+          <a href="/views/platforms/rumble.html">Rumble</a>
+          <a href="/views/platforms/youtube.html">YouTube</a>
+          <a href="/views/platforms/twitch.html">Twitch</a>
+          <a href="/views/platforms/kick.html">Kick</a>
+          <a class="is-disabled" href="/views/platforms/pilled.html" aria-disabled="true">Pilled</a>
+        </div>
+        <div class="creator-nav-footer">
+          <span class="creator-nav-label">Quick links</span>
+          <a href="https://streamsuites.app">Public site</a>
+          <a href="https://streamsuites.app/clips">Clips gallery</a>
+          <a href="https://streamsuites.app/scoreboards">Scoreboards</a>
+          <a href="https://streamsuites.app/support.html">Support</a>
+          <a href="https://docs.streamsuites.app">Documentation</a>
+          <a href="https://streamsuites.app/donate.html">Donate</a>
+        </div>
+      </aside>
+
+      <main class="creator-main">
+        <section class="creator-section account-settings">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Account</span>
+              <h2>Account settings</h2>
+              <p class="section-subtext">
+                Keep your creator identity, sign-in methods, and plan details in one place.
+                Changes are preview-only until this surface is fully activated.
+              </p>
+            </div>
+            <div class="section-actions">
+              <span class="status-pill subtle">
+                <span class="status-dot"></span>
+                Read-only preview
+              </span>
+            </div>
+          </div>
+
+          <div class="creator-hero">
+            <div>
+              <h3>Your creator profile lives here.</h3>
+              <p>
+                Review profile basics, confirm how you sign in, and see where platform connections
+                are managed. Updates will unlock once account management goes live.
+              </p>
+            </div>
+            <div class="creator-hero-actions">
+              <a class="creator-button primary" href="/views/plans.html">View plans</a>
+              <a class="creator-button ghost" href="https://streamsuites.app/support.html">Support</a>
+            </div>
+          </div>
+
+          <div class="card-grid account-grid">
+            <article class="card">
+              <h3>Profile</h3>
+              <p>Profile details visible across your creator workspace.</p>
+              <div class="account-field-grid">
+                <div class="account-field">
+                  <span class="account-field-label">Display name</span>
+                  <input
+                    class="account-field-input"
+                    type="text"
+                    value="Nova Creator"
+                    disabled
+                  />
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Avatar</span>
+                  <div class="account-avatar-row">
+                    <span class="account-avatar-frame">
+                      <img src="/assets/icons/ui/profile.svg" alt="Avatar placeholder" />
+                    </span>
+                    <span class="account-avatar-note">Avatar uploads are coming soon.</span>
+                  </div>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Account identifier</span>
+                  <span class="account-field-value">creator@streamsuites.app</span>
+                  <span class="account-field-note">Email or username syncs from your login method.</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <h3>Login &amp; Security</h3>
+              <p>Supported sign-in methods for your StreamSuites account.</p>
+              <ul class="account-list">
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">Email</span>
+                    <span class="account-list-note">Primary sign-in</span>
+                  </div>
+                  <span class="status-pill success"><span class="status-dot"></span>Connected</span>
+                </li>
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">Discord</span>
+                    <span class="account-list-note">Community identity</span>
+                  </div>
+                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                </li>
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">Google</span>
+                    <span class="account-list-note">OAuth provider</span>
+                  </div>
+                  <span class="status-pill success"><span class="status-dot"></span>Connected</span>
+                </li>
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">GitHub</span>
+                    <span class="account-list-note">Developer access</span>
+                  </div>
+                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                </li>
+              </ul>
+              <p class="account-note">Connection controls will appear once account security settings launch.</p>
+            </article>
+
+            <article class="card">
+              <h3>Platform integrations</h3>
+              <p>Connection status for creator platforms.</p>
+              <ul class="account-list">
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">Rumble</span>
+                    <span class="account-list-note">Managed on the Rumble platform page</span>
+                  </div>
+                  <span class="status-pill success"><span class="status-dot"></span>Connected</span>
+                </li>
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">YouTube</span>
+                    <span class="account-list-note">Managed on the YouTube platform page</span>
+                  </div>
+                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                </li>
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">Twitch</span>
+                    <span class="account-list-note">Managed on the Twitch platform page</span>
+                  </div>
+                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                </li>
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">Kick</span>
+                    <span class="account-list-note">Managed on the Kick platform page</span>
+                  </div>
+                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                </li>
+              </ul>
+              <p class="account-note">
+                Connect and manage per-platform credentials on each platform page.
+              </p>
+            </article>
+
+            <article class="card">
+              <h3>Billing &amp; Plan</h3>
+              <p>Your current plan and billing preview.</p>
+              <div class="stat-grid">
+                <div>
+                  <span class="stat-label">Current plan</span>
+                  <span class="stat-value">CORE</span>
+                </div>
+                <div>
+                  <span class="stat-label">Billing status</span>
+                  <span class="stat-value">Preview only</span>
+                </div>
+                <div>
+                  <span class="stat-label">Next invoice</span>
+                  <span class="stat-value">Not scheduled</span>
+                </div>
+                <div>
+                  <span class="stat-label">Plan upgrades</span>
+                  <span class="stat-value">Coming soon</span>
+                </div>
+              </div>
+              <a href="/views/plans.html">Go to Plans &amp; Tiers -&gt;</a>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

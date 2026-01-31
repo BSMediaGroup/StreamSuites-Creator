@@ -54,51 +54,9 @@
           <span class="streamsuites-auth-role">Creator</span>
           <span class="streamsuites-auth-tier" data-auth-tier="true">CORE</span>
           <div class="creator-account-dropdown" data-account-dropdown="true" role="menu">
-          <div class="creator-account-details" data-account-details-panel="true" hidden>
-            <div class="creator-account-detail">
-              <span class="creator-account-detail-label">Display name</span>
-              <span class="creator-account-detail-value" data-account-detail-name="true">Signed out</span>
-            </div>
-            <div class="creator-account-detail">
-              <span class="creator-account-detail-label">Email</span>
-              <span class="creator-account-detail-value" data-account-detail-email="true">Signed out</span>
-            </div>
-            <div class="creator-account-detail">
-              <span class="creator-account-detail-label">Tier</span>
-              <span class="creator-account-detail-value" data-account-detail-tier="true">CORE</span>
-            </div>
+            <a class="creator-account-item" href="/views/account.html">Account settings</a>
+            <button class="creator-account-item" type="button" data-auth-logout="true">Log out</button>
           </div>
-          <button class="creator-account-item" type="button" data-account-details-toggle="true">
-            View account details
-          </button>
-          <button class="creator-account-item" type="button" data-account-edit-toggle="true">
-            Change display name
-          </button>
-          <div class="creator-account-form" data-account-edit-panel="true" hidden>
-            <label class="creator-account-input-label" for="creator-display-name">
-              Display name
-            </label>
-            <input
-              class="creator-account-input"
-              type="text"
-              id="creator-display-name"
-              autocomplete="name"
-              data-account-display-name="true"
-            />
-            <div class="creator-account-form-actions">
-              <button class="creator-account-item primary" type="button" data-account-save="true">
-                Save
-              </button>
-              <button class="creator-account-item subtle" type="button" data-account-cancel="true">
-                Cancel
-              </button>
-            </div>
-            <div class="creator-account-status" data-account-status="true" aria-live="polite" hidden></div>
-          </div>
-          <button class="creator-account-item" type="button" data-auth-logout="true">Log out</button>
-          <button class="creator-account-item danger" type="button" data-account-delete="true">
-            Delete account
-          </button>
         </div>
       </div>
     </header>
@@ -127,6 +85,7 @@
         <span class="creator-nav-title">Creator navigation</span>
         <nav class="creator-nav-main">
           <a href="/index.html">Overview</a>
+          <a href="/views/account.html">Account settings</a>
           <a href="/views/plans.html" class="is-active">Plans &amp; Tiers</a>
           <a href="/views/triggers.html">Chat Triggers</a>
           <a href="/views/settings.html">Settings / Preferences</a>

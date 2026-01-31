@@ -739,6 +739,121 @@ h3 {
   font-family: var(--creator-heading);
 }
 
+.account-settings .card {
+  gap: 14px;
+}
+
+.account-field-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.account-field-label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--creator-muted);
+}
+
+.account-field-input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--creator-text);
+  font-family: var(--creator-font);
+}
+
+.account-field-input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.account-field-value {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.account-field-note {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--creator-muted);
+}
+
+.account-avatar-row {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.account-avatar-frame {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.account-avatar-frame img {
+  width: 20px;
+  height: 20px;
+}
+
+.account-avatar-note {
+  font-size: 12px;
+  color: var(--creator-muted);
+}
+
+.account-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.account-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(11, 15, 22, 0.7);
+}
+
+.account-list-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.account-list-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.account-list-note {
+  font-size: 12px;
+  color: var(--creator-muted);
+}
+
+.account-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--creator-muted);
+}
+
 .card-top {
   display: flex;
   align-items: center;
