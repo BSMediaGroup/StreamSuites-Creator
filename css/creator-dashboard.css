@@ -14,6 +14,10 @@
   --creator-shadow: 0 24px 60px rgba(4, 8, 20, 0.55);
   --creator-font: "SuiGenerisRg", "Segoe UI", system-ui, -apple-system, sans-serif;
   --creator-heading: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+  --creator-scroll-track: #0d1118;
+  --creator-scroll-thumb: #2b3444;
+  --creator-scroll-thumb-hover: #3a465e;
+  --creator-header-offset: 96px;
 }
 
 * {
@@ -381,6 +385,8 @@ h3 {
   gap: 28px;
   padding: 32px;
   flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
 }
 
 .creator-nav {
@@ -395,6 +401,7 @@ h3 {
   position: sticky;
   top: 110px;
   height: fit-content;
+  min-height: 0;
 }
 
 .creator-nav-title {
@@ -473,6 +480,53 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 32px;
+  min-height: 0;
+}
+
+.creator-app,
+.creator-app * {
+  scrollbar-color: var(--creator-scroll-thumb) var(--creator-scroll-track);
+  scrollbar-width: thin;
+}
+
+.creator-app *::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.creator-app *::-webkit-scrollbar-track {
+  background: var(--creator-scroll-track);
+}
+
+.creator-app *::-webkit-scrollbar-thumb {
+  background: var(--creator-scroll-thumb);
+  border-radius: 999px;
+  border: 2px solid var(--creator-scroll-track);
+}
+
+.creator-app *::-webkit-scrollbar-thumb:hover {
+  background: var(--creator-scroll-thumb-hover);
+}
+
+@media (min-width: 1025px) {
+  .creator-layout {
+    max-height: calc(100vh - var(--creator-header-offset));
+    overflow: hidden;
+  }
+
+  .creator-nav,
+  .creator-main {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable both-edges;
+    overscroll-behavior: contain;
+  }
+
+  .creator-nav {
+    position: sticky;
+    top: 110px;
+  }
 }
 
 .creator-section {
