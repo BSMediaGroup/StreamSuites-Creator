@@ -509,14 +509,19 @@ h3 {
 }
 
 @media (min-width: 1025px) {
+  .creator-app {
+    height: 100vh;
+  }
+
   .creator-layout {
-    max-height: calc(100vh - var(--creator-header-offset));
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: hidden;
   }
 
   .creator-nav,
   .creator-main {
-    height: 100%;
+    max-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-gutter: stable both-edges;
