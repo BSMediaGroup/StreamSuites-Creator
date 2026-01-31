@@ -1,81 +1,236 @@
-<!-- ========================================================= -->
-<!-- StreamSuites — Kick Platform (VIEW PARTIAL) -->
-<!-- Creator-facing platform overview (read-only) -->
-<!-- ========================================================= -->
+<!DOCTYPE html>
+<!-- ===================================================================== -->
+<!-- StreamSuites Dashboard - Kick Platform (Creator)                      -->
+<!-- ===================================================================== -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StreamSuites - Kick Platform</title>
+  <meta
+    name="description"
+    content="Creator-facing Kick integration overview for StreamSuites."
+  />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
-<header class="ss-header">
-  <div class="ss-header-left">
-    <h1 class="ss-title">StreamSuites</h1>
-    <span class="ss-subtitle">Kick Platform</span>
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/theme-dark.css" />
+  <link rel="stylesheet" href="/css/creator-dashboard.css" />
+</head>
+<body>
+  <div class="creator-app">
+    <header class="creator-header">
+      <div class="creator-header-left">
+        <a href="https://streamsuites.app" class="creator-brand-link">
+          <img class="creator-logo-img" src="/assets/logos/logo.png" alt="StreamSuites" />
+          <h1 class="creator-title">StreamSuites</h1>
+          <span class="dashboard-badge creator-dashboard-badge">CREATOR DASHBOARD</span>
+        </a>
+      </div>
+      <div class="creator-header-right">
+        <div class="creator-account streamsuites-auth" data-auth-summary="true" data-account-menu="true">
+          <button
+            class="creator-account-toggle"
+            type="button"
+            data-account-toggle="true"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <span class="streamsuites-auth-avatar">
+              <img
+                class="creator-avatar"
+                src="/assets/icons/ui/profile.svg"
+                alt="Creator avatar"
+                data-auth-avatar="true"
+              />
+            </span>
+            <span class="streamsuites-auth-meta">
+              <span class="streamsuites-auth-name" data-auth-name="true">Signed out</span>
+              <span class="streamsuites-auth-identity" data-auth-email="true">Signed out</span>
+            </span>
+            <span class="creator-account-chevron" aria-hidden="true"></span>
+          </button>
+          <span class="streamsuites-auth-role">Creator</span>
+          <span class="streamsuites-auth-tier" data-auth-tier="true">CORE</span>
+          <div class="creator-account-dropdown" data-account-dropdown="true" role="menu">
+          <div class="creator-account-details" data-account-details-panel="true" hidden>
+            <div class="creator-account-detail">
+              <span class="creator-account-detail-label">Display name</span>
+              <span class="creator-account-detail-value" data-account-detail-name="true">Signed out</span>
+            </div>
+            <div class="creator-account-detail">
+              <span class="creator-account-detail-label">Email</span>
+              <span class="creator-account-detail-value" data-account-detail-email="true">Signed out</span>
+            </div>
+            <div class="creator-account-detail">
+              <span class="creator-account-detail-label">Tier</span>
+              <span class="creator-account-detail-value" data-account-detail-tier="true">CORE</span>
+            </div>
+          </div>
+          <button class="creator-account-item" type="button" data-account-details-toggle="true">
+            View account details
+          </button>
+          <button class="creator-account-item" type="button" data-account-edit-toggle="true">
+            Change display name
+          </button>
+          <div class="creator-account-form" data-account-edit-panel="true" hidden>
+            <label class="creator-account-input-label" for="creator-display-name">
+              Display name
+            </label>
+            <input
+              class="creator-account-input"
+              type="text"
+              id="creator-display-name"
+              autocomplete="name"
+              data-account-display-name="true"
+            />
+            <div class="creator-account-form-actions">
+              <button class="creator-account-item primary" type="button" data-account-save="true">
+                Save
+              </button>
+              <button class="creator-account-item subtle" type="button" data-account-cancel="true">
+                Cancel
+              </button>
+            </div>
+            <div class="creator-account-status" data-account-status="true" aria-live="polite" hidden></div>
+          </div>
+          <button class="creator-account-item" type="button" data-auth-logout="true">Log out</button>
+          <button class="creator-account-item danger" type="button" data-account-delete="true">
+            Delete account
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <section class="creator-lockout" data-creator-lockout hidden>
+      <div class="lockout-card">
+        <span class="lockout-pill">Creator access required</span>
+        <h2>This area requires creator access.</h2>
+        <p>Your StreamSuites account is authenticated, but creator access is not enabled.</p>
+        <div class="lockout-actions">
+          <a
+            class="lockout-button"
+            href="https://api.streamsuites.app/auth/login/google?surface=creator"
+          >
+            Login as Creator
+          </a>
+          <button class="lockout-button secondary" type="button" data-auth-logout="true">
+            Sign out
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="creator-layout" data-creator-content>
+      <aside class="creator-nav">
+        <span class="creator-nav-title">Creator navigation</span>
+        <nav class="creator-nav-main">
+          <a href="/index.html">Overview</a>
+          <a href="/views/plans.html">Plans &amp; Tiers</a>
+          <a href="/views/settings.html">Settings / Preferences</a>
+        </nav>
+        <div class="creator-nav-group">
+          <span class="creator-nav-label">Platforms</span>
+          <a href="/views/platforms/rumble.html">Rumble</a>
+          <a href="/views/platforms/youtube.html">YouTube</a>
+          <a href="/views/platforms/twitch.html">Twitch</a>
+          <a href="/views/platforms/kick.html" class="is-active">Kick</a>
+          <a class="is-disabled" href="/views/platforms/pilled.html" aria-disabled="true">Pilled</a>
+        </div>
+        <div class="creator-nav-footer">
+          <span class="creator-nav-label">Quick links</span>
+          <a href="https://streamsuites.app">Public site</a>
+          <a href="https://streamsuites.app/clips">Clips gallery</a>
+          <a href="https://streamsuites.app/scoreboards">Scoreboards</a>
+          <a href="https://streamsuites.app/support.html">Support</a>
+          <a href="https://docs.streamsuites.app">Documentation</a>
+          <a href="https://streamsuites.app/donate.html">Donate</a>
+        </div>
+      </aside>
+
+      <main class="creator-main">
+        <section class="creator-section">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Platform</span>
+              <h2>Kick integration</h2>
+            </div>
+            <div class="section-actions">
+              <span class="status-pill warning">
+                <span class="status-dot"></span>
+                Not connected
+              </span>
+            </div>
+          </div>
+
+          <div class="creator-hero">
+            <div>
+              <h3>Kick is staged for future onboarding</h3>
+              <p>
+                This page will support Kick channel connections once the integration is enabled.
+                For now, it stays as a creator-friendly placeholder.
+              </p>
+            </div>
+            <div class="creator-hero-actions">
+              <img class="creator-logo-img" src="/assets/icons/kick-white.svg" alt="Kick" />
+            </div>
+          </div>
+
+          <div class="card-grid">
+            <article class="card">
+              <h3>Integration overview</h3>
+              <p>When enabled, StreamSuites will surface Kick workspace visibility here.</p>
+              <ul>
+                <li>Channel status and export health snapshots.</li>
+                <li>Overlay and clip destination mapping.</li>
+                <li>Broadcast readiness signals for your channel.</li>
+              </ul>
+            </article>
+            <article class="card">
+              <h3>Connection status</h3>
+              <div class="stat-grid">
+                <div>
+                  <span class="stat-label">Connection</span>
+                  <span class="stat-value">Not connected</span>
+                </div>
+                <div>
+                  <span class="stat-label">Channel link</span>
+                  <span class="stat-value">Not linked</span>
+                </div>
+                <div>
+                  <span class="stat-label">Last sync</span>
+                  <span class="stat-value">Pending</span>
+                </div>
+                <div>
+                  <span class="stat-label">Exports</span>
+                  <span class="stat-value">Waiting</span>
+                </div>
+              </div>
+              <div class="platform-actions">
+                <button class="creator-button ghost" type="button" disabled aria-disabled="true">
+                  Connect Kick (coming soon)
+                </button>
+              </div>
+            </article>
+            <article class="card">
+              <h3>What happens next</h3>
+              <p>
+                Connection controls and guidance will appear here once Kick onboarding is ready.
+              </p>
+              <ul>
+                <li>No connection actions are required today.</li>
+                <li>Runtime data will appear after the first successful sync.</li>
+                <li>This surface stays read-only until launch.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
   </div>
-  <div class="ss-header-right">
-    <span class="status-indicator warning">● Status: Disabled</span>
-  </div>
-</header>
 
-<main class="ss-main" data-scope="creator">
-  <section class="ss-panel">
-    <header class="ss-panel-header">
-      <h2>Connection status</h2>
-    </header>
-    <div class="ss-panel-body">
-      <p class="muted">
-        Kick automation is staged but disabled. Enablement and OAuth onboarding will
-        appear here when Kick is activated for your workspace.
-      </p>
-      <button class="ss-btn ss-btn-secondary" type="button" disabled>
-        Connect Kick (coming soon)
-      </button>
-    </div>
-  </section>
-
-  <section class="ss-panel">
-    <header class="ss-panel-header">
-      <h2>Snapshot metrics</h2>
-    </header>
-    <div class="ss-panel-body">
-      <table class="ss-table ss-table-compact">
-        <tbody>
-          <tr>
-            <td>Trigger queue</td>
-            <td class="align-right muted">Queued</td>
-          </tr>
-          <tr>
-            <td>Overlay pack</td>
-            <td class="align-right muted">Ready</td>
-          </tr>
-          <tr>
-            <td>Last update</td>
-            <td class="align-right muted">Awaiting runtime export</td>
-          </tr>
-          <tr>
-            <td>Automation status</td>
-            <td class="align-right muted">Disabled</td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="muted" style="margin-top: 12px;">
-        Metrics hydrate from runtime exports when available. This view is read-only.
-      </p>
-    </div>
-  </section>
-
-  <section class="ss-panel">
-    <header class="ss-panel-header">
-      <h2>Next steps</h2>
-    </header>
-    <div class="ss-panel-body">
-      <ul class="ss-list muted">
-        <li>Prepare Kick channel details for future onboarding.</li>
-        <li>Review overlay presets when enablement begins.</li>
-        <li>Track Kick readiness in workspace updates.</li>
-      </ul>
-    </div>
-  </section>
-</main>
-
-<footer class="ss-footer">
-  <span class="muted">Kick overview is read-only and sourced from runtime exports.</span>
-</footer>
-
-<script src="/js/auth.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>
