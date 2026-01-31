@@ -30,10 +30,20 @@
   const LOGOUT_GUARD_KEY = "streamsuites.creator.loggedOut";
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
+  const SESSION_POLL_INTERVAL_MS = 20000;
+  const SESSION_POLL_FAILURE_THRESHOLD = 3;
+  const SESSION_POLL_FAILURE_COOLDOWN_MS = 60000;
+  const SESSION_INVALID_REDIRECT_DELAY_MS = 1400;
 
   const sessionState = {
     value: null,
     loading: false
+  };
+  const sessionMonitor = {
+    timer: null,
+    checking: false,
+    consecutiveFailures: 0,
+    lastFailureNoticeAt: 0
   };
   let accountMenuWired = false;
   let isAccountMenuOpen = false;
@@ -225,9 +235,9 @@
     return data;
   }
 
-  async function loadSession() {
+  async function loadSession(options = {}) {
     if (sessionState.loading) return sessionState.value;
-    if (sessionState.value) return sessionState.value;
+    if (sessionState.value && options.force !== true) return sessionState.value;
 
     sessionState.loading = true;
     try {
@@ -244,6 +254,20 @@
     }
 
     return sessionState.value;
+  }
+
+  function areSessionsEquivalent(left, right) {
+    if (left === right) return true;
+    if (!left || !right) return false;
+    return (
+      !!left.authenticated === !!right.authenticated &&
+      (left.email || "") === (right.email || "") &&
+      (left.name || "") === (right.name || "") &&
+      (left.avatar || "") === (right.avatar || "") &&
+      (left.role || "") === (right.role || "") &&
+      (left.tier || "") === (right.tier || "") &&
+      !!left.onboardingRequired === !!right.onboardingRequired
+    );
   }
 
   function updateAppSession(session) {
@@ -418,6 +442,7 @@
     try {
       await fetchJson(AUTH_ENDPOINTS.logout, { method: "POST" }, 5000);
     } finally {
+      stopSessionMonitor();
       clearLocalSessionState();
       setCreatorShellVisible(false);
       try {
@@ -1262,6 +1287,43 @@
     window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=${reason}`);
   }
 
+  function buildAuthToast() {
+    const toast = document.createElement("div");
+    toast.className = "ss-alert ss-auth-toast";
+    toast.dataset.authToast = "true";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    toast.hidden = true;
+    return toast;
+  }
+
+  function getAuthToast() {
+    let toast = document.querySelector("[data-auth-toast]");
+    if (!toast) {
+      toast = buildAuthToast();
+      document.body.appendChild(toast);
+    }
+    return toast;
+  }
+
+  function showAuthToast(message, options = {}) {
+    if (!message) return;
+    const { tone = "warning", autoHideMs = 4200 } = options;
+    const toast = getAuthToast();
+    toast.textContent = message;
+    toast.classList.toggle("ss-alert-danger", tone === "danger");
+    toast.hidden = false;
+
+    if (toast._hideTimer) {
+      clearTimeout(toast._hideTimer);
+    }
+    if (autoHideMs > 0) {
+      toast._hideTimer = setTimeout(() => {
+        toast.hidden = true;
+      }, autoHideMs);
+    }
+  }
+
   function setCreatorShellVisible(visible) {
     const content = document.querySelector("[data-creator-content]");
     const footer = document.querySelector(".creator-footer");
@@ -1298,6 +1360,89 @@
     modal.hidden = false;
     setAuthView("login");
     return true;
+  }
+
+  function handleSessionInvalidation(reason = "expired") {
+    stopSessionMonitor();
+    clearLocalSessionState();
+    showAuthToast("Session expired. Redirecting to sign in…", {
+      tone: "danger",
+      autoHideMs: SESSION_INVALID_REDIRECT_DELAY_MS
+    });
+    setTimeout(() => {
+      redirectToLogin(reason);
+    }, SESSION_INVALID_REDIRECT_DELAY_MS);
+  }
+
+  function applySessionUpdate(nextSession) {
+    if (!nextSession) return;
+    if (areSessionsEquivalent(sessionState.value, nextSession)) return;
+    sessionState.value = nextSession;
+    updateAppSession(nextSession);
+    updateAuthSummary(nextSession);
+  }
+
+  async function performSilentSessionCheck(options = {}) {
+    const { isPublic = false } = options;
+    if (isPublic) return;
+    if (sessionMonitor.checking) return;
+    if (!sessionState.value || sessionState.value.authenticated !== true) return;
+
+    sessionMonitor.checking = true;
+    try {
+      const payload = await fetchJson(AUTH_ENDPOINTS.session, {}, 5000);
+      const nextSession = normalizeSessionPayload(payload);
+      sessionMonitor.consecutiveFailures = 0;
+
+      if (!nextSession?.authenticated) {
+        handleSessionInvalidation("expired");
+        return;
+      }
+
+      applySessionUpdate(nextSession);
+
+      if (nextSession?.authenticated) {
+        const role = normalizeRole(nextSession.role);
+        if (role && role !== CREATOR_ROLE) {
+          toggleCreatorLockout(true);
+          return;
+        }
+        if (!isPublic) {
+          toggleCreatorLockout(false);
+          setCreatorShellVisible(true);
+        }
+      }
+    } catch (err) {
+      const status = err?.status ?? null;
+      if (status === 401 || status === 403) {
+        handleSessionInvalidation("expired");
+        return;
+      }
+
+      sessionMonitor.consecutiveFailures += 1;
+      if (sessionMonitor.consecutiveFailures >= SESSION_POLL_FAILURE_THRESHOLD) {
+        const now = Date.now();
+        if (now - sessionMonitor.lastFailureNoticeAt >= SESSION_POLL_FAILURE_COOLDOWN_MS) {
+          sessionMonitor.lastFailureNoticeAt = now;
+          showAuthToast("Auth service is unreachable. Retrying in the background…");
+        }
+      }
+    } finally {
+      sessionMonitor.checking = false;
+    }
+  }
+
+  function startSessionMonitor(options = {}) {
+    if (sessionMonitor.timer) return;
+    sessionMonitor.timer = setInterval(() => {
+      performSilentSessionCheck(options);
+    }, SESSION_POLL_INTERVAL_MS);
+  }
+
+  function stopSessionMonitor() {
+    if (!sessionMonitor.timer) return;
+    clearInterval(sessionMonitor.timer);
+    sessionMonitor.timer = null;
   }
 
   async function initAuth() {
@@ -1351,6 +1496,7 @@
     if (session?.authenticated && !isPublic) {
       toggleCreatorLockout(false);
       setCreatorShellVisible(true);
+      startSessionMonitor({ isPublic });
     }
 
     if (session?.authenticated) {
