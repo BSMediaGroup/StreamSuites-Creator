@@ -1,209 +1,211 @@
-<!-- ========================================================= -->
-<!-- StreamSuites — Chat Triggers (VIEW PARTIAL) -->
-<!-- NOTE: CSS and app bootstrap are loaded by index.html -->
-<!-- ========================================================= -->
+﻿<!DOCTYPE html>
+<!-- ===================================================================== -->
+<!-- StreamSuites Dashboard - Creator Chat Triggers                         -->
+<!-- ===================================================================== -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StreamSuites - Chat Triggers</title>
+  <meta
+    name="description"
+    content="Preview and toggle creator chat triggers per platform."
+  />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
-<!-- =========================================================
-     HEADER
-     ========================================================= -->
-<header class="ss-header">
-  <div class="ss-header-left">
-    <h1 class="ss-title">StreamSuites</h1>
-    <span class="ss-subtitle">Creator Triggers</span>
-  </div>
-</header>
-
-<!-- =========================================================
-     HONESTY BANNER
-     ========================================================= -->
-<div id="triggers-banner" class="ss-alert"></div>
-
-<!-- =========================================================
-     TRIGGERS PANEL
-     ========================================================= -->
-<section class="ss-panel">
-  <div class="ss-toolbar">
-    <div class="ss-toolbar-left">
-      <button id="btn-add-trigger" class="ss-btn ss-btn-primary">
-        + Add Trigger
-      </button>
-
-      <button id="btn-refresh-triggers" class="ss-btn ss-btn-secondary">
-        Refresh from runtime
-      </button>
-    </div>
-
-    <div class="ss-toolbar-right">
-      <button id="btn-save-triggers" class="ss-btn ss-btn-primary">
-        Save triggers.json
-      </button>
-    </div>
-  </div>
-
-  <div class="ss-panel-body">
-    <div id="triggers-runtime-state" class="muted">Loaded from runtime snapshot.</div>
-    <div id="triggers-runtime-missing" class="ss-empty hidden">
-      Runtime not reporting triggers.
-    </div>
-    <div id="triggers-actions-missing" class="ss-alert ss-alert-danger hidden">
-      Runtime not reporting trigger actions; editing is disabled until actions are available.
-    </div>
-
-    <div class="ss-meta-row">
-      <div class="ss-chip">Creator: <span id="triggers-creator-label">—</span></div>
-      <div class="ss-chip">Snapshot: <span id="triggers-snapshot-label">—</span></div>
-    </div>
-
-    <div id="triggers-message" class="ss-alert hidden"></div>
-
-    <table class="ss-table">
-      <thead>
-        <tr>
-          <th>Status</th>
-          <th>Match</th>
-          <th>Mode</th>
-          <th>Action</th>
-          <th>Creator</th>
-          <th class="align-right">Actions</th>
-        </tr>
-      </thead>
-
-      <tbody id="triggers-table-body">
-        <!-- populated dynamically -->
-      </tbody>
-    </table>
-
-    <div id="triggers-empty" class="ss-empty hidden">
-      No triggers configured yet for this creator.
-    </div>
-  </div>
-</section>
-
-<div id="triggers-save-notice" class="ss-alert hidden" style="margin: 12px 0;">
-  Trigger changes apply on next runtime restart.
-</div>
-
-<!-- =========================================================
-     RECENT TRIGGER ACTIVITY
-     ========================================================= -->
-<section class="ss-panel">
-  <header class="ss-panel-header">
-    <div class="ss-panel-header-main">
-      <h2>Recent Trigger Activity</h2>
-      <p class="muted" style="margin:6px 0 0;">
-        Viewer-triggered commands captured from runtime exports (read-only).
-      </p>
-    </div>
-  </header>
-
-  <div class="ss-toolbar">
-    <div class="ss-toolbar-left">
-      <button id="btn-refresh-trigger-activity" class="ss-btn ss-btn-secondary ss-btn-small">
-        Refresh activity
-      </button>
-      <span id="triggers-activity-status" class="muted">Waiting for exports…</span>
-    </div>
-  </div>
-
-  <div class="ss-panel-body">
-    <div id="triggers-activity-error" class="ss-alert ss-alert-danger hidden"></div>
-
-    <div class="ss-meta-row">
-      <div><strong>Last export:</strong> <span id="triggers-activity-exported">—</span></div>
-    </div>
-
-    <ul id="triggers-activity-list" class="ss-list muted"></ul>
-
-    <div id="triggers-activity-empty" class="ss-empty hidden">
-      No trigger activity exported yet.
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================
-     TRIGGER EDITOR
-     ========================================================= -->
-<section id="trigger-editor" class="ss-panel hidden">
-  <header class="ss-panel-header">
-    <div class="ss-panel-header-main">
-      <h2 id="trigger-editor-title">Add Trigger</h2>
-      <span class="muted">Creator: <span id="trigger-editor-creator">—</span></span>
-    </div>
-  </header>
-
-  <div class="ss-panel-body">
-    <form id="trigger-form" autocomplete="off">
-      <div class="ss-form-row">
-        <label class="inline-label switch-button" aria-label="Trigger enabled">
-          <div class="switch-scale">
-            <div class="switch-outer">
-              <input type="checkbox" id="trigger-enabled" checked />
-              <div class="ss-switch-inner">
-                <span class="ss-switch-toggle"></span>
-                <span class="ss-switch-indicator"></span>
-              </div>
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/theme-dark.css" />
+  <link rel="stylesheet" href="/css/creator-dashboard.css" />
+</head>
+<body>
+  <div class="creator-app">
+    <header class="creator-header">
+      <div class="creator-header-left">
+        <a href="https://streamsuites.app" class="creator-brand-link">
+          <img class="creator-logo-img" src="/assets/logos/logo.png" alt="StreamSuites" />
+          <h1 class="creator-title">StreamSuites</h1>
+          <span class="dashboard-badge creator-dashboard-badge">CREATOR DASHBOARD</span>
+        </a>
+      </div>
+      <div class="creator-header-right">
+        <div class="creator-account streamsuites-auth" data-auth-summary="true" data-account-menu="true">
+          <button
+            class="creator-account-toggle"
+            type="button"
+            data-account-toggle="true"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <span class="streamsuites-auth-avatar">
+              <img
+                class="creator-avatar"
+                src="/assets/icons/ui/profile.svg"
+                alt="Creator avatar"
+                data-auth-avatar="true"
+              />
+            </span>
+            <span class="streamsuites-auth-meta">
+              <span class="streamsuites-auth-name" data-auth-name="true">Signed out</span>
+              <span class="streamsuites-auth-identity" data-auth-email="true">Signed out</span>
+            </span>
+            <span class="creator-account-chevron" aria-hidden="true"></span>
+          </button>
+          <span class="streamsuites-auth-role">Creator</span>
+          <span class="streamsuites-auth-tier" data-auth-tier="true">CORE</span>
+          <div class="creator-account-dropdown" data-account-dropdown="true" role="menu">
+          <div class="creator-account-details" data-account-details-panel="true" hidden>
+            <div class="creator-account-detail">
+              <span class="creator-account-detail-label">Display name</span>
+              <span class="creator-account-detail-value" data-account-detail-name="true">Signed out</span>
+            </div>
+            <div class="creator-account-detail">
+              <span class="creator-account-detail-label">Email</span>
+              <span class="creator-account-detail-value" data-account-detail-email="true">Signed out</span>
+            </div>
+            <div class="creator-account-detail">
+              <span class="creator-account-detail-label">Tier</span>
+              <span class="creator-account-detail-value" data-account-detail-tier="true">CORE</span>
             </div>
           </div>
-          <span class="sr-only">Enabled (applies on restart)</span>
-        </label>
+          <button class="creator-account-item" type="button" data-account-details-toggle="true">
+            View account details
+          </button>
+          <button class="creator-account-item" type="button" data-account-edit-toggle="true">
+            Change display name
+          </button>
+          <div class="creator-account-form" data-account-edit-panel="true" hidden>
+            <label class="creator-account-input-label" for="creator-display-name">
+              Display name
+            </label>
+            <input
+              class="creator-account-input"
+              type="text"
+              id="creator-display-name"
+              autocomplete="name"
+              data-account-display-name="true"
+            />
+            <div class="creator-account-form-actions">
+              <button class="creator-account-item primary" type="button" data-account-save="true">
+                Save
+              </button>
+              <button class="creator-account-item subtle" type="button" data-account-cancel="true">
+                Cancel
+              </button>
+            </div>
+            <div class="creator-account-status" data-account-status="true" aria-live="polite" hidden></div>
+          </div>
+          <button class="creator-account-item" type="button" data-auth-logout="true">Log out</button>
+          <button class="creator-account-item danger" type="button" data-account-delete="true">
+            Delete account
+          </button>
+        </div>
       </div>
+    </header>
 
-      <div class="ss-form-row">
-        <label for="trigger-match">Match pattern</label>
-        <input
-          type="text"
-          id="trigger-match"
-          placeholder="e.g. !ping"
-          required
-        />
+    <section class="creator-lockout" data-creator-lockout hidden>
+      <div class="lockout-card">
+        <span class="lockout-pill">Creator access required</span>
+        <h2>This area requires creator access.</h2>
+        <p>Your StreamSuites account is authenticated, but creator access is not enabled.</p>
+        <div class="lockout-actions">
+          <a
+            class="lockout-button"
+            href="https://api.streamsuites.app/auth/login/google?surface=creator"
+          >
+            Login as Creator
+          </a>
+          <button class="lockout-button secondary" type="button" data-auth-logout="true">
+            Sign out
+          </button>
+        </div>
       </div>
+    </section>
 
-      <div class="ss-form-row">
-        <label for="trigger-match-mode">Match mode</label>
-        <select id="trigger-match-mode">
-          <option value="equals_icase">Equals (case-insensitive)</option>
-          <option value="contains_icase">Contains (case-insensitive)</option>
-        </select>
-      </div>
+    <div class="creator-layout" data-creator-content>
+      <aside class="creator-nav">
+        <span class="creator-nav-title">Creator navigation</span>
+        <nav class="creator-nav-main">
+          <a href="/index.html">Overview</a>
+          <a href="/views/plans.html">Plans &amp; Tiers</a>
+          <a href="/views/triggers.html" class="is-active">Chat Triggers</a>
+          <a href="/views/settings.html">Settings / Preferences</a>
+        </nav>
+        <div class="creator-nav-group">
+          <span class="creator-nav-label">Platforms</span>
+          <a href="/views/platforms/rumble.html">Rumble</a>
+          <a href="/views/platforms/youtube.html">YouTube</a>
+          <a href="/views/platforms/twitch.html">Twitch</a>
+          <a href="/views/platforms/kick.html">Kick</a>
+          <a class="is-disabled" href="/views/platforms/pilled.html" aria-disabled="true">Pilled</a>
+        </div>
+        <div class="creator-nav-footer">
+          <span class="creator-nav-label">Quick links</span>
+          <a href="https://streamsuites.app">Public site</a>
+          <a href="https://streamsuites.app/clips">Clips gallery</a>
+          <a href="https://streamsuites.app/scoreboards">Scoreboards</a>
+          <a href="https://streamsuites.app/support.html">Support</a>
+          <a href="https://docs.streamsuites.app">Documentation</a>
+          <a href="https://streamsuites.app/donate.html">Donate</a>
+        </div>
+      </aside>
 
-      <div class="ss-form-row">
-        <label for="trigger-action">Action</label>
-        <select id="trigger-action"></select>
-        <p class="muted">
-          Actions are provided by the runtime. Execution internals remain hidden
-          here; selections only change the next exported triggers.json.
-        </p>
-      </div>
+      <main class="creator-main">
+        <section class="creator-section">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">Automation</span>
+              <h2>Chat triggers</h2>
+            </div>
+            <div class="section-actions">
+              <span class="status-pill warning">
+                <span class="status-dot"></span>
+                Preview only
+              </span>
+              <span class="status-pill subtle" data-trigger-status>No preview changes</span>
+            </div>
+          </div>
 
-      <div class="ss-form-actions">
-        <button type="submit" class="ss-btn ss-btn-primary">
-          Save Trigger
-        </button>
+          <div class="creator-hero">
+            <div>
+              <h3>Stage how chat triggers behave per platform.</h3>
+              <p>
+                Toggle triggers per channel to preview your automation layout. Changes stay local to
+                this page and reset on reload.
+              </p>
+            </div>
+            <div class="creator-hero-actions">
+              <button class="creator-button ghost" type="button" data-trigger-reset>
+                Reset preview
+              </button>
+            </div>
+          </div>
 
-        <button
-          type="button"
-          id="btn-cancel-trigger"
-          class="ss-btn ss-btn-secondary"
-        >
-          Cancel
-        </button>
-      </div>
+          <div class="triggers-toolbar">
+            <div class="triggers-meta">
+              Triggers: <strong data-trigger-count>0</strong>
+            </div>
+            <div class="triggers-meta">
+              Last updated: <span data-trigger-updated>Not updated yet</span>
+            </div>
+          </div>
 
-      <p class="muted" style="margin-top: 8px;">
-        Trigger changes are staged only. Export to shared/state/admin/triggers.json
-        and restart StreamSuites to apply.
-      </p>
-    </form>
+          <div class="triggers-grid" data-trigger-list></div>
+
+          <div class="trigger-footnote">
+            <span class="status-pill subtle">No saves yet</span>
+            <p>
+              This control surface is interactive but non-persistent. Saving and runtime sync will
+              arrive in a future phase.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
   </div>
-</section>
 
-<!-- =========================================================
-     FOOTER
-     ========================================================= -->
-<footer class="ss-footer">
-  <span class="muted">
-    Triggers are scoped to a single creator and apply on the next runtime restart.
-  </span>
-</footer>
-
-<script src="/js/auth.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/triggers.js"></script>
+</body>
+</html>
