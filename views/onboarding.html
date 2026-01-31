@@ -108,8 +108,8 @@
         <span class="section-kicker">Onboarding</span>
         <h2>Welcome to StreamSuites Creator</h2>
         <p class="creator-onboarding-copy">
-          Confirm your current tier and continue to your creator dashboard. Upgrades will become
-          available once GOLD and PRO tiers launch.
+          Confirm your current tier and continue to your creator dashboard. GOLD and PRO remain visible
+          but locked for now.
         </p>
 
         <div class="creator-onboarding-tier">
@@ -117,29 +117,33 @@
         </div>
 
         <div class="creator-tier-grid">
-          <article class="creator-tier-card is-active" data-tier="CORE">
+          <article class="creator-tier-card is-active" data-tier="CORE" data-tier-id="core">
             <div class="creator-tier-header">
               <h3>CORE</h3>
-              <span class="creator-tier-pill">Active</span>
+              <span class="creator-tier-pill" data-tier-label>Current</span>
             </div>
             <p>Core creator workspace with runtime exports.</p>
-            <button class="creator-button ghost" type="button" disabled>Current tier</button>
+            <button class="creator-button ghost" type="button" data-tier-action>Current tier</button>
           </article>
-          <article class="creator-tier-card is-disabled" data-tier="GOLD">
+          <article class="creator-tier-card is-disabled" data-tier="GOLD" data-tier-id="gold">
             <div class="creator-tier-header">
               <h3>GOLD</h3>
-              <span class="creator-tier-price">$5/mo</span>
+              <span class="creator-tier-pill" data-tier-label>Coming soon</span>
             </div>
             <p>Automation boosters and premium creator queues.</p>
-            <button class="creator-button ghost" type="button" disabled>Coming soon</button>
+            <button class="creator-button ghost" type="button" data-tier-action aria-disabled="true" disabled>
+              Not available yet
+            </button>
           </article>
-          <article class="creator-tier-card is-disabled" data-tier="PRO">
+          <article class="creator-tier-card is-disabled" data-tier="PRO" data-tier-id="pro">
             <div class="creator-tier-header">
               <h3>PRO</h3>
-              <span class="creator-tier-price">$15/mo</span>
+              <span class="creator-tier-pill" data-tier-label>Coming soon</span>
             </div>
             <p>Advanced integrations and priority creator support.</p>
-            <button class="creator-button ghost" type="button" disabled>Coming soon</button>
+            <button class="creator-button ghost" type="button" data-tier-action aria-disabled="true" disabled>
+              Not available yet
+            </button>
           </article>
         </div>
 

@@ -21,6 +21,7 @@
 
   const CREATOR_ROLE = "creator";
   const TIER_OPTIONS = new Set(["CORE", "GOLD", "PRO"]);
+  const TIER_ID_OPTIONS = new Set(["core", "gold", "pro"]);
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
 
   const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/auth/login.html`;
@@ -81,6 +82,43 @@
     return TIER_OPTIONS.has(trimmed) ? trimmed : "CORE";
   }
 
+  function normalizeTierId(tierId) {
+    if (typeof tierId !== "string") return "";
+    const trimmed = tierId.trim().toLowerCase();
+    return TIER_ID_OPTIONS.has(trimmed) ? trimmed : "";
+  }
+
+  function normalizeVisibility(visibility) {
+    if (typeof visibility !== "string") return "";
+    const trimmed = visibility.trim().toLowerCase();
+    return trimmed === "public" || trimmed === "soft_locked" ? trimmed : "";
+  }
+
+  function normalizeEffectiveTier(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    const tierId = normalizeTierId(raw.tier_id || raw.tierId);
+    const tierLabel =
+      typeof raw.tier_label === "string"
+        ? raw.tier_label.trim()
+        : typeof raw.tierLabel === "string"
+          ? raw.tierLabel.trim()
+          : "";
+    const visibility = normalizeVisibility(raw.visibility);
+
+    if (!tierId && !tierLabel && !visibility) return null;
+
+    return {
+      tierId,
+      tierLabel: tierLabel || (tierId ? tierId.toUpperCase() : ""),
+      visibility
+    };
+  }
+
+  function normalizeFeatures(raw) {
+    if (!raw || typeof raw !== "object") return {};
+    return { ...raw };
+  }
+
   function normalizeSessionPayload(payload) {
     if (!payload || typeof payload !== "object") {
       return { authenticated: false };
@@ -126,13 +164,21 @@
       sessionSource.onboarding_required === true ||
       sessionSource.onboardingRequired === true;
 
+    const effectiveTier = normalizeEffectiveTier(
+      sessionSource.effective_tier || sessionSource.effectiveTier
+    );
+    const features = normalizeFeatures(sessionSource.features);
+    const tier = normalizeTier(effectiveTier?.tierId || sessionSource.tier);
+
     return {
       authenticated: true,
       email: emailCandidate.trim() || "Signed in",
       name: displayNameCandidate.trim() || "",
       avatar: avatarCandidate.trim() || "",
       role,
-      tier: normalizeTier(sessionSource.tier),
+      tier,
+      effectiveTier,
+      features,
       onboardingRequired
     };
   }
@@ -266,8 +312,16 @@
       (left.avatar || "") === (right.avatar || "") &&
       (left.role || "") === (right.role || "") &&
       (left.tier || "") === (right.tier || "") &&
+      (left.effectiveTier?.tierId || "") === (right.effectiveTier?.tierId || "") &&
+      (left.effectiveTier?.tierLabel || "") === (right.effectiveTier?.tierLabel || "") &&
+      (left.effectiveTier?.visibility || "") === (right.effectiveTier?.visibility || "") &&
+      JSON.stringify(left.features || {}) === JSON.stringify(right.features || {}) &&
       !!left.onboardingRequired === !!right.onboardingRequired
     );
+  }
+
+  function getTierLabel(session) {
+    return session?.effectiveTier?.tierLabel || session?.tier || "CORE";
   }
 
   function updateAppSession(session) {
@@ -279,6 +333,8 @@
       avatar: session?.avatar || "",
       role: session?.role || "",
       tier: session?.tier || "",
+      effectiveTier: session?.effectiveTier || null,
+      features: session?.features || {},
       onboardingRequired: session?.onboardingRequired === true
     };
   }
@@ -291,6 +347,8 @@
       avatar: session?.avatar || "",
       role: session?.role || "",
       tier: session?.tier || "",
+      effectiveTier: session?.effectiveTier || null,
+      features: session?.features || {},
       onboardingRequired: session?.onboardingRequired === true
     };
     try {
@@ -393,7 +451,7 @@
       if (nameEl) {
         nameEl.textContent = displayName;
       }
-      tierEl.textContent = session.tier || "CORE";
+      tierEl.textContent = getTierLabel(session);
       tierEl.hidden = false;
       logoutEl.hidden = false;
       if (avatarEl) {
@@ -433,7 +491,7 @@
         detailEmail.textContent = authenticated ? getEmailValue(session) : "Signed out";
       }
       if (detailTier) {
-        detailTier.textContent = authenticated ? session?.tier || "CORE" : "CORE";
+        detailTier.textContent = authenticated ? getTierLabel(session) : "CORE";
       }
     });
   }

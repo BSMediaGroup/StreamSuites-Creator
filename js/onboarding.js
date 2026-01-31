@@ -128,6 +128,21 @@
     return VALID_TIERS.has(normalized) ? normalized : "CORE";
   }
 
+  function getEffectiveTierLabel(session) {
+    const effectiveTier = session?.effectiveTier;
+    if (effectiveTier?.tierLabel) return effectiveTier.tierLabel;
+    if (effectiveTier?.tierId) return normalizeTier(effectiveTier.tierId);
+    return null;
+  }
+
+  function getSessionTier(session, fallbackTier) {
+    return (
+      getEffectiveTierLabel(session) ||
+      (typeof fallbackTier === "string" ? normalizeTier(fallbackTier) : null) ||
+      normalizeTier(session?.tier || "CORE")
+    );
+  }
+
   function normalizeStep(step) {
     if (typeof step !== "string") return "welcome";
     const trimmed = step.trim().toLowerCase();
@@ -376,12 +391,12 @@
   }
 
   function renderTier() {
-    const tier = normalizeTier(sessionSnapshot?.tier || currentState?.tier || "CORE");
+    const tier = getSessionTier(sessionSnapshot, currentState?.tier);
 
     const copy = document.createElement("p");
     copy.className = "ss-onboarding-copy";
     copy.textContent =
-      "StreamSuites tiers unlock additional automation and integrations. Your current tier is shown below.";
+      "StreamSuites tiers group creator access and integrations. Your current tier is shown below.";
 
     const tierRow = document.createElement("div");
     tierRow.className = "ss-onboarding-tier";
@@ -389,7 +404,7 @@
 
     const hint = document.createElement("p");
     hint.className = "muted";
-    hint.textContent = "GOLD and PRO tiers are coming soon. You will be notified when upgrades are available.";
+    hint.textContent = "GOLD and PRO tiers are visible but not available yet.";
 
     ui.body.append(copy, tierRow, hint);
 
@@ -462,11 +477,12 @@
 
     const summary = document.createElement("ul");
     summary.className = "ss-onboarding-list";
+    const tierLabel = getSessionTier(sessionSnapshot, currentState?.tier);
     summary.innerHTML =
       "<li>Terms accepted: <strong>" +
       (currentState?.accepted_terms ? "Yes" : "Not yet") +
       "</strong></li><li>Tier: <strong>" +
-      normalizeTier(currentState?.tier || sessionSnapshot?.tier || "CORE") +
+      tierLabel +
       "</strong></li>";
 
     ui.body.append(copy, summary);

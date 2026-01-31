@@ -157,61 +157,56 @@
               <h2>Creator tiers</h2>
             </div>
             <p class="section-subtext">
-              Upgrades are visible but disabled until GOLD and PRO launch.
-              <a
-                class="ss-link"
-                href="https://docs.streamsuites.app/integrations/stripe"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Billing details</a>
+              GOLD and PRO tiers are visible but not available yet.
             </p>
           </div>
 
           <div class="card-grid plan-grid">
-            <article class="card tier-card is-active">
+            <article class="card tier-card is-active" data-tier-id="core">
               <div class="card-top">
                 <h3>CORE</h3>
-                <span class="status-pill success">Current plan</span>
+                <span class="status-pill success" data-tier-label>Current plan</span>
               </div>
-              <p>Free creator access with runtime exports and dashboards.</p>
-              <div class="tier-price">Free</div>
+              <p>Creator access with runtime exports and dashboards.</p>
               <ul class="tier-features">
                 <li>Core creator dashboard access</li>
                 <li>Runtime export monitoring</li>
                 <li>Standard support queue</li>
               </ul>
               <p class="tier-note">Default plan for all creators.</p>
-              <button class="creator-button ghost" type="button">Select plan</button>
+              <button class="creator-button ghost" type="button" data-tier-action>Current plan</button>
             </article>
-            <article class="card tier-card is-disabled">
+            <article class="card tier-card is-disabled" data-tier-id="gold">
               <div class="card-top">
                 <h3>GOLD</h3>
-                <span class="status-pill warning">Coming soon</span>
+                <span class="status-pill warning" data-tier-label>Coming soon</span>
               </div>
               <p>Expanded automation and premium creator queues.</p>
-              <div class="tier-price">$5 / month</div>
               <ul class="tier-features">
                 <li>Priority automation windows</li>
                 <li>Enhanced export scheduling</li>
                 <li>Premium creator queue access</li>
               </ul>
-              <p class="tier-note">Upgrades unlock after the GOLD launch window.</p>
-              <button class="creator-button ghost" type="button" disabled>Upgrade</button>
+              <p class="tier-note">Not available yet.</p>
+              <button class="creator-button ghost" type="button" data-tier-action aria-disabled="true" disabled>
+                Not available yet
+              </button>
             </article>
-            <article class="card tier-card is-disabled">
+            <article class="card tier-card is-disabled" data-tier-id="pro">
               <div class="card-top">
                 <h3>PRO</h3>
-                <span class="status-pill warning">Coming soon</span>
+                <span class="status-pill warning" data-tier-label>Coming soon</span>
               </div>
               <p>Advanced integrations and priority creator support.</p>
-              <div class="tier-price">$15 / month</div>
               <ul class="tier-features">
                 <li>Advanced platform integrations</li>
                 <li>Priority creator support SLA</li>
                 <li>Early access to new modules</li>
               </ul>
-              <p class="tier-note">Upgrades unlock after the PRO launch window.</p>
-              <button class="creator-button ghost" type="button" disabled>Upgrade</button>
+              <p class="tier-note">Not available yet.</p>
+              <button class="creator-button ghost" type="button" data-tier-action aria-disabled="true" disabled>
+                Not available yet
+              </button>
             </article>
           </div>
         </section>
@@ -221,5 +216,6 @@
 
   <script src="/js/app.js"></script>
   <script src="/js/auth.js"></script>
+  <script src="/js/plans.js"></script>
 </body>
 </html>

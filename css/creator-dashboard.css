@@ -765,6 +765,8 @@ h3 {
 
 .creator-tier-card.is-disabled {
   opacity: 0.7;
+  pointer-events: none;
+  cursor: default;
 }
 
 .creator-tier-header {
@@ -827,6 +829,13 @@ h3 {
 
 .tier-card.is-disabled {
   opacity: 0.7;
+  pointer-events: none;
+  cursor: default;
+}
+
+.creator-tier-card.is-disabled .creator-tier-pill,
+.tier-card.is-disabled .status-pill {
+  color: var(--creator-muted);
 }
 
 .stat-grid {

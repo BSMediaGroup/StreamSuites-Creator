@@ -9,6 +9,7 @@
   const ONBOARDING_COMPLETE_ENDPOINT = `${RUNTIME_BASE_URL}/account/onboarding/complete`;
 
   const VALID_TIERS = new Set(["CORE", "GOLD", "PRO"]);
+  const VALID_TIER_IDS = new Set(["core", "gold", "pro"]);
 
   const ui = {
     tierLabel: null,
@@ -18,12 +19,45 @@
     error: null
   };
   const REQUIRED_TIER = "CORE";
+  const REQUIRED_TIER_ID = "core";
   let confirmedTier = null;
 
   function normalizeTier(tier) {
     if (typeof tier !== "string") return "CORE";
     const normalized = tier.trim().toUpperCase();
     return VALID_TIERS.has(normalized) ? normalized : "CORE";
+  }
+
+  function normalizeTierId(tierId) {
+    if (typeof tierId !== "string") return "";
+    const normalized = tierId.trim().toLowerCase();
+    return VALID_TIER_IDS.has(normalized) ? normalized : "";
+  }
+
+  function normalizeVisibility(visibility) {
+    if (typeof visibility !== "string") return "";
+    const normalized = visibility.trim().toLowerCase();
+    return normalized === "public" || normalized === "soft_locked" ? normalized : "";
+  }
+
+  function normalizeEffectiveTier(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    const tierId = normalizeTierId(raw.tier_id || raw.tierId);
+    const tierLabel =
+      typeof raw.tier_label === "string"
+        ? raw.tier_label.trim()
+        : typeof raw.tierLabel === "string"
+          ? raw.tierLabel.trim()
+          : "";
+    const visibility = normalizeVisibility(raw.visibility);
+
+    if (!tierId && !tierLabel && !visibility) return null;
+
+    return {
+      tierId,
+      tierLabel: tierLabel || (tierId ? tierId.toUpperCase() : ""),
+      visibility
+    };
   }
 
   function getFetchWithTimeout() {
@@ -99,14 +133,38 @@
     }
   }
 
-  function updateTierDisplay(tier) {
+  function updateTierDisplay(tierLabel, currentTierId, effectiveTier) {
     if (ui.tierLabel) {
-      ui.tierLabel.textContent = tier;
+      ui.tierLabel.textContent = tierLabel;
     }
     if (ui.tierCards) {
+      const visibility = effectiveTier?.visibility || "public";
       ui.tierCards.forEach((card) => {
         const cardTier = card.getAttribute("data-tier");
-        card.classList.toggle("is-active", cardTier === tier);
+        const cardTierId = normalizeTierId(card.getAttribute("data-tier-id") || "");
+        const isCore = cardTierId === REQUIRED_TIER_ID;
+        const isLocked = !isCore || visibility === "soft_locked";
+        const isCurrent = isCore && currentTierId === REQUIRED_TIER_ID;
+        const labelEl = card.querySelector("[data-tier-label]");
+        const actionEl = card.querySelector("[data-tier-action]");
+
+        card.classList.toggle("is-active", isCurrent);
+        card.classList.toggle("is-disabled", isLocked);
+        if (labelEl) {
+          labelEl.textContent = isCurrent ? "Current" : isLocked ? "Coming soon" : "Select";
+        }
+        if (actionEl instanceof HTMLButtonElement) {
+          if (isLocked) {
+            actionEl.textContent = "Not available yet";
+            actionEl.disabled = true;
+            actionEl.setAttribute("aria-disabled", "true");
+          } else {
+            actionEl.textContent = isCurrent ? "Current tier" : "Select tier";
+            actionEl.disabled = false;
+            actionEl.setAttribute("aria-disabled", "false");
+          }
+        }
+        card.dataset.locked = isLocked ? "true" : "false";
       });
     }
   }
@@ -148,13 +206,17 @@
     return fetchJson(AUTH_SESSION_ENDPOINT, {}, 5000);
   }
 
-  function extractTier(accountState, session) {
-    const candidate =
-      accountState?.tier ||
-      accountState?.user?.tier ||
-      session?.tier ||
-      "CORE";
-    return normalizeTier(candidate);
+  function extractEffectiveTier(accountState, session) {
+    const source =
+      accountState?.user && typeof accountState.user === "object"
+        ? accountState.user
+        : accountState;
+    return normalizeEffectiveTier(
+      source?.effective_tier ||
+        source?.effectiveTier ||
+        session?.effectiveTier ||
+        session?.effective_tier
+    );
   }
 
   async function init() {
@@ -174,6 +236,10 @@
     if (ui.tierCards) {
       ui.tierCards.forEach((card) => {
         card.addEventListener("click", () => {
+          if (card.dataset.locked === "true") {
+            setStatus("Only the CORE tier is available right now.", true);
+            return;
+          }
           const tier = card.getAttribute("data-tier");
           if (tier !== REQUIRED_TIER) {
             setStatus("Only the CORE tier is available right now.", true);
@@ -217,8 +283,13 @@
       session = null;
     }
 
-    const tier = extractTier(accountState, session);
-    updateTierDisplay(tier);
+    const effectiveTier = extractEffectiveTier(accountState, session);
+    const currentTierId = normalizeTierId(
+      effectiveTier?.tierId || session?.tier || REQUIRED_TIER_ID
+    );
+    const tierLabel =
+      effectiveTier?.tierLabel || normalizeTier(currentTierId || REQUIRED_TIER_ID);
+    updateTierDisplay(tierLabel, currentTierId, effectiveTier);
     if (ui.continueButton) {
       ui.continueButton.disabled = true;
     }
