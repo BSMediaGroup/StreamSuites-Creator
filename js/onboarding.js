@@ -6,7 +6,8 @@
   const ONBOARDING_CACHE_KEY = "streamsuites.onboarding.cache";
 
   const VALID_STATES = new Set(["not_started", "in_progress", "complete"]);
-  const VALID_TIERS = new Set(["CORE", "GOLD", "PRO"]);
+  const tierUtils = window.StreamSuitesTier || {};
+  const normalizeTier = tierUtils.normalizeTier;
 
   const STEP_DEFINITIONS = [
     {
@@ -122,20 +123,16 @@
     return data;
   }
 
-  function normalizeTier(tier) {
-    if (typeof tier !== "string") return "CORE";
-    const normalized = tier.trim().toUpperCase();
-    return VALID_TIERS.has(normalized) ? normalized : "CORE";
-  }
-
   function getEffectiveTierLabel(session) {
     const effectiveTier = session?.effectiveTier;
-    if (effectiveTier?.tierLabel) return effectiveTier.tierLabel;
+    if (typeof normalizeTier !== "function") return null;
+    if (effectiveTier?.tierLabel) return normalizeTier(effectiveTier.tierLabel);
     if (effectiveTier?.tierId) return normalizeTier(effectiveTier.tierId);
     return null;
   }
 
   function getSessionTier(session, fallbackTier) {
+    if (typeof normalizeTier !== "function") return "CORE";
     return (
       getEffectiveTierLabel(session) ||
       (typeof fallbackTier === "string" ? normalizeTier(fallbackTier) : null) ||
@@ -164,7 +161,10 @@
       onboarding_state: state,
       onboarding_step: normalizeStep(payload.onboarding_step || payload.step),
       accepted_terms: payload.accepted_terms === true,
-      tier: normalizeTier(payload.tier || payload.tier_level),
+      tier:
+        typeof normalizeTier === "function"
+          ? normalizeTier(payload.tier || payload.tier_level)
+          : "CORE",
       metadata: payload.metadata && typeof payload.metadata === "object" ? payload.metadata : {}
     };
   }

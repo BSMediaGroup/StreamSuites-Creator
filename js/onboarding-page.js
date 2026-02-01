@@ -8,9 +8,11 @@
   const AUTH_SESSION_ENDPOINT = `${RUNTIME_BASE_URL}/auth/session`;
   const ONBOARDING_COMPLETE_ENDPOINT = `${RUNTIME_BASE_URL}/account/onboarding/complete`;
 
-  const VALID_TIERS = new Set(["CORE", "GOLD", "PRO"]);
   const VALID_TIER_IDS = new Set(["core", "gold", "pro"]);
   const SESSION_IDLE_REASON = "cookie_missing";
+  const tierUtils = window.StreamSuitesTier || {};
+  const normalizeTier = tierUtils.normalizeTier;
+  const renderTierPill = tierUtils.renderTierPill;
 
   const ui = {
     tierLabel: null,
@@ -23,26 +25,10 @@
   const REQUIRED_TIER_ID = "core";
   let confirmedTier = null;
 
-  function normalizeTier(tier) {
-    if (typeof tier !== "string") return "CORE";
-    const normalized = tier.trim().toUpperCase();
-    return VALID_TIERS.has(normalized) ? normalized : "CORE";
-  }
-
   function normalizeTierId(tierId) {
     if (typeof tierId !== "string") return "";
     const normalized = tierId.trim().toLowerCase();
     return VALID_TIER_IDS.has(normalized) ? normalized : "";
-  }
-
-  function applyTierPillClass(element, tierId, tierLabel) {
-    if (!element) return;
-    const normalized = normalizeTierId(tierId);
-    const fallback = normalizeTier(tierLabel || "CORE").toLowerCase();
-    const tierClass = normalized || fallback;
-    element.classList.add("tier-pill");
-    element.classList.remove("tier-core", "tier-gold", "tier-pro");
-    element.classList.add(`tier-${tierClass}`);
   }
 
   function normalizeVisibility(visibility) {
@@ -189,8 +175,8 @@
   }
 
   function updateTierDisplay(tierLabel, currentTierId, effectiveTier) {
-    if (ui.tierLabel) {
-      ui.tierLabel.textContent = tierLabel;
+    if (ui.tierLabel && typeof normalizeTier === "function") {
+      ui.tierLabel.textContent = normalizeTier(tierLabel);
     }
     if (ui.tierCards) {
       const visibility = effectiveTier?.visibility || "public";
@@ -205,10 +191,9 @@
 
         card.classList.toggle("is-active", isCurrent);
         card.classList.toggle("is-disabled", isLocked);
-        if (labelEl) {
-          const tierLabel = cardTier || (cardTierId ? cardTierId.toUpperCase() : "CORE");
-          labelEl.textContent = tierLabel;
-          applyTierPillClass(labelEl, cardTierId, tierLabel);
+        if (labelEl && typeof normalizeTier === "function" && typeof renderTierPill === "function") {
+          const normalizedLabel = normalizeTier(cardTier || cardTierId || "CORE");
+          renderTierPill(labelEl, normalizedLabel);
         }
         if (actionEl instanceof HTMLButtonElement) {
           if (isLocked) {
@@ -347,7 +332,10 @@
       effectiveTier?.tierId || session?.tier || REQUIRED_TIER_ID
     );
     const tierLabel =
-      effectiveTier?.tierLabel || normalizeTier(currentTierId || REQUIRED_TIER_ID);
+      effectiveTier?.tierLabel ||
+      (typeof normalizeTier === "function"
+        ? normalizeTier(currentTierId || REQUIRED_TIER_ID)
+        : REQUIRED_TIER);
     updateTierDisplay(tierLabel, currentTierId, effectiveTier);
     if (ui.continueButton) {
       ui.continueButton.disabled = true;

@@ -3,15 +3,9 @@
 
   const VALID_TIER_IDS = new Set(["core", "gold", "pro"]);
   const REQUIRED_TIER_ID = "core";
-
-  function applyTierPillClass(element, tierId) {
-    if (!element) return;
-    const normalized = normalizeTierId(tierId);
-    if (!normalized) return;
-    element.classList.add("tier-pill");
-    element.classList.remove("tier-core", "tier-gold", "tier-pro");
-    element.classList.add(`tier-${normalized}`);
-  }
+  const tierUtils = window.StreamSuitesTier || {};
+  const normalizeTier = tierUtils.normalizeTier;
+  const renderTierPill = tierUtils.renderTierPill;
 
   function normalizeTierId(tierId) {
     if (typeof tierId !== "string") return "";
@@ -60,10 +54,9 @@
 
       card.classList.toggle("is-active", isCurrent);
       card.classList.toggle("is-disabled", isLocked);
-      if (labelEl) {
-        const tierLabel = tierId ? tierId.toUpperCase() : "CORE";
-        labelEl.textContent = tierLabel;
-        applyTierPillClass(labelEl, tierId || REQUIRED_TIER_ID);
+      if (labelEl && typeof normalizeTier === "function" && typeof renderTierPill === "function") {
+        const tierLabel = normalizeTier(tierId || REQUIRED_TIER_ID);
+        renderTierPill(labelEl, tierLabel);
       }
       if (actionEl instanceof HTMLButtonElement) {
         if (isLocked) {

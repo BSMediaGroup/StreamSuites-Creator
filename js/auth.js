@@ -20,7 +20,14 @@
   });
 
   const CREATOR_ROLE = "creator";
-  const TIER_OPTIONS = new Set(["CORE", "GOLD", "PRO"]);
+  const TIER_LABELS = new Map([
+    ["CORE", "CORE"],
+    ["CORETIER", "CORE"],
+    ["GOLD", "GOLD"],
+    ["GOLDTIER", "GOLD"],
+    ["PRO", "PRO"],
+    ["PROTIER", "PRO"]
+  ]);
   const TIER_ID_OPTIONS = new Set(["core", "gold", "pro"]);
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
 
@@ -85,9 +92,9 @@
 
   function normalizeTier(tier) {
     if (typeof tier !== "string") return "CORE";
-    const trimmed = tier.trim().toUpperCase();
-    if (!trimmed) return "CORE";
-    return TIER_OPTIONS.has(trimmed) ? trimmed : "CORE";
+    const normalized = tier.toUpperCase().replace(/[\s_]+/g, "");
+    if (!normalized) return "CORE";
+    return TIER_LABELS.get(normalized) || "CORE";
   }
 
   function normalizeTierId(tierId) {
@@ -96,12 +103,13 @@
     return TIER_ID_OPTIONS.has(trimmed) ? trimmed : "";
   }
 
-  function applyTierPillClass(element, tierLabel) {
+  function renderTierPill(element, tierLabel) {
     if (!element) return;
     const normalized = normalizeTier(tierLabel);
     element.classList.add("tier-pill");
     element.classList.remove("tier-core", "tier-gold", "tier-pro");
-    element.classList.add(`tier-${normalized.toLowerCase()}`);
+    element.dataset.tier = normalized;
+    element.textContent = normalized;
   }
 
   function normalizeVisibility(visibility) {
@@ -464,7 +472,7 @@
   }
 
   function getTierLabel(session) {
-    return session?.effectiveTier?.tierLabel || session?.tier || "CORE";
+    return normalizeTier(session?.effectiveTier?.tierLabel || session?.tier || "CORE");
   }
 
   function updateAppSession(session) {
@@ -595,8 +603,7 @@
         nameEl.textContent = displayName;
       }
       const tierLabel = getTierLabel(session);
-      tierEl.textContent = tierLabel;
-      applyTierPillClass(tierEl, tierLabel);
+      renderTierPill(tierEl, tierLabel);
       tierEl.hidden = false;
       logoutEl.hidden = false;
       if (avatarEl) {
@@ -637,7 +644,7 @@
         detailEmail.textContent = authenticated ? getEmailValue(session) : "Signed out";
       }
       if (detailTier) {
-        detailTier.textContent = authenticated ? getTierLabel(session) : "CORE";
+        renderTierPill(detailTier, authenticated ? getTierLabel(session) : "CORE");
       }
     });
   }
@@ -655,7 +662,7 @@
       emailValue.textContent = authenticated ? getEmailValue(session) : "Signed out";
     }
     if (tierValue) {
-      tierValue.textContent = authenticated ? getTierLabel(session) : "CORE";
+      renderTierPill(tierValue, authenticated ? getTierLabel(session) : "CORE");
     }
   }
 
@@ -1750,6 +1757,11 @@
       window.StreamSuitesAuth.loginHint = "Auth service is unreachable. Please try again.";
     }
   }
+
+  window.StreamSuitesTier = {
+    normalizeTier,
+    renderTierPill
+  };
 
   window.StreamSuitesAuth = {
     endpoints: AUTH_ENDPOINTS,
