@@ -230,7 +230,7 @@
     var(--btn-bg-2) 90%
   );
   color: var(--btn-bg-color);
-  padding: 0.85em 1.4em;
+  padding: 0.7em 1.2em;
   border-radius: 0.5em;
   cursor: pointer;
   font-size: var(--size, 0.85rem);
@@ -270,7 +270,7 @@
 }
 
 .ss-btn-small {
-  padding: 0.7em 1.1em;
+  padding: 0.6em 1em;
   font-size: 0.72rem;
   min-height: 40px;
 }
