@@ -322,7 +322,7 @@ h3 {
     var(--btn-bg-2) 90%
   );
   color: var(--btn-bg-color);
-  padding: 0.6em 1.1em;
+  padding: 0.5em;
   border-radius: 0.5em;
   min-height: 44px;
   min-width: 120px;
@@ -365,6 +365,11 @@ h3 {
 }
 
 .creator-account-item.danger {
+  --btn-bg-1: #b64b5e;
+  --btn-bg-2: #7c2f3f;
+}
+
+.creator-account-dropdown .creator-account-item[data-auth-logout="true"] {
   --btn-bg-1: #b64b5e;
   --btn-bg-2: #7c2f3f;
 }
@@ -432,7 +437,7 @@ h3 {
     var(--btn-bg-2) 90%
   );
   color: var(--btn-bg-color);
-  padding: 0.65em 1.2em;
+  padding: 0.5em;
   border-radius: 0.5em;
   min-height: 44px;
   min-width: 120px;
@@ -722,7 +727,7 @@ h3 {
   --btn-bg-2: var(--creator-btn-primary-2);
   --btn-bg-color: var(--creator-btn-text);
   border: none;
-  padding: 0.7em 1.2em;
+  padding: 0.5em;
   border-radius: 0.5em;
   background-size: 280% auto;
   background-image: linear-gradient(
@@ -1494,7 +1499,7 @@ h3 {
     var(--btn-bg-2) 90%
   );
   color: var(--btn-bg-color);
-  padding: 0.7em 1.25em;
+  padding: 0.5em;
   border-radius: 0.5em;
   text-decoration: none;
   font-weight: 500;
