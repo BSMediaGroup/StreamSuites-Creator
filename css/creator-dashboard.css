@@ -694,7 +694,7 @@ h3 {
   gap: 6px;
   --tier-pill-pad-y: 3px;
   --tier-pill-pad-x: 8px;
-  --tier-pill-border-size: 1.5px;
+  --tier-pill-border-size: 1.2px;
   padding: var(--tier-pill-pad-y) var(--tier-pill-pad-x);
   border-radius: 999px;
   background: var(--tier-pill-bg, rgba(123, 140, 255, 0.2));
@@ -746,8 +746,10 @@ h3 {
   padding: var(--tier-pill-border-size);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
-  filter: drop-shadow(0 0 8px var(--tier-pill-border-glow));
+  filter: drop-shadow(0 0 8px var(--tier-pill-border-glow))
+    drop-shadow(0 0 14px rgba(255, 255, 255, 0.18));
   transform: rotate(0deg);
   animation: tier-orbit var(--tier-pill-orbit-speed) linear infinite;
   opacity: 1;
@@ -758,8 +760,8 @@ h3 {
   background: linear-gradient(
     120deg,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.2) 45%,
-    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.26) 45%,
+    rgba(255, 255, 255, 0.3) 50%,
     rgba(255, 255, 255, 0) 62%
   );
   opacity: 0;
@@ -819,8 +821,8 @@ h3 {
 }
 
 .tier-pill:hover::after {
-  opacity: 0.22;
-  animation: tier-glass-sheen 4s linear infinite;
+  opacity: 0.32;
+  animation: tier-glass-sheen 3.2s cubic-bezier(0.2, 0.8, 0.3, 1) infinite;
 }
 
 @keyframes tier-glass-sheen {
