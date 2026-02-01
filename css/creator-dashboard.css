@@ -37,6 +37,19 @@ body {
   background: radial-gradient(circle at top, rgba(40, 56, 88, 0.35), transparent 55%),
     linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
   color: var(--creator-text);
+  position: relative;
+}
+
+.creator-app::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(240, 246, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 246, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 .creator-app .muted {
@@ -54,6 +67,8 @@ h3 {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 .creator-header {
