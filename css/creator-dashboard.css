@@ -275,7 +275,7 @@ h3 {
   font-weight: 600;
 }
 
-.creator-account-item {
+  .creator-account-item {
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.06);
   color: var(--creator-text);
@@ -284,7 +284,7 @@ h3 {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-family: var(--creator-heading);
+    font-family: var(--creator-font);
   cursor: pointer;
   text-align: left;
 }
@@ -357,7 +357,7 @@ h3 {
   flex-wrap: wrap;
 }
 
-.creator-account-button {
+  .creator-account-button {
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--creator-text);
   background: rgba(255, 255, 255, 0.08);
@@ -366,7 +366,7 @@ h3 {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-family: var(--creator-heading);
+    font-family: var(--creator-font);
   cursor: pointer;
 }
 
@@ -622,7 +622,7 @@ h3 {
   flex-wrap: wrap;
 }
 
-.creator-button {
+  .creator-button {
   border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 10px 18px;
   border-radius: 999px;
@@ -632,7 +632,7 @@ h3 {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-family: var(--creator-heading);
+    font-family: var(--creator-font);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -656,7 +656,7 @@ h3 {
   opacity: 0.5;
 }
 
-.status-pill {
+  .status-pill {
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -667,8 +667,8 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--creator-heading);
-}
+    font-family: var(--creator-font);
+  }
 
 .status-pill.subtle {
   color: var(--creator-muted);
@@ -686,7 +686,7 @@ h3 {
   background: rgba(255, 190, 92, 0.15);
 }
 
-.tier-pill {
+  .tier-pill {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -704,18 +704,14 @@ h3 {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   text-shadow: 0 1px 8px rgba(5, 8, 14, 0.5);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(12px);
-  overflow: hidden;
-  isolation: isolate;
-  --tier-pill-orbit-inner: rgba(255, 255, 255, 0.12);
-  --tier-pill-orbit-outer: rgba(255, 255, 255, 0.28);
-  --tier-pill-border-glow: rgba(123, 140, 255, 0.2);
-  --tier-pill-sparkle-1: rgba(255, 255, 255, 0.08);
-  --tier-pill-sparkle-2: rgba(255, 255, 255, 0.06);
-  --tier-pill-sparkle-3: rgba(255, 255, 255, 0.05);
-  --tier-pill-orbit-speed: 12s;
-}
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      0 0 12px var(--tier-pill-glow, rgba(5, 10, 24, 0.35));
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+    isolation: isolate;
+    border: var(--tier-pill-border-size) solid
+      var(--tier-pill-border, rgba(140, 170, 255, 0.45));
+  }
 
 .tier-pill::before,
 .tier-pill::after {
@@ -739,48 +735,6 @@ h3 {
   filter: blur(12px);
   opacity: 0.9;
   z-index: 0;
-}
-
-.tier-pill-orbit,
-.tier-pill-sparkle {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-.tier-pill-orbit {
-  padding: var(--tier-pill-border-size);
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    var(--tier-pill-orbit-inner) 60deg,
-    transparent 120deg,
-    var(--tier-pill-orbit-outer) 180deg,
-    transparent 250deg,
-    var(--tier-pill-orbit-inner) 300deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  filter: drop-shadow(0 0 8px var(--tier-pill-border-glow))
-    drop-shadow(0 0 14px rgba(255, 255, 255, 0.18));
-  transform: rotate(0deg);
-  animation: tier-orbit var(--tier-pill-orbit-speed) linear infinite;
-  opacity: 1;
-  z-index: 1;
-}
-
-.tier-pill-sparkle {
-  background:
-    radial-gradient(circle at 15% 25%, var(--tier-pill-sparkle-1) 0, rgba(255, 255, 255, 0) 38%),
-    radial-gradient(circle at 70% 30%, var(--tier-pill-sparkle-2) 0, rgba(255, 255, 255, 0) 36%),
-    radial-gradient(circle at 35% 70%, var(--tier-pill-sparkle-3) 0, rgba(255, 255, 255, 0) 34%);
-  opacity: 0.12;
-  animation: tier-sparkle 10s ease-in-out infinite;
-  z-index: 1;
 }
 
 .tier-pill-content {
@@ -817,64 +771,31 @@ h3 {
   z-index: 3;
 }
 
-.tier-pill[data-tier="CORE"] {
-  --tier-pill-bg: linear-gradient(135deg, rgba(92, 176, 188, 0.24), rgba(62, 130, 150, 0.14));
-  --tier-pill-glow: rgba(72, 160, 170, 0.22);
-  --tier-pill-text: #d7f3f4;
-  --tier-pill-orbit-inner: rgba(120, 200, 188, 0.12);
-  --tier-pill-orbit-outer: rgba(120, 200, 188, 0.18);
-  --tier-pill-border-glow: rgba(120, 200, 188, 0.18);
-  --tier-pill-orbit-speed: 14s;
-}
+  .tier-pill[data-tier="CORE"] {
+    --tier-pill-bg: linear-gradient(135deg, rgba(92, 176, 188, 0.24), rgba(62, 130, 150, 0.14));
+    --tier-pill-glow: rgba(72, 160, 170, 0.22);
+    --tier-pill-text: #d7f3f4;
+    --tier-pill-border: rgba(101, 194, 207, 0.6);
+  }
 
-.tier-pill[data-tier="GOLD"] {
-  --tier-pill-bg: linear-gradient(135deg, rgba(255, 198, 84, 0.42), rgba(255, 232, 164, 0.12));
-  --tier-pill-glow: rgba(255, 195, 92, 0.4);
-  --tier-pill-text: #fff3c9;
-  --tier-pill-orbit-inner: rgba(255, 223, 150, 0.35);
-  --tier-pill-orbit-outer: rgba(255, 195, 92, 0.55);
-  --tier-pill-border-glow: rgba(255, 196, 104, 0.24);
-  --tier-pill-sparkle-1: rgba(255, 246, 210, 0.6);
-  --tier-pill-sparkle-2: rgba(255, 236, 180, 0.5);
-  --tier-pill-sparkle-3: rgba(255, 226, 160, 0.45);
-  --tier-pill-orbit-speed: 10s;
-}
+  .tier-pill[data-tier="GOLD"] {
+    --tier-pill-bg: linear-gradient(135deg, rgba(255, 198, 84, 0.42), rgba(255, 232, 164, 0.12));
+    --tier-pill-glow: rgba(255, 195, 92, 0.4);
+    --tier-pill-text: #fff3c9;
+    --tier-pill-border: rgba(255, 210, 110, 0.65);
+  }
 
-.tier-pill[data-tier="PRO"] {
+  .tier-pill[data-tier="PRO"] {
   --tier-pill-bg: linear-gradient(
     130deg,
     rgba(255, 88, 204, 0.45),
     rgba(132, 102, 255, 0.24) 55%,
     rgba(80, 160, 255, 0.24)
   );
-  --tier-pill-glow: rgba(170, 90, 255, 0.45);
-  --tier-pill-text: #ffe1ff;
-  --tier-pill-orbit-inner: rgba(210, 160, 255, 0.4);
-  --tier-pill-orbit-outer: rgba(255, 110, 220, 0.55);
-  --tier-pill-border-glow: rgba(200, 120, 255, 0.24);
-  --tier-pill-sparkle-1: rgba(255, 220, 255, 0.65);
-  --tier-pill-sparkle-2: rgba(240, 190, 255, 0.55);
-  --tier-pill-sparkle-3: rgba(255, 160, 230, 0.5);
-  --tier-pill-orbit-speed: 10s;
-}
-
-@keyframes tier-orbit {
-  0% {
-    transform: rotate(0deg);
+    --tier-pill-glow: rgba(170, 90, 255, 0.45);
+    --tier-pill-text: #ffe1ff;
+    --tier-pill-border: rgba(255, 110, 214, 0.65);
   }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes tier-sparkle {
-  0% {
-    opacity: 0.08;
-  }
-  100% {
-    opacity: 0.15;
-  }
-}
 
 .tier-pill:hover::after {
   opacity: 0.32;
@@ -890,17 +811,15 @@ h3 {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tier-pill-orbit,
-  .tier-pill-sparkle,
-  .tier-pill::after {
-    animation: none !important;
+  @media (prefers-reduced-motion: reduce) {
+    .tier-pill::after {
+      animation: none !important;
+    }
+    .tier-pill:hover::after {
+      animation: none !important;
+      transform: translateX(0);
+    }
   }
-  .tier-pill:hover::after {
-    animation: none !important;
-    transform: translateX(0);
-  }
-}
 
 .status-dot {
   width: 8px;
@@ -1332,7 +1251,7 @@ h3 {
   box-shadow: var(--creator-shadow);
 }
 
-.lockout-pill {
+  .lockout-pill {
   display: inline-flex;
   padding: 6px 12px;
   border-radius: 999px;
@@ -1342,8 +1261,8 @@ h3 {
   color: var(--creator-accent-strong);
   border: 1px solid rgba(123, 140, 255, 0.4);
   background: rgba(123, 140, 255, 0.12);
-  font-family: var(--creator-heading);
-}
+    font-family: var(--creator-font);
+  }
 
 .lockout-card h2 {
   margin: 16px 0 12px;
@@ -1362,15 +1281,15 @@ h3 {
   align-items: center;
 }
 
-.lockout-button {
+  .lockout-button {
   background: var(--creator-accent);
   color: #0b0f16;
   padding: 10px 18px;
   border-radius: 999px;
   text-decoration: none;
   font-weight: 600;
-  font-family: var(--creator-heading);
-}
+    font-family: var(--creator-font);
+  }
 
 .lockout-button.secondary {
   background: transparent;

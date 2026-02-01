@@ -114,14 +114,6 @@
     element.classList.add("tier-pill");
     element.classList.remove("tier-core", "tier-gold", "tier-pro");
     element.dataset.tier = normalized;
-    const orbit = document.createElement("span");
-    orbit.className = "tier-pill-orbit";
-    orbit.setAttribute("aria-hidden", "true");
-
-    const sparkle = document.createElement("span");
-    sparkle.className = "tier-pill-sparkle";
-    sparkle.setAttribute("aria-hidden", "true");
-
     const content = document.createElement("span");
     content.className = "tier-pill-content";
 
@@ -141,7 +133,7 @@
     text.textContent = normalized;
     content.appendChild(text);
 
-    element.replaceChildren(orbit, sparkle, content);
+    element.replaceChildren(content);
   }
 
   function normalizeVisibility(visibility) {
