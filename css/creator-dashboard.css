@@ -170,6 +170,35 @@ h3 {
   letter-spacing: 0.02em;
 }
 
+.streamsuites-auth-name::after {
+  content: "";
+  display: inline-block;
+  width: 1.4em;
+  height: 1.4em;
+  margin-left: 6px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.9;
+  vertical-align: middle;
+}
+
+.creator-account:has(.tier-pill[data-tier="CORE"]) .streamsuites-auth-name::after {
+  background-image: url("/assets/icons/tierbadge-core.svg");
+}
+
+.creator-account:has(.tier-pill[data-tier="GOLD"]) .streamsuites-auth-name::after {
+  background-image: url("/assets/icons/tierbadge-gold.svg");
+}
+
+.creator-account:has(.tier-pill[data-tier="PRO"]) .streamsuites-auth-name::after {
+  background-image: url("/assets/icons/tierbadge-pro.svg");
+}
+
+.creator-account:has(.tier-pill[hidden]) .streamsuites-auth-name::after {
+  display: none;
+}
+
 .streamsuites-auth-identity {
   font-size: 10px;
   font-weight: 400;
@@ -1289,10 +1318,18 @@ h3 {
 }
 
 .tier-card .tier-price {
+  margin: 0;
   font-size: 14px;
-  color: var(--creator-accent-strong);
+  color: var(--creator-muted);
   font-family: var(--creator-heading);
   letter-spacing: 0.04em;
+}
+
+.tier-card .tier-features-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .tier-card .tier-features {
@@ -1301,6 +1338,18 @@ h3 {
   color: var(--creator-muted);
   display: grid;
   gap: 6px;
+  flex: 1 1 0;
+  min-width: 180px;
+  font-size: calc(var(--creator-body-size) * 0.75);
+}
+
+.tier-card .tier-feature-illustration {
+  width: clamp(56px, 18vw, 92px);
+  aspect-ratio: 1 / 1;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.55;
+  flex: 0 0 auto;
 }
 
 .tier-card .tier-note {
