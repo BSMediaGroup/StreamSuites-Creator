@@ -594,6 +594,7 @@
       }
     });
     updateAccountMenuState(session);
+    updateAccountSettingsPanel(session);
   }
 
   function updateAccountMenuState(session) {
@@ -629,6 +630,23 @@
         detailTier.textContent = authenticated ? getTierLabel(session) : "CORE";
       }
     });
+  }
+
+  function updateAccountSettingsPanel(session) {
+    const nameInput = document.querySelector("[data-account-profile-name]");
+    const emailValue = document.querySelector("[data-account-profile-email]");
+    const tierValue = document.querySelector("[data-account-profile-tier]");
+    const authenticated = !!session?.authenticated;
+
+    if (nameInput instanceof HTMLInputElement) {
+      nameInput.value = authenticated ? getDisplayName(session) : "Signed out";
+    }
+    if (emailValue) {
+      emailValue.textContent = authenticated ? getEmailValue(session) : "Signed out";
+    }
+    if (tierValue) {
+      tierValue.textContent = authenticated ? getTierLabel(session) : "CORE";
+    }
   }
 
   async function logout() {
