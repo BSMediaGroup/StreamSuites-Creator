@@ -10,6 +10,7 @@
 
   const VALID_TIERS = new Set(["CORE", "GOLD", "PRO"]);
   const VALID_TIER_IDS = new Set(["core", "gold", "pro"]);
+  const SESSION_IDLE_REASON = "cookie_missing";
 
   const ui = {
     tierLabel: null,
@@ -38,6 +39,49 @@
     if (typeof visibility !== "string") return "";
     const normalized = visibility.trim().toLowerCase();
     return normalized === "public" || normalized === "soft_locked" ? normalized : "";
+  }
+
+  function normalizeAuthReason(value) {
+    if (typeof value !== "string") return "";
+    const trimmed = value.trim().toLowerCase();
+    if (!trimmed) return "";
+    if (trimmed.includes(SESSION_IDLE_REASON)) return SESSION_IDLE_REASON;
+    return trimmed;
+  }
+
+  function resolveAuthReason(payload, response) {
+    if (!payload || typeof payload !== "object") {
+      const headerReason =
+        response?.headers &&
+        ["x-auth-reason", "x-streamsuites-auth-reason", "x-auth-status"]
+          .map((header) => response.headers.get(header))
+          .find(Boolean);
+      return normalizeAuthReason(headerReason);
+    }
+
+    const candidate =
+      payload.reason ||
+      payload.error?.reason ||
+      payload.status ||
+      payload.error ||
+      payload.message;
+
+    if (candidate) {
+      return normalizeAuthReason(candidate);
+    }
+
+    const headerReason =
+      response?.headers &&
+      ["x-auth-reason", "x-streamsuites-auth-reason", "x-auth-status"]
+        .map((header) => response.headers.get(header))
+        .find(Boolean);
+    return normalizeAuthReason(headerReason);
+  }
+
+  function isCookieMissingError(err) {
+    if (!err || err.status !== 401) return false;
+    const reason = normalizeAuthReason(err.reason || err.payload?.reason);
+    return reason === SESSION_IDLE_REASON;
   }
 
   function normalizeEffectiveTier(raw) {
@@ -108,6 +152,7 @@
       const error = new Error("Onboarding request failed");
       error.status = response.status;
       error.payload = data;
+      error.reason = resolveAuthReason(data, response);
       throw error;
     }
 
@@ -268,7 +313,9 @@
         return;
       }
     } catch (err) {
-      console.error("[Onboarding] Unable to load account state", err);
+      if (!isCookieMissingError(err)) {
+        console.error("[Onboarding] Unable to load account state", err);
+      }
       setStatus("Unable to verify onboarding status. Please try again.", true);
     }
 

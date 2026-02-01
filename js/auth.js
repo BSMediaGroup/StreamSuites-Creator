@@ -35,6 +35,8 @@
   const SESSION_POLL_FAILURE_THRESHOLD = 3;
   const SESSION_POLL_FAILURE_COOLDOWN_MS = 60000;
   const SESSION_INVALID_REDIRECT_DELAY_MS = 1400;
+  const SESSION_IDLE_REASON = "cookie_missing";
+  const SESSION_RETRY_MIN_INTERVAL_MS = 7000;
 
   const sessionState = {
     value: null,
@@ -45,6 +47,12 @@
     checking: false,
     consecutiveFailures: 0,
     lastFailureNoticeAt: 0
+  };
+  const sessionRetry = {
+    idle: false,
+    idleReason: "",
+    lastAttemptAt: 0,
+    notified: false
   };
   let accountMenuWired = false;
   let isAccountMenuOpen = false;
@@ -208,6 +216,100 @@
     };
   }
 
+  function normalizeAuthReason(value) {
+    if (typeof value !== "string") return "";
+    const trimmed = value.trim().toLowerCase();
+    if (!trimmed) return "";
+    if (trimmed.includes(SESSION_IDLE_REASON)) return SESSION_IDLE_REASON;
+    return trimmed;
+  }
+
+  function resolveAuthReason(payload, response) {
+    if (!payload || typeof payload !== "object") {
+      const headerReason =
+        response?.headers &&
+        ["x-auth-reason", "x-streamsuites-auth-reason", "x-auth-status"]
+          .map((header) => response.headers.get(header))
+          .find(Boolean);
+      return normalizeAuthReason(headerReason);
+    }
+
+    const candidate =
+      payload.reason ||
+      payload.error?.reason ||
+      payload.status ||
+      payload.error ||
+      payload.message;
+
+    if (candidate) {
+      return normalizeAuthReason(candidate);
+    }
+
+    const headerReason =
+      response?.headers &&
+      ["x-auth-reason", "x-streamsuites-auth-reason", "x-auth-status"]
+        .map((header) => response.headers.get(header))
+        .find(Boolean);
+    return normalizeAuthReason(headerReason);
+  }
+
+  async function ensureIdleBackoff() {
+    if (!sessionRetry.idle || !sessionRetry.lastAttemptAt) {
+      sessionRetry.lastAttemptAt = Date.now();
+      return;
+    }
+    const now = Date.now();
+    const nextAllowedAt = sessionRetry.lastAttemptAt + SESSION_RETRY_MIN_INTERVAL_MS;
+    if (now < nextAllowedAt) {
+      await new Promise((resolve) => setTimeout(resolve, nextAllowedAt - now));
+    }
+    sessionRetry.lastAttemptAt = Date.now();
+  }
+
+  async function fetchSessionJson(timeoutMs = 8000) {
+    const fetchWithTimeout = getFetchWithTimeout();
+    const response = await fetchWithTimeout(
+      AUTH_ENDPOINTS.session,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json"
+        }
+      },
+      timeoutMs
+    );
+
+    const raw = await response.text();
+    let data = null;
+
+    if (raw) {
+      try {
+        data = JSON.parse(raw);
+      } catch (err) {
+        data = null;
+      }
+    }
+
+    const reason = resolveAuthReason(data, response);
+
+    if (!response.ok) {
+      const error = new Error("Auth request failed");
+      error.status = response.status;
+      error.payload = data;
+      error.reason = reason;
+      throw error;
+    }
+
+    return { payload: data, reason };
+  }
+
+  function isCookieMissingError(err) {
+    if (!err || err.status !== 401) return false;
+    const reason = normalizeAuthReason(err.reason || err.payload?.reason);
+    return reason === SESSION_IDLE_REASON;
+  }
+
   async function fetchJson(url, options = {}, timeoutMs = 8000) {
     const fetchWithTimeout = getFetchWithTimeout();
     const response = await fetchWithTimeout(
@@ -284,17 +386,50 @@
   async function loadSession(options = {}) {
     if (sessionState.loading) return sessionState.value;
     if (sessionState.value && options.force !== true) return sessionState.value;
+    if (sessionRetry.idle && options.force !== true) {
+      return (
+        sessionState.value || {
+          authenticated: false,
+          errorStatus: 401,
+          errorReason: sessionRetry.idleReason || SESSION_IDLE_REASON,
+          idle: true
+        }
+      );
+    }
 
     sessionState.loading = true;
     try {
-      const payload = await fetchJson(AUTH_ENDPOINTS.session, {}, 5000);
+      if (sessionRetry.idle && options.force === true) {
+        await ensureIdleBackoff();
+      }
+      const { payload } = await fetchSessionJson(5000);
+      sessionRetry.idle = false;
+      sessionRetry.idleReason = "";
+      sessionRetry.notified = false;
       sessionState.value = normalizeSessionPayload(payload);
     } catch (err) {
-      sessionState.value = {
-        authenticated: false,
-        error: err,
-        errorStatus: err?.status ?? null
-      };
+      if (isCookieMissingError(err)) {
+        sessionRetry.idle = true;
+        sessionRetry.idleReason = SESSION_IDLE_REASON;
+        sessionRetry.lastAttemptAt = Date.now();
+        if (!sessionRetry.notified) {
+          console.info("[Creator][Auth] Session idle (cookie missing).");
+          sessionRetry.notified = true;
+        }
+        sessionState.value = {
+          authenticated: false,
+          error: err,
+          errorStatus: err?.status ?? null,
+          errorReason: sessionRetry.idleReason,
+          idle: true
+        };
+      } else {
+        sessionState.value = {
+          authenticated: false,
+          error: err,
+          errorStatus: err?.status ?? null
+        };
+      }
     } finally {
       sessionState.loading = false;
     }
@@ -907,7 +1042,7 @@
       }
     }
 
-    const session = await loadSession();
+    const session = await loadSession({ force: true });
     if (session?.authenticated) {
       window.location.assign(resolvePostAuthRedirect(session));
     }
@@ -1444,13 +1579,17 @@
     const { isPublic = false } = options;
     if (isPublic) return;
     if (sessionMonitor.checking) return;
+    if (sessionRetry.idle) return;
     if (!sessionState.value || sessionState.value.authenticated !== true) return;
 
     sessionMonitor.checking = true;
     try {
-      const payload = await fetchJson(AUTH_ENDPOINTS.session, {}, 5000);
+      const { payload } = await fetchSessionJson(5000);
       const nextSession = normalizeSessionPayload(payload);
       sessionMonitor.consecutiveFailures = 0;
+      sessionRetry.idle = false;
+      sessionRetry.idleReason = "";
+      sessionRetry.notified = false;
 
       if (!nextSession?.authenticated) {
         handleSessionInvalidation("expired");
@@ -1471,6 +1610,13 @@
         }
       }
     } catch (err) {
+      if (isCookieMissingError(err)) {
+        sessionRetry.idle = true;
+        sessionRetry.idleReason = SESSION_IDLE_REASON;
+        sessionRetry.lastAttemptAt = Date.now();
+        handleSessionInvalidation("expired");
+        return;
+      }
       const status = err?.status ?? null;
       if (status === 401 || status === 403) {
         handleSessionInvalidation("expired");
