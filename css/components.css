@@ -217,26 +217,48 @@
    ---------------------------------------------------------------------- */
 
 .ss-btn {
+  --btn-bg-1: #8a7bff;
+  --btn-bg-2: #4f6bff;
+  --btn-bg-color: #ffffff;
   appearance: none;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-panel-alt);
-  color: var(--text-primary);
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
+  border: none;
+  background-size: 280% auto;
+  background-image: linear-gradient(
+    325deg,
+    var(--btn-bg-2) 0%,
+    var(--btn-bg-1) 55%,
+    var(--btn-bg-2) 90%
+  );
+  color: var(--btn-bg-color);
+  padding: 0.85em 1.4em;
+  border-radius: 0.5em;
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--size, 0.85rem);
   line-height: 1;
-  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  min-height: 44px;
+  min-width: 120px;
+  transition: 0.8s;
   user-select: none;
+  font-family: "SuiGenerisRg", "Segoe UI", system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow:
+    0 0 20px rgba(109, 130, 255, 0.45),
+    0 5px 5px -1px rgba(64, 86, 192, 0.3),
+    inset 4px 4px 8px rgba(176, 194, 255, 0.45),
+    inset -4px -4px 8px rgba(41, 56, 148, 0.42);
 }
 
 .ss-btn:hover {
-  background: var(--bg-hover);
-  border-color: var(--border-strong);
+  background-position: right top;
 }
 
-.ss-btn:active {
-  transform: translateY(1px);
+.ss-btn:is(:focus, :focus-visible, :active) {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--btn-bg-color),
+    0 0 0 6px var(--btn-bg-2);
 }
 
 .ss-btn:disabled,
@@ -244,32 +266,28 @@
   opacity: 0.45;
   cursor: not-allowed;
   pointer-events: none;
+  box-shadow: none;
 }
 
 .ss-btn-small {
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 0.7em 1.1em;
+  font-size: 0.72rem;
+  min-height: 40px;
 }
 
 .ss-btn-primary {
-  background: linear-gradient(
-    180deg,
-    rgba(140, 199, 54, 0.85),
-    rgba(140, 199, 54, 0.65)
-  );
-  border-color: rgba(140, 199, 54, 0.9);
-  color: #0b1205;
-  box-shadow: 0 0 12px var(--glow-soft);
-}
-
-.ss-btn-primary:hover {
-  box-shadow: 0 0 18px var(--glow-hard);
+  --btn-bg-1: #8a7bff;
+  --btn-bg-2: #4f6bff;
 }
 
 .ss-btn-secondary {
-  background: var(--bg-panel-alt);
-  border-color: var(--border-subtle);
-  color: var(--text-primary);
+  --btn-bg-1: #2d3656;
+  --btn-bg-2: #3c466d;
+  box-shadow:
+    0 0 14px rgba(80, 96, 150, 0.35),
+    0 5px 6px -1px rgba(46, 58, 108, 0.35),
+    inset 4px 4px 8px rgba(116, 134, 198, 0.24),
+    inset -4px -4px 8px rgba(32, 44, 98, 0.4);
 }
 
 .ss-btn-danger {
@@ -281,6 +299,12 @@
 .ss-btn-danger:hover {
   background: rgba(217, 83, 79, 0.22);
   border-color: rgba(217, 83, 79, 0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ss-btn {
+    transition: linear;
+  }
 }
 
 /* File button wrapper (label acting as button) */

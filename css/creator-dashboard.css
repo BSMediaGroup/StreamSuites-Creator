@@ -20,6 +20,11 @@
   --creator-header-offset: 96px;
   --creator-body-size: 13.5px;
   --creator-body-size-sm: 11px;
+  --creator-btn-primary-1: #8a7bff;
+  --creator-btn-primary-2: #4f6bff;
+  --creator-btn-secondary-1: #2d3656;
+  --creator-btn-secondary-2: #3c466d;
+  --creator-btn-text: #ffffff;
 }
 
 * {
@@ -276,41 +281,69 @@ h3 {
 }
 
   .creator-account-item {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--creator-text);
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 11px;
+  --btn-bg-1: var(--creator-btn-primary-1);
+  --btn-bg-2: var(--creator-btn-primary-2);
+  --btn-bg-color: var(--creator-btn-text);
+  border: none;
+  background-size: 280% auto;
+  background-image: linear-gradient(
+    325deg,
+    var(--btn-bg-2) 0%,
+    var(--btn-bg-1) 55%,
+    var(--btn-bg-2) 90%
+  );
+  color: var(--btn-bg-color);
+  padding: 0.7em 1.2em;
+  border-radius: 0.5em;
+  min-height: 44px;
+  min-width: 120px;
+  font-size: var(--size, 0.7rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
     font-family: var(--creator-font);
   cursor: pointer;
-  text-align: left;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.8s;
+  box-shadow:
+    0 0 18px rgba(111, 132, 255, 0.45),
+    0 5px 6px -1px rgba(66, 88, 195, 0.28),
+    inset 4px 4px 8px rgba(178, 196, 255, 0.45),
+    inset -4px -4px 8px rgba(44, 60, 150, 0.4);
 }
 
 .creator-account-item:hover {
-  background: rgba(123, 140, 255, 0.2);
+  background-position: right top;
+}
+
+.creator-account-item:is(:focus, :focus-visible, :active) {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--btn-bg-color),
+    0 0 0 6px var(--btn-bg-2);
 }
 
 .creator-account-item.primary {
-  background: var(--creator-accent);
-  color: #0b0f16;
-  border-color: transparent;
-  text-align: center;
+  --btn-bg-1: var(--creator-btn-primary-1);
+  --btn-bg-2: var(--creator-btn-primary-2);
 }
 
 .creator-account-item.subtle {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.12);
-  color: var(--creator-muted);
-  text-align: center;
+  --btn-bg-1: var(--creator-btn-secondary-1);
+  --btn-bg-2: var(--creator-btn-secondary-2);
 }
 
 .creator-account-item.danger {
-  border-color: rgba(255, 138, 138, 0.45);
-  color: #ffb2b2;
-  background: rgba(255, 138, 138, 0.12);
+  --btn-bg-1: #b64b5e;
+  --btn-bg-2: #7c2f3f;
+}
+
+.creator-account-dropdown .creator-account-item {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
 }
 
 .creator-account-form {
@@ -358,30 +391,63 @@ h3 {
 }
 
   .creator-account-button {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--creator-text);
-  background: rgba(255, 255, 255, 0.08);
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 11px;
+  --btn-bg-1: var(--creator-btn-primary-1);
+  --btn-bg-2: var(--creator-btn-primary-2);
+  --btn-bg-color: var(--creator-btn-text);
+  border: none;
+  background-size: 280% auto;
+  background-image: linear-gradient(
+    325deg,
+    var(--btn-bg-2) 0%,
+    var(--btn-bg-1) 55%,
+    var(--btn-bg-2) 90%
+  );
+  color: var(--btn-bg-color);
+  padding: 0.75em 1.3em;
+  border-radius: 0.5em;
+  min-height: 44px;
+  min-width: 120px;
+  font-size: var(--size, 0.72rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
     font-family: var(--creator-font);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.8s;
+  box-shadow:
+    0 0 18px rgba(111, 132, 255, 0.45),
+    0 5px 6px -1px rgba(66, 88, 195, 0.28),
+    inset 4px 4px 8px rgba(178, 196, 255, 0.45),
+    inset -4px -4px 8px rgba(44, 60, 150, 0.4);
 }
 
 .creator-account-button.secondary {
-  border-color: rgba(123, 140, 255, 0.4);
-  background: rgba(123, 140, 255, 0.2);
+  --btn-bg-1: var(--creator-btn-secondary-1);
+  --btn-bg-2: var(--creator-btn-secondary-2);
+  box-shadow:
+    0 0 14px rgba(80, 96, 150, 0.35),
+    0 5px 6px -1px rgba(46, 58, 108, 0.35),
+    inset 4px 4px 8px rgba(116, 134, 198, 0.24),
+    inset -4px -4px 8px rgba(32, 44, 98, 0.4);
 }
 
 .creator-account-button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+  box-shadow: none;
 }
 
 .creator-account-button:hover:not(:disabled) {
-  background: rgba(123, 140, 255, 0.2);
+  background-position: right top;
+}
+
+.creator-account-button:is(:focus, :focus-visible, :active) {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--btn-bg-color),
+    0 0 0 6px var(--btn-bg-2);
 }
 
 .creator-layout {
@@ -623,13 +689,24 @@ h3 {
 }
 
   .creator-button {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--creator-text);
+  --btn-bg-1: var(--creator-btn-primary-1);
+  --btn-bg-2: var(--creator-btn-primary-2);
+  --btn-bg-color: var(--creator-btn-text);
+  border: none;
+  padding: 0.9em 1.4em;
+  border-radius: 0.5em;
+  background-size: 280% auto;
+  background-image: linear-gradient(
+    325deg,
+    var(--btn-bg-2) 0%,
+    var(--btn-bg-1) 55%,
+    var(--btn-bg-2) 90%
+  );
+  color: var(--btn-bg-color);
   text-decoration: none;
-  font-size: 12px;
+  min-height: 44px;
+  min-width: 120px;
+  font-size: var(--size, 0.8rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
     font-family: var(--creator-font);
@@ -637,23 +714,74 @@ h3 {
   align-items: center;
   justify-content: center;
   gap: 6px;
+  transition: 0.8s;
+  box-shadow:
+    0 0 20px rgba(109, 130, 255, 0.5),
+    0 5px 5px -1px rgba(64, 86, 192, 0.3),
+    inset 4px 4px 8px rgba(176, 194, 255, 0.5),
+    inset -4px -4px 8px rgba(41, 56, 148, 0.42);
 }
 
 .creator-button.primary {
-  background: var(--creator-accent);
-  color: #0b0f16;
-  border-color: transparent;
+  --btn-bg-1: var(--creator-btn-primary-1);
+  --btn-bg-2: var(--creator-btn-primary-2);
 }
 
 .creator-button.ghost {
-  background: transparent;
-  border-color: rgba(123, 140, 255, 0.4);
-  color: var(--creator-accent-strong);
+  --btn-bg-1: var(--creator-btn-secondary-1);
+  --btn-bg-2: var(--creator-btn-secondary-2);
+  box-shadow:
+    0 0 14px rgba(80, 96, 150, 0.35),
+    0 5px 6px -1px rgba(46, 58, 108, 0.35),
+    inset 4px 4px 8px rgba(116, 134, 198, 0.24),
+    inset -4px -4px 8px rgba(32, 44, 98, 0.4);
+}
+
+.creator-button:hover {
+  background-position: right top;
+}
+
+.creator-button:is(:focus, :focus-visible, :active) {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--btn-bg-color),
+    0 0 0 6px var(--btn-bg-2);
 }
 
 .creator-button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+  box-shadow: none;
+}
+
+.creator-button[data-tier-action] {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--creator-text);
+  background-image: none;
+  background-size: auto;
+  box-shadow: none;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.creator-button.ghost[data-tier-action] {
+  background: transparent;
+  border-color: rgba(123, 140, 255, 0.4);
+  color: var(--creator-accent-strong);
+}
+
+.creator-button.primary[data-tier-action] {
+  background: var(--creator-accent);
+  color: #0b0f16;
+  border-color: transparent;
+}
+
+.creator-button[data-tier-action]:is(:focus, :focus-visible, :active) {
+  outline: 2px solid rgba(154, 209, 255, 0.6);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
   .status-pill {
@@ -884,7 +1012,30 @@ h3 {
 }
 
 .account-settings .card {
-  gap: 14px;
+  gap: 16px;
+  padding: 24px;
+  min-height: 100%;
+}
+
+.account-settings .card-grid {
+  gap: 24px;
+  align-items: stretch;
+}
+
+.account-settings .account-field-grid {
+  gap: 16px;
+}
+
+.account-settings .account-list {
+  gap: 12px;
+}
+
+.account-settings .account-list-item {
+  padding: 12px 14px;
+}
+
+.account-settings .creator-hero {
+  margin-bottom: 28px;
 }
 
 .account-field-grid {
@@ -1282,19 +1433,64 @@ h3 {
 }
 
   .lockout-button {
-  background: var(--creator-accent);
-  color: #0b0f16;
-  padding: 10px 18px;
-  border-radius: 999px;
+  --btn-bg-1: var(--creator-btn-primary-1);
+  --btn-bg-2: var(--creator-btn-primary-2);
+  --btn-bg-color: var(--creator-btn-text);
+  border: none;
+  background-size: 280% auto;
+  background-image: linear-gradient(
+    325deg,
+    var(--btn-bg-2) 0%,
+    var(--btn-bg-1) 55%,
+    var(--btn-bg-2) 90%
+  );
+  color: var(--btn-bg-color);
+  padding: 0.85em 1.4em;
+  border-radius: 0.5em;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
+  min-height: 44px;
+  min-width: 140px;
     font-family: var(--creator-font);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.8s;
+  box-shadow:
+    0 0 20px rgba(109, 130, 255, 0.5),
+    0 5px 5px -1px rgba(64, 86, 192, 0.3),
+    inset 4px 4px 8px rgba(176, 194, 255, 0.5),
+    inset -4px -4px 8px rgba(41, 56, 148, 0.42);
   }
 
 .lockout-button.secondary {
-  background: transparent;
-  border: 1px solid rgba(123, 140, 255, 0.4);
-  color: var(--creator-accent-strong);
+  --btn-bg-1: var(--creator-btn-secondary-1);
+  --btn-bg-2: var(--creator-btn-secondary-2);
+  box-shadow:
+    0 0 14px rgba(80, 96, 150, 0.35),
+    0 5px 6px -1px rgba(46, 58, 108, 0.35),
+    inset 4px 4px 8px rgba(116, 134, 198, 0.24),
+    inset -4px -4px 8px rgba(32, 44, 98, 0.4);
+}
+
+.lockout-button:hover {
+  background-position: right top;
+}
+
+.lockout-button:is(:focus, :focus-visible, :active) {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--btn-bg-color),
+    0 0 0 6px var(--btn-bg-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .creator-account-item,
+  .creator-account-button,
+  .creator-button,
+  .lockout-button {
+    transition: linear;
+  }
 }
 
 body.creator-lockout-active .creator-layout,
