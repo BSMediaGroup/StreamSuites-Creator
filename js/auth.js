@@ -96,6 +96,14 @@
     return TIER_ID_OPTIONS.has(trimmed) ? trimmed : "";
   }
 
+  function applyTierPillClass(element, tierLabel) {
+    if (!element) return;
+    const normalized = normalizeTier(tierLabel);
+    element.classList.add("tier-pill");
+    element.classList.remove("tier-core", "tier-gold", "tier-pro");
+    element.classList.add(`tier-${normalized.toLowerCase()}`);
+  }
+
   function normalizeVisibility(visibility) {
     if (typeof visibility !== "string") return "";
     const trimmed = visibility.trim().toLowerCase();
@@ -586,7 +594,9 @@
       if (nameEl) {
         nameEl.textContent = displayName;
       }
-      tierEl.textContent = getTierLabel(session);
+      const tierLabel = getTierLabel(session);
+      tierEl.textContent = tierLabel;
+      applyTierPillClass(tierEl, tierLabel);
       tierEl.hidden = false;
       logoutEl.hidden = false;
       if (avatarEl) {

@@ -679,6 +679,153 @@ h3 {
   background: rgba(255, 190, 92, 0.15);
 }
 
+.tier-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--tier-pill-pad-y, 4px) var(--tier-pill-pad-x, 10px);
+  border-radius: 999px;
+  border: 1px solid var(--tier-pill-border, rgba(255, 255, 255, 0.2));
+  background: var(--tier-pill-bg, rgba(123, 140, 255, 0.2));
+  color: var(--tier-pill-text, #e6f0ff);
+  font-family: var(--creator-heading);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(5, 8, 14, 0.5);
+  box-shadow: 0 8px 18px var(--tier-pill-glow, rgba(5, 10, 24, 0.35)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tier-pill::before,
+.tier-pill::after {
+  content: "";
+  position: absolute;
+  inset: -30% 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.tier-pill::before {
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 45%);
+  opacity: 0.22;
+}
+
+.tier-pill::after {
+  background-image:
+    radial-gradient(circle at 18% 30%, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0) 45%),
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 42% 70%, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 46%);
+  opacity: 0;
+  transform: translateX(-30%);
+}
+
+.tier-core {
+  --tier-pill-bg: linear-gradient(135deg, rgba(120, 146, 255, 0.26), rgba(72, 102, 214, 0.14));
+  --tier-pill-border: rgba(132, 162, 255, 0.35);
+  --tier-pill-glow: rgba(92, 128, 255, 0.28);
+  --tier-pill-text: #d9e7ff;
+}
+
+.tier-gold {
+  --tier-pill-bg: linear-gradient(135deg, rgba(255, 198, 84, 0.42), rgba(255, 232, 164, 0.12));
+  --tier-pill-border: rgba(255, 216, 124, 0.55);
+  --tier-pill-glow: rgba(255, 195, 92, 0.4);
+  --tier-pill-text: #fff3c9;
+}
+
+.tier-pro {
+  --tier-pill-bg: linear-gradient(
+    130deg,
+    rgba(255, 88, 204, 0.45),
+    rgba(132, 102, 255, 0.24) 55%,
+    rgba(80, 160, 255, 0.24)
+  );
+  --tier-pill-border: rgba(182, 126, 255, 0.6);
+  --tier-pill-glow: rgba(170, 90, 255, 0.45);
+  --tier-pill-text: #ffe1ff;
+}
+
+.streamsuites-auth-tier.tier-pill {
+  --tier-pill-pad-y: 3px;
+  --tier-pill-pad-x: 8px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+}
+
+.creator-tier-pill.tier-pill {
+  --tier-pill-pad-y: 4px;
+  --tier-pill-pad-x: 10px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.status-pill.tier-pill {
+  --tier-pill-pad-y: 6px;
+  --tier-pill-pad-x: 12px;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+}
+
+.tier-gold.tier-pill::before,
+.tier-pro.tier-pill::before {
+  opacity: 0.35;
+  animation: tier-shimmer 6s linear infinite;
+}
+
+.tier-gold.tier-pill::after,
+.tier-pro.tier-pill::after {
+  opacity: 0.55;
+  animation: tier-sparkle 7s linear infinite;
+}
+
+.tier-pro.tier-pill::after {
+  opacity: 0.65;
+}
+
+.tier-core.tier-pill::before,
+.tier-core.tier-pill::after {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes tier-shimmer {
+  0% {
+    transform: translateX(-35%);
+  }
+  50% {
+    transform: translateX(20%);
+  }
+  100% {
+    transform: translateX(45%);
+  }
+}
+
+@keyframes tier-sparkle {
+  0% {
+    transform: translateX(-35%);
+  }
+  50% {
+    transform: translateX(10%);
+  }
+  100% {
+    transform: translateX(40%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tier-pill::before,
+  .tier-pill::after {
+    animation: none !important;
+  }
+}
+
 .status-dot {
   width: 8px;
   height: 8px;
@@ -1019,8 +1166,14 @@ h3 {
   cursor: default;
 }
 
-.creator-tier-card.is-disabled .creator-tier-pill,
-.tier-card.is-disabled .status-pill {
+.creator-tier-card.is-disabled .creator-tier-pill.tier-pill,
+.tier-card.is-disabled .status-pill.tier-pill {
+  opacity: 0.85;
+  filter: saturate(0.95);
+}
+
+.creator-tier-card.is-disabled .creator-tier-pill:not(.tier-pill),
+.tier-card.is-disabled .status-pill:not(.tier-pill) {
   color: var(--creator-muted);
 }
 

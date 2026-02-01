@@ -35,6 +35,16 @@
     return VALID_TIER_IDS.has(normalized) ? normalized : "";
   }
 
+  function applyTierPillClass(element, tierId, tierLabel) {
+    if (!element) return;
+    const normalized = normalizeTierId(tierId);
+    const fallback = normalizeTier(tierLabel || "CORE").toLowerCase();
+    const tierClass = normalized || fallback;
+    element.classList.add("tier-pill");
+    element.classList.remove("tier-core", "tier-gold", "tier-pro");
+    element.classList.add(`tier-${tierClass}`);
+  }
+
   function normalizeVisibility(visibility) {
     if (typeof visibility !== "string") return "";
     const normalized = visibility.trim().toLowerCase();
@@ -196,7 +206,9 @@
         card.classList.toggle("is-active", isCurrent);
         card.classList.toggle("is-disabled", isLocked);
         if (labelEl) {
-          labelEl.textContent = isCurrent ? "Current" : isLocked ? "Coming soon" : "Select";
+          const tierLabel = cardTier || (cardTierId ? cardTierId.toUpperCase() : "CORE");
+          labelEl.textContent = tierLabel;
+          applyTierPillClass(labelEl, cardTierId, tierLabel);
         }
         if (actionEl instanceof HTMLButtonElement) {
           if (isLocked) {

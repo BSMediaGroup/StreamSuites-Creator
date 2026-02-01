@@ -4,6 +4,15 @@
   const VALID_TIER_IDS = new Set(["core", "gold", "pro"]);
   const REQUIRED_TIER_ID = "core";
 
+  function applyTierPillClass(element, tierId) {
+    if (!element) return;
+    const normalized = normalizeTierId(tierId);
+    if (!normalized) return;
+    element.classList.add("tier-pill");
+    element.classList.remove("tier-core", "tier-gold", "tier-pro");
+    element.classList.add(`tier-${normalized}`);
+  }
+
   function normalizeTierId(tierId) {
     if (typeof tierId !== "string") return "";
     const normalized = tierId.trim().toLowerCase();
@@ -52,13 +61,9 @@
       card.classList.toggle("is-active", isCurrent);
       card.classList.toggle("is-disabled", isLocked);
       if (labelEl) {
-        if (isLocked) {
-          labelEl.textContent = "Coming soon";
-        } else if (isCurrent) {
-          labelEl.textContent = "Current plan";
-        } else {
-          labelEl.textContent = "Core tier";
-        }
+        const tierLabel = tierId ? tierId.toUpperCase() : "CORE";
+        labelEl.textContent = tierLabel;
+        applyTierPillClass(labelEl, tierId || REQUIRED_TIER_ID);
       }
       if (actionEl instanceof HTMLButtonElement) {
         if (isLocked) {
