@@ -691,7 +691,6 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
   --tier-pill-pad-y: 3px;
   --tier-pill-pad-x: 8px;
   --tier-pill-border-size: 1.2px;
@@ -705,17 +704,16 @@ h3 {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   text-shadow: 0 1px 8px rgba(5, 8, 14, 0.5);
-  box-shadow: 0 8px 18px var(--tier-pill-glow, rgba(5, 10, 24, 0.35)),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
   backdrop-filter: blur(12px);
   overflow: hidden;
   isolation: isolate;
   --tier-pill-orbit-inner: rgba(255, 255, 255, 0.12);
   --tier-pill-orbit-outer: rgba(255, 255, 255, 0.28);
   --tier-pill-border-glow: rgba(123, 140, 255, 0.2);
-  --tier-pill-sparkle-1: rgba(255, 255, 255, 0);
-  --tier-pill-sparkle-2: rgba(255, 255, 255, 0);
-  --tier-pill-sparkle-3: rgba(255, 255, 255, 0);
+  --tier-pill-sparkle-1: rgba(255, 255, 255, 0.08);
+  --tier-pill-sparkle-2: rgba(255, 255, 255, 0.06);
+  --tier-pill-sparkle-3: rgba(255, 255, 255, 0.05);
   --tier-pill-orbit-speed: 12s;
 }
 
@@ -723,27 +721,46 @@ h3 {
 .tier-pill::after {
   content: "";
   position: absolute;
-  inset: 0;
   pointer-events: none;
   border-radius: inherit;
 }
 
 .tier-pill::before {
-  background:
-    conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      var(--tier-pill-orbit-inner) 60deg,
-      transparent 120deg,
-      var(--tier-pill-orbit-outer) 180deg,
-      transparent 250deg,
-      var(--tier-pill-orbit-inner) 300deg,
-      transparent 360deg
-    ),
-    radial-gradient(circle at 15% 25%, var(--tier-pill-sparkle-1) 0, rgba(255, 255, 255, 0) 38%),
-    radial-gradient(circle at 70% 30%, var(--tier-pill-sparkle-2) 0, rgba(255, 255, 255, 0) 36%),
-    radial-gradient(circle at 35% 70%, var(--tier-pill-sparkle-3) 0, rgba(255, 255, 255, 0) 34%);
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    var(--tier-pill-glow, rgba(5, 10, 24, 0.35)) 0%,
+    rgba(5, 10, 24, 0) 62%
+  );
+  filter: blur(12px);
+  opacity: 0.9;
+  z-index: 0;
+}
+
+.tier-pill-orbit,
+.tier-pill-sparkle {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.tier-pill-orbit {
   padding: var(--tier-pill-border-size);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--tier-pill-orbit-inner) 60deg,
+    transparent 120deg,
+    var(--tier-pill-orbit-outer) 180deg,
+    transparent 250deg,
+    var(--tier-pill-orbit-inner) 300deg,
+    transparent 360deg
+  );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -753,10 +770,40 @@ h3 {
   transform: rotate(0deg);
   animation: tier-orbit var(--tier-pill-orbit-speed) linear infinite;
   opacity: 1;
-  z-index: 0;
+  z-index: 1;
+}
+
+.tier-pill-sparkle {
+  background:
+    radial-gradient(circle at 15% 25%, var(--tier-pill-sparkle-1) 0, rgba(255, 255, 255, 0) 38%),
+    radial-gradient(circle at 70% 30%, var(--tier-pill-sparkle-2) 0, rgba(255, 255, 255, 0) 36%),
+    radial-gradient(circle at 35% 70%, var(--tier-pill-sparkle-3) 0, rgba(255, 255, 255, 0) 34%);
+  opacity: 0.12;
+  animation: tier-sparkle 10s ease-in-out infinite;
+  z-index: 1;
+}
+
+.tier-pill-content {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+
+.tier-pill-icon {
+  height: 13px;
+  width: auto;
+  display: block;
+  opacity: 0.85;
+}
+
+.tier-pill-text {
+  display: inline-block;
 }
 
 .tier-pill::after {
+  inset: 0;
   background: linear-gradient(
     120deg,
     rgba(255, 255, 255, 0) 0%,
@@ -767,7 +814,7 @@ h3 {
   opacity: 0;
   transform: translateX(-140%);
   filter: blur(0.6px);
-  z-index: 1;
+  z-index: 3;
 }
 
 .tier-pill[data-tier="CORE"] {
@@ -820,6 +867,15 @@ h3 {
   }
 }
 
+@keyframes tier-sparkle {
+  0% {
+    opacity: 0.08;
+  }
+  100% {
+    opacity: 0.15;
+  }
+}
+
 .tier-pill:hover::after {
   opacity: 0.32;
   animation: tier-glass-sheen 3.2s cubic-bezier(0.2, 0.8, 0.3, 1) infinite;
@@ -835,7 +891,8 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tier-pill::before,
+  .tier-pill-orbit,
+  .tier-pill-sparkle,
   .tier-pill::after {
     animation: none !important;
   }

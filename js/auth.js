@@ -28,6 +28,11 @@
     ["PRO", "PRO"],
     ["PROTIER", "PRO"]
   ]);
+  const TIER_ICON_SOURCES = new Map([
+    ["CORE", "/assets/icons/tier-core.svg"],
+    ["GOLD", "/assets/icons/tier-gold.svg"],
+    ["PRO", "/assets/icons/tier-pro.svg"]
+  ]);
   const TIER_ID_OPTIONS = new Set(["core", "gold", "pro"]);
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
 
@@ -109,7 +114,34 @@
     element.classList.add("tier-pill");
     element.classList.remove("tier-core", "tier-gold", "tier-pro");
     element.dataset.tier = normalized;
-    element.textContent = normalized;
+    const orbit = document.createElement("span");
+    orbit.className = "tier-pill-orbit";
+    orbit.setAttribute("aria-hidden", "true");
+
+    const sparkle = document.createElement("span");
+    sparkle.className = "tier-pill-sparkle";
+    sparkle.setAttribute("aria-hidden", "true");
+
+    const content = document.createElement("span");
+    content.className = "tier-pill-content";
+
+    const iconSrc = TIER_ICON_SOURCES.get(normalized);
+    if (iconSrc) {
+      const icon = document.createElement("img");
+      icon.className = "tier-pill-icon";
+      icon.src = iconSrc;
+      icon.alt = "";
+      icon.decoding = "async";
+      icon.setAttribute("aria-hidden", "true");
+      content.appendChild(icon);
+    }
+
+    const text = document.createElement("span");
+    text.className = "tier-pill-text";
+    text.textContent = normalized;
+    content.appendChild(text);
+
+    element.replaceChildren(orbit, sparkle, content);
   }
 
   function normalizeVisibility(visibility) {
