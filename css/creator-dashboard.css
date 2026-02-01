@@ -337,9 +337,9 @@ h3 {
     var(--btn-bg-2) 90%
   );
   color: var(--btn-bg-color);
-  padding: 0.6em 0.6em;
+  padding: 0.6em 0.9em;
   border-radius: 0.5em;
-  min-height: 44px;
+  min-height: 34px;
   min-width: 120px;
   font-size: var(--size, 0.7rem);
   letter-spacing: 0.08em;
@@ -452,9 +452,9 @@ h3 {
     var(--btn-bg-2) 90%
   );
   color: var(--btn-bg-color);
-  padding: 0.6em 0.6em;
+  padding: 0.6em 0.9em;
   border-radius: 0.5em;
-  min-height: 44px;
+  min-height: 34px;
   min-width: 120px;
   font-size: var(--size, 0.72rem);
   letter-spacing: 0.08em;
@@ -742,7 +742,7 @@ h3 {
   --btn-bg-2: var(--creator-btn-primary-2);
   --btn-bg-color: var(--creator-btn-text);
   border: none;
-  padding: 0.6em 0.6em;
+  padding: 0.6em 0.9em;
   border-radius: 0.5em;
   background-size: 280% auto;
   background-image: linear-gradient(
@@ -753,7 +753,7 @@ h3 {
   );
   color: var(--btn-bg-color);
   text-decoration: none;
-  min-height: 44px;
+  min-height: 34px;
   min-width: 120px;
   font-size: var(--size, 0.8rem);
   letter-spacing: 0.08em;
@@ -1514,11 +1514,11 @@ h3 {
     var(--btn-bg-2) 90%
   );
   color: var(--btn-bg-color);
-  padding: 0.6em 0.6em;
+  padding: 0.6em 0.9em;
   border-radius: 0.5em;
   text-decoration: none;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 34px;
   min-width: 140px;
     font-family: var(--creator-font);
   display: inline-flex;
