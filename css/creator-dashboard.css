@@ -694,9 +694,9 @@ h3 {
   gap: 6px;
   --tier-pill-pad-y: 3px;
   --tier-pill-pad-x: 8px;
+  --tier-pill-border-size: 1.5px;
   padding: var(--tier-pill-pad-y) var(--tier-pill-pad-x);
   border-radius: 999px;
-  border: 1px solid var(--tier-pill-border, rgba(255, 255, 255, 0.2));
   background: var(--tier-pill-bg, rgba(123, 140, 255, 0.2));
   color: var(--tier-pill-text, #e6f0ff);
   font-family: var(--creator-font);
@@ -712,7 +712,10 @@ h3 {
   isolation: isolate;
   --tier-pill-orbit-inner: rgba(255, 255, 255, 0.12);
   --tier-pill-orbit-outer: rgba(255, 255, 255, 0.28);
-  --tier-pill-sparkle: rgba(255, 255, 255, 0.5);
+  --tier-pill-border-glow: rgba(123, 140, 255, 0.2);
+  --tier-pill-sparkle-1: rgba(255, 255, 255, 0);
+  --tier-pill-sparkle-2: rgba(255, 255, 255, 0);
+  --tier-pill-sparkle-3: rgba(255, 255, 255, 0);
   --tier-pill-orbit-speed: 12s;
 }
 
@@ -720,9 +723,8 @@ h3 {
 .tier-pill::after {
   content: "";
   position: absolute;
-  inset: -55%;
+  inset: 0;
   pointer-events: none;
-  opacity: 0;
   border-radius: inherit;
 }
 
@@ -737,43 +739,55 @@ h3 {
       transparent 250deg,
       var(--tier-pill-orbit-inner) 300deg,
       transparent 360deg
-    );
-  filter: blur(8px);
+    ),
+    radial-gradient(circle at 15% 25%, var(--tier-pill-sparkle-1) 0, rgba(255, 255, 255, 0) 38%),
+    radial-gradient(circle at 70% 30%, var(--tier-pill-sparkle-2) 0, rgba(255, 255, 255, 0) 36%),
+    radial-gradient(circle at 35% 70%, var(--tier-pill-sparkle-3) 0, rgba(255, 255, 255, 0) 34%);
+  padding: var(--tier-pill-border-size);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: drop-shadow(0 0 8px var(--tier-pill-border-glow));
   transform: rotate(0deg);
   animation: tier-orbit var(--tier-pill-orbit-speed) linear infinite;
+  opacity: 1;
+  z-index: 0;
 }
 
 .tier-pill::after {
-  inset: -40%;
-  background-image:
-    radial-gradient(circle at 15% 25%, var(--tier-pill-sparkle) 0, rgba(255, 255, 255, 0) 38%),
-    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.45) 0, rgba(255, 255, 255, 0) 36%),
-    radial-gradient(circle at 35% 70%, rgba(255, 255, 255, 0.4) 0, rgba(255, 255, 255, 0) 34%),
-    radial-gradient(circle at 80% 75%, rgba(255, 255, 255, 0.35) 0, rgba(255, 255, 255, 0) 32%);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 45%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0) 62%
+  );
   opacity: 0;
-  filter: blur(1px);
-  animation: none;
+  transform: translateX(-140%);
+  filter: blur(0.6px);
+  z-index: 1;
 }
 
 .tier-pill[data-tier="CORE"] {
-  --tier-pill-bg: linear-gradient(135deg, rgba(120, 146, 255, 0.26), rgba(72, 102, 214, 0.14));
-  --tier-pill-border: rgba(132, 162, 255, 0.35);
-  --tier-pill-glow: rgba(92, 128, 255, 0.28);
-  --tier-pill-text: #d9e7ff;
-  --tier-pill-orbit-inner: rgba(130, 160, 255, 0.1);
-  --tier-pill-orbit-outer: rgba(130, 160, 255, 0.16);
-  --tier-pill-sparkle: rgba(255, 255, 255, 0.35);
+  --tier-pill-bg: linear-gradient(135deg, rgba(92, 176, 188, 0.24), rgba(62, 130, 150, 0.14));
+  --tier-pill-glow: rgba(72, 160, 170, 0.22);
+  --tier-pill-text: #d7f3f4;
+  --tier-pill-orbit-inner: rgba(120, 200, 188, 0.12);
+  --tier-pill-orbit-outer: rgba(120, 200, 188, 0.18);
+  --tier-pill-border-glow: rgba(120, 200, 188, 0.18);
   --tier-pill-orbit-speed: 14s;
 }
 
 .tier-pill[data-tier="GOLD"] {
   --tier-pill-bg: linear-gradient(135deg, rgba(255, 198, 84, 0.42), rgba(255, 232, 164, 0.12));
-  --tier-pill-border: rgba(255, 216, 124, 0.55);
   --tier-pill-glow: rgba(255, 195, 92, 0.4);
   --tier-pill-text: #fff3c9;
   --tier-pill-orbit-inner: rgba(255, 223, 150, 0.35);
   --tier-pill-orbit-outer: rgba(255, 195, 92, 0.55);
-  --tier-pill-sparkle: rgba(255, 246, 210, 0.7);
+  --tier-pill-border-glow: rgba(255, 196, 104, 0.24);
+  --tier-pill-sparkle-1: rgba(255, 246, 210, 0.6);
+  --tier-pill-sparkle-2: rgba(255, 236, 180, 0.5);
+  --tier-pill-sparkle-3: rgba(255, 226, 160, 0.45);
   --tier-pill-orbit-speed: 10s;
 }
 
@@ -784,33 +798,15 @@ h3 {
     rgba(132, 102, 255, 0.24) 55%,
     rgba(80, 160, 255, 0.24)
   );
-  --tier-pill-border: rgba(182, 126, 255, 0.6);
   --tier-pill-glow: rgba(170, 90, 255, 0.45);
   --tier-pill-text: #ffe1ff;
   --tier-pill-orbit-inner: rgba(210, 160, 255, 0.4);
   --tier-pill-orbit-outer: rgba(255, 110, 220, 0.55);
-  --tier-pill-sparkle: rgba(255, 220, 255, 0.75);
+  --tier-pill-border-glow: rgba(200, 120, 255, 0.24);
+  --tier-pill-sparkle-1: rgba(255, 220, 255, 0.65);
+  --tier-pill-sparkle-2: rgba(240, 190, 255, 0.55);
+  --tier-pill-sparkle-3: rgba(255, 160, 230, 0.5);
   --tier-pill-orbit-speed: 10s;
-}
-
-.tier-pill[data-tier="GOLD"]::before,
-.tier-pill[data-tier="PRO"]::before {
-  opacity: 0.28;
-}
-
-.tier-pill[data-tier="GOLD"]::after,
-.tier-pill[data-tier="PRO"]::after {
-  opacity: 0.45;
-  animation: tier-sparkle-pulse 8s ease-in-out infinite;
-}
-
-.tier-pill[data-tier="PRO"]::after {
-  opacity: 0.55;
-}
-
-.tier-pill[data-tier="CORE"]::after {
-  opacity: 0;
-  animation: none;
 }
 
 @keyframes tier-orbit {
@@ -822,46 +818,17 @@ h3 {
   }
 }
 
-@keyframes tier-sparkle-pulse {
-  0%,
-  100% {
-    opacity: 0.32;
-  }
-  50% {
-    opacity: 0.52;
-  }
-}
-
-.tier-pill:hover::before {
-  animation: tier-orbit var(--tier-pill-orbit-speed) linear infinite, tier-glass-sheen 3.6s linear infinite;
-  background-image:
-    conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      var(--tier-pill-orbit-inner) 60deg,
-      transparent 120deg,
-      var(--tier-pill-orbit-outer) 180deg,
-      transparent 250deg,
-      var(--tier-pill-orbit-inner) 300deg,
-      transparent 360deg
-    ),
-    linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.2) 45%,
-      rgba(255, 255, 255, 0.22) 50%,
-      rgba(255, 255, 255, 0) 65%
-    );
-  background-size: 100% 100%, 220% 100%;
-  background-position: center, -120% 0;
+.tier-pill:hover::after {
+  opacity: 0.22;
+  animation: tier-glass-sheen 4s linear infinite;
 }
 
 @keyframes tier-glass-sheen {
   0% {
-    background-position: center, -120% 0;
+    transform: translateX(-140%);
   }
   100% {
-    background-position: center, 120% 0;
+    transform: translateX(140%);
   }
 }
 
@@ -870,8 +837,9 @@ h3 {
   .tier-pill::after {
     animation: none !important;
   }
-  .tier-pill:hover::before {
+  .tier-pill:hover::after {
     animation: none !important;
+    transform: translateX(0);
   }
 }
 
