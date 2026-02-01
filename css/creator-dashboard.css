@@ -710,31 +710,49 @@ h3 {
   backdrop-filter: blur(12px);
   overflow: hidden;
   isolation: isolate;
+  --tier-pill-orbit-inner: rgba(255, 255, 255, 0.12);
+  --tier-pill-orbit-outer: rgba(255, 255, 255, 0.28);
+  --tier-pill-sparkle: rgba(255, 255, 255, 0.5);
+  --tier-pill-orbit-speed: 12s;
 }
 
 .tier-pill::before,
 .tier-pill::after {
   content: "";
   position: absolute;
-  inset: -30% 0;
+  inset: -55%;
   pointer-events: none;
   opacity: 0;
+  border-radius: inherit;
 }
 
 .tier-pill::before {
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 45%);
-  opacity: 0.22;
+  background:
+    conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      var(--tier-pill-orbit-inner) 60deg,
+      transparent 120deg,
+      var(--tier-pill-orbit-outer) 180deg,
+      transparent 250deg,
+      var(--tier-pill-orbit-inner) 300deg,
+      transparent 360deg
+    );
+  filter: blur(8px);
+  transform: rotate(0deg);
+  animation: tier-orbit var(--tier-pill-orbit-speed) linear infinite;
 }
 
 .tier-pill::after {
+  inset: -40%;
   background-image:
-    radial-gradient(circle at 18% 30%, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0) 45%),
-    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 42%),
-    radial-gradient(circle at 42% 70%, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 46%);
+    radial-gradient(circle at 15% 25%, var(--tier-pill-sparkle) 0, rgba(255, 255, 255, 0) 38%),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.45) 0, rgba(255, 255, 255, 0) 36%),
+    radial-gradient(circle at 35% 70%, rgba(255, 255, 255, 0.4) 0, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 80% 75%, rgba(255, 255, 255, 0.35) 0, rgba(255, 255, 255, 0) 32%);
   opacity: 0;
-  transform: translateX(-30%);
+  filter: blur(1px);
+  animation: none;
 }
 
 .tier-pill[data-tier="CORE"] {
@@ -742,6 +760,10 @@ h3 {
   --tier-pill-border: rgba(132, 162, 255, 0.35);
   --tier-pill-glow: rgba(92, 128, 255, 0.28);
   --tier-pill-text: #d9e7ff;
+  --tier-pill-orbit-inner: rgba(130, 160, 255, 0.1);
+  --tier-pill-orbit-outer: rgba(130, 160, 255, 0.16);
+  --tier-pill-sparkle: rgba(255, 255, 255, 0.35);
+  --tier-pill-orbit-speed: 14s;
 }
 
 .tier-pill[data-tier="GOLD"] {
@@ -749,6 +771,10 @@ h3 {
   --tier-pill-border: rgba(255, 216, 124, 0.55);
   --tier-pill-glow: rgba(255, 195, 92, 0.4);
   --tier-pill-text: #fff3c9;
+  --tier-pill-orbit-inner: rgba(255, 223, 150, 0.35);
+  --tier-pill-orbit-outer: rgba(255, 195, 92, 0.55);
+  --tier-pill-sparkle: rgba(255, 246, 210, 0.7);
+  --tier-pill-orbit-speed: 10s;
 }
 
 .tier-pill[data-tier="PRO"] {
@@ -761,57 +787,90 @@ h3 {
   --tier-pill-border: rgba(182, 126, 255, 0.6);
   --tier-pill-glow: rgba(170, 90, 255, 0.45);
   --tier-pill-text: #ffe1ff;
+  --tier-pill-orbit-inner: rgba(210, 160, 255, 0.4);
+  --tier-pill-orbit-outer: rgba(255, 110, 220, 0.55);
+  --tier-pill-sparkle: rgba(255, 220, 255, 0.75);
+  --tier-pill-orbit-speed: 10s;
 }
 
 .tier-pill[data-tier="GOLD"]::before,
 .tier-pill[data-tier="PRO"]::before {
-  opacity: 0.35;
-  animation: tier-shimmer 6s linear infinite;
+  opacity: 0.28;
 }
 
 .tier-pill[data-tier="GOLD"]::after,
 .tier-pill[data-tier="PRO"]::after {
-  opacity: 0.55;
-  animation: tier-sparkle 7s linear infinite;
+  opacity: 0.45;
+  animation: tier-sparkle-pulse 8s ease-in-out infinite;
 }
 
 .tier-pill[data-tier="PRO"]::after {
-  opacity: 0.65;
+  opacity: 0.55;
 }
 
-.tier-pill[data-tier="CORE"]::before,
 .tier-pill[data-tier="CORE"]::after {
   opacity: 0;
   animation: none;
 }
 
-@keyframes tier-shimmer {
+@keyframes tier-orbit {
   0% {
-    transform: translateX(-35%);
-  }
-  50% {
-    transform: translateX(20%);
+    transform: rotate(0deg);
   }
   100% {
-    transform: translateX(45%);
+    transform: rotate(360deg);
   }
 }
 
-@keyframes tier-sparkle {
-  0% {
-    transform: translateX(-35%);
+@keyframes tier-sparkle-pulse {
+  0%,
+  100% {
+    opacity: 0.32;
   }
   50% {
-    transform: translateX(10%);
+    opacity: 0.52;
+  }
+}
+
+.tier-pill:hover::before {
+  animation: tier-orbit var(--tier-pill-orbit-speed) linear infinite, tier-glass-sheen 3.6s linear infinite;
+  background-image:
+    conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      var(--tier-pill-orbit-inner) 60deg,
+      transparent 120deg,
+      var(--tier-pill-orbit-outer) 180deg,
+      transparent 250deg,
+      var(--tier-pill-orbit-inner) 300deg,
+      transparent 360deg
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 45%,
+      rgba(255, 255, 255, 0.22) 50%,
+      rgba(255, 255, 255, 0) 65%
+    );
+  background-size: 100% 100%, 220% 100%;
+  background-position: center, -120% 0;
+}
+
+@keyframes tier-glass-sheen {
+  0% {
+    background-position: center, -120% 0;
   }
   100% {
-    transform: translateX(40%);
+    background-position: center, 120% 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .tier-pill::before,
   .tier-pill::after {
+    animation: none !important;
+  }
+  .tier-pill:hover::before {
     animation: none !important;
   }
 }
