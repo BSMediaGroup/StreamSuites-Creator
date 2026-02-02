@@ -2,7 +2,7 @@
   "use strict";
 
   const VERSION_ENDPOINT = new URL(
-    "https://admin.streamsuites.app/docs/runtime/exports/version.json",
+    "https://admin.streamsuites.app/runtime/exports/version.json",
     window.location.origin
   ).href;
   const CACHE = {
