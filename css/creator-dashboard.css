@@ -337,11 +337,11 @@ h3 {
     var(--btn-bg-2) 90%
   );
   color: var(--btn-bg-color);
-  padding: 0.6em 0.9em;
+  padding: 0.6em 0.8em;
   border-radius: 0.5em;
-  min-height: 34px;
+  min-height: 26px;
   min-width: 120px;
-  font-size: var(--size, 0.7rem);
+  font-size: var(--size, 0.6rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
     font-family: var(--creator-font);
@@ -742,7 +742,7 @@ h3 {
   --btn-bg-2: var(--creator-btn-primary-2);
   --btn-bg-color: var(--creator-btn-text);
   border: none;
-  padding: 0.6em 0.9em;
+  padding: 0.6em 0.8em;
   border-radius: 0.5em;
   background-size: 280% auto;
   background-image: linear-gradient(
@@ -753,9 +753,9 @@ h3 {
   );
   color: var(--btn-bg-color);
   text-decoration: none;
-  min-height: 34px;
+  min-height: 26px;
   min-width: 120px;
-  font-size: var(--size, 0.8rem);
+  font-size: var(--size, 0.6rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
     font-family: var(--creator-font);
