@@ -1375,7 +1375,7 @@ h3 {
 }
 
 .tier-card .tier-feature-illustration {
-  width: clamp(56px, 18vw, 92px);
+  width: clamp(56px, 18vw, 76px);
   aspect-ratio: 1 / 1;
   height: auto;
   object-fit: contain;
