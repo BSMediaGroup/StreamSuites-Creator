@@ -1348,10 +1348,20 @@ h3 {
 
 .tier-card .tier-features-row {
   display: flex;
-  align-items: flex-end;
   gap: 16px;
   flex-wrap: wrap;
+
+  /* Default: stacked layout (image below list) */
+  align-items: flex-end;
 }
+
+/* When there is enough horizontal space for side-by-side layout */
+@media (min-width: 420px) {
+  .tier-card .tier-features-row {
+    align-items: center;
+  }
+}
+
 
 .tier-card .tier-features {
   margin: 0;
