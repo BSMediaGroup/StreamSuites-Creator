@@ -1,10 +1,8 @@
 (() => {
   "use strict";
 
-  const VERSION_ENDPOINT = new URL(
-    "https://admin.streamsuites.app/runtime/exports/version.json",
-    window.location.origin
-  ).href;
+  const VERSION_ENDPOINT =
+  "https://admin.streamsuites.app/runtime/exports/version.json";
   const CACHE = {
     promise: null,
     data: null
