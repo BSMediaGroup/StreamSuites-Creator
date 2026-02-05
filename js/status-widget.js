@@ -1,0 +1,243 @@
+(() => {
+  const API_URL = "https://v0hwlmly3pd2.statuspage.io/api/v2/summary.json";
+  const STATUS_URL = "https://streamsuites.statuspage.io/";
+  const ROOT_ID = "ss-status-indicator";
+  const DETAILS_ID = "ss-status-details";
+
+  if (document.getElementById(ROOT_ID)) return;
+
+  const root = document.createElement("div");
+  root.id = ROOT_ID;
+  root.className = "ss-status-indicator";
+  root.dataset.state = "unknown";
+  root.dataset.expanded = "false";
+
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "ss-status-toggle";
+  toggle.setAttribute("aria-expanded", "false");
+  toggle.setAttribute("aria-controls", DETAILS_ID);
+  toggle.setAttribute("aria-label", "Service status details");
+
+  const dot = document.createElement("span");
+  dot.className = "ss-status-dot";
+  dot.setAttribute("aria-hidden", "true");
+
+  const label = document.createElement("span");
+  label.className = "ss-status-label";
+  label.textContent = "Status";
+
+  toggle.append(dot, label);
+
+  const details = document.createElement("div");
+  details.id = DETAILS_ID;
+  details.className = "ss-status-details";
+  details.hidden = true;
+
+  root.append(toggle, details);
+  document.body.appendChild(root);
+
+  let userToggled = false;
+
+  const setExpanded = (expanded) => {
+    const isExpanded = Boolean(expanded);
+    root.dataset.expanded = String(isExpanded);
+    toggle.setAttribute("aria-expanded", String(isExpanded));
+    details.hidden = !isExpanded;
+  };
+
+  toggle.addEventListener("click", () => {
+    userToggled = true;
+    setExpanded(root.dataset.expanded !== "true");
+  });
+
+  const toTitle = (value) => {
+    if (!value) return "";
+    return String(value)
+      .replace(/_/g, " ")
+      .split(" ")
+      .map((part) => (part ? part[0].toUpperCase() + part.slice(1) : part))
+      .join(" ");
+  };
+
+  const truncateText = (value, limit) => {
+    if (!value) return "";
+    const text = String(value).trim();
+    if (text.length <= limit) return text;
+    const slice = text.slice(0, limit);
+    const lastSpace = slice.lastIndexOf(" ");
+    if (lastSpace > 40) {
+      return `${slice.slice(0, lastSpace)}...`;
+    }
+    return `${slice}...`;
+  };
+
+  const buildSection = (titleText, items) => {
+    const section = document.createElement("div");
+    section.className = "ss-status-section";
+    const title = document.createElement("div");
+    title.className = "ss-status-section-title";
+    title.textContent = titleText;
+    const list = document.createElement("ul");
+    list.className = "ss-status-list";
+    items.forEach((item) => list.appendChild(item));
+    section.append(title, list);
+    return section;
+  };
+
+  const createListItem = ({ title, meta, body }) => {
+    const item = document.createElement("li");
+    item.className = "ss-status-item";
+
+    const titleEl = document.createElement("div");
+    titleEl.className = "ss-status-item-title";
+    titleEl.textContent = title;
+    item.appendChild(titleEl);
+
+    if (meta) {
+      const metaEl = document.createElement("div");
+      metaEl.className = "ss-status-item-meta";
+      metaEl.textContent = meta;
+      item.appendChild(metaEl);
+    }
+
+    if (body) {
+      const bodyEl = document.createElement("div");
+      bodyEl.className = "ss-status-item-body";
+      bodyEl.textContent = body;
+      item.appendChild(bodyEl);
+    }
+
+    return item;
+  };
+
+  const createLink = () => {
+    const link = document.createElement("a");
+    link.className = "ss-status-link";
+    link.href = STATUS_URL;
+    link.rel = "noreferrer";
+    link.target = "_blank";
+    link.textContent = "View full status →";
+    return link;
+  };
+
+  const computeState = (components) => {
+    if (components.some((component) => component.status === "major_outage")) {
+      return "major";
+    }
+    if (
+      components.some(
+        (component) =>
+          component.status === "partial_outage" ||
+          component.status === "degraded_performance"
+      )
+    ) {
+      return "partial";
+    }
+    return "operational";
+  };
+
+  const setUnavailable = () => {
+    root.dataset.state = "unknown";
+    details.innerHTML = "";
+    const summary = document.createElement("div");
+    summary.className = "ss-status-summary";
+    summary.textContent = "Status unavailable.";
+    details.append(summary, createLink());
+  };
+
+  const updateWidget = (summary) => {
+    const components = Array.isArray(summary?.components) ? summary.components : [];
+    const incidents = Array.isArray(summary?.incidents) ? summary.incidents : [];
+    const maintenances = Array.isArray(summary?.scheduled_maintenances)
+      ? summary.scheduled_maintenances
+      : [];
+
+    const impactedComponents = components.filter(
+      (component) => component.status !== "operational"
+    );
+
+    root.dataset.state = computeState(components);
+
+    details.innerHTML = "";
+    const description = summary?.status?.description || "Status unavailable.";
+    const summaryEl = document.createElement("div");
+    summaryEl.className = "ss-status-summary";
+    summaryEl.textContent = description;
+    details.appendChild(summaryEl);
+
+    if (impactedComponents.length) {
+      const items = impactedComponents.map((component) =>
+        createListItem({
+          title: component.name || "Unnamed Component",
+          meta: toTitle(component.status) || "Status Unknown",
+        })
+      );
+      details.appendChild(buildSection("Components", items));
+    }
+
+    const unresolvedIncidents = incidents.filter(
+      (incident) => incident.status !== "resolved"
+    );
+    if (unresolvedIncidents.length) {
+      const items = unresolvedIncidents.map((incident) => {
+        const update = Array.isArray(incident.incident_updates)
+          ? incident.incident_updates[0]
+          : null;
+        return createListItem({
+          title: incident.name || "Untitled Incident",
+          meta: toTitle(incident.status) || "Unknown",
+          body: truncateText(update?.body || "", 180) || null,
+        });
+      });
+      details.appendChild(buildSection("Incidents", items));
+    }
+
+    const activeMaintenances = maintenances.filter(
+      (maintenance) => maintenance.status !== "completed"
+    );
+    if (activeMaintenances.length) {
+      const items = activeMaintenances.map((maintenance) =>
+        createListItem({
+          title: maintenance.name || "Scheduled Maintenance",
+          meta: toTitle(maintenance.status) || "Scheduled",
+        })
+      );
+      details.appendChild(buildSection("Maintenance", items));
+    }
+
+    details.appendChild(createLink());
+
+    const shouldExpand = incidents.length > 0 || impactedComponents.length > 0;
+    if (!userToggled) {
+      setExpanded(shouldExpand);
+    }
+  };
+
+  const fetchStatus = async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    try {
+      const response = await fetch(API_URL, {
+        signal: controller.signal,
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) throw new Error("status fetch failed");
+      const data = await response.json();
+      updateWidget(data);
+    } catch (error) {
+      setUnavailable();
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fetchStatus);
+  } else {
+    fetchStatus();
+  }
+})();
