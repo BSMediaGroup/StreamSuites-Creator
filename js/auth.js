@@ -12,7 +12,8 @@
     oauth: Object.freeze({
       google: `${AUTH_BASE_URL}/auth/google`,
       github: `${AUTH_BASE_URL}/auth/github`,
-      discord: `${AUTH_BASE_URL}/auth/discord`
+      discord: `${AUTH_BASE_URL}/auth/discord`,
+      x: `${AUTH_BASE_URL}/auth/x/start?surface=creator`
     })
   });
   const ACCOUNT_ENDPOINTS = Object.freeze({
@@ -43,6 +44,11 @@
   const LOGOUT_GUARD_KEY = "streamsuites.creator.loggedOut";
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
+  const AUTO_START_GUARD_KEY = "streamsuites.creator.autoStartXAt";
+  const AUTO_START_GUARD_WINDOW_MS = 5 * 60 * 1000;
+  const CREATOR_RETRY_LOGIN_URL = "/auth/login.html?login=1";
+  const LOCKOUT_VARIANT_SESSION_INVALID = "session_invalid";
+  const LOCKOUT_VARIANT_ROLE_MISMATCH = "role_mismatch";
   const SESSION_POLL_INTERVAL_MS = 20000;
   const SESSION_POLL_FAILURE_THRESHOLD = 3;
   const SESSION_POLL_FAILURE_COOLDOWN_MS = 60000;
@@ -69,6 +75,7 @@
   let accountMenuWired = false;
   let isAccountMenuOpen = false;
   let activeAccountMenu = null;
+  let creatorAuthGuardBlockedLogged = false;
 
   function ensureAppNamespace() {
     if (!window.App) {
@@ -293,6 +300,24 @@
     return normalizeAuthReason(headerReason);
   }
 
+  function resolveAuthReasonEnum(payload, response) {
+    if (payload && typeof payload === "object") {
+      const candidate = payload.reason_enum || payload.error?.reason_enum;
+      if (typeof candidate === "string" && candidate.trim()) {
+        return candidate.trim().toUpperCase();
+      }
+    }
+    const headerReason =
+      response?.headers &&
+      ["x-auth-reason-enum", "x-streamsuites-auth-reason-enum"]
+        .map((header) => response.headers.get(header))
+        .find(Boolean);
+    if (typeof headerReason === "string" && headerReason.trim()) {
+      return headerReason.trim().toUpperCase();
+    }
+    return "";
+  }
+
   async function ensureIdleBackoff() {
     if (!sessionRetry.idle || !sessionRetry.lastAttemptAt) {
       sessionRetry.lastAttemptAt = Date.now();
@@ -332,20 +357,24 @@
     }
 
     const reason = resolveAuthReason(data, response);
+    const reasonEnum = resolveAuthReasonEnum(data, response);
 
     if (!response.ok) {
       const error = new Error("Auth request failed");
       error.status = response.status;
       error.payload = data;
       error.reason = reason;
+      error.reasonEnum = reasonEnum;
       throw error;
     }
 
-    return { payload: data, reason };
+    return { payload: data, reason, reasonEnum };
   }
 
   function isCookieMissingError(err) {
     if (!err || err.status !== 401) return false;
+    const reasonEnum = typeof err.reasonEnum === "string" ? err.reasonEnum.trim().toUpperCase() : "";
+    if (reasonEnum === "COOKIE_MISSING") return true;
     const reason = normalizeAuthReason(err.reason || err.payload?.reason);
     return reason === SESSION_IDLE_REASON;
   }
@@ -446,7 +475,11 @@
       sessionRetry.idle = false;
       sessionRetry.idleReason = "";
       sessionRetry.notified = false;
-      sessionState.value = normalizeSessionPayload(payload);
+      const normalized = normalizeSessionPayload(payload);
+      sessionState.value = {
+        ...normalized,
+        reasonEnum: resolveAuthReasonEnum(payload, null)
+      };
     } catch (err) {
       if (isCookieMissingError(err)) {
         sessionRetry.idle = true;
@@ -461,13 +494,15 @@
           error: err,
           errorStatus: err?.status ?? null,
           errorReason: sessionRetry.idleReason,
+          errorReasonEnum: err?.reasonEnum || "COOKIE_MISSING",
           idle: true
         };
       } else {
         sessionState.value = {
           authenticated: false,
           error: err,
-          errorStatus: err?.status ?? null
+          errorStatus: err?.status ?? null,
+          errorReasonEnum: err?.reasonEnum || ""
         };
       }
     } finally {
@@ -1435,43 +1470,74 @@
     });
   }
 
-  function buildCreatorLockout() {
+  function buildCreatorLockout(variant = LOCKOUT_VARIANT_SESSION_INVALID) {
     const lockout = document.createElement("section");
     lockout.className = "creator-lockout";
     lockout.dataset.creatorLockout = "true";
+    lockout.dataset.variant = variant;
+
+    if (variant === LOCKOUT_VARIANT_ROLE_MISMATCH) {
+      lockout.innerHTML = `
+        <div class="lockout-card">
+          <span class="lockout-pill">Creator access required</span>
+          <h2>This area requires creator access.</h2>
+          <p>
+            Your StreamSuites account is authenticated, but creator access is not enabled.
+          </p>
+          <div class="lockout-actions">
+            <a
+              class="lockout-button"
+              href="https://api.streamsuites.app/auth/login/google?surface=creator"
+            >
+              Login as Creator
+            </a>
+            <button class="lockout-button secondary" type="button" data-auth-logout="true">
+              Sign out
+            </button>
+          </div>
+        </div>
+      `;
+      return lockout;
+    }
 
     lockout.innerHTML = `
-      <div class="lockout-card">
-        <span class="lockout-pill">Creator access required</span>
-        <h2>This area requires creator access.</h2>
-        <p>
-          Your StreamSuites account is authenticated, but creator access is not enabled.
-        </p>
-        <div class="lockout-actions">
-          <a
-            class="lockout-button"
-            href="https://api.streamsuites.app/auth/login/google?surface=creator"
-          >
-            Login as Creator
-          </a>
-          <button class="lockout-button secondary" type="button" data-auth-logout="true">
-            Sign out
-          </button>
+        <div class="lockout-card">
+          <span class="lockout-pill">Not logged in</span>
+          <h2>Sign in to continue.</h2>
+          <p>
+            Your creator session is not active.
+          </p>
+          <div class="lockout-actions">
+            <a
+              class="lockout-button"
+              href="${CREATOR_RETRY_LOGIN_URL}"
+            >
+              Retry login
+            </a>
+          </div>
         </div>
-      </div>
-    `;
+      `;
 
     return lockout;
   }
 
-  function toggleCreatorLockout(show) {
+  function toggleCreatorLockout(show, options = {}) {
+    const variant =
+      options.variant === LOCKOUT_VARIANT_ROLE_MISMATCH
+        ? LOCKOUT_VARIANT_ROLE_MISMATCH
+        : LOCKOUT_VARIANT_SESSION_INVALID;
     let lockout = document.querySelector("[data-creator-lockout]");
     const content = document.querySelector("[data-creator-content]");
     if (!lockout && show) {
-      lockout = buildCreatorLockout();
+      lockout = buildCreatorLockout(variant);
       document.body.prepend(lockout);
     }
     if (!lockout) return false;
+    if (show && lockout.dataset.variant !== variant) {
+      const replacement = buildCreatorLockout(variant);
+      lockout.replaceWith(replacement);
+      lockout = replacement;
+    }
 
     if (show) {
       lockout.hidden = false;
@@ -1539,6 +1605,42 @@
     window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=${reason}`);
   }
 
+  function maybeAutoStartXLogin(session) {
+    const pathname = getPathname();
+    if (pathname !== "/auth/login.html") return false;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("login") !== "1") return false;
+    if (session?.authenticated === true) return false;
+
+    const reasonEnum =
+      (session?.errorReasonEnum || session?.reasonEnum || "SESSION_UNKNOWN").toString().trim().toUpperCase();
+    const now = Date.now();
+    let lastAttemptAt = 0;
+    try {
+      const raw = sessionStorage.getItem(AUTO_START_GUARD_KEY);
+      const parsed = raw ? Number.parseInt(raw, 10) : 0;
+      lastAttemptAt = Number.isFinite(parsed) ? parsed : 0;
+    } catch (err) {
+      lastAttemptAt = 0;
+    }
+
+    if (lastAttemptAt > 0 && now - lastAttemptAt < AUTO_START_GUARD_WINDOW_MS) {
+      if (!creatorAuthGuardBlockedLogged) {
+        creatorAuthGuardBlockedLogged = true;
+        console.info(`[Creator][Auth] CREATOR_AUTH_GUARD_BLOCKED reason_enum=${reasonEnum || "SESSION_UNKNOWN"}`);
+      }
+      return false;
+    }
+
+    try {
+      sessionStorage.setItem(AUTO_START_GUARD_KEY, String(now));
+    } catch (err) {
+      console.warn("[Creator][Auth] Failed to persist auto-start guard", err);
+    }
+    window.location.assign(AUTH_ENDPOINTS.oauth.x);
+    return true;
+  }
+
   function buildAuthToast() {
     const toast = document.createElement("div");
     toast.className = "ss-alert ss-auth-toast";
@@ -1585,24 +1687,13 @@
 
   function showAuthModalAndHaltAppInit(session) {
     setCreatorShellVisible(false);
-    toggleCreatorLockout(false);
-
-    if (forceLoginModal()) {
-      return true;
-    }
-
     const pathname = getPathname();
     if (pathname === "/auth/login.html") {
+      toggleCreatorLockout(false);
+      forceLoginModal();
       return true;
     }
-
-    const reason =
-      session?.errorStatus === 401
-        ? "expired"
-        : session?.errorStatus
-          ? "unavailable"
-          : "expired";
-    window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=${reason}`);
+    toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_SESSION_INVALID });
     return true;
   }
 
@@ -1614,16 +1705,19 @@
     return true;
   }
 
-  function handleSessionInvalidation(reason = "expired") {
+  function handleSessionInvalidation(reason = "expired", reasonEnum = "") {
     stopSessionMonitor();
     clearLocalSessionState();
-    showAuthToast("Session expired. Redirecting to sign in…", {
+    showAuthToast("Session expired. Sign in again to continue.", {
       tone: "danger",
       autoHideMs: SESSION_INVALID_REDIRECT_DELAY_MS
     });
-    setTimeout(() => {
-      redirectToLogin(reason);
-    }, SESSION_INVALID_REDIRECT_DELAY_MS);
+    showAuthModalAndHaltAppInit({
+      authenticated: false,
+      errorStatus: 401,
+      errorReason: reason,
+      errorReasonEnum: reasonEnum || "SESSION_UNKNOWN"
+    });
   }
 
   function applySessionUpdate(nextSession) {
@@ -1643,15 +1737,18 @@
 
     sessionMonitor.checking = true;
     try {
-      const { payload } = await fetchSessionJson(5000);
-      const nextSession = normalizeSessionPayload(payload);
+      const { payload, reasonEnum } = await fetchSessionJson(5000);
+      const nextSession = {
+        ...normalizeSessionPayload(payload),
+        reasonEnum: reasonEnum || resolveAuthReasonEnum(payload, null)
+      };
       sessionMonitor.consecutiveFailures = 0;
       sessionRetry.idle = false;
       sessionRetry.idleReason = "";
       sessionRetry.notified = false;
 
       if (!nextSession?.authenticated) {
-        handleSessionInvalidation("expired");
+        handleSessionInvalidation("expired", nextSession?.reasonEnum || "");
         return;
       }
 
@@ -1660,7 +1757,7 @@
       if (nextSession?.authenticated) {
         const role = normalizeRole(nextSession.role);
         if (role && role !== CREATOR_ROLE) {
-          toggleCreatorLockout(true);
+          toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_ROLE_MISMATCH });
           return;
         }
         if (!isPublic) {
@@ -1673,12 +1770,12 @@
         sessionRetry.idle = true;
         sessionRetry.idleReason = SESSION_IDLE_REASON;
         sessionRetry.lastAttemptAt = Date.now();
-        handleSessionInvalidation("expired");
+        handleSessionInvalidation("expired", err?.reasonEnum || "COOKIE_MISSING");
         return;
       }
       const status = err?.status ?? null;
       if (status === 401 || status === 403) {
-        handleSessionInvalidation("expired");
+        handleSessionInvalidation("expired", err?.reasonEnum || "");
         return;
       }
 
@@ -1740,6 +1837,9 @@
       if (isPublic && session?.error && !new URLSearchParams(window.location.search).get("reason")) {
         window.StreamSuitesAuth.loginHint = "Auth service is unreachable. Please try again.";
       }
+      if (isPublic && maybeAutoStartXLogin(session)) {
+        return;
+      }
       showAuthModalAndHaltAppInit(session);
       return;
     }
@@ -1751,7 +1851,7 @@
     if (session?.authenticated) {
       const role = normalizeRole(session.role);
       if (role !== CREATOR_ROLE) {
-        toggleCreatorLockout(true);
+        toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_ROLE_MISMATCH });
         return;
       }
     }
