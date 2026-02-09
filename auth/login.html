@@ -52,63 +52,79 @@
                   <img class="auth-oauth-icon" src="/assets/icons/github.svg" alt="" aria-hidden="true" />
                   <span>GitHub</span>
                 </a>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="discord" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/discord.svg" alt="" aria-hidden="true" />
+                  <span>Discord</span>
+                </a>
                 <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="x" href="#">
                   <img class="auth-oauth-icon" src="/assets/icons/x.svg" alt="" aria-hidden="true" />
                   <span>X</span>
                 </a>
-                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="discord" href="#">
-                  <img class="auth-oauth-icon" src="/assets/icons/discord.svg" alt="" aria-hidden="true" />
-                  <span>Discord</span>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="twitch" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/twitch.svg" alt="" aria-hidden="true" />
+                  <span>Twitch</span>
                 </a>
               </div>
             </div>
 
             <div class="auth-divider">
-              <span>or</span>
+              <span>email/password</span>
             </div>
 
-            <div class="auth-section">
-              <p class="section-kicker">Email login</p>
-              <form class="auth-form" data-auth-login-form>
-                <div class="ss-form-row">
-                  <label for="auth-login-email">Email address</label>
-                  <input
-                    id="auth-login-email"
-                    type="email"
-                    class="ss-input"
-                    data-auth-login-email
-                    placeholder="creator@streamsuites.app"
-                    autocomplete="email"
-                    required
-                  />
-                </div>
-                <div class="ss-form-row">
-                  <label for="auth-login-password">Password</label>
-                  <input
-                    id="auth-login-password"
-                    type="password"
-                    class="ss-input"
-                    data-auth-login-password
-                    placeholder="Enter your password"
-                    autocomplete="current-password"
-                    required
-                  />
-                </div>
-                <div class="auth-actions">
-                  <button class="ss-btn ss-btn-primary auth-primary-submit" type="submit" data-auth-login-submit>
-                    Log in
-                  </button>
-                  <span class="muted auth-status" data-auth-login-status aria-live="polite"></span>
-                </div>
-                <div class="ss-alert auth-hint" data-auth-login-hint hidden></div>
-                <div class="ss-alert ss-alert-danger auth-error" data-auth-login-error hidden></div>
-                <div class="auth-actions" data-auth-login-resend hidden>
-                  <button class="ss-btn ss-btn-secondary ss-btn-small" type="button" data-auth-resend-button>
-                    Resend verification email
-                  </button>
-                  <span class="muted auth-status" data-auth-resend-status aria-live="polite"></span>
-                </div>
-              </form>
+            <div class="auth-section auth-manual-section">
+              <button
+                type="button"
+                class="ss-btn ss-btn-secondary auth-manual-toggle"
+                data-auth-manual-toggle
+                data-auth-manual-target="auth-login-manual"
+                aria-expanded="false"
+                aria-controls="auth-login-manual"
+              >
+                Use email/password
+              </button>
+              <div id="auth-login-manual" class="auth-manual-panel" data-auth-manual-panel hidden>
+                <p class="section-kicker">Email login</p>
+                <form class="auth-form" data-auth-login-form>
+                  <div class="ss-form-row">
+                    <label for="auth-login-email">Email address</label>
+                    <input
+                      id="auth-login-email"
+                      type="email"
+                      class="ss-input"
+                      data-auth-login-email
+                      placeholder="creator@streamsuites.app"
+                      autocomplete="email"
+                      required
+                    />
+                  </div>
+                  <div class="ss-form-row">
+                    <label for="auth-login-password">Password</label>
+                    <input
+                      id="auth-login-password"
+                      type="password"
+                      class="ss-input"
+                      data-auth-login-password
+                      placeholder="Enter your password"
+                      autocomplete="current-password"
+                      required
+                    />
+                  </div>
+                  <div class="auth-actions">
+                    <button class="ss-btn ss-btn-primary auth-primary-submit" type="submit" data-auth-login-submit>
+                      Log in
+                    </button>
+                    <span class="muted auth-status" data-auth-login-status aria-live="polite"></span>
+                  </div>
+                  <div class="ss-alert auth-hint" data-auth-login-hint hidden></div>
+                  <div class="ss-alert ss-alert-danger auth-error" data-auth-login-error hidden></div>
+                  <div class="auth-actions" data-auth-login-resend hidden>
+                    <button class="ss-btn ss-btn-secondary ss-btn-small" type="button" data-auth-resend-button>
+                      Resend verification email
+                    </button>
+                    <span class="muted auth-status" data-auth-resend-status aria-live="polite"></span>
+                  </div>
+                </form>
+              </div>
             </div>
 
             <p class="auth-switch">
@@ -129,84 +145,100 @@
                   <img class="auth-oauth-icon" src="/assets/icons/github.svg" alt="" aria-hidden="true" />
                   <span>GitHub</span>
                 </a>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="discord" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/discord.svg" alt="" aria-hidden="true" />
+                  <span>Discord</span>
+                </a>
                 <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="x" href="#">
                   <img class="auth-oauth-icon" src="/assets/icons/x.svg" alt="" aria-hidden="true" />
                   <span>X</span>
                 </a>
-                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="discord" href="#">
-                  <img class="auth-oauth-icon" src="/assets/icons/discord.svg" alt="" aria-hidden="true" />
-                  <span>Discord</span>
+                <a class="ss-btn ss-btn-primary auth-oauth-btn" data-auth-oauth="twitch" href="#">
+                  <img class="auth-oauth-icon" src="/assets/icons/twitch.svg" alt="" aria-hidden="true" />
+                  <span>Twitch</span>
                 </a>
               </div>
             </div>
 
             <div class="auth-divider">
-              <span>or</span>
+              <span>email/password</span>
             </div>
 
-            <div class="auth-section">
-              <p class="section-kicker">Email signup</p>
-              <form class="auth-form" data-auth-signup-form>
-                <div class="ss-form-row">
-                  <label for="auth-signup-email">Email address</label>
-                  <input
-                    id="auth-signup-email"
-                    type="email"
-                    class="ss-input"
-                    data-auth-signup-email
-                    placeholder="creator@streamsuites.app"
-                    autocomplete="email"
-                    required
-                  />
-                </div>
-                <div class="ss-form-row">
-                  <label for="auth-signup-password">Password</label>
-                  <input
-                    id="auth-signup-password"
-                    type="password"
-                    class="ss-input"
-                    data-auth-signup-password
-                    placeholder="Create a password"
-                    autocomplete="new-password"
-                    required
-                  />
-                </div>
-                <div class="ss-form-row">
-                  <label for="auth-signup-confirm">Confirm password</label>
-                  <input
-                    id="auth-signup-confirm"
-                    type="password"
-                    class="ss-input"
-                    data-auth-signup-confirm
-                    placeholder="Re-enter your password"
-                    autocomplete="new-password"
-                    required
-                  />
-                </div>
-                <p class="muted auth-strength" data-auth-signup-strength>Strength: Weak</p>
-                <div class="auth-actions">
-                  <button class="ss-btn ss-btn-primary auth-primary-submit" type="submit" data-auth-signup-submit>
-                    Create account
-                  </button>
-                  <span class="muted auth-status" data-auth-signup-status aria-live="polite"></span>
-                </div>
-                <p class="auth-legal">
-                  By signing up, you agree to the StreamSuites
-                  <a href="https://streamsuites.app/terms.html">Terms of Service</a>
-                  and
-                  <a href="https://streamsuites.app/privacy.html">Privacy Policy</a>. 
-                  Certain StreamSuites™ software and features may be subject to additional 
-                  <a href="https://docs.streamsuites.app/docs/legal/eula">license</a> terms.
-                </p>
-                <div class="ss-alert auth-hint" data-auth-signup-hint hidden></div>
-                <div class="ss-alert ss-alert-danger auth-error" data-auth-signup-error hidden></div>
-                <div class="auth-actions" data-auth-signup-resend hidden>
-                  <button class="ss-btn ss-btn-secondary ss-btn-small" type="button" data-auth-resend-button>
-                    Resend verification email
-                  </button>
-                  <span class="muted auth-status" data-auth-resend-status aria-live="polite"></span>
-                </div>
-              </form>
+            <div class="auth-section auth-manual-section">
+              <button
+                type="button"
+                class="ss-btn ss-btn-secondary auth-manual-toggle"
+                data-auth-manual-toggle
+                data-auth-manual-target="auth-signup-manual"
+                aria-expanded="false"
+                aria-controls="auth-signup-manual"
+              >
+                Use email/password
+              </button>
+              <div id="auth-signup-manual" class="auth-manual-panel" data-auth-manual-panel hidden>
+                <p class="section-kicker">Email signup</p>
+                <form class="auth-form" data-auth-signup-form>
+                  <div class="ss-form-row">
+                    <label for="auth-signup-email">Email address</label>
+                    <input
+                      id="auth-signup-email"
+                      type="email"
+                      class="ss-input"
+                      data-auth-signup-email
+                      placeholder="creator@streamsuites.app"
+                      autocomplete="email"
+                      required
+                    />
+                  </div>
+                  <div class="ss-form-row">
+                    <label for="auth-signup-password">Password</label>
+                    <input
+                      id="auth-signup-password"
+                      type="password"
+                      class="ss-input"
+                      data-auth-signup-password
+                      placeholder="Create a password"
+                      autocomplete="new-password"
+                      required
+                    />
+                  </div>
+                  <div class="ss-form-row">
+                    <label for="auth-signup-confirm">Confirm password</label>
+                    <input
+                      id="auth-signup-confirm"
+                      type="password"
+                      class="ss-input"
+                      data-auth-signup-confirm
+                      placeholder="Re-enter your password"
+                      autocomplete="new-password"
+                      required
+                    />
+                  </div>
+                  <p class="muted auth-strength" data-auth-signup-strength>Strength: Weak</p>
+                  <div class="auth-actions">
+                    <button class="ss-btn ss-btn-primary auth-primary-submit" type="submit" data-auth-signup-submit>
+                      Create account
+                    </button>
+                    <span class="muted auth-status" data-auth-signup-status aria-live="polite"></span>
+                  </div>
+                  <p class="auth-legal">
+                    By signing up, you agree to the StreamSuites
+                    <a href="https://streamsuites.app/terms.html">Terms of Service</a>
+                    and
+                    <a href="https://streamsuites.app/privacy.html">Privacy Policy</a>. 
+                    Certain StreamSuites™ software and features may be subject to additional 
+                    <a href="https://docs.streamsuites.app/docs/legal/eula">license</a> terms.
+                  </p>
+                  <div class="ss-alert auth-hint" data-auth-signup-hint hidden></div>
+                  <div class="ss-alert ss-alert-danger auth-error" data-auth-signup-error hidden></div>
+                  <div class="auth-actions" data-auth-signup-resend hidden>
+                    <button class="ss-btn ss-btn-secondary ss-btn-small" type="button" data-auth-resend-button>
+                      Resend verification email
+                    </button>
+                    <span class="muted auth-status" data-auth-resend-status aria-live="polite"></span>
+                  </div>
+                </form>
+              </div>
             </div>
 
             <p class="auth-switch">

@@ -71,7 +71,6 @@
       const RUNTIME_BASE_URL = "https://api.streamsuites.app";
       const SESSION_URL = `${RUNTIME_BASE_URL}/auth/session`;
       const CREATOR_HOME_URL = "/index.html";
-      const ONBOARDING_URL = "/views/onboarding.html";
       const statusEl = document.querySelector("[data-auth-status]");
       const errorEl = document.querySelector("[data-auth-error]");
       const errorMessageEl = document.querySelector("[data-auth-error-message]");
@@ -114,20 +113,15 @@
           payload = null;
         }
 
-        const isOk = response.ok === true && payload?.ok === true;
-        console.log(`[Creator][Auth] Session ok: ${isOk ? "ok" : "error"}`);
+        const isSessionValid =
+          response.ok === true &&
+          (payload?.ok === true ||
+            payload?.authenticated === true ||
+            payload?.session_valid === true);
+        console.log(`[Creator][Auth] Session ok: ${isSessionValid ? "ok" : "error"}`);
 
-        if (!isOk || response.status === 401) {
+        if (!isSessionValid || response.status === 401) {
           showError("We could not confirm your session. Please return to login.");
-          return;
-        }
-
-        const onboardingStatus =
-          typeof payload?.onboarding_status === "string"
-            ? payload.onboarding_status.trim().toLowerCase()
-            : "";
-        if (onboardingStatus === "required") {
-          window.location.assign(ONBOARDING_URL);
           return;
         }
 

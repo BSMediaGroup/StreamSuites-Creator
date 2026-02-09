@@ -45,6 +45,8 @@
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
   const AUTO_START_GUARD_KEY = "streamsuites.creator.autoStartXAt";
+  const LAST_OAUTH_PROVIDER_KEY = "streamsuites.creator.lastOauthProvider";
+  const X_EMAIL_BANNER_DISMISSED_KEY = "streamsuites.creator.banner.xMissingEmail.dismissed";
   const AUTO_START_GUARD_WINDOW_MS = 5 * 60 * 1000;
   const CREATOR_RETRY_LOGIN_URL = "/auth/login.html?login=1";
   const LOCKOUT_VARIANT_SESSION_INVALID = "session_invalid";
@@ -100,6 +102,54 @@
     if (typeof role !== "string") return null;
     const trimmed = role.trim().toLowerCase();
     return trimmed || null;
+  }
+
+  function coerceText(value) {
+    if (typeof value === "string") return value.trim();
+    if (typeof value === "number") return String(value);
+    return "";
+  }
+
+  function normalizeProvider(provider) {
+    const normalized = coerceText(provider).toLowerCase();
+    if (!normalized) return "";
+    if (normalized === "twitter") return "x";
+    if (normalized === "google") return "google";
+    if (normalized === "github") return "github";
+    if (normalized === "discord") return "discord";
+    if (normalized === "x") return "x";
+    if (normalized === "twitch") return "twitch";
+    return normalized;
+  }
+
+  function readLocalStorageValue(key) {
+    try {
+      return localStorage.getItem(key) || "";
+    } catch (err) {
+      return "";
+    }
+  }
+
+  function writeLocalStorageValue(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (err) {
+      // Ignore storage write errors.
+    }
+  }
+
+  function getLastOauthProvider() {
+    return normalizeProvider(readLocalStorageValue(LAST_OAUTH_PROVIDER_KEY));
+  }
+
+  function persistLastOauthProvider(provider) {
+    const normalized = normalizeProvider(provider);
+    if (!normalized) return;
+    writeLocalStorageValue(LAST_OAUTH_PROVIDER_KEY, normalized);
+  }
+
+  function isEmailMissing(value) {
+    return coerceText(value).length === 0;
   }
 
   function normalizeTier(tier) {
@@ -197,6 +247,16 @@
 
     const emailCandidate =
       typeof sessionSource.email === "string" ? sessionSource.email : "";
+    const providerCandidate = normalizeProvider(
+      sessionSource.provider ||
+        sessionSource.auth_provider ||
+        payload.provider ||
+        payload.auth_provider ||
+        payload.session?.provider ||
+        payload.session?.auth_provider ||
+        payload.user?.provider ||
+        payload.user?.auth_provider
+    );
 
     const roleCandidate =
       typeof sessionSource.role === "string" ? sessionSource.role : "";
@@ -227,10 +287,11 @@
 
     return {
       authenticated: true,
-      email: emailCandidate.trim() || "Signed in",
+      email: emailCandidate.trim(),
       name: displayNameCandidate.trim() || "",
       avatar: avatarCandidate.trim() || "",
       role,
+      provider: providerCandidate || getLastOauthProvider(),
       tier,
       effectiveTier,
       features,
@@ -476,6 +537,9 @@
       sessionRetry.idleReason = "";
       sessionRetry.notified = false;
       const normalized = normalizeSessionPayload(payload);
+      if (normalized?.authenticated && normalized?.provider) {
+        persistLastOauthProvider(normalized.provider);
+      }
       sessionState.value = {
         ...normalized,
         reasonEnum: resolveAuthReasonEnum(payload, null)
@@ -521,6 +585,7 @@
       (left.name || "") === (right.name || "") &&
       (left.avatar || "") === (right.avatar || "") &&
       (left.role || "") === (right.role || "") &&
+      (left.provider || "") === (right.provider || "") &&
       (left.tier || "") === (right.tier || "") &&
       (left.effectiveTier?.tierId || "") === (right.effectiveTier?.tierId || "") &&
       (left.effectiveTier?.tierLabel || "") === (right.effectiveTier?.tierLabel || "") &&
@@ -542,6 +607,7 @@
       name: session?.name || "",
       avatar: session?.avatar || "",
       role: session?.role || "",
+      provider: session?.provider || "",
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
       features: session?.features || {},
@@ -556,6 +622,7 @@
       name: session?.name || "",
       avatar: session?.avatar || "",
       role: session?.role || "",
+      provider: session?.provider || "",
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
       features: session?.features || {},
@@ -744,6 +811,8 @@
   function clearLocalSessionState() {
     sessionState.value = { authenticated: false };
     updateAppSession(sessionState.value);
+    updateAuthSummary(sessionState.value);
+    updateXEmailBanner(sessionState.value, isPublicPath(getPathname()));
     if (window.App?.state) {
       window.App.state = {};
     }
@@ -1457,15 +1526,43 @@
     buttons.forEach((button) => {
       const provider = button.getAttribute("data-auth-oauth");
       if (!provider) return;
+      const normalizedProvider = normalizeProvider(provider);
       const url = AUTH_ENDPOINTS.oauth[provider];
       if (!url) return;
       if (button instanceof HTMLAnchorElement) {
         button.href = url;
+        button.addEventListener("click", () => {
+          persistLastOauthProvider(normalizedProvider);
+        });
         return;
       }
       button.addEventListener("click", (event) => {
         event.preventDefault();
+        persistLastOauthProvider(normalizedProvider);
         window.location.assign(url);
+      });
+    });
+  }
+
+  function wireManualAuthSections() {
+    const toggles = document.querySelectorAll("[data-auth-manual-toggle]");
+    toggles.forEach((toggle) => {
+      if (!(toggle instanceof HTMLButtonElement)) return;
+      const targetId = toggle.dataset.authManualTarget || toggle.getAttribute("aria-controls") || "";
+      if (!targetId) return;
+      const panel = document.getElementById(targetId);
+      if (!panel) return;
+
+      panel.hidden = true;
+      toggle.setAttribute("aria-expanded", "false");
+
+      if (toggle.dataset.manualWired === "true") return;
+      toggle.dataset.manualWired = "true";
+
+      toggle.addEventListener("click", () => {
+        const shouldOpen = panel.hidden;
+        panel.hidden = !shouldOpen;
+        toggle.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
       });
     });
   }
@@ -1637,6 +1734,7 @@
     } catch (err) {
       console.warn("[Creator][Auth] Failed to persist auto-start guard", err);
     }
+    persistLastOauthProvider("x");
     window.location.assign(AUTH_ENDPOINTS.oauth.x);
     return true;
   }
@@ -1676,6 +1774,68 @@
         toast.hidden = true;
       }, autoHideMs);
     }
+  }
+
+  function removeXEmailBanner() {
+    const banner = document.querySelector("[data-auth-x-email-banner]");
+    if (!banner) return;
+    banner.remove();
+  }
+
+  function buildXEmailBanner() {
+    const banner = document.createElement("div");
+    banner.className = "ss-alert ss-email-completion-banner";
+    banner.dataset.authXEmailBanner = "true";
+    banner.setAttribute("role", "status");
+    banner.setAttribute("aria-live", "polite");
+
+    const message = document.createElement("span");
+    message.textContent =
+      "Your X account is connected without an email. You can add one later from account settings.";
+
+    const actions = document.createElement("div");
+    actions.className = "ss-email-completion-banner-actions";
+
+    const dismiss = document.createElement("button");
+    dismiss.type = "button";
+    dismiss.className = "ss-email-completion-banner-dismiss";
+    dismiss.textContent = "Dismiss";
+    dismiss.addEventListener("click", () => {
+      writeLocalStorageValue(X_EMAIL_BANNER_DISMISSED_KEY, "1");
+      banner.hidden = true;
+    });
+
+    actions.appendChild(dismiss);
+    banner.append(message, actions);
+    return banner;
+  }
+
+  function ensureXEmailBanner() {
+    let banner = document.querySelector("[data-auth-x-email-banner]");
+    if (!banner) {
+      banner = buildXEmailBanner();
+      document.body.prepend(banner);
+    }
+    return banner;
+  }
+
+  function shouldShowXEmailBanner(session, isPublic) {
+    if (isPublic) return false;
+    if (!session || session.authenticated !== true) return false;
+    if (normalizeRole(session.role) !== CREATOR_ROLE) return false;
+    const provider = normalizeProvider(session.provider || getLastOauthProvider());
+    if (provider !== "x") return false;
+    if (!isEmailMissing(session.email)) return false;
+    return readLocalStorageValue(X_EMAIL_BANNER_DISMISSED_KEY) !== "1";
+  }
+
+  function updateXEmailBanner(session, isPublic) {
+    if (!shouldShowXEmailBanner(session, isPublic)) {
+      removeXEmailBanner();
+      return;
+    }
+    const banner = ensureXEmailBanner();
+    banner.hidden = false;
   }
 
   function setCreatorShellVisible(visible) {
@@ -1726,6 +1886,7 @@
     sessionState.value = nextSession;
     updateAppSession(nextSession);
     updateAuthSummary(nextSession);
+    updateXEmailBanner(nextSession, isPublicPath(getPathname()));
   }
 
   async function performSilentSessionCheck(options = {}) {
@@ -1815,12 +1976,14 @@
     wireAccountMenus();
     wireOauthButtons();
     wireAuthToggle();
+    wireManualAuthSections();
     wirePasswordForms();
 
     if (shouldSkipSessionFetch(isPublic)) {
       sessionState.value = { authenticated: false };
       updateAppSession(sessionState.value);
       updateAuthSummary(sessionState.value);
+      updateXEmailBanner(sessionState.value, isPublic);
       showAuthModalAndHaltAppInit(sessionState.value);
       return;
     }
@@ -1832,6 +1995,7 @@
     const session = await loadSession();
     updateAppSession(session);
     updateAuthSummary(session);
+    updateXEmailBanner(session, isPublic);
 
     if (!session || session.authenticated !== true) {
       if (isPublic && session?.error && !new URLSearchParams(window.location.search).get("reason")) {

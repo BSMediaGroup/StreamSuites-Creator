@@ -347,6 +347,35 @@
   display: none !important;
 }
 
+.ss-email-completion-banner {
+  margin: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ss-email-completion-banner-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ss-email-completion-banner-dismiss {
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.ss-email-completion-banner-dismiss:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
 .ss-alert-danger {
   border-color: rgba(217, 83, 79, 0.55);
   background: rgba(217, 83, 79, 0.12);

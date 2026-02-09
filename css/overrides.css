@@ -287,6 +287,27 @@
   font-size: 11px;
 }
 
+.auth-manual-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-manual-toggle {
+  width: 100%;
+  justify-content: center;
+}
+
+.auth-manual-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-manual-panel[hidden] {
+  display: none !important;
+}
+
 .auth-actions {
   display: flex;
   align-items: center;
