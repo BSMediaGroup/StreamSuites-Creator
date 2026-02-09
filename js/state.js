@@ -1,6 +1,28 @@
 (() => {
   "use strict";
 
+  if (!window.opener || window.name !== "ss_requests_auth") {
+    return;
+  }
+
+  try {
+    window.opener.postMessage("SS_REQUESTS_AUTH_COMPLETE", "https://streamsuites.app");
+  } catch (_err) {
+    // no-op: popup close is best-effort only
+  }
+
+  window.setTimeout(() => {
+    try {
+      window.close();
+    } catch (_err) {
+      // no-op: browser may block script-initiated close
+    }
+  }, 150);
+})();
+
+(() => {
+  "use strict";
+
   /* SAFETY: ensure fetchWithTimeout always exists (SAFE MODE compatible) */
   if (typeof window.fetchWithTimeout !== "function") {
     window.fetchWithTimeout = async function (url, opts = {}, timeoutMs = 8000) {
