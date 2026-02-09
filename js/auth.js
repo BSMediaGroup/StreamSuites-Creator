@@ -244,6 +244,12 @@
 
     const emailCandidate =
       typeof sessionSource.email === "string" ? sessionSource.email : "";
+    const userCodeCandidate =
+      typeof sessionSource.user_code === "string"
+        ? sessionSource.user_code
+        : typeof sessionSource.userCode === "string"
+          ? sessionSource.userCode
+          : "";
     const providerCandidate = normalizeProvider(
       sessionSource.provider ||
         sessionSource.auth_provider ||
@@ -285,6 +291,7 @@
     return {
       authenticated: true,
       email: emailCandidate.trim(),
+      user_code: userCodeCandidate.trim(),
       name: displayNameCandidate.trim() || "",
       avatar: avatarCandidate.trim() || "",
       role,
@@ -591,6 +598,7 @@
     return (
       !!left.authenticated === !!right.authenticated &&
       (left.email || "") === (right.email || "") &&
+      (left.user_code || "") === (right.user_code || "") &&
       (left.name || "") === (right.name || "") &&
       (left.avatar || "") === (right.avatar || "") &&
       (left.role || "") === (right.role || "") &&
@@ -608,11 +616,48 @@
     return normalizeTier(session?.effectiveTier?.tierLabel || session?.tier || "CORE");
   }
 
+  function getCreatorIdValue(session) {
+    const userCode = typeof session?.user_code === "string" ? session.user_code.trim() : "";
+    return userCode || "Not available";
+  }
+
+  function ensureCreatorIdDetailValue(menu, detailsPanel) {
+    if (!menu || !detailsPanel) return null;
+
+    const existingValue = menu.querySelector("[data-account-detail-user-code]");
+    if (existingValue) return existingValue;
+
+    const detailRow = document.createElement("div");
+    detailRow.className = "creator-account-detail";
+
+    const label = document.createElement("span");
+    label.className = "creator-account-detail-label";
+    label.textContent = "Creator ID";
+
+    const value = document.createElement("span");
+    value.className = "creator-account-detail-value";
+    value.dataset.accountDetailUserCode = "true";
+    value.textContent = "Not available";
+
+    detailRow.append(label, value);
+
+    const tierValue = menu.querySelector("[data-account-detail-tier]");
+    const tierRow = tierValue ? tierValue.closest(".creator-account-detail") : null;
+    if (tierRow && tierRow.parentElement === detailsPanel) {
+      detailsPanel.insertBefore(detailRow, tierRow);
+    } else {
+      detailsPanel.append(detailRow);
+    }
+
+    return value;
+  }
+
   function updateAppSession(session) {
     ensureAppNamespace();
     window.App.session = {
       authenticated: !!session?.authenticated,
       email: session?.email || "",
+      user_code: session?.user_code || "",
       name: session?.name || "",
       avatar: session?.avatar || "",
       role: session?.role || "",
@@ -628,6 +673,7 @@
     const payload = {
       authenticated: !!session?.authenticated,
       email: session?.email || "",
+      user_code: session?.user_code || "",
       name: session?.name || "",
       avatar: session?.avatar || "",
       role: session?.role || "",
@@ -762,6 +808,7 @@
       const detailName = menu.querySelector("[data-account-detail-name]");
       const detailEmail = menu.querySelector("[data-account-detail-email]");
       const detailTier = menu.querySelector("[data-account-detail-tier]");
+      const detailCreatorId = ensureCreatorIdDetailValue(menu, detailsPanel);
 
       if (toggle) {
         toggle.disabled = !authenticated;
@@ -777,6 +824,9 @@
       }
       if (detailEmail) {
         detailEmail.textContent = authenticated ? getEmailValue(session) : "Signed out";
+      }
+      if (detailCreatorId) {
+        detailCreatorId.textContent = authenticated ? getCreatorIdValue(session) : "Not available";
       }
       if (detailTier) {
         renderTierPill(detailTier, authenticated ? getTierLabel(session) : "CORE");
