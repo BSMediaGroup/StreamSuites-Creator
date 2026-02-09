@@ -1177,6 +1177,23 @@ h3 {
   background: rgba(11, 15, 22, 0.7);
 }
 
+.account-list-main {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+
+.account-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.account-list-item-email {
+  align-items: flex-start;
+}
+
 .account-list-meta {
   display: flex;
   flex-direction: column;
@@ -1191,6 +1208,16 @@ h3 {
 .account-list-note {
   font-size: var(--creator-body-size-sm);
   color: var(--creator-muted);
+  min-height: 1.1em;
+}
+
+.account-provider-value {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--creator-body-size-sm);
+  color: var(--creator-text);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .account-note {

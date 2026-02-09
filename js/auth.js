@@ -36,6 +36,13 @@
   ]);
   const TIER_ID_OPTIONS = new Set(["core", "gold", "pro"]);
   const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
+  const ACCOUNT_AUTH_PROVIDER_ALIASES = Object.freeze({
+    email: Object.freeze(["email", "password", "credentials", "local"]),
+    discord: Object.freeze(["discord"]),
+    google: Object.freeze(["google"]),
+    github: Object.freeze(["github"]),
+    x: Object.freeze(["x", "twitter"])
+  });
 
   const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/auth/login.html`;
   const CREATOR_ONBOARDING_PAGE = `${CREATOR_ORIGIN}/views/onboarding.html`;
@@ -260,6 +267,24 @@
         payload.user?.provider ||
         payload.user?.auth_provider
     );
+    const primaryProviderCandidate = normalizeProvider(
+      sessionSource.primary_provider ||
+        sessionSource.primaryProvider ||
+        sessionSource.default_provider ||
+        sessionSource.defaultProvider ||
+        payload.primary_provider ||
+        payload.primaryProvider ||
+        payload.default_provider ||
+        payload.defaultProvider ||
+        payload.session?.primary_provider ||
+        payload.session?.primaryProvider ||
+        payload.session?.default_provider ||
+        payload.session?.defaultProvider ||
+        payload.user?.primary_provider ||
+        payload.user?.primaryProvider ||
+        payload.user?.default_provider ||
+        payload.user?.defaultProvider
+    );
     const linkedProviders = extractLinkedProviders({
       payload,
       sessionSource,
@@ -301,6 +326,7 @@
       avatar: avatarCandidate.trim() || "",
       role,
       provider: providerCandidate || getLastOauthProvider(),
+      primaryProvider: primaryProviderCandidate,
       linkedProviders,
       tier,
       effectiveTier,
@@ -413,6 +439,37 @@
     addProviderToSet(linked, activeProvider);
 
     return Array.from(linked.values());
+  }
+
+  function getProviderAliases(providerKey) {
+    const normalized = normalizeProvider(providerKey);
+    if (!normalized) return [];
+    if (ACCOUNT_AUTH_PROVIDER_ALIASES[normalized]) {
+      return ACCOUNT_AUTH_PROVIDER_ALIASES[normalized];
+    }
+    return [normalized];
+  }
+
+  function buildLinkedProviderSet(session) {
+    const linked = new Set();
+    if (Array.isArray(session?.linkedProviders)) {
+      session.linkedProviders
+        .map((provider) => normalizeProvider(provider))
+        .filter(Boolean)
+        .forEach((provider) => linked.add(provider));
+    }
+    const activeProvider = normalizeProvider(session?.provider);
+    if (activeProvider) {
+      linked.add(activeProvider);
+    }
+    return linked;
+  }
+
+  function isAccountProviderLinked(session, linkedProviders, providerKey) {
+    if (!session?.authenticated) return false;
+    const aliases = getProviderAliases(providerKey);
+    if (!aliases.length) return false;
+    return aliases.some((alias) => linkedProviders.has(alias));
   }
 
   function getDisplayName(session) {
@@ -715,6 +772,7 @@
       (left.avatar || "") === (right.avatar || "") &&
       (left.role || "") === (right.role || "") &&
       (left.provider || "") === (right.provider || "") &&
+      (left.primaryProvider || "") === (right.primaryProvider || "") &&
       JSON.stringify(left.linkedProviders || []) === JSON.stringify(right.linkedProviders || []) &&
       (left.tier || "") === (right.tier || "") &&
       (left.effectiveTier?.tierId || "") === (right.effectiveTier?.tierId || "") &&
@@ -775,6 +833,7 @@
       avatar: session?.avatar || "",
       role: session?.role || "",
       provider: session?.provider || "",
+      primaryProvider: session?.primaryProvider || "",
       linkedProviders: Array.isArray(session?.linkedProviders) ? session.linkedProviders : [],
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
@@ -792,6 +851,7 @@
       avatar: session?.avatar || "",
       role: session?.role || "",
       provider: session?.provider || "",
+      primaryProvider: session?.primaryProvider || "",
       linkedProviders: Array.isArray(session?.linkedProviders) ? session.linkedProviders : [],
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
@@ -952,19 +1012,22 @@
   function updateAccountSettingsPanel(session) {
     const nameInput = document.querySelector("[data-account-profile-name]");
     const userCodeValue = document.querySelector("[data-account-profile-user-code]");
+    const profileEmailValue = document.querySelector("[data-account-profile-email]");
     const avatarImage = document.querySelector("[data-account-profile-avatar]");
     const tierValue = document.querySelector("[data-account-profile-tier]");
-    const emailProviderStatus = document.querySelector('[data-account-provider-status="email"]');
-    const googleProviderStatus = document.querySelector('[data-account-provider-status="google"]');
-    const githubProviderStatus = document.querySelector('[data-account-provider-status="github"]');
-    const discordProviderStatus = document.querySelector('[data-account-provider-status="discord"]');
-    const twitchProviderStatus = document.querySelector('[data-account-provider-status="twitch"]');
     const authenticated = !!session?.authenticated;
-    const linkedProviders = new Set(
-      Array.isArray(session?.linkedProviders)
-        ? session.linkedProviders.map((provider) => normalizeProvider(provider)).filter(Boolean)
-        : []
-    );
+    const linkedProviders = buildLinkedProviderSet(session);
+    const emailProviderStatus = document.querySelector('[data-account-provider-status="email"]');
+    const emailProviderNote = document.querySelector('[data-account-provider-note="email"]');
+    const emailProviderValue = document.querySelector('[data-account-provider-value="email"]');
+    const discordProviderStatus = document.querySelector('[data-account-provider-status="discord"]');
+    const discordProviderNote = document.querySelector('[data-account-provider-note="discord"]');
+    const googleProviderStatus = document.querySelector('[data-account-provider-status="google"]');
+    const googleProviderNote = document.querySelector('[data-account-provider-note="google"]');
+    const githubProviderStatus = document.querySelector('[data-account-provider-status="github"]');
+    const githubProviderNote = document.querySelector('[data-account-provider-note="github"]');
+    const xProviderStatus = document.querySelector('[data-account-provider-status="x"]');
+    const xProviderNote = document.querySelector('[data-account-provider-note="x"]');
 
     if (nameInput instanceof HTMLInputElement) {
       nameInput.value = authenticated ? getDisplayName(session) : "Signed out";
@@ -980,18 +1043,61 @@
     }
 
     const emailValue = coerceText(session?.email);
-    setProviderStatus(emailProviderStatus, {
-      linked: authenticated && !!emailValue,
-      linkedText: authenticated ? emailValue : "Signed out",
-      unlinkedText: "Not set"
+    if (profileEmailValue) {
+      profileEmailValue.textContent = authenticated ? emailValue : "";
+    }
+
+    const providerRows = [
+      {
+        key: "email",
+        statusElement: emailProviderStatus,
+        noteElement: emailProviderNote,
+        linked: isAccountProviderLinked(session, linkedProviders, "email")
+      },
+      {
+        key: "discord",
+        statusElement: discordProviderStatus,
+        noteElement: discordProviderNote,
+        linked: isAccountProviderLinked(session, linkedProviders, "discord")
+      },
+      {
+        key: "google",
+        statusElement: googleProviderStatus,
+        noteElement: googleProviderNote,
+        linked: isAccountProviderLinked(session, linkedProviders, "google")
+      },
+      {
+        key: "github",
+        statusElement: githubProviderStatus,
+        noteElement: githubProviderNote,
+        linked: isAccountProviderLinked(session, linkedProviders, "github")
+      },
+      {
+        key: "x",
+        statusElement: xProviderStatus,
+        noteElement: xProviderNote,
+        linked: isAccountProviderLinked(session, linkedProviders, "x")
+      }
+    ];
+
+    const primaryProvider = normalizeProvider(session?.primaryProvider);
+    providerRows.forEach((row) => {
+      setProviderStatus(row.statusElement, {
+        linked: authenticated && row.linked,
+        linkedText: "Connected",
+        unlinkedText: "Not connected"
+      });
+      const isPrimary =
+        !!primaryProvider &&
+        row.linked &&
+        getProviderAliases(row.key).includes(primaryProvider);
+      setProviderNote(row.noteElement, isPrimary ? "Primary sign-in" : "");
     });
-    setProviderStatus(googleProviderStatus, { linked: authenticated && linkedProviders.has("google") });
-    setProviderStatus(githubProviderStatus, { linked: authenticated && linkedProviders.has("github") });
-    setProviderStatus(discordProviderStatus, { linked: authenticated && linkedProviders.has("discord") });
-    setProviderStatus(twitchProviderStatus, { linked: authenticated && linkedProviders.has("twitch") });
+
+    setProviderValue(emailProviderValue, authenticated ? emailValue : "");
   }
 
-  function setProviderStatus(element, { linked, linkedText = "Connected", unlinkedText = "Available" } = {}) {
+  function setProviderStatus(element, { linked, linkedText = "Connected", unlinkedText = "Not connected" } = {}) {
     if (!(element instanceof HTMLElement)) return;
     element.classList.remove("success", "subtle");
     element.classList.add(linked ? "success" : "subtle");
@@ -1000,6 +1106,18 @@
     if (dot) {
       element.prepend(dot);
     }
+  }
+
+  function setProviderNote(element, noteText) {
+    if (!(element instanceof HTMLElement)) return;
+    const value = coerceText(noteText);
+    element.textContent = value;
+    element.hidden = value.length === 0;
+  }
+
+  function setProviderValue(element, valueText) {
+    if (!(element instanceof HTMLElement)) return;
+    element.textContent = coerceText(valueText);
   }
 
   async function logout() {

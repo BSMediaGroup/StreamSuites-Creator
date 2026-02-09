@@ -193,6 +193,10 @@
                   </span>
                   <span class="account-field-note">Email or username syncs from your login method.</span>
                 </div>
+                <div class="account-field">
+                  <span class="account-field-label">Email</span>
+                  <span class="account-field-value" data-account-profile-email="true"></span>
+                </div>
               </div>
             </article>
 
@@ -200,40 +204,54 @@
               <h3>Login &amp; Security</h3>
               <p>Supported sign-in methods for your StreamSuites account.</p>
               <ul class="account-list">
-                <li class="account-list-item">
-                  <div class="account-list-meta">
-                    <span class="account-list-title">Email</span>
-                    <span class="account-list-note">Primary sign-in</span>
+                <li class="account-list-item account-list-item-email">
+                  <div class="account-list-main">
+                    <div class="account-list-header">
+                      <div class="account-list-meta">
+                        <span class="account-list-title">Email</span>
+                        <span class="account-list-note" data-account-provider-note="email"></span>
+                      </div>
+                      <span class="status-pill subtle" data-account-provider-status="email">
+                        <span class="status-dot"></span>Not connected
+                      </span>
+                    </div>
+                    <span class="account-provider-value" data-account-provider-value="email"></span>
                   </div>
-                  <span class="status-pill success" data-account-provider-status="email">
-                    <span class="status-dot"></span>Connected
-                  </span>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
                     <span class="account-list-title">Discord</span>
-                    <span class="account-list-note">Community identity</span>
+                    <span class="account-list-note" data-account-provider-note="discord"></span>
                   </div>
                   <span class="status-pill subtle" data-account-provider-status="discord">
-                    <span class="status-dot"></span>Available
+                    <span class="status-dot"></span>Not connected
                   </span>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
                     <span class="account-list-title">Google</span>
-                    <span class="account-list-note">OAuth provider</span>
+                    <span class="account-list-note" data-account-provider-note="google"></span>
                   </div>
-                  <span class="status-pill success" data-account-provider-status="google">
-                    <span class="status-dot"></span>Connected
+                  <span class="status-pill subtle" data-account-provider-status="google">
+                    <span class="status-dot"></span>Not connected
                   </span>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
                     <span class="account-list-title">GitHub</span>
-                    <span class="account-list-note">Developer access</span>
+                    <span class="account-list-note" data-account-provider-note="github"></span>
                   </div>
                   <span class="status-pill subtle" data-account-provider-status="github">
-                    <span class="status-dot"></span>Available
+                    <span class="status-dot"></span>Not connected
+                  </span>
+                </li>
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">X</span>
+                    <span class="account-list-note" data-account-provider-note="x"></span>
+                  </div>
+                  <span class="status-pill subtle" data-account-provider-status="x">
+                    <span class="status-dot"></span>Not connected
                   </span>
                 </li>
               </ul>
