@@ -44,11 +44,9 @@
   const LOGOUT_GUARD_KEY = "streamsuites.creator.loggedOut";
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
-  const AUTO_START_GUARD_KEY = "streamsuites.creator.autoStartXAt";
   const LAST_OAUTH_PROVIDER_KEY = "streamsuites.creator.lastOauthProvider";
   const X_EMAIL_BANNER_DISMISSED_KEY = "streamsuites.creator.banner.xMissingEmail.dismissed";
-  const AUTO_START_GUARD_WINDOW_MS = 5 * 60 * 1000;
-  const CREATOR_RETRY_LOGIN_URL = "/auth/login.html?login=1";
+  const CREATOR_RETRY_LOGIN_URL = "/auth/login.html";
   const LOCKOUT_VARIANT_SESSION_INVALID = "session_invalid";
   const LOCKOUT_VARIANT_ROLE_MISMATCH = "role_mismatch";
   const SESSION_POLL_INTERVAL_MS = 20000;
@@ -77,7 +75,6 @@
   let accountMenuWired = false;
   let isAccountMenuOpen = false;
   let activeAccountMenu = null;
-  let creatorAuthGuardBlockedLogged = false;
 
   function ensureAppNamespace() {
     if (!window.App) {
@@ -1702,43 +1699,6 @@
     window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=${reason}`);
   }
 
-  function maybeAutoStartXLogin(session) {
-    const pathname = getPathname();
-    if (pathname !== "/auth/login.html") return false;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("login") !== "1") return false;
-    if (session?.authenticated === true) return false;
-
-    const reasonEnum =
-      (session?.errorReasonEnum || session?.reasonEnum || "SESSION_UNKNOWN").toString().trim().toUpperCase();
-    const now = Date.now();
-    let lastAttemptAt = 0;
-    try {
-      const raw = sessionStorage.getItem(AUTO_START_GUARD_KEY);
-      const parsed = raw ? Number.parseInt(raw, 10) : 0;
-      lastAttemptAt = Number.isFinite(parsed) ? parsed : 0;
-    } catch (err) {
-      lastAttemptAt = 0;
-    }
-
-    if (lastAttemptAt > 0 && now - lastAttemptAt < AUTO_START_GUARD_WINDOW_MS) {
-      if (!creatorAuthGuardBlockedLogged) {
-        creatorAuthGuardBlockedLogged = true;
-        console.info(`[Creator][Auth] CREATOR_AUTH_GUARD_BLOCKED reason_enum=${reasonEnum || "SESSION_UNKNOWN"}`);
-      }
-      return false;
-    }
-
-    try {
-      sessionStorage.setItem(AUTO_START_GUARD_KEY, String(now));
-    } catch (err) {
-      console.warn("[Creator][Auth] Failed to persist auto-start guard", err);
-    }
-    persistLastOauthProvider("x");
-    window.location.assign(AUTH_ENDPOINTS.oauth.x);
-    return true;
-  }
-
   function buildAuthToast() {
     const toast = document.createElement("div");
     toast.className = "ss-alert ss-auth-toast";
@@ -1998,11 +1958,13 @@
     updateXEmailBanner(session, isPublic);
 
     if (!session || session.authenticated !== true) {
-      if (isPublic && session?.error && !new URLSearchParams(window.location.search).get("reason")) {
+      if (
+        isPublic &&
+        session?.error &&
+        session?.errorStatus !== 401 &&
+        !new URLSearchParams(window.location.search).get("reason")
+      ) {
         window.StreamSuitesAuth.loginHint = "Auth service is unreachable. Please try again.";
-      }
-      if (isPublic && maybeAutoStartXLogin(session)) {
-        return;
       }
       showAuthModalAndHaltAppInit(session);
       return;
@@ -2041,7 +2003,12 @@
       }
     }
 
-    if (isPublic && session?.error && !new URLSearchParams(window.location.search).get("reason")) {
+    if (
+      isPublic &&
+      session?.error &&
+      session?.errorStatus !== 401 &&
+      !new URLSearchParams(window.location.search).get("reason")
+    ) {
       window.StreamSuitesAuth.loginHint = "Auth service is unreachable. Please try again.";
     }
   }
