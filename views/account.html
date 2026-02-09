@@ -177,15 +177,19 @@
                   <span class="account-field-label">Avatar</span>
                   <div class="account-avatar-row">
                     <span class="account-avatar-frame">
-                      <img src="/assets/icons/ui/profile.svg" alt="Avatar placeholder" />
+                      <img
+                        src="/assets/icons/ui/profile.svg"
+                        alt="Avatar placeholder"
+                        data-account-profile-avatar="true"
+                      />
                     </span>
                     <span class="account-avatar-note">Avatar uploads are coming soon.</span>
                   </div>
                 </div>
                 <div class="account-field">
-                  <span class="account-field-label">Account identifier</span>
-                  <span class="account-field-value" data-account-profile-email="true">
-                    creator@streamsuites.app
+                  <span class="account-field-label">Creator ID</span>
+                  <span class="account-field-value" data-account-profile-user-code="true">
+                    Not available
                   </span>
                   <span class="account-field-note">Email or username syncs from your login method.</span>
                 </div>
@@ -201,28 +205,36 @@
                     <span class="account-list-title">Email</span>
                     <span class="account-list-note">Primary sign-in</span>
                   </div>
-                  <span class="status-pill success"><span class="status-dot"></span>Connected</span>
+                  <span class="status-pill success" data-account-provider-status="email">
+                    <span class="status-dot"></span>Connected
+                  </span>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
                     <span class="account-list-title">Discord</span>
                     <span class="account-list-note">Community identity</span>
                   </div>
-                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                  <span class="status-pill subtle" data-account-provider-status="discord">
+                    <span class="status-dot"></span>Available
+                  </span>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
                     <span class="account-list-title">Google</span>
                     <span class="account-list-note">OAuth provider</span>
                   </div>
-                  <span class="status-pill success"><span class="status-dot"></span>Connected</span>
+                  <span class="status-pill success" data-account-provider-status="google">
+                    <span class="status-dot"></span>Connected
+                  </span>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
                     <span class="account-list-title">GitHub</span>
                     <span class="account-list-note">Developer access</span>
                   </div>
-                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                  <span class="status-pill subtle" data-account-provider-status="github">
+                    <span class="status-dot"></span>Available
+                  </span>
                 </li>
               </ul>
               <p class="account-note">Connection controls will appear once account security settings launch.</p>
@@ -251,7 +263,9 @@
                     <span class="account-list-title">Twitch</span>
                     <span class="account-list-note">Managed on the Twitch platform page</span>
                   </div>
-                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                  <span class="status-pill subtle" data-account-provider-status="twitch">
+                    <span class="status-dot"></span>Available
+                  </span>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">

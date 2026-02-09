@@ -260,6 +260,11 @@
         payload.user?.provider ||
         payload.user?.auth_provider
     );
+    const linkedProviders = extractLinkedProviders({
+      payload,
+      sessionSource,
+      activeProvider: providerCandidate
+    });
 
     const roleCandidate =
       typeof sessionSource.role === "string" ? sessionSource.role : "";
@@ -296,11 +301,118 @@
       avatar: avatarCandidate.trim() || "",
       role,
       provider: providerCandidate || getLastOauthProvider(),
+      linkedProviders,
       tier,
       effectiveTier,
       features,
       onboardingRequired
     };
+  }
+
+  function isTruthyProviderLink(value) {
+    if (value === true || value === 1) return true;
+    if (typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+      return normalized === "true" || normalized === "1" || normalized === "linked" || normalized === "connected";
+    }
+    return false;
+  }
+
+  function addProviderToSet(set, value) {
+    const normalized = normalizeProvider(value);
+    if (!normalized) return;
+    set.add(normalized);
+  }
+
+  function readProviderCollection(source, destination) {
+    if (!source) return;
+    if (typeof source === "string") {
+      source
+        .split(",")
+        .map((entry) => normalizeProvider(entry))
+        .filter(Boolean)
+        .forEach((entry) => destination.add(entry));
+      return;
+    }
+    if (Array.isArray(source)) {
+      source.forEach((entry) => {
+        if (typeof entry === "string") {
+          addProviderToSet(destination, entry);
+          return;
+        }
+        if (!entry || typeof entry !== "object") return;
+        const nameCandidate =
+          entry.provider ||
+          entry.name ||
+          entry.id ||
+          entry.key ||
+          entry.provider_name ||
+          entry.providerName;
+        if (!nameCandidate) return;
+        const hasLinkState =
+          Object.prototype.hasOwnProperty.call(entry, "linked") ||
+          Object.prototype.hasOwnProperty.call(entry, "is_linked") ||
+          Object.prototype.hasOwnProperty.call(entry, "connected") ||
+          Object.prototype.hasOwnProperty.call(entry, "isConnected");
+        if (
+          !hasLinkState ||
+          isTruthyProviderLink(entry.linked) ||
+          isTruthyProviderLink(entry.is_linked) ||
+          isTruthyProviderLink(entry.connected) ||
+          isTruthyProviderLink(entry.isConnected)
+        ) {
+          addProviderToSet(destination, nameCandidate);
+        }
+      });
+      return;
+    }
+    if (typeof source === "object") {
+      Object.entries(source).forEach(([providerKey, linked]) => {
+        if (isTruthyProviderLink(linked)) {
+          addProviderToSet(destination, providerKey);
+        }
+      });
+    }
+  }
+
+  function extractLinkedProviders({ payload, sessionSource, activeProvider }) {
+    const linked = new Set();
+    const providerSources = [
+      sessionSource?.providers,
+      sessionSource?.linked_providers,
+      sessionSource?.linkedProviders,
+      sessionSource?.auth_providers,
+      sessionSource?.authProviders,
+      payload?.providers,
+      payload?.linked_providers,
+      payload?.linkedProviders,
+      payload?.auth_providers,
+      payload?.authProviders,
+      payload?.user?.providers,
+      payload?.user?.linked_providers,
+      payload?.user?.linkedProviders,
+      payload?.session?.providers,
+      payload?.session?.linked_providers,
+      payload?.session?.linkedProviders
+    ];
+    const providerFlagSources = [
+      sessionSource?.provider_flags,
+      sessionSource?.providerFlags,
+      sessionSource?.providers_map,
+      sessionSource?.providersMap,
+      payload?.provider_flags,
+      payload?.providerFlags,
+      payload?.providers_map,
+      payload?.providersMap,
+      payload?.user?.provider_flags,
+      payload?.user?.providerFlags
+    ];
+
+    providerSources.forEach((entry) => readProviderCollection(entry, linked));
+    providerFlagSources.forEach((entry) => readProviderCollection(entry, linked));
+    addProviderToSet(linked, activeProvider);
+
+    return Array.from(linked.values());
   }
 
   function getDisplayName(session) {
@@ -603,6 +715,7 @@
       (left.avatar || "") === (right.avatar || "") &&
       (left.role || "") === (right.role || "") &&
       (left.provider || "") === (right.provider || "") &&
+      JSON.stringify(left.linkedProviders || []) === JSON.stringify(right.linkedProviders || []) &&
       (left.tier || "") === (right.tier || "") &&
       (left.effectiveTier?.tierId || "") === (right.effectiveTier?.tierId || "") &&
       (left.effectiveTier?.tierLabel || "") === (right.effectiveTier?.tierLabel || "") &&
@@ -662,6 +775,7 @@
       avatar: session?.avatar || "",
       role: session?.role || "",
       provider: session?.provider || "",
+      linkedProviders: Array.isArray(session?.linkedProviders) ? session.linkedProviders : [],
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
       features: session?.features || {},
@@ -678,6 +792,7 @@
       avatar: session?.avatar || "",
       role: session?.role || "",
       provider: session?.provider || "",
+      linkedProviders: Array.isArray(session?.linkedProviders) ? session.linkedProviders : [],
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
       features: session?.features || {},
@@ -836,18 +951,54 @@
 
   function updateAccountSettingsPanel(session) {
     const nameInput = document.querySelector("[data-account-profile-name]");
-    const emailValue = document.querySelector("[data-account-profile-email]");
+    const userCodeValue = document.querySelector("[data-account-profile-user-code]");
+    const avatarImage = document.querySelector("[data-account-profile-avatar]");
     const tierValue = document.querySelector("[data-account-profile-tier]");
+    const emailProviderStatus = document.querySelector('[data-account-provider-status="email"]');
+    const googleProviderStatus = document.querySelector('[data-account-provider-status="google"]');
+    const githubProviderStatus = document.querySelector('[data-account-provider-status="github"]');
+    const discordProviderStatus = document.querySelector('[data-account-provider-status="discord"]');
+    const twitchProviderStatus = document.querySelector('[data-account-provider-status="twitch"]');
     const authenticated = !!session?.authenticated;
+    const linkedProviders = new Set(
+      Array.isArray(session?.linkedProviders)
+        ? session.linkedProviders.map((provider) => normalizeProvider(provider)).filter(Boolean)
+        : []
+    );
 
     if (nameInput instanceof HTMLInputElement) {
       nameInput.value = authenticated ? getDisplayName(session) : "Signed out";
     }
-    if (emailValue) {
-      emailValue.textContent = authenticated ? getEmailValue(session) : "Signed out";
+    if (userCodeValue) {
+      userCodeValue.textContent = authenticated ? getCreatorIdValue(session) : "Not available";
     }
     if (tierValue) {
       renderTierPill(tierValue, authenticated ? getTierLabel(session) : "CORE");
+    }
+    if (avatarImage instanceof HTMLImageElement) {
+      avatarImage.src = authenticated && session?.avatar ? session.avatar : "/assets/icons/ui/profile.svg";
+    }
+
+    const emailValue = coerceText(session?.email);
+    setProviderStatus(emailProviderStatus, {
+      linked: authenticated && !!emailValue,
+      linkedText: authenticated ? emailValue : "Signed out",
+      unlinkedText: "Not set"
+    });
+    setProviderStatus(googleProviderStatus, { linked: authenticated && linkedProviders.has("google") });
+    setProviderStatus(githubProviderStatus, { linked: authenticated && linkedProviders.has("github") });
+    setProviderStatus(discordProviderStatus, { linked: authenticated && linkedProviders.has("discord") });
+    setProviderStatus(twitchProviderStatus, { linked: authenticated && linkedProviders.has("twitch") });
+  }
+
+  function setProviderStatus(element, { linked, linkedText = "Connected", unlinkedText = "Available" } = {}) {
+    if (!(element instanceof HTMLElement)) return;
+    element.classList.remove("success", "subtle");
+    element.classList.add(linked ? "success" : "subtle");
+    const dot = element.querySelector(".status-dot");
+    element.textContent = linked ? linkedText : unlinkedText;
+    if (dot) {
+      element.prepend(dot);
     }
   }
 
