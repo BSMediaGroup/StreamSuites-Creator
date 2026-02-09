@@ -437,6 +437,18 @@
     return reason === SESSION_IDLE_REASON;
   }
 
+  function isCookieMissingSessionState(session) {
+    if (!session || session.authenticated === true) return false;
+    const reasonEnum =
+      typeof session.errorReasonEnum === "string" ? session.errorReasonEnum.trim().toUpperCase() : "";
+    if (reasonEnum === "COOKIE_MISSING") return true;
+    if (session.idle === true) return true;
+    const reason = normalizeAuthReason(
+      session.errorReason || session.error?.reason || session.error?.payload?.reason
+    );
+    return reason === SESSION_IDLE_REASON;
+  }
+
   async function fetchJson(url, options = {}, timeoutMs = 8000) {
     const fetchWithTimeout = getFetchWithTimeout();
     const response = await fetchWithTimeout(
@@ -1696,7 +1708,8 @@
     } catch (err) {
       console.warn("[Dashboard][Auth] Failed to set redirect guard", err);
     }
-    window.location.assign(`${CREATOR_LOGIN_PAGE}?reason=${reason}`);
+    const suffix = reason ? `?reason=${encodeURIComponent(reason)}` : "";
+    window.location.assign(`${CREATOR_LOGIN_PAGE}${suffix}`);
   }
 
   function buildAuthToast() {
@@ -1826,6 +1839,13 @@
   }
 
   function handleSessionInvalidation(reason = "expired", reasonEnum = "") {
+    const normalizedReasonEnum =
+      typeof reasonEnum === "string" ? reasonEnum.trim().toUpperCase() : "";
+    if (normalizedReasonEnum === "COOKIE_MISSING" || normalizeAuthReason(reason) === SESSION_IDLE_REASON) {
+      redirectToLogin("");
+      return;
+    }
+
     stopSessionMonitor();
     clearLocalSessionState();
     showAuthToast("Session expired. Sign in again to continue.", {
@@ -1958,6 +1978,10 @@
     updateXEmailBanner(session, isPublic);
 
     if (!session || session.authenticated !== true) {
+      if (!isPublic && isCookieMissingSessionState(session)) {
+        redirectToLogin("");
+        return;
+      }
       if (
         isPublic &&
         session?.error &&
