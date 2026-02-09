@@ -1700,6 +1700,10 @@
     }
   }
 
+  function redirectToLoginReplace() {
+    window.location.replace("/auth/login.html");
+  }
+
   function redirectToLogin(reason = "expired") {
     if (getPathname().startsWith("/auth/")) return;
     try {
@@ -1842,7 +1846,7 @@
     const normalizedReasonEnum =
       typeof reasonEnum === "string" ? reasonEnum.trim().toUpperCase() : "";
     if (normalizedReasonEnum === "COOKIE_MISSING" || normalizeAuthReason(reason) === SESSION_IDLE_REASON) {
-      redirectToLogin("");
+      redirectToLoginReplace();
       return;
     }
 
@@ -1973,15 +1977,16 @@
     }
 
     const session = await loadSession();
+    if (!isPublic && isCookieMissingSessionState(session)) {
+      redirectToLoginReplace();
+      return;
+    }
+
     updateAppSession(session);
     updateAuthSummary(session);
     updateXEmailBanner(session, isPublic);
 
     if (!session || session.authenticated !== true) {
-      if (!isPublic && isCookieMissingSessionState(session)) {
-        redirectToLogin("");
-        return;
-      }
       if (
         isPublic &&
         session?.error &&

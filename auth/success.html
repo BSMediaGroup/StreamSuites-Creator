@@ -70,7 +70,7 @@
 
       const RUNTIME_BASE_URL = "https://api.streamsuites.app";
       const SESSION_URL = `${RUNTIME_BASE_URL}/auth/session`;
-      const CREATOR_HOME_URL = "/index.html";
+      const CREATOR_HOME_URL = "https://creator.streamsuites.app/";
       const statusEl = document.querySelector("[data-auth-status]");
       const errorEl = document.querySelector("[data-auth-error]");
       const errorMessageEl = document.querySelector("[data-auth-error-message]");
@@ -89,6 +89,58 @@
           errorEl.textContent = message;
         }
         errorEl.hidden = false;
+      }
+
+      function normalizeReason(value) {
+        if (typeof value !== "string") return "";
+        const trimmed = value.trim().toLowerCase();
+        if (!trimmed) return "";
+        if (trimmed.includes("cookie_missing")) return "cookie_missing";
+        return trimmed;
+      }
+
+      function resolveReason(payload, response) {
+        if (payload && typeof payload === "object") {
+          const candidate =
+            payload.reason ||
+            payload.error?.reason ||
+            payload.status ||
+            payload.error ||
+            payload.message;
+          const normalized = normalizeReason(candidate);
+          if (normalized) return normalized;
+        }
+        const headerReason =
+          response?.headers &&
+          ["x-auth-reason", "x-streamsuites-auth-reason", "x-auth-status"]
+            .map((header) => response.headers.get(header))
+            .find(Boolean);
+        return normalizeReason(headerReason);
+      }
+
+      function resolveReasonEnum(payload, response) {
+        if (payload && typeof payload === "object") {
+          const candidate = payload.reason_enum || payload.error?.reason_enum;
+          if (typeof candidate === "string" && candidate.trim()) {
+            return candidate.trim().toUpperCase();
+          }
+        }
+        const headerReasonEnum =
+          response?.headers &&
+          ["x-auth-reason-enum", "x-streamsuites-auth-reason-enum"]
+            .map((header) => response.headers.get(header))
+            .find(Boolean);
+        if (typeof headerReasonEnum === "string" && headerReasonEnum.trim()) {
+          return headerReasonEnum.trim().toUpperCase();
+        }
+        return "";
+      }
+
+      function isCookieMissing(response, payload) {
+        if (!response || response.status !== 401) return false;
+        const reasonEnum = resolveReasonEnum(payload, response);
+        if (reasonEnum === "COOKIE_MISSING") return true;
+        return resolveReason(payload, response) === "cookie_missing";
       }
 
       async function finalizeAuth() {
@@ -120,13 +172,18 @@
             payload?.session_valid === true);
         console.log(`[Creator][Auth] Session ok: ${isSessionValid ? "ok" : "error"}`);
 
+        if (isCookieMissing(response, payload)) {
+          window.location.replace("/auth/login.html");
+          return;
+        }
+
         if (!isSessionValid || response.status === 401) {
           showError("We could not confirm your session. Please return to login.");
           return;
         }
 
         setStatus("Session confirmed. Redirecting...");
-        window.location.assign(CREATOR_HOME_URL);
+        window.location.replace(CREATOR_HOME_URL);
       }
 
       document.addEventListener("DOMContentLoaded", finalizeAuth);
