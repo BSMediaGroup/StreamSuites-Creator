@@ -13,7 +13,8 @@
       google: `${AUTH_BASE_URL}/auth/google`,
       github: `${AUTH_BASE_URL}/auth/github`,
       discord: `${AUTH_BASE_URL}/auth/discord`,
-      x: `${AUTH_BASE_URL}/auth/x/start?surface=creator`
+      x: `${AUTH_BASE_URL}/auth/x/start?surface=creator`,
+      twitch: `${AUTH_BASE_URL}/oauth/twitch/start`
     })
   });
   const ACCOUNT_ENDPOINTS = Object.freeze({
