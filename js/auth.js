@@ -54,6 +54,15 @@
   const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
   const LAST_OAUTH_PROVIDER_KEY = "streamsuites.creator.lastOauthProvider";
   const X_EMAIL_BANNER_DISMISSED_KEY = "streamsuites.creator.banner.xMissingEmail.dismissed";
+  const CREATOR_DEBUG_MODE_KEY = "ss_creator_debug_mode";
+  const CREATOR_DEBUG_MODE_EVENT = "streamsuites:creator-debug-mode";
+  const ADMIN_ROLE_ALIASES = new Set([
+    "admin",
+    "administrator",
+    "super_admin",
+    "superadmin",
+    "owner"
+  ]);
   const CREATOR_RETRY_LOGIN_URL = "/auth/login.html";
   const LOCKOUT_VARIANT_SESSION_INVALID = "session_invalid";
   const LOCKOUT_VARIANT_ROLE_MISMATCH = "role_mismatch";
@@ -83,6 +92,7 @@
   let accountMenuWired = false;
   let isAccountMenuOpen = false;
   let activeAccountMenu = null;
+  let creatorDebugWired = false;
 
   function ensureAppNamespace() {
     if (!window.App) {
@@ -107,6 +117,15 @@
     if (typeof role !== "string") return null;
     const trimmed = role.trim().toLowerCase();
     return trimmed || null;
+  }
+
+  function isAdminRole(role) {
+    const normalized = normalizeRole(role);
+    return normalized ? ADMIN_ROLE_ALIASES.has(normalized) : false;
+  }
+
+  function isAdminSession(session) {
+    return !!session?.authenticated && isAdminRole(session?.role);
   }
 
   function coerceText(value) {
@@ -145,6 +164,14 @@
 
   function getLastOauthProvider() {
     return normalizeProvider(readLocalStorageValue(LAST_OAUTH_PROVIDER_KEY));
+  }
+
+  function readCreatorDebugModeFlag() {
+    return readLocalStorageValue(CREATOR_DEBUG_MODE_KEY) === "1";
+  }
+
+  function writeCreatorDebugModeFlag(enabled) {
+    writeLocalStorageValue(CREATOR_DEBUG_MODE_KEY, enabled ? "1" : "0");
   }
 
   function persistLastOauthProvider(provider) {
@@ -929,9 +956,137 @@
     });
   }
 
+  function removeCreatorRoleTags(summary) {
+    if (!summary) return;
+    summary.querySelectorAll(".streamsuites-auth-role").forEach((roleTag) => {
+      roleTag.remove();
+    });
+  }
+
+  function ensureCreatorDebugPill(summary) {
+    if (!summary) return null;
+    let pill = summary.querySelector("[data-creator-debug-indicator]");
+    if (pill) return pill;
+
+    pill = document.createElement("span");
+    pill.className = "creator-debug-pill";
+    pill.dataset.creatorDebugIndicator = "true";
+    pill.textContent = "Debug Mode";
+    pill.hidden = true;
+
+    const tierEl = summary.querySelector("[data-auth-tier]");
+    if (tierEl && tierEl.parentElement === summary) {
+      summary.insertBefore(pill, tierEl);
+    } else {
+      summary.appendChild(pill);
+    }
+
+    return pill;
+  }
+
+  function ensureCreatorDebugExitControl(menu) {
+    if (!menu) return null;
+    let control = menu.querySelector("[data-creator-debug-exit]");
+    if (control) return control;
+
+    const dropdown = menu.querySelector("[data-account-dropdown]");
+    if (!dropdown) return null;
+
+    control = document.createElement("button");
+    control.type = "button";
+    control.className = "creator-account-item subtle";
+    control.dataset.creatorDebugExit = "true";
+    control.textContent = "Exit Debug Mode";
+    control.hidden = true;
+
+    const logoutButton = dropdown.querySelector("[data-auth-logout]");
+    if (logoutButton && logoutButton.parentElement === dropdown) {
+      dropdown.insertBefore(control, logoutButton);
+    } else {
+      dropdown.appendChild(control);
+    }
+
+    return control;
+  }
+
+  function isCreatorDebugModeEligible(session = sessionState.value) {
+    return isAdminSession(session);
+  }
+
+  function isCreatorDebugModeActive(session = sessionState.value) {
+    if (!isCreatorDebugModeEligible(session)) return false;
+    return readCreatorDebugModeFlag();
+  }
+
+  function updateCreatorDebugIndicators(session = sessionState.value) {
+    const enabled = isCreatorDebugModeActive(session);
+    const eligible = isCreatorDebugModeEligible(session);
+
+    document.querySelectorAll("[data-auth-summary]").forEach((summary) => {
+      removeCreatorRoleTags(summary);
+      const pill = ensureCreatorDebugPill(summary);
+      if (pill) {
+        pill.hidden = !enabled;
+      }
+    });
+
+    document.querySelectorAll("[data-account-menu]").forEach((menu) => {
+      const exitControl = ensureCreatorDebugExitControl(menu);
+      if (exitControl) {
+        exitControl.hidden = !(eligible && enabled);
+      }
+    });
+  }
+
+  function syncCreatorDebugModeState(session = sessionState.value) {
+    const requested = readCreatorDebugModeFlag();
+    const authenticated = !!session?.authenticated;
+    const eligible = isCreatorDebugModeEligible(session);
+
+    if (authenticated && !eligible && requested) {
+      writeCreatorDebugModeFlag(false);
+    }
+
+    const enabled = eligible && readCreatorDebugModeFlag();
+
+    ensureAppNamespace();
+    window.App.creatorDebugMode = {
+      enabled,
+      eligible,
+      requested,
+      storageKey: CREATOR_DEBUG_MODE_KEY
+    };
+
+    document.body.classList.toggle("creator-debug-mode", enabled);
+    updateCreatorDebugIndicators(session);
+    window.dispatchEvent(
+      new CustomEvent(CREATOR_DEBUG_MODE_EVENT, {
+        detail: {
+          enabled,
+          eligible
+        }
+      })
+    );
+    return enabled;
+  }
+
+  function setCreatorDebugModeEnabled(enabled, session = sessionState.value) {
+    if (enabled && !isCreatorDebugModeEligible(session)) {
+      return false;
+    }
+    writeCreatorDebugModeFlag(Boolean(enabled));
+    syncCreatorDebugModeState(session);
+    return true;
+  }
+
+  function isRoleMismatchBypassAllowed(session = sessionState.value) {
+    return isCreatorDebugModeActive(session);
+  }
+
   function updateAuthSummary(session) {
     const summaries = document.querySelectorAll("[data-auth-summary]");
     summaries.forEach((summary) => {
+      removeCreatorRoleTags(summary);
       const emailEl = summary.querySelector("[data-auth-email]");
       const nameEl = summary.querySelector("[data-auth-name]");
       const tierEl = summary.querySelector("[data-auth-tier]");
@@ -969,6 +1124,7 @@
     });
     updateAccountMenuState(session);
     updateAccountSettingsPanel(session);
+    syncCreatorDebugModeState(session);
   }
 
   function updateAccountMenuState(session) {
@@ -1161,6 +1317,47 @@
       if (!button) return;
       event.preventDefault();
       logout();
+    });
+  }
+
+  function wireCreatorDebugControls() {
+    if (creatorDebugWired) return;
+    creatorDebugWired = true;
+
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+
+      const proceedButton = target.closest("[data-creator-debug-proceed]");
+      if (proceedButton) {
+        event.preventDefault();
+        const session = sessionState.value || window.App?.session || null;
+        if (!setCreatorDebugModeEnabled(true, session)) {
+          showAuthToast("Debug Mode is only available to admin accounts.");
+          return;
+        }
+        if (session?.authenticated) {
+          persistLocalSession(session);
+        }
+        window.location.reload();
+        return;
+      }
+
+      const exitButton = target.closest("[data-creator-debug-exit]");
+      if (!exitButton) return;
+
+      event.preventDefault();
+      setCreatorDebugModeEnabled(false, sessionState.value || window.App?.session || null);
+
+      const role = normalizeRole(sessionState.value?.role);
+      if (sessionState.value?.authenticated && role && role !== CREATOR_ROLE) {
+        toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_ROLE_MISMATCH });
+        setCreatorShellVisible(false);
+      } else {
+        toggleCreatorLockout(false);
+        setCreatorShellVisible(true);
+      }
+      showAuthToast("Debug Mode disabled.");
     });
   }
 
@@ -1521,6 +1718,10 @@
   }
 
   function resolvePostAuthRedirect(session) {
+    const role = normalizeRole(session?.role);
+    if (role && role !== CREATOR_ROLE) {
+      return `${CREATOR_ORIGIN}/index.html`;
+    }
     const needsOnboarding = session?.onboardingRequired === true;
     return needsOnboarding ? CREATOR_ONBOARDING_PAGE : `${CREATOR_ORIGIN}/index.html`;
   }
@@ -1903,6 +2104,32 @@
     lockout.dataset.variant = variant;
 
     if (variant === LOCKOUT_VARIANT_ROLE_MISMATCH) {
+      const adminSession = isAdminSession(sessionState.value);
+      const debugEnabled = isCreatorDebugModeActive(sessionState.value);
+
+      if (adminSession) {
+        lockout.innerHTML = `
+          <div class="lockout-card">
+            <span class="lockout-pill">Creator access required</span>
+            <h2>This area is for creators.</h2>
+            <p>
+              You are signed in with an admin account. You can continue with sample data in Debug Mode.
+            </p>
+            <div class="lockout-actions">
+              <button class="lockout-button" type="button" data-creator-debug-proceed="true">
+                ${debugEnabled ? "Continue in Debug Mode" : "Proceed in Debug Mode"}
+              </button>
+              ${
+                debugEnabled
+                  ? '<button class="lockout-button secondary" type="button" data-creator-debug-exit="true">Exit Debug Mode</button>'
+                  : '<button class="lockout-button secondary" type="button" data-auth-logout="true">Sign out</button>'
+              }
+            </div>
+          </div>
+        `;
+        return lockout;
+      }
+
       lockout.innerHTML = `
         <div class="lockout-card">
           <span class="lockout-pill">Creator access required</span>
@@ -2189,6 +2416,7 @@
     if (areSessionsEquivalent(sessionState.value, nextSession)) return;
     sessionState.value = nextSession;
     updateAppSession(nextSession);
+    persistLocalSession(nextSession);
     updateAuthSummary(nextSession);
     updateXEmailBanner(nextSession, isPublicPath(getPathname()));
   }
@@ -2221,7 +2449,7 @@
 
       if (nextSession?.authenticated) {
         const role = normalizeRole(nextSession.role);
-        if (role && role !== CREATOR_ROLE) {
+        if (role && role !== CREATOR_ROLE && !isRoleMismatchBypassAllowed(nextSession)) {
           toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_ROLE_MISMATCH });
           return;
         }
@@ -2277,11 +2505,13 @@
 
     ensureAuthSummaryMounts();
     wireLogoutButtons();
+    wireCreatorDebugControls();
     wireAccountMenus();
     wireOauthButtons();
     wireAuthToggle();
     wireManualAuthSections();
     wirePasswordForms();
+    syncCreatorDebugModeState(sessionState.value);
 
     if (shouldSkipSessionFetch(isPublic)) {
       sessionState.value = { authenticated: false };
@@ -2303,6 +2533,9 @@
     }
 
     updateAppSession(session);
+    if (session?.authenticated) {
+      persistLocalSession(session);
+    }
     updateAuthSummary(session);
     updateXEmailBanner(session, isPublic);
 
@@ -2325,7 +2558,7 @@
 
     if (session?.authenticated) {
       const role = normalizeRole(session.role);
-      if (role !== CREATOR_ROLE) {
+      if (role !== CREATOR_ROLE && !isRoleMismatchBypassAllowed(session)) {
         toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_ROLE_MISMATCH });
         return;
       }
@@ -2338,13 +2571,18 @@
     }
 
     if (session?.authenticated) {
+      const role = normalizeRole(session.role);
       if (session?.onboardingRequired && !isOnboarding) {
-        window.location.assign(CREATOR_ONBOARDING_PAGE);
-        return;
+        if (role === CREATOR_ROLE) {
+          window.location.assign(CREATOR_ONBOARDING_PAGE);
+          return;
+        }
       }
       if (!session?.onboardingRequired && isOnboarding) {
-        window.location.assign(`${CREATOR_ORIGIN}/index.html`);
-        return;
+        if (role === CREATOR_ROLE) {
+          window.location.assign(`${CREATOR_ORIGIN}/index.html`);
+          return;
+        }
       }
       if (isPublic) {
         await routeAfterAuth(session);
@@ -2372,6 +2610,14 @@
     loadSession,
     logout,
     routeAfterAuth,
+    showToast: showAuthToast,
+    debugMode: {
+      key: CREATOR_DEBUG_MODE_KEY,
+      isEnabled: () => isCreatorDebugModeActive(sessionState.value),
+      isEligible: () => isCreatorDebugModeEligible(sessionState.value),
+      setEnabled: (enabled) => setCreatorDebugModeEnabled(Boolean(enabled), sessionState.value),
+      sync: () => syncCreatorDebugModeState(sessionState.value)
+    },
     persistLocalSession,
     storageKeys: {
       session: LOCAL_SESSION_KEY,

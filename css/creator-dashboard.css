@@ -227,6 +227,7 @@ h3 {
   padding: 4px 8px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
+  display: none;
 }
 
 .streamsuites-auth-tier {
@@ -235,6 +236,21 @@ h3 {
   text-transform: uppercase;
   padding: 2px 8px;
   border-radius: 999px;
+}
+
+.creator-debug-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 205, 102, 0.55);
+  background: rgba(255, 196, 76, 0.14);
+  color: #ffe7ba;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: var(--creator-font);
 }
 
 .creator-account-toggle {

@@ -46,6 +46,15 @@
   const TRIGGER_MATCH_MODES = new Set(["equals_icase", "contains_icase"]);
 
   const STORAGE_KEY = "streamsuites.stateRootOverride";
+  const CREATOR_DEBUG_MODE_KEY = "ss_creator_debug_mode";
+  const LOCAL_SESSION_KEY = "streamsuites.creator.session";
+  const ADMIN_ROLE_ALIASES = new Set([
+    "admin",
+    "administrator",
+    "super_admin",
+    "superadmin",
+    "owner"
+  ]);
 
   const RUNTIME_AVAILABILITY_FLAG = "__RUNTIME_AVAILABLE__";
   const RUNTIME_OFFLINE_FLAG = "__STREAMSUITES_RUNTIME_OFFLINE__";
@@ -136,6 +145,59 @@
       runtimeUnavailableLogged = true;
       console.info("[Dashboard] Runtime not available (static mode).");
     }
+  }
+
+  function normalizeRole(role) {
+    if (typeof role !== "string") return "";
+    return role.trim().toLowerCase();
+  }
+
+  function isAdminRole(role) {
+    const normalized = normalizeRole(role);
+    return normalized ? ADMIN_ROLE_ALIASES.has(normalized) : false;
+  }
+
+  function readDebugModeFlag() {
+    try {
+      return localStorage.getItem(CREATOR_DEBUG_MODE_KEY) === "1";
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  function readPersistedSessionRole() {
+    try {
+      const raw = localStorage.getItem(LOCAL_SESSION_KEY);
+      if (!raw) return "";
+      const parsed = JSON.parse(raw);
+      return typeof parsed?.role === "string" ? parsed.role : "";
+    } catch (_err) {
+      return "";
+    }
+  }
+
+  function isCreatorDebugModeActive() {
+    const appMode = window.App?.creatorDebugMode;
+    if (appMode && appMode.enabled === true && appMode.eligible === true) {
+      return true;
+    }
+    const role = window.App?.session?.role || readPersistedSessionRole();
+    return readDebugModeFlag() && isAdminRole(role);
+  }
+
+  function resolveDebugStatePath(relativePath) {
+    const normalized =
+      typeof relativePath === "string"
+        ? relativePath.trim().replace(/^\.?\//, "")
+        : "";
+    if (!normalized) return null;
+
+    if (normalized === "runtime_snapshot.json") return "./data/runtime_snapshot.json";
+    if (normalized === "jobs.json") return "./data/jobs.json";
+    if (normalized === "quotas.json") return "./data/quotas.json";
+    if (normalized === "admin_activity.json") return "./data/admin_activity.json";
+
+    return null;
   }
 
   function getCreatorContext() {
@@ -247,6 +309,14 @@
   }
 
   async function loadStateJson(relativePath) {
+    if (isCreatorDebugModeActive()) {
+      const debugPath = resolveDebugStatePath(relativePath);
+      if (!debugPath) {
+        return null;
+      }
+      return fetchFallbackJson(debugPath);
+    }
+
     if (
       window[RUNTIME_OFFLINE_FLAG] === true &&
       Object.prototype.hasOwnProperty.call(stateCache, relativePath)
@@ -658,6 +728,13 @@
       return deepClone(cache.runtimeSnapshot);
     }
 
+    if (isCreatorDebugModeActive()) {
+      const debugRaw = await fetchFallbackJson("./data/runtime_snapshot.json");
+      const debugSnapshot = normalizeRuntimeSnapshot(debugRaw);
+      cache.runtimeSnapshot = debugSnapshot ? { ...debugSnapshot, source: "debug" } : null;
+      return cache.runtimeSnapshot ? deepClone(cache.runtimeSnapshot) : null;
+    }
+
     const runtimeState = window.App?.state?.runtimeSnapshot;
 
     if (runtimeState?.getSnapshot) {
@@ -705,6 +782,12 @@
 
     if (cache.quotas && !options.forceReload) {
       return deepClone(cache.quotas);
+    }
+
+    if (isCreatorDebugModeActive()) {
+      const debugQuotas = normalize(await fetchFallbackJson("./data/quotas.json"));
+      cache.quotas = debugQuotas || null;
+      return cache.quotas ? deepClone(cache.quotas) : null;
     }
 
     const quotasState = window.App?.state?.quotas;
@@ -888,6 +971,16 @@
   "use strict";
 
   const PLATFORM_KEYS = ["youtube", "twitch", "kick", "pilled", "rumble"];
+  const CREATOR_DEBUG_MODE_KEY = "ss_creator_debug_mode";
+  const LOCAL_SESSION_KEY = "streamsuites.creator.session";
+  const ADMIN_ROLE_ALIASES = new Set([
+    "admin",
+    "administrator",
+    "super_admin",
+    "superadmin",
+    "owner"
+  ]);
+  const DEBUG_MODE_BLOCKED_WRITE_MESSAGE = "Disabled in Debug Mode";
 
   const DATA_PATHS = {
     creators: "data/creators.json",
@@ -992,6 +1085,59 @@
     system: null,
     runtimeSnapshot: null
   };
+
+  function normalizeRole(role) {
+    if (typeof role !== "string") return "";
+    return role.trim().toLowerCase();
+  }
+
+  function isAdminRole(role) {
+    const normalized = normalizeRole(role);
+    return normalized ? ADMIN_ROLE_ALIASES.has(normalized) : false;
+  }
+
+  function readDebugModeFlag() {
+    try {
+      return localStorage.getItem(CREATOR_DEBUG_MODE_KEY) === "1";
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  function readPersistedSessionRole() {
+    try {
+      const raw = localStorage.getItem(LOCAL_SESSION_KEY);
+      if (!raw) return "";
+      const parsed = JSON.parse(raw);
+      return typeof parsed?.role === "string" ? parsed.role : "";
+    } catch (_err) {
+      return "";
+    }
+  }
+
+  function isDebugModeActive() {
+    const appMode = window.App?.creatorDebugMode;
+    if (appMode && appMode.enabled === true && appMode.eligible === true) {
+      return true;
+    }
+    const role = window.App?.session?.role || readPersistedSessionRole();
+    return readDebugModeFlag() && isAdminRole(role);
+  }
+
+  function showDebugModeNotice(message = DEBUG_MODE_BLOCKED_WRITE_MESSAGE) {
+    const authToast = window.StreamSuitesAuth?.showToast;
+    if (typeof authToast === "function") {
+      authToast(message, { tone: "warning" });
+      return;
+    }
+    console.info(`[Dashboard][Config] ${message}`);
+  }
+
+  function shouldBlockMutationsInDebugMode() {
+    if (!isDebugModeActive()) return false;
+    showDebugModeNotice();
+    return true;
+  }
 
   function deepClone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -1194,6 +1340,16 @@
       return deepClone(cache.creators);
     }
 
+    if (isDebugModeActive()) {
+      const debugData = await fetchJson(DATA_PATHS.creators);
+      const debugPayload = deriveCreatorsPayload(debugData) ?? debugData;
+      const debugCreators = normalizeCreators(debugPayload || []);
+      cache.creators = debugCreators.length
+        ? debugCreators
+        : normalizeCreators(DEFAULT_CREATORS);
+      return deepClone(cache.creators);
+    }
+
     const localDraft = App.storage.loadFromLocalStorage("creators", null);
     const draftPayload = deriveCreatorsPayload(localDraft) ?? localDraft;
     const draftCreators = normalizeCreators(draftPayload || []);
@@ -1215,6 +1371,11 @@
   }
 
   function saveCreators(list) {
+    if (shouldBlockMutationsInDebugMode()) {
+      const fallback = Array.isArray(cache.creators) ? cache.creators : normalizeCreators(DEFAULT_CREATORS);
+      return deepClone(fallback);
+    }
+
     const normalized = normalizeCreators(list || []);
     cache.creators = normalized;
     App.storage.saveToLocalStorage("creators", normalized);
@@ -1236,6 +1397,22 @@
 
   async function loadPlatforms(options = {}) {
     if (cache.platforms && !options.forceReload) {
+      return deepClone(cache.platforms);
+    }
+
+    if (isDebugModeActive()) {
+      const debugData = await fetchJson(DATA_PATHS.platforms);
+      if (debugData && typeof debugData === "object") {
+        cache.platforms = {
+          schema: debugData.schema || "streamsuites.platforms.v1",
+          platforms: normalizePlatforms(debugData)
+        };
+      } else {
+        cache.platforms = {
+          schema: "streamsuites.platforms.v1",
+          platforms: normalizePlatforms(DEFAULT_PLATFORMS)
+        };
+      }
       return deepClone(cache.platforms);
     }
 
@@ -1265,6 +1442,16 @@
   }
 
   function savePlatforms(platforms) {
+    if (shouldBlockMutationsInDebugMode()) {
+      const fallback =
+        cache.platforms ||
+        {
+          schema: "streamsuites.platforms.v1",
+          platforms: normalizePlatforms(DEFAULT_PLATFORMS)
+        };
+      return deepClone(fallback);
+    }
+
     const normalized = {
       schema: "streamsuites.platforms.v1",
       platforms: normalizePlatforms(platforms || {})
@@ -1294,6 +1481,12 @@
       return deepClone(cache.system);
     }
 
+    if (isDebugModeActive()) {
+      const debugData = await fetchJson(DATA_PATHS.system);
+      cache.system = normalizeSystem(debugData && typeof debugData === "object" ? debugData : DEFAULT_SYSTEM);
+      return deepClone(cache.system);
+    }
+
     const localDraft = App.storage.loadFromLocalStorage("system", null);
     if (localDraft && typeof localDraft === "object") {
       cache.system = normalizeSystem(localDraft);
@@ -1311,6 +1504,11 @@
   }
 
   function saveSystem(systemConfig = {}) {
+    if (shouldBlockMutationsInDebugMode()) {
+      const fallback = cache.system || normalizeSystem(DEFAULT_SYSTEM);
+      return deepClone(fallback);
+    }
+
     const normalized = normalizeSystem({
       ...(cache.system || DEFAULT_SYSTEM),
       ...(systemConfig || {})
@@ -1339,6 +1537,15 @@
       return deepClone(cache.dashboard);
     }
 
+    if (isDebugModeActive()) {
+      const debugData = await fetchJson(DATA_PATHS.dashboard);
+      cache.dashboard =
+        debugData && typeof debugData === "object"
+          ? { ...DEFAULT_DASHBOARD_STATE, ...debugData }
+          : deepClone(DEFAULT_DASHBOARD_STATE);
+      return deepClone(cache.dashboard);
+    }
+
     const local = App.storage.loadFromLocalStorage("dashboard_state", null);
     if (local && typeof local === "object") {
       cache.dashboard = { ...DEFAULT_DASHBOARD_STATE, ...local };
@@ -1356,6 +1563,10 @@
   }
 
   function updateDashboardState(partial) {
+    if (shouldBlockMutationsInDebugMode()) {
+      return deepClone(cache.dashboard || DEFAULT_DASHBOARD_STATE);
+    }
+
     const next = { ...(cache.dashboard || DEFAULT_DASHBOARD_STATE), ...partial };
     cache.dashboard = next;
     App.storage.saveToLocalStorage("dashboard_state", next);
@@ -1386,6 +1597,11 @@
   }
 
   function applyCreatorsImport(payload) {
+    if (shouldBlockMutationsInDebugMode()) {
+      const fallback = Array.isArray(cache.creators) ? cache.creators : normalizeCreators(DEFAULT_CREATORS);
+      return deepClone(fallback);
+    }
+
     const sourceCreators =
       deriveCreatorsPayload(payload) ?? (payload && payload.creators);
     const normalized = normalizeCreators(sourceCreators || []);
@@ -1395,6 +1611,16 @@
   }
 
   function applyPlatformsImport(payload) {
+    if (shouldBlockMutationsInDebugMode()) {
+      const fallback =
+        cache.platforms ||
+        {
+          schema: "streamsuites.platforms.v1",
+          platforms: normalizePlatforms(DEFAULT_PLATFORMS)
+        };
+      return deepClone(fallback);
+    }
+
     const normalized = {
       schema: "streamsuites.platforms.v1",
       platforms: normalizePlatforms(payload || {})
@@ -1405,6 +1631,10 @@
   }
 
   async function importConfigBundle(file) {
+    if (shouldBlockMutationsInDebugMode()) {
+      throw new Error(DEBUG_MODE_BLOCKED_WRITE_MESSAGE);
+    }
+
     const parsed = await App.storage.importJsonFromFile(file);
     if (!parsed || typeof parsed !== "object") {
       throw new Error("Invalid config bundle");
