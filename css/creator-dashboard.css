@@ -656,6 +656,10 @@ h3 {
   font-family: var(--creator-font);
 }
 
+.creator-debug-pill[hidden] {
+  display: none !important;
+}
+
 .creator-account-toggle {
   display: inline-flex;
   align-items: center;

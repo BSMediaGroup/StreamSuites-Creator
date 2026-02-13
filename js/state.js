@@ -159,55 +159,26 @@
     return normalized ? ADMIN_ROLE_ALIASES.has(normalized) : false;
   }
 
-  function isTruthyFlag(value) {
-    if (value === true || value === 1) return true;
-    if (typeof value === "string") {
-      const normalized = value.trim().toLowerCase();
-      return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "enabled";
-    }
-    return false;
+  function getSessionRoleChecks() {
+    return window.StreamSuitesAuth?.sessionRoleChecks || null;
   }
 
-  function hasCreatorCapability(features) {
-    if (!features || typeof features !== "object") return false;
-
-    const directKeys = [
-      "creator",
-      "creator_access",
-      "creatorAccess",
-      "has_creator_access",
-      "hasCreatorAccess",
-      "can_access_creator",
-      "canAccessCreator",
-      "creator_enabled",
-      "creatorEnabled"
-    ];
-    if (directKeys.some((key) => isTruthyFlag(features[key]))) {
-      return true;
+  function isCreatorSession(session) {
+    const checks = getSessionRoleChecks();
+    if (checks && typeof checks.isCreatorSession === "function") {
+      return checks.isCreatorSession(session);
     }
+    if (!session || session.authenticated !== true) return false;
+    return normalizeRole(session.role) === CREATOR_ROLE;
+  }
 
-    const permissions = features.permissions;
-    if (permissions && typeof permissions === "object") {
-      if (directKeys.some((key) => isTruthyFlag(permissions[key]))) {
-        return true;
-      }
-      if (isTruthyFlag(permissions.creator)) {
-        return true;
-      }
+  function isAdminSession(session) {
+    const checks = getSessionRoleChecks();
+    if (checks && typeof checks.isAdminSession === "function") {
+      return checks.isAdminSession(session);
     }
-
-    const capabilities = features.capabilities;
-    if (capabilities && typeof capabilities === "object") {
-      if (directKeys.some((key) => isTruthyFlag(capabilities[key]))) {
-        return true;
-      }
-      if (isTruthyFlag(capabilities.creator)) {
-        return true;
-      }
-    }
-
-    const roles = Array.isArray(features.roles) ? features.roles : [];
-    return roles.some((roleValue) => normalizeRole(roleValue) === CREATOR_ROLE);
+    if (!session || session.authenticated !== true) return false;
+    return isAdminRole(session.role);
   }
 
   function readDebugModeFlag() {
@@ -229,26 +200,18 @@
     }
   }
 
-  function hasCreatorAccessSession(session) {
-    if (!session || session.authenticated !== true) return false;
-    const role = normalizeRole(session.role);
-    if (role === CREATOR_ROLE) return true;
-    return hasCreatorCapability(session.features);
-  }
-
   function isCreatorDebugModeActive() {
     const appMode = window.App?.creatorDebugMode;
     if (
       appMode &&
       appMode.enabled === true &&
       appMode.eligible === true &&
-      appMode.hasCreatorAccess !== true
+      appMode.isCreatorSession !== true
     ) {
       return true;
     }
     const session = window.App?.session || readPersistedSession();
-    const role = session?.role || "";
-    return readDebugModeFlag() && isAdminRole(role) && !hasCreatorAccessSession(session);
+    return readDebugModeFlag() && isAdminSession(session) && !isCreatorSession(session);
   }
 
   function clearDebugModeStateCaches() {
@@ -1177,55 +1140,26 @@
     return normalized ? ADMIN_ROLE_ALIASES.has(normalized) : false;
   }
 
-  function isTruthyFlag(value) {
-    if (value === true || value === 1) return true;
-    if (typeof value === "string") {
-      const normalized = value.trim().toLowerCase();
-      return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "enabled";
-    }
-    return false;
+  function getSessionRoleChecks() {
+    return window.StreamSuitesAuth?.sessionRoleChecks || null;
   }
 
-  function hasCreatorCapability(features) {
-    if (!features || typeof features !== "object") return false;
-
-    const directKeys = [
-      "creator",
-      "creator_access",
-      "creatorAccess",
-      "has_creator_access",
-      "hasCreatorAccess",
-      "can_access_creator",
-      "canAccessCreator",
-      "creator_enabled",
-      "creatorEnabled"
-    ];
-    if (directKeys.some((key) => isTruthyFlag(features[key]))) {
-      return true;
+  function isCreatorSession(session) {
+    const checks = getSessionRoleChecks();
+    if (checks && typeof checks.isCreatorSession === "function") {
+      return checks.isCreatorSession(session);
     }
+    if (!session || session.authenticated !== true) return false;
+    return normalizeRole(session.role) === CREATOR_ROLE;
+  }
 
-    const permissions = features.permissions;
-    if (permissions && typeof permissions === "object") {
-      if (directKeys.some((key) => isTruthyFlag(permissions[key]))) {
-        return true;
-      }
-      if (isTruthyFlag(permissions.creator)) {
-        return true;
-      }
+  function isAdminSession(session) {
+    const checks = getSessionRoleChecks();
+    if (checks && typeof checks.isAdminSession === "function") {
+      return checks.isAdminSession(session);
     }
-
-    const capabilities = features.capabilities;
-    if (capabilities && typeof capabilities === "object") {
-      if (directKeys.some((key) => isTruthyFlag(capabilities[key]))) {
-        return true;
-      }
-      if (isTruthyFlag(capabilities.creator)) {
-        return true;
-      }
-    }
-
-    const roles = Array.isArray(features.roles) ? features.roles : [];
-    return roles.some((roleValue) => normalizeRole(roleValue) === CREATOR_ROLE);
+    if (!session || session.authenticated !== true) return false;
+    return isAdminRole(session.role);
   }
 
   function readDebugModeFlag() {
@@ -1247,26 +1181,18 @@
     }
   }
 
-  function hasCreatorAccessSession(session) {
-    if (!session || session.authenticated !== true) return false;
-    const role = normalizeRole(session.role);
-    if (role === CREATOR_ROLE) return true;
-    return hasCreatorCapability(session.features);
-  }
-
   function isDebugModeActive() {
     const appMode = window.App?.creatorDebugMode;
     if (
       appMode &&
       appMode.enabled === true &&
       appMode.eligible === true &&
-      appMode.hasCreatorAccess !== true
+      appMode.isCreatorSession !== true
     ) {
       return true;
     }
     const session = window.App?.session || readPersistedSession();
-    const role = session?.role || "";
-    return readDebugModeFlag() && isAdminRole(role) && !hasCreatorAccessSession(session);
+    return readDebugModeFlag() && isAdminSession(session) && !isCreatorSession(session);
   }
 
   function clearConfigDebugCaches() {

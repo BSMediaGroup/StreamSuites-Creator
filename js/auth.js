@@ -56,6 +56,7 @@
   const X_EMAIL_BANNER_DISMISSED_KEY = "streamsuites.creator.banner.xMissingEmail.dismissed";
   const CREATOR_DEBUG_MODE_KEY = "ss_creator_debug_mode";
   const CREATOR_DEBUG_MODE_EVENT = "streamsuites:creator-debug-mode";
+  const CREATOR_DEBUG_MODE_STORAGE_KEYS = Object.freeze([CREATOR_DEBUG_MODE_KEY]);
   const ADMIN_ROLE_ALIASES = new Set([
     "admin",
     "administrator",
@@ -128,63 +129,8 @@
     return !!session?.authenticated && isAdminRole(session?.role);
   }
 
-  function isTruthyFlag(value) {
-    if (value === true || value === 1) return true;
-    if (typeof value === "string") {
-      const normalized = value.trim().toLowerCase();
-      return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "enabled";
-    }
-    return false;
-  }
-
-  function hasCreatorCapability(features) {
-    if (!features || typeof features !== "object") return false;
-
-    const directKeys = [
-      "creator",
-      "creator_access",
-      "creatorAccess",
-      "has_creator_access",
-      "hasCreatorAccess",
-      "can_access_creator",
-      "canAccessCreator",
-      "creator_enabled",
-      "creatorEnabled"
-    ];
-
-    if (directKeys.some((key) => isTruthyFlag(features[key]))) {
-      return true;
-    }
-
-    const permissions = features.permissions;
-    if (permissions && typeof permissions === "object") {
-      if (directKeys.some((key) => isTruthyFlag(permissions[key]))) {
-        return true;
-      }
-      if (isTruthyFlag(permissions.creator)) {
-        return true;
-      }
-    }
-
-    const capabilities = features.capabilities;
-    if (capabilities && typeof capabilities === "object") {
-      if (directKeys.some((key) => isTruthyFlag(capabilities[key]))) {
-        return true;
-      }
-      if (isTruthyFlag(capabilities.creator)) {
-        return true;
-      }
-    }
-
-    const roles = Array.isArray(features.roles) ? features.roles : [];
-    return roles.some((roleValue) => normalizeRole(roleValue) === CREATOR_ROLE);
-  }
-
-  function hasCreatorAccess(session = sessionState.value) {
-    if (!session?.authenticated) return false;
-    const role = normalizeRole(session?.role);
-    if (role === CREATOR_ROLE) return true;
-    return hasCreatorCapability(session?.features);
+  function isCreatorSession(session) {
+    return !!session?.authenticated && normalizeRole(session?.role) === CREATOR_ROLE;
   }
 
   function coerceText(value) {
@@ -234,11 +180,13 @@
   }
 
   function clearCreatorDebugModeFlag() {
-    try {
-      localStorage.removeItem(CREATOR_DEBUG_MODE_KEY);
-    } catch (err) {
-      writeLocalStorageValue(CREATOR_DEBUG_MODE_KEY, "0");
-    }
+    CREATOR_DEBUG_MODE_STORAGE_KEYS.forEach((key) => {
+      try {
+        localStorage.removeItem(key);
+      } catch (err) {
+        writeLocalStorageValue(key, "0");
+      }
+    });
   }
 
   function persistLastOauthProvider(provider) {
@@ -1080,7 +1028,7 @@
   }
 
   function isCreatorDebugModeEligible(session = sessionState.value) {
-    return isAdminSession(session) && !hasCreatorAccess(session);
+    return isAdminSession(session) && !isCreatorSession(session);
   }
 
   function isCreatorDebugModeActive(session = sessionState.value) {
@@ -1088,58 +1036,66 @@
     return readCreatorDebugModeFlag();
   }
 
-  function updateCreatorDebugIndicators(session = sessionState.value) {
+  function syncDebugModeUI(session = sessionState.value) {
     const enabled = isCreatorDebugModeActive(session);
-    const eligible = isCreatorDebugModeEligible(session);
 
     document.querySelectorAll("[data-auth-summary]").forEach((summary) => {
       removeCreatorRoleTags(summary);
       const pill = ensureCreatorDebugPill(summary);
       if (pill) {
-        pill.hidden = !(eligible && enabled);
+        pill.hidden = !enabled;
       }
     });
 
     document.querySelectorAll("[data-account-menu]").forEach((menu) => {
       const exitControl = ensureCreatorDebugExitControl(menu);
       if (exitControl) {
-        exitControl.hidden = !(eligible && enabled);
+        exitControl.hidden = !enabled;
       }
     });
+
+    document.documentElement.classList.toggle("creator-debug-mode", enabled);
+    document.body.classList.toggle("creator-debug-mode", enabled);
+    return enabled;
   }
 
   function syncCreatorDebugModeState(session = sessionState.value) {
     const requested = readCreatorDebugModeFlag();
     const authenticated = !!session?.authenticated;
-    const creatorAccess = hasCreatorAccess(session);
+    const creatorSession = isCreatorSession(session);
+    const adminSession = isAdminSession(session);
     const eligible = isCreatorDebugModeEligible(session);
 
-    const forcedOffForIneligible = authenticated && !eligible && requested;
-    if (forcedOffForIneligible) {
+    const forcedOffForCreator = authenticated && creatorSession && requested;
+    if (authenticated && creatorSession) {
+      clearCreatorDebugModeFlag();
+    } else if (authenticated && !eligible && requested) {
       clearCreatorDebugModeFlag();
     }
-    const forcedOffForCreator = forcedOffForIneligible && creatorAccess;
+    const forcedOffForIneligible = authenticated && !creatorSession && !eligible && requested;
 
     const requestedAfterEnforcement = readCreatorDebugModeFlag();
-    const enabled = eligible && requestedAfterEnforcement;
+    const enabled = adminSession && !creatorSession && requestedAfterEnforcement;
 
     ensureAppNamespace();
     window.App.creatorDebugMode = {
       enabled,
       eligible,
       requested: requestedAfterEnforcement,
-      hasCreatorAccess: creatorAccess,
-      storageKey: CREATOR_DEBUG_MODE_KEY
+      isAdminSession: adminSession,
+      isCreatorSession: creatorSession,
+      storageKey: CREATOR_DEBUG_MODE_KEY,
+      storageKeys: CREATOR_DEBUG_MODE_STORAGE_KEYS.slice()
     };
 
-    document.body.classList.toggle("creator-debug-mode", enabled);
-    updateCreatorDebugIndicators(session);
+    syncDebugModeUI(session);
     window.dispatchEvent(
       new CustomEvent(CREATOR_DEBUG_MODE_EVENT, {
         detail: {
           enabled,
           eligible,
-          hasCreatorAccess: creatorAccess,
+          isAdminSession: adminSession,
+          isCreatorSession: creatorSession,
           forcedOffForIneligible,
           forcedOffForCreator
         }
@@ -1431,8 +1387,7 @@
       event.preventDefault();
       setCreatorDebugModeEnabled(false, sessionState.value || window.App?.session || null);
 
-      const role = normalizeRole(sessionState.value?.role);
-      if (sessionState.value?.authenticated && role && role !== CREATOR_ROLE) {
+      if (sessionState.value?.authenticated && !isCreatorSession(sessionState.value)) {
         toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_ROLE_MISMATCH });
         setCreatorShellVisible(false);
       } else {
@@ -1800,8 +1755,7 @@
   }
 
   function resolvePostAuthRedirect(session) {
-    const role = normalizeRole(session?.role);
-    if (role && role !== CREATOR_ROLE) {
+    if (session?.authenticated && !isCreatorSession(session)) {
       return `${CREATOR_ORIGIN}/index.html`;
     }
     const needsOnboarding = session?.onboardingRequired === true;
@@ -2428,7 +2382,7 @@
   function shouldShowXEmailBanner(session, isPublic) {
     if (isPublic) return false;
     if (!session || session.authenticated !== true) return false;
-    if (normalizeRole(session.role) !== CREATOR_ROLE) return false;
+    if (!isCreatorSession(session)) return false;
     const provider = normalizeProvider(session.provider || getLastOauthProvider());
     if (provider !== "x") return false;
     if (!isEmailMissing(session.email)) return false;
@@ -2530,8 +2484,7 @@
       applySessionUpdate(nextSession);
 
       if (nextSession?.authenticated) {
-        const role = normalizeRole(nextSession.role);
-        if (role && role !== CREATOR_ROLE && !isRoleMismatchBypassAllowed(nextSession)) {
+        if (!isCreatorSession(nextSession) && !isRoleMismatchBypassAllowed(nextSession)) {
           toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_ROLE_MISMATCH });
           return;
         }
@@ -2639,8 +2592,7 @@
     }
 
     if (session?.authenticated) {
-      const role = normalizeRole(session.role);
-      if (role !== CREATOR_ROLE && !isRoleMismatchBypassAllowed(session)) {
+      if (!isCreatorSession(session) && !isRoleMismatchBypassAllowed(session)) {
         toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_ROLE_MISMATCH });
         return;
       }
@@ -2653,15 +2605,14 @@
     }
 
     if (session?.authenticated) {
-      const role = normalizeRole(session.role);
       if (session?.onboardingRequired && !isOnboarding) {
-        if (role === CREATOR_ROLE) {
+        if (isCreatorSession(session)) {
           window.location.assign(CREATOR_ONBOARDING_PAGE);
           return;
         }
       }
       if (!session?.onboardingRequired && isOnboarding) {
-        if (role === CREATOR_ROLE) {
+        if (isCreatorSession(session)) {
           window.location.assign(`${CREATOR_ORIGIN}/index.html`);
           return;
         }
@@ -2702,7 +2653,12 @@
       isEnabled: () => isCreatorDebugModeActive(sessionState.value),
       isEligible: () => isCreatorDebugModeEligible(sessionState.value),
       setEnabled: (enabled) => setCreatorDebugModeEnabled(Boolean(enabled), sessionState.value),
-      sync: () => syncCreatorDebugModeState(sessionState.value)
+      sync: () => syncCreatorDebugModeState(sessionState.value),
+      syncUI: () => syncDebugModeUI(sessionState.value)
+    },
+    sessionRoleChecks: {
+      isCreatorSession: (session) => isCreatorSession(session),
+      isAdminSession: (session) => isAdminSession(session)
     },
     persistLocalSession,
     storageKeys: {
