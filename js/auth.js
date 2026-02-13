@@ -944,6 +944,9 @@
     }
 
     document.querySelectorAll(".ss-header").forEach((header) => {
+      if (header.closest("#view-container")) {
+        return;
+      }
       let right = header.querySelector(".ss-header-right");
       if (!right) {
         right = document.createElement("div");
@@ -2611,7 +2614,6 @@
     logout,
     routeAfterAuth,
     refreshSummary: async () => {
-      ensureAuthSummaryMounts();
       updateAuthSummary(sessionState.value);
       return sessionState.value;
     },
