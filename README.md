@@ -55,7 +55,8 @@ authoritative state. No sections were removed; wording was replaced to incorpora
 requirements.
 
 ## Repo Structure:
-```StreamSuites-Creator/
+```
+StreamSuites-Creator/
 ├── .gitignore
 ├── CNAME
 ├── COMMERCIAL-LICENSE-NOTICE.md
