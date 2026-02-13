@@ -1975,7 +1975,7 @@ body.creator-lockout-active .creator-lockout {
   overflow-x: hidden;
   scrollbar-gutter: stable;
   padding-bottom: 10px;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
 }
 
