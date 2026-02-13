@@ -128,6 +128,65 @@
     return !!session?.authenticated && isAdminRole(session?.role);
   }
 
+  function isTruthyFlag(value) {
+    if (value === true || value === 1) return true;
+    if (typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+      return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "enabled";
+    }
+    return false;
+  }
+
+  function hasCreatorCapability(features) {
+    if (!features || typeof features !== "object") return false;
+
+    const directKeys = [
+      "creator",
+      "creator_access",
+      "creatorAccess",
+      "has_creator_access",
+      "hasCreatorAccess",
+      "can_access_creator",
+      "canAccessCreator",
+      "creator_enabled",
+      "creatorEnabled"
+    ];
+
+    if (directKeys.some((key) => isTruthyFlag(features[key]))) {
+      return true;
+    }
+
+    const permissions = features.permissions;
+    if (permissions && typeof permissions === "object") {
+      if (directKeys.some((key) => isTruthyFlag(permissions[key]))) {
+        return true;
+      }
+      if (isTruthyFlag(permissions.creator)) {
+        return true;
+      }
+    }
+
+    const capabilities = features.capabilities;
+    if (capabilities && typeof capabilities === "object") {
+      if (directKeys.some((key) => isTruthyFlag(capabilities[key]))) {
+        return true;
+      }
+      if (isTruthyFlag(capabilities.creator)) {
+        return true;
+      }
+    }
+
+    const roles = Array.isArray(features.roles) ? features.roles : [];
+    return roles.some((roleValue) => normalizeRole(roleValue) === CREATOR_ROLE);
+  }
+
+  function hasCreatorAccess(session = sessionState.value) {
+    if (!session?.authenticated) return false;
+    const role = normalizeRole(session?.role);
+    if (role === CREATOR_ROLE) return true;
+    return hasCreatorCapability(session?.features);
+  }
+
   function coerceText(value) {
     if (typeof value === "string") return value.trim();
     if (typeof value === "number") return String(value);
@@ -172,6 +231,14 @@
 
   function writeCreatorDebugModeFlag(enabled) {
     writeLocalStorageValue(CREATOR_DEBUG_MODE_KEY, enabled ? "1" : "0");
+  }
+
+  function clearCreatorDebugModeFlag() {
+    try {
+      localStorage.removeItem(CREATOR_DEBUG_MODE_KEY);
+    } catch (err) {
+      writeLocalStorageValue(CREATOR_DEBUG_MODE_KEY, "0");
+    }
   }
 
   function persistLastOauthProvider(provider) {
@@ -1013,7 +1080,7 @@
   }
 
   function isCreatorDebugModeEligible(session = sessionState.value) {
-    return isAdminSession(session);
+    return isAdminSession(session) && !hasCreatorAccess(session);
   }
 
   function isCreatorDebugModeActive(session = sessionState.value) {
@@ -1029,7 +1096,7 @@
       removeCreatorRoleTags(summary);
       const pill = ensureCreatorDebugPill(summary);
       if (pill) {
-        pill.hidden = !enabled;
+        pill.hidden = !(eligible && enabled);
       }
     });
 
@@ -1044,19 +1111,24 @@
   function syncCreatorDebugModeState(session = sessionState.value) {
     const requested = readCreatorDebugModeFlag();
     const authenticated = !!session?.authenticated;
+    const creatorAccess = hasCreatorAccess(session);
     const eligible = isCreatorDebugModeEligible(session);
 
-    if (authenticated && !eligible && requested) {
-      writeCreatorDebugModeFlag(false);
+    const forcedOffForIneligible = authenticated && !eligible && requested;
+    if (forcedOffForIneligible) {
+      clearCreatorDebugModeFlag();
     }
+    const forcedOffForCreator = forcedOffForIneligible && creatorAccess;
 
-    const enabled = eligible && readCreatorDebugModeFlag();
+    const requestedAfterEnforcement = readCreatorDebugModeFlag();
+    const enabled = eligible && requestedAfterEnforcement;
 
     ensureAppNamespace();
     window.App.creatorDebugMode = {
       enabled,
       eligible,
-      requested,
+      requested: requestedAfterEnforcement,
+      hasCreatorAccess: creatorAccess,
       storageKey: CREATOR_DEBUG_MODE_KEY
     };
 
@@ -1066,7 +1138,10 @@
       new CustomEvent(CREATOR_DEBUG_MODE_EVENT, {
         detail: {
           enabled,
-          eligible
+          eligible,
+          hasCreatorAccess: creatorAccess,
+          forcedOffForIneligible,
+          forcedOffForCreator
         }
       })
     );
@@ -1077,7 +1152,11 @@
     if (enabled && !isCreatorDebugModeEligible(session)) {
       return false;
     }
-    writeCreatorDebugModeFlag(Boolean(enabled));
+    if (enabled) {
+      writeCreatorDebugModeFlag(true);
+    } else {
+      clearCreatorDebugModeFlag();
+    }
     syncCreatorDebugModeState(session);
     return true;
   }

@@ -48,6 +48,8 @@
   const STORAGE_KEY = "streamsuites.stateRootOverride";
   const CREATOR_DEBUG_MODE_KEY = "ss_creator_debug_mode";
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
+  const CREATOR_ROLE = "creator";
+  const CREATOR_DEBUG_MODE_EVENT = "streamsuites:creator-debug-mode";
   const ADMIN_ROLE_ALIASES = new Set([
     "admin",
     "administrator",
@@ -157,6 +159,57 @@
     return normalized ? ADMIN_ROLE_ALIASES.has(normalized) : false;
   }
 
+  function isTruthyFlag(value) {
+    if (value === true || value === 1) return true;
+    if (typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+      return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "enabled";
+    }
+    return false;
+  }
+
+  function hasCreatorCapability(features) {
+    if (!features || typeof features !== "object") return false;
+
+    const directKeys = [
+      "creator",
+      "creator_access",
+      "creatorAccess",
+      "has_creator_access",
+      "hasCreatorAccess",
+      "can_access_creator",
+      "canAccessCreator",
+      "creator_enabled",
+      "creatorEnabled"
+    ];
+    if (directKeys.some((key) => isTruthyFlag(features[key]))) {
+      return true;
+    }
+
+    const permissions = features.permissions;
+    if (permissions && typeof permissions === "object") {
+      if (directKeys.some((key) => isTruthyFlag(permissions[key]))) {
+        return true;
+      }
+      if (isTruthyFlag(permissions.creator)) {
+        return true;
+      }
+    }
+
+    const capabilities = features.capabilities;
+    if (capabilities && typeof capabilities === "object") {
+      if (directKeys.some((key) => isTruthyFlag(capabilities[key]))) {
+        return true;
+      }
+      if (isTruthyFlag(capabilities.creator)) {
+        return true;
+      }
+    }
+
+    const roles = Array.isArray(features.roles) ? features.roles : [];
+    return roles.some((roleValue) => normalizeRole(roleValue) === CREATOR_ROLE);
+  }
+
   function readDebugModeFlag() {
     try {
       return localStorage.getItem(CREATOR_DEBUG_MODE_KEY) === "1";
@@ -165,24 +218,46 @@
     }
   }
 
-  function readPersistedSessionRole() {
+  function readPersistedSession() {
     try {
       const raw = localStorage.getItem(LOCAL_SESSION_KEY);
-      if (!raw) return "";
+      if (!raw) return null;
       const parsed = JSON.parse(raw);
-      return typeof parsed?.role === "string" ? parsed.role : "";
+      return parsed && typeof parsed === "object" ? parsed : null;
     } catch (_err) {
-      return "";
+      return null;
     }
+  }
+
+  function hasCreatorAccessSession(session) {
+    if (!session || session.authenticated !== true) return false;
+    const role = normalizeRole(session.role);
+    if (role === CREATOR_ROLE) return true;
+    return hasCreatorCapability(session.features);
   }
 
   function isCreatorDebugModeActive() {
     const appMode = window.App?.creatorDebugMode;
-    if (appMode && appMode.enabled === true && appMode.eligible === true) {
+    if (
+      appMode &&
+      appMode.enabled === true &&
+      appMode.eligible === true &&
+      appMode.hasCreatorAccess !== true
+    ) {
       return true;
     }
-    const role = window.App?.session?.role || readPersistedSessionRole();
-    return readDebugModeFlag() && isAdminRole(role);
+    const session = window.App?.session || readPersistedSession();
+    const role = session?.role || "";
+    return readDebugModeFlag() && isAdminRole(role) && !hasCreatorAccessSession(session);
+  }
+
+  function clearDebugModeStateCaches() {
+    cache.runtimeSnapshot = null;
+    cache.quotas = null;
+    cache.adminActivity = null;
+    Object.keys(stateCache).forEach((key) => {
+      delete stateCache[key];
+    });
   }
 
   function resolveDebugStatePath(relativePath) {
@@ -943,6 +1018,10 @@
     return fallback ? deepClone(fallback) : null;
   }
 
+  window.addEventListener(CREATOR_DEBUG_MODE_EVENT, () => {
+    clearDebugModeStateCaches();
+  });
+
   window.StreamSuitesState = {
     formatTimestamp,
     loadStateJson,
@@ -973,6 +1052,8 @@
   const PLATFORM_KEYS = ["youtube", "twitch", "kick", "pilled", "rumble"];
   const CREATOR_DEBUG_MODE_KEY = "ss_creator_debug_mode";
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
+  const CREATOR_ROLE = "creator";
+  const CREATOR_DEBUG_MODE_EVENT = "streamsuites:creator-debug-mode";
   const ADMIN_ROLE_ALIASES = new Set([
     "admin",
     "administrator",
@@ -1096,6 +1177,57 @@
     return normalized ? ADMIN_ROLE_ALIASES.has(normalized) : false;
   }
 
+  function isTruthyFlag(value) {
+    if (value === true || value === 1) return true;
+    if (typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+      return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "enabled";
+    }
+    return false;
+  }
+
+  function hasCreatorCapability(features) {
+    if (!features || typeof features !== "object") return false;
+
+    const directKeys = [
+      "creator",
+      "creator_access",
+      "creatorAccess",
+      "has_creator_access",
+      "hasCreatorAccess",
+      "can_access_creator",
+      "canAccessCreator",
+      "creator_enabled",
+      "creatorEnabled"
+    ];
+    if (directKeys.some((key) => isTruthyFlag(features[key]))) {
+      return true;
+    }
+
+    const permissions = features.permissions;
+    if (permissions && typeof permissions === "object") {
+      if (directKeys.some((key) => isTruthyFlag(permissions[key]))) {
+        return true;
+      }
+      if (isTruthyFlag(permissions.creator)) {
+        return true;
+      }
+    }
+
+    const capabilities = features.capabilities;
+    if (capabilities && typeof capabilities === "object") {
+      if (directKeys.some((key) => isTruthyFlag(capabilities[key]))) {
+        return true;
+      }
+      if (isTruthyFlag(capabilities.creator)) {
+        return true;
+      }
+    }
+
+    const roles = Array.isArray(features.roles) ? features.roles : [];
+    return roles.some((roleValue) => normalizeRole(roleValue) === CREATOR_ROLE);
+  }
+
   function readDebugModeFlag() {
     try {
       return localStorage.getItem(CREATOR_DEBUG_MODE_KEY) === "1";
@@ -1104,24 +1236,45 @@
     }
   }
 
-  function readPersistedSessionRole() {
+  function readPersistedSession() {
     try {
       const raw = localStorage.getItem(LOCAL_SESSION_KEY);
-      if (!raw) return "";
+      if (!raw) return null;
       const parsed = JSON.parse(raw);
-      return typeof parsed?.role === "string" ? parsed.role : "";
+      return parsed && typeof parsed === "object" ? parsed : null;
     } catch (_err) {
-      return "";
+      return null;
     }
+  }
+
+  function hasCreatorAccessSession(session) {
+    if (!session || session.authenticated !== true) return false;
+    const role = normalizeRole(session.role);
+    if (role === CREATOR_ROLE) return true;
+    return hasCreatorCapability(session.features);
   }
 
   function isDebugModeActive() {
     const appMode = window.App?.creatorDebugMode;
-    if (appMode && appMode.enabled === true && appMode.eligible === true) {
+    if (
+      appMode &&
+      appMode.enabled === true &&
+      appMode.eligible === true &&
+      appMode.hasCreatorAccess !== true
+    ) {
       return true;
     }
-    const role = window.App?.session?.role || readPersistedSessionRole();
-    return readDebugModeFlag() && isAdminRole(role);
+    const session = window.App?.session || readPersistedSession();
+    const role = session?.role || "";
+    return readDebugModeFlag() && isAdminRole(role) && !hasCreatorAccessSession(session);
+  }
+
+  function clearConfigDebugCaches() {
+    cache.creators = null;
+    cache.platforms = null;
+    cache.dashboard = null;
+    cache.system = null;
+    cache.runtimeSnapshot = null;
   }
 
   function showDebugModeNotice(message = DEBUG_MODE_BLOCKED_WRITE_MESSAGE) {
@@ -1658,6 +1811,10 @@
       last_loaded_at: safeNowIso()
     });
   }
+
+  window.addEventListener(CREATOR_DEBUG_MODE_EVENT, () => {
+    clearConfigDebugCaches();
+  });
 
   window.ConfigState = {
     loadCreators,
