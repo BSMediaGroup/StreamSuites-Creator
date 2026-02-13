@@ -434,6 +434,7 @@
     registerView("plans", { scripts: ViewScripts.plans, controllerName: "PlansView" });
     registerView("triggers", { scripts: ViewScripts.triggers, controllerName: "TriggersView" });
     registerView("settings", { scripts: ViewScripts.settings, controllerName: "SettingsView" });
+    registerView("notifications", { controllerName: "NotificationsView" });
     registerView("updates");
     registerView("creators", { scripts: ViewScripts.creators, controllerName: "CreatorsView" });
     registerView("jobs", { scripts: ViewScripts.jobs, controllerName: "JobsView" });

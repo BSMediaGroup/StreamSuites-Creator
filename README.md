@@ -327,6 +327,7 @@ StreamSuites-Creator/
 │   ├── creators.js
 │   ├── feature-gate.js
 │   ├── jobs.js
+│   ├── notifications.js
 │   ├── onboarding-page.js
 │   ├── onboarding.js
 │   ├── platforms.js
@@ -334,12 +335,14 @@ StreamSuites-Creator/
 │   ├── settings.js
 │   ├── state.js
 │   └── utils
+│       ├── notifications-store.js
 │       ├── version-stamp.js
 │       └── versioning.js
 └── views
     ├── creators.html
     ├── design.html
     ├── jobs.html
+    ├── notifications.html
     ├── onboarding.html
     ├── overview.html
     ├── plans.html

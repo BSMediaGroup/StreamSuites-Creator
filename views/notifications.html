@@ -1,0 +1,86 @@
+<!-- ========================================================= -->
+<!-- StreamSuites - Notifications (VIEW PARTIAL) -->
+<!-- ========================================================= -->
+
+<header class="ss-header">
+  <div class="ss-header-left">
+    <h1 class="ss-title">Notifications</h1>
+    <span class="ss-subtitle">Track creator alerts and control local notification noise.</span>
+  </div>
+  <div class="ss-header-right">
+    <span id="creator-notifications-center-count" class="ss-chip">0 total</span>
+    <span id="creator-notifications-center-unread" class="ss-chip">0 unread</span>
+  </div>
+</header>
+
+<main class="ss-main creator-notifications-center" id="creator-notifications-center-root">
+  <section class="ss-panel creator-notifications-panel">
+    <header class="ss-panel-header">
+      <div class="ss-panel-header-main">
+        <h2>Inbox</h2>
+        <p class="muted">Local preview data for the Creator workspace (browser-stored preferences).</p>
+      </div>
+      <button
+        type="button"
+        id="creator-notifications-center-mark-all"
+        class="ss-btn ss-btn-secondary"
+      >
+        Mark all read
+      </button>
+    </header>
+
+    <div class="ss-panel-body">
+      <div class="creator-notifications-controls" role="group" aria-label="Notification controls">
+        <label class="creator-notifications-field">
+          <span>Filter</span>
+          <select id="creator-notifications-filter-status" class="ss-input">
+            <option value="all">All</option>
+            <option value="unread">Unread</option>
+            <option value="read">Read</option>
+          </select>
+        </label>
+
+        <label class="creator-notifications-field creator-notifications-field-search">
+          <span>Search</span>
+          <input
+            id="creator-notifications-filter-search"
+            class="ss-input"
+            type="search"
+            placeholder="Search title or snippet"
+            autocomplete="off"
+          />
+        </label>
+      </div>
+
+      <div id="creator-notifications-center-list" class="creator-notifications-center-list" aria-live="polite"></div>
+
+      <div id="creator-notifications-center-empty" class="creator-notifications-empty hidden">
+        <h3>Nothing to show right now</h3>
+        <p class="muted">
+          Try a different filter or search phrase, or unmute notification types in settings.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <aside class="ss-panel creator-notifications-settings" aria-labelledby="creator-notifications-settings-title">
+    <header class="ss-panel-header">
+      <div class="ss-panel-header-main">
+        <h2 id="creator-notifications-settings-title">Mute settings</h2>
+        <p class="muted">Saved locally in this browser.</p>
+      </div>
+    </header>
+
+    <div class="ss-panel-body">
+      <label class="creator-notifications-setting-toggle">
+        <input type="checkbox" id="creator-notifications-mute-all" />
+        <span>Mute notifications</span>
+      </label>
+
+      <section class="creator-notifications-setting-group" aria-labelledby="creator-notifications-mute-types-title">
+        <h3 id="creator-notifications-mute-types-title">Mute by type</h3>
+        <div id="creator-notifications-mute-types" class="creator-notifications-checkbox-list"></div>
+      </section>
+    </div>
+  </aside>
+</main>
