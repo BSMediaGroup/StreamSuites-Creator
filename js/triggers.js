@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   "use strict";
 
   const platforms = [
@@ -54,20 +54,18 @@
     }
   ];
 
-  const listEl = document.querySelector("[data-trigger-list]");
-  const statusEl = document.querySelector("[data-trigger-status]");
-  const updatedEl = document.querySelector("[data-trigger-updated]");
-  const countEl = document.querySelector("[data-trigger-count]");
-  const resetBtn = document.querySelector("[data-trigger-reset]");
-
-  if (!listEl) {
-    return;
-  }
-
   const state = {
+    initialized: false,
     base: {},
     current: {},
-    updatedAt: null
+    updatedAt: null,
+    listEl: null,
+    statusEl: null,
+    updatedEl: null,
+    countEl: null,
+    resetBtn: null,
+    onListChange: null,
+    onResetClick: null
   };
 
   function formatTimestamp(value) {
@@ -84,7 +82,19 @@
     }
   }
 
+  function cacheElements(root = document) {
+    state.listEl = root.querySelector("[data-trigger-list]");
+    state.statusEl = root.querySelector("[data-trigger-status]");
+    state.updatedEl = root.querySelector("[data-trigger-updated]");
+    state.countEl = root.querySelector("[data-trigger-count]");
+    state.resetBtn = root.querySelector("[data-trigger-reset]");
+  }
+
   function buildInitialState() {
+    state.base = {};
+    state.current = {};
+    state.updatedAt = null;
+
     triggers.forEach((trigger) => {
       const platformState = {};
       platforms.forEach((platform) => {
@@ -113,23 +123,24 @@
 
   function updateStatus() {
     const totalChanges = countTotalChanges();
-    if (statusEl) {
-      statusEl.textContent =
+    if (state.statusEl) {
+      state.statusEl.textContent =
         totalChanges === 0
           ? "No preview changes"
           : `${totalChanges} change${totalChanges === 1 ? "" : "s"} staged`;
-      statusEl.classList.toggle("warning", totalChanges > 0);
-      statusEl.classList.toggle("subtle", totalChanges === 0);
+      state.statusEl.classList.toggle("warning", totalChanges > 0);
+      state.statusEl.classList.toggle("subtle", totalChanges === 0);
     }
 
-    if (updatedEl) {
-      updatedEl.textContent = formatTimestamp(state.updatedAt);
+    if (state.updatedEl) {
+      state.updatedEl.textContent = formatTimestamp(state.updatedAt);
     }
 
+    if (!state.listEl) return;
     triggers.forEach((trigger) => {
       const changeCount = countTriggerChanges(trigger.id);
-      const card = listEl.querySelector(`[data-trigger-card="${trigger.id}"]`);
-      const changeEl = listEl.querySelector(`[data-trigger-change="${trigger.id}"]`);
+      const card = state.listEl.querySelector(`[data-trigger-card="${trigger.id}"]`);
+      const changeEl = state.listEl.querySelector(`[data-trigger-change="${trigger.id}"]`);
       if (card) {
         card.classList.toggle("is-changed", changeCount > 0);
       }
@@ -201,31 +212,84 @@
   }
 
   function render() {
-    if (countEl) {
-      countEl.textContent = String(triggers.length);
+    if (!state.listEl) return;
+    if (state.countEl) {
+      state.countEl.textContent = String(triggers.length);
     }
-    listEl.innerHTML = triggers.map(renderTriggerCard).join("");
+    state.listEl.innerHTML = triggers.map(renderTriggerCard).join("");
     updateStatus();
   }
 
-  buildInitialState();
-  render();
+  function bindEvents() {
+    if (!state.listEl) return;
 
-  listEl.addEventListener("change", (event) => {
-    const target = event.target;
-    if (!(target instanceof HTMLInputElement)) return;
-    if (!target.matches("input[data-trigger-id][data-platform]")) return;
-    if (target.disabled) return;
-    handleToggle(target);
-  });
+    state.onListChange = (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement)) return;
+      if (!target.matches("input[data-trigger-id][data-platform]")) return;
+      if (target.disabled) return;
+      handleToggle(target);
+    };
+    state.listEl.addEventListener("change", state.onListChange);
 
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      triggers.forEach((trigger) => {
-        state.current[trigger.id] = { ...state.base[trigger.id] };
-      });
-      state.updatedAt = new Date();
-      render();
-    });
+    if (state.resetBtn) {
+      state.onResetClick = () => {
+        triggers.forEach((trigger) => {
+          state.current[trigger.id] = { ...state.base[trigger.id] };
+        });
+        state.updatedAt = new Date();
+        render();
+      };
+      state.resetBtn.addEventListener("click", state.onResetClick);
+    }
+  }
+
+  function destroy() {
+    if (state.listEl && state.onListChange) {
+      state.listEl.removeEventListener("change", state.onListChange);
+    }
+    if (state.resetBtn && state.onResetClick) {
+      state.resetBtn.removeEventListener("click", state.onResetClick);
+    }
+
+    state.initialized = false;
+    state.onListChange = null;
+    state.onResetClick = null;
+    state.listEl = null;
+    state.statusEl = null;
+    state.updatedEl = null;
+    state.countEl = null;
+    state.resetBtn = null;
+    state.base = {};
+    state.current = {};
+    state.updatedAt = null;
+  }
+
+  function init(root = document) {
+    destroy();
+    cacheElements(root);
+    if (!state.listEl) return;
+
+    buildInitialState();
+    render();
+    bindEvents();
+    state.initialized = true;
+  }
+
+  window.TriggersView = {
+    init,
+    destroy
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        init(document);
+      },
+      { once: true }
+    );
+  } else {
+    init(document);
   }
 })();

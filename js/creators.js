@@ -68,6 +68,8 @@
   function cacheElements() {
     el.tableBody = document.getElementById("creators-table-body");
     el.emptyState = document.getElementById("creators-empty");
+    el.importError = document.getElementById("creators-import-error");
+    el.importErrorText = document.getElementById("creators-import-error-text");
 
     el.btnAddCreator = document.getElementById("btn-add-creator");
     el.btnRefresh = document.getElementById("btn-refresh-creators");
@@ -97,6 +99,18 @@
     el.inputRumbleApiEnvKey = document.getElementById("rumble-api-env-key");
   }
 
+  function showImportError(message) {
+    if (!el.importError || !el.importErrorText) return;
+    el.importErrorText.textContent = String(message || "Import failed");
+    el.importError.classList.remove("hidden");
+  }
+
+  function clearImportError() {
+    if (!el.importError || !el.importErrorText) return;
+    el.importErrorText.textContent = "";
+    el.importError.classList.add("hidden");
+  }
+
   function wireEvents() {
     if (wired) return;
 
@@ -105,6 +119,22 @@
     el.btnAddCreator?.addEventListener("click", () => openEditor());
     el.btnRefresh?.addEventListener("click", () => hydrateCreators(true));
     el.btnCancelEdit?.addEventListener("click", closeEditor);
+    el.btnExport?.addEventListener("click", () => {
+      clearImportError();
+      exportCreators();
+    });
+    el.btnImport?.addEventListener("click", () => {
+      clearImportError();
+      if (!el.importInput) return;
+      el.importInput.value = "";
+      el.importInput.click();
+    });
+    el.importInput?.addEventListener("change", () => {
+      const file = el.importInput.files?.[0];
+      if (!file) return;
+      clearImportError();
+      importCreatorsFromFile(file, showImportError);
+    });
     
     el.checkboxRumble?.addEventListener("change", () => {
       if (!el.rumbleConfig) return;

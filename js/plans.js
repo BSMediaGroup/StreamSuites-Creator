@@ -6,6 +6,7 @@
   const tierUtils = window.StreamSuitesTier || {};
   const normalizeTier = tierUtils.normalizeTier;
   const renderTierPill = tierUtils.renderTierPill;
+  let initialized = false;
 
   function normalizeTierId(tierId) {
     if (typeof tierId !== "string") return "";
@@ -74,6 +75,8 @@
   }
 
   async function init() {
+    if (initialized) return;
+    initialized = true;
     try {
       const session = await window.StreamSuitesAuth?.loadSession?.();
       applyTierState(session || {});
@@ -82,7 +85,25 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function destroy() {
+    initialized = false;
+  }
+
+  function autoInitWhenPresent() {
+    if (!document.querySelector("[data-tier-id]")) return;
     void init();
-  });
+  }
+
+  window.PlansView = {
+    init,
+    destroy
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", autoInitWhenPresent, {
+      once: true
+    });
+  } else {
+    autoInitWhenPresent();
+  }
 })();

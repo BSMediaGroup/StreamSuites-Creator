@@ -38,19 +38,19 @@
         <div id="app-nav-list" class="creator-nav-list">
           <span class="creator-nav-title">Creator navigation</span>
         <nav class="creator-nav-main">
-          <a href="/index.html" class="is-active">Overview</a>
-          <a href="/views/account.html">Account settings</a>
-          <a href="/views/plans.html">Plans &amp; Tiers</a>
-          <a href="/views/triggers.html">Chat Triggers</a>
-          <a href="/views/settings.html">Settings / Preferences</a>
+          <a href="#overview" class="is-active" data-route="overview">Overview</a>
+          <a href="#account" data-route="account">Account settings</a>
+          <a href="#plans" data-route="plans">Plans &amp; Tiers</a>
+          <a href="#triggers" data-route="triggers">Chat Triggers</a>
+          <a href="#settings" data-route="settings">Settings / Preferences</a>
         </nav>
         <div class="creator-nav-group">
           <span class="creator-nav-label">Platforms</span>
-          <a href="/views/platforms/rumble.html">Rumble</a>
-          <a href="/views/platforms/youtube.html">YouTube</a>
-          <a href="/views/platforms/twitch.html">Twitch</a>
-          <a href="/views/platforms/kick.html">Kick</a>
-          <a class="is-disabled" href="/views/platforms/pilled.html" aria-disabled="true">Pilled</a>
+          <a href="#platforms/rumble" data-route="platforms/rumble">Rumble</a>
+          <a href="#platforms/youtube" data-route="platforms/youtube">YouTube</a>
+          <a href="#platforms/twitch" data-route="platforms/twitch">Twitch</a>
+          <a href="#platforms/kick" data-route="platforms/kick">Kick</a>
+          <a class="is-disabled" href="#platforms/pilled" aria-disabled="true" data-route="platforms/pilled">Pilled</a>
         </div>
         <div class="creator-nav-footer">
           <span class="creator-nav-label">Quick links</span>
@@ -123,7 +123,7 @@
                 </div>
               </div>
 
-              <a class="creator-account-item" href="/views/account.html">Account settings</a>
+              <a class="creator-account-item" href="#account" data-route="account">Account settings</a>
               <button class="creator-account-item" type="button" data-auth-logout="true">Log out</button>
             </div>
           </div>
@@ -190,8 +190,8 @@
               </p>
             </div>
             <div class="creator-hero-actions">
-              <a class="creator-button primary" href="/views/settings.html">Review settings</a>
-              <a class="creator-button ghost" href="/views/updates.html">View recent activity</a>
+              <a class="creator-button primary" href="#settings">Review settings</a>
+              <a class="creator-button ghost" href="#updates">View recent activity</a>
             </div>
           </div>
           <div class="card-grid overview-grid">
@@ -216,7 +216,7 @@
                   <span class="stat-value">Up to date</span>
                 </div>
               </div>
-              <a href="/views/overview.html">Review workspace summary →</a>
+              <a href="#overview">Review workspace summary →</a>
             </article>
             <article class="card">
               <h3>Next broadcast checklist</h3>
@@ -226,7 +226,7 @@
                 <li>Verify clip queue for your channel</li>
                 <li>Confirm current poll overlays</li>
               </ul>
-              <a href="/views/overview.html">Open checklist →</a>
+              <a href="#overview">Open checklist →</a>
             </article>
             <article class="card">
               <h3>Onboarding status</h3>
@@ -236,7 +236,7 @@
                 <li>Review terms and support resources</li>
                 <li>Stage future platform integrations</li>
               </ul>
-              <a href="/views/settings.html">Open onboarding →</a>
+              <a href="#settings">Open onboarding →</a>
             </article>
             <article class="card">
               <h3>Creator ops cadence</h3>
@@ -260,7 +260,7 @@
             <p class="section-subtext">Manage destination status, onboarding, and creator metrics.</p>
           </div>
           <div class="card-grid platform-grid">
-            <a class="card platform-card" href="/views/platforms/youtube.html">
+            <a class="card platform-card" href="#platforms/youtube">
               <div class="card-top">
                 <h3>YouTube</h3>
                 <span class="status-pill success">
@@ -275,7 +275,7 @@
               </div>
               <span class="platform-link">Open YouTube view →</span>
             </a>
-            <a class="card platform-card" href="/views/platforms/twitch.html">
+            <a class="card platform-card" href="#platforms/twitch">
               <div class="card-top">
                 <h3>Twitch</h3>
                 <span class="status-pill success">
@@ -290,7 +290,7 @@
               </div>
               <span class="platform-link">Open Twitch view →</span>
             </a>
-            <a class="card platform-card" href="/views/platforms/rumble.html">
+            <a class="card platform-card" href="#platforms/rumble">
               <div class="card-top">
                 <h3>Rumble</h3>
                 <span class="status-pill subtle">
@@ -305,7 +305,7 @@
               </div>
               <span class="platform-link">Open Rumble view →</span>
             </a>
-            <a class="card platform-card" href="/views/platforms/kick.html">
+            <a class="card platform-card" href="#platforms/kick">
               <div class="card-top">
                 <h3>Kick</h3>
                 <span class="status-pill warning">
@@ -320,7 +320,7 @@
               </div>
               <span class="platform-link">Open Kick view →</span>
             </a>
-            <a class="card platform-card is-disabled" href="/views/platforms/pilled.html" aria-disabled="true">
+            <a class="card platform-card is-disabled" href="#platforms/pilled" aria-disabled="true">
               <div class="card-top">
                 <h3>Pilled</h3>
                 <span class="status-pill warning">
@@ -382,7 +382,7 @@
             <article class="card">
               <h3>Export health</h3>
               <p>Runtime exports update daily and surface new automation states.</p>
-              <a href="/views/updates.html">Review export history →</a>
+              <a href="#updates">Review export history →</a>
             </article>
             <article class="card">
               <h3>Support touchpoints</h3>
@@ -392,7 +392,7 @@
             <article class="card">
               <h3>Workspace settings</h3>
               <p>Manage onboarding progress, tier guidance, and workspace preferences.</p>
-              <a href="/views/settings.html">Open settings →</a>
+              <a href="#settings">Open settings →</a>
             </article>
           </div>
         </section>

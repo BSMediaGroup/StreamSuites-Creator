@@ -70,6 +70,7 @@
   const LOADER_MIN_VISIBLE_MS = 280;
 
   const NAV_ICON_BY_SEGMENT = Object.freeze({
+    overview: "/assets/icons/ui/dashboard.svg",
     index: "/assets/icons/ui/dashboard.svg",
     account: "/assets/icons/ui/profile.svg",
     plans: "/assets/icons/ui/cards.svg",
@@ -180,16 +181,65 @@
       .trim();
   }
 
+  function normalizeRouteValue(value) {
+    if (typeof value !== "string") return "";
+    return value
+      .trim()
+      .replace(/^#+/, "")
+      .replace(/^\/+/, "")
+      .replace(/\.html$/i, "")
+      .replace(/\/index$/i, "")
+      .toLowerCase();
+  }
+
+  function resolveRouteFromUrl(urlLike) {
+    if (!urlLike) return "";
+
+    let url = null;
+    if (urlLike instanceof URL) {
+      url = urlLike;
+    } else {
+      try {
+        url = new URL(String(urlLike), window.location.href);
+      } catch (err) {
+        return "";
+      }
+    }
+
+    if (url.origin !== window.location.origin) return "";
+
+    const hashRoute = normalizeRouteValue(url.hash);
+    if (hashRoute) return hashRoute;
+
+    const queryRoute = normalizeRouteValue(url.searchParams.get("view") || "");
+    if (queryRoute) return queryRoute;
+
+    const pathname = normalizeRouteValue(url.pathname || "");
+    if (!pathname || pathname === "index") return "overview";
+
+    if (pathname.startsWith("views/")) {
+      return normalizeRouteValue(pathname.slice("views/".length));
+    }
+
+    return "";
+  }
+
+  function resolveRouteFromHref(href) {
+    if (typeof href !== "string" || !href.trim()) return "";
+    const routeFromHash = normalizeRouteValue(href);
+    if (href.trim().startsWith("#") && routeFromHash) {
+      return routeFromHash;
+    }
+    return resolveRouteFromUrl(href);
+  }
+
   function resolveNavIconPath(anchor) {
+    const explicitRoute = normalizeRouteValue(anchor.dataset.route || "");
     const href = anchor.getAttribute("href") || "";
-    if (!href) return "/assets/icons/ui/cog.svg";
-    try {
-      const url = new URL(href, window.location.origin);
-      const segments = url.pathname.split("/").filter(Boolean);
-      const last = (segments[segments.length - 1] || "").replace(/\.html$/i, "").toLowerCase();
-      if (NAV_ICON_BY_SEGMENT[last]) return NAV_ICON_BY_SEGMENT[last];
-    } catch (err) {
-      // Fall through to default icon.
+    const route = explicitRoute || resolveRouteFromHref(href);
+    const segment = normalizeRouteValue(route.split("/").pop() || route);
+    if (segment && NAV_ICON_BY_SEGMENT[segment]) {
+      return NAV_ICON_BY_SEGMENT[segment];
     }
     return "/assets/icons/ui/cog.svg";
   }
@@ -451,6 +501,9 @@
       } catch (err) {
         return;
       }
+      if (anchor.dataset.route || resolveRouteFromUrl(url)) {
+        return;
+      }
       if (url.origin !== window.location.origin) return;
       if (
         url.pathname === window.location.pathname &&
@@ -531,6 +584,18 @@
     ensureSidebarScrim();
     bindSidebarBehavior();
     updateNavTitles();
+
+    window.App.creatorShell = {
+      resolveRouteFromHref,
+      resolveRouteFromUrl,
+      setTopbarTitle(title) {
+        if (!shell.headerLeft) return;
+        const titleNode = shell.headerLeft.querySelector(".creator-topbar-page-title");
+        if (!titleNode) return;
+        const text = typeof title === "string" ? title.trim() : "";
+        titleNode.textContent = text || resolvePageTitle();
+      }
+    };
   }
 
   if (document.readyState === "loading") {

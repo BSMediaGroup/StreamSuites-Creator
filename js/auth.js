@@ -2610,6 +2610,11 @@
     loadSession,
     logout,
     routeAfterAuth,
+    refreshSummary: async () => {
+      ensureAuthSummaryMounts();
+      updateAuthSummary(sessionState.value);
+      return sessionState.value;
+    },
     showToast: showAuthToast,
     debugMode: {
       key: CREATOR_DEBUG_MODE_KEY,
