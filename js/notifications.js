@@ -2,6 +2,10 @@
   "use strict";
 
   const PREVIEW_LIMIT = 5;
+  const DROPDOWN_REFRESH_DEBOUNCE_MS = 15000;
+  const VIEW_REFRESH_DEBOUNCE_MS = 5000;
+  const BACKGROUND_REFRESH_INTERVAL_MS = 90000;
+  const BACKGROUND_REFRESH_MIN_INTERVAL_MS = 60000;
 
   const topbar = {
     root: null,
@@ -29,14 +33,35 @@
   const state = {
     topbarBound: false,
     centerBound: false,
+    authRefreshBound: false,
+    backgroundRefreshBound: false,
     centerFilters: {
       status: "all",
       query: ""
-    }
+    },
+    lastDropdownRefreshAt: 0
   };
 
   function getStore() {
     return window.StreamSuitesCreatorNotificationsStore || null;
+  }
+
+  function getStoreItems(store) {
+    if (!store) return [];
+    if (typeof store.getItems === "function") {
+      return store.getItems();
+    }
+    return typeof store.getNotifications === "function" ? store.getNotifications() : [];
+  }
+
+  function isSessionAuthenticated() {
+    return window.App?.session?.authenticated === true;
+  }
+
+  function requestRefresh(options = {}) {
+    const store = getStore();
+    if (!store || typeof store.refresh !== "function") return Promise.resolve([]);
+    return store.refresh(options).catch(() => []);
   }
 
   function escapeHtml(value) {
@@ -137,7 +162,7 @@
     const store = getStore();
     if (!store) return [];
     return store
-      .getNotifications()
+      .getItems()
       .filter((item) => !store.isMuted(item))
       .slice(0, PREVIEW_LIMIT);
   }
@@ -162,7 +187,10 @@
 
     const previewItems = getPreviewItems();
     if (!previewItems.length) {
-      topbar.list.innerHTML = '<div class="creator-notifications-empty">No notifications available.</div>';
+      const refreshing = typeof store.isRefreshing === "function" && store.isRefreshing();
+      topbar.list.innerHTML = refreshing
+        ? '<div class="creator-notifications-empty muted">Refreshing...</div>'
+        : '<div class="creator-notifications-empty">No notifications.</div>';
       return;
     }
 
@@ -229,7 +257,7 @@
     const store = getStore();
     if (!store) return [];
     const query = state.centerFilters.query.trim().toLowerCase();
-    return store.getNotifications().filter((item) => {
+    return getStoreItems(store).filter((item) => {
       const read = store.isRead(item);
       if (state.centerFilters.status === "unread" && read) return false;
       if (state.centerFilters.status === "read" && !read) return false;
@@ -267,9 +295,42 @@
     if (!store || !center.list || !center.empty) return;
 
     const items = getFilteredCenterItems();
+    const allItems = getStoreItems(store);
     if (!items.length) {
       center.list.innerHTML = "";
       center.empty.classList.remove("hidden");
+      const emptyTitle = center.empty.querySelector("h3");
+      const emptyText = center.empty.querySelector("p.muted");
+      const notes = typeof store.getNotes === "function" ? store.getNotes() : [];
+      const notesText = notes.length ? notes.join(" ") : "";
+
+      if (!allItems.length) {
+        if (emptyTitle) emptyTitle.textContent = "No notifications";
+        if (emptyText) {
+          emptyText.textContent = "You're all caught up.";
+        }
+      } else {
+        if (emptyTitle) emptyTitle.textContent = "Nothing to show right now";
+        if (emptyText) {
+          emptyText.textContent =
+            "Try a different filter or search phrase, or unmute notification types in settings.";
+        }
+      }
+
+      let notesElement = document.getElementById("creator-notifications-center-note");
+      if (!notesElement) {
+        notesElement = document.createElement("p");
+        notesElement.id = "creator-notifications-center-note";
+        notesElement.className = "muted hidden";
+        center.empty.appendChild(notesElement);
+      }
+      if (!allItems.length && notesText) {
+        notesElement.textContent = notesText;
+        notesElement.classList.remove("hidden");
+      } else {
+        notesElement.textContent = "";
+        notesElement.classList.add("hidden");
+      }
       return;
     }
 
@@ -326,7 +387,7 @@
     if (!store || !cacheCenterElements()) return;
 
     const unread = store.getUnreadCount();
-    center.count.textContent = `${store.getNotifications().length} total`;
+    center.count.textContent = `${getStoreItems(store).length} total`;
     center.unread.textContent = `${unread} unread`;
     center.markAll.disabled = unread <= 0;
     center.filterStatus.value = state.centerFilters.status;
@@ -365,6 +426,11 @@
       const nextOpen = !isDropdownOpen();
       setDropdownOpen(nextOpen);
       if (nextOpen) {
+        const now = Date.now();
+        if (now - state.lastDropdownRefreshAt >= DROPDOWN_REFRESH_DEBOUNCE_MS) {
+          state.lastDropdownRefreshAt = now;
+          void requestRefresh({ minIntervalMs: DROPDOWN_REFRESH_DEBOUNCE_MS });
+        }
         renderTopbarList();
       }
     });
@@ -473,11 +539,38 @@
 
   function initTopbar() {
     bindTopbarEvents();
+    if (isSessionAuthenticated()) {
+      void requestRefresh({ minIntervalMs: VIEW_REFRESH_DEBOUNCE_MS });
+    }
     renderTopbar();
+  }
+
+  function bindAuthHydrationRefresh() {
+    if (state.authRefreshBound) return;
+    state.authRefreshBound = true;
+
+    window.addEventListener("streamsuites:auth-init-complete", () => {
+      if (!isSessionAuthenticated()) return;
+      void requestRefresh({ force: true });
+    });
+  }
+
+  function bindBackgroundRefresh() {
+    if (state.backgroundRefreshBound) return;
+    state.backgroundRefreshBound = true;
+
+    window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      if (!isSessionAuthenticated()) return;
+      void requestRefresh({ minIntervalMs: BACKGROUND_REFRESH_MIN_INTERVAL_MS });
+    }, BACKGROUND_REFRESH_INTERVAL_MS);
   }
 
   function initCenter() {
     bindCenterEvents();
+    if (isSessionAuthenticated()) {
+      void requestRefresh({ minIntervalMs: VIEW_REFRESH_DEBOUNCE_MS });
+    }
     renderCenter();
   }
 
@@ -488,6 +581,8 @@
 
   function autoInitWhenPresent() {
     if (!document.querySelector("[data-creator-notifications-widget]")) return;
+    bindAuthHydrationRefresh();
+    bindBackgroundRefresh();
     initTopbar();
   }
 

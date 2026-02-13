@@ -1,6 +1,11 @@
 (() => {
   "use strict";
 
+  const API_BASE_URL = "https://api.streamsuites.app";
+  const NOTIFICATIONS_ENDPOINT = `${API_BASE_URL}/api/creator/notifications`;
+  const DEFAULT_REFRESH_LIMIT = 25;
+  const DEFAULT_REFRESH_TIMEOUT_MS = 8000;
+
   const READ_STORAGE_KEY = "ss_creator_notifications_read";
   const MUTED_STORAGE_KEY = "ss_creator_notifications_muted";
   const UPDATE_EVENT = "ss:creator-notifications-updated";
@@ -70,8 +75,14 @@
     muted: {
       all: false,
       types: new Set()
-    }
+    },
+    source: "seed",
+    notes: [],
+    nextCursor: "",
+    refreshing: false,
+    lastRefreshAt: 0
   };
+  let refreshPromise = null;
 
   function safeParse(raw) {
     if (typeof raw !== "string" || !raw.trim()) return null;
@@ -86,8 +97,19 @@
     return typeof value === "string" && value.trim() ? value.trim().toLowerCase() : "system";
   }
 
+  function normalizeText(value, fallback = "") {
+    if (typeof value === "string" && value.trim()) return value.trim();
+    if (typeof value === "number") return String(value);
+    return fallback;
+  }
+
+  function normalizeMeta(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    return { ...value };
+  }
+
   function normalizeTimestamp(value) {
-    if (typeof value !== "string") return { iso: "", ms: 0 };
+    if (!(typeof value === "string" || typeof value === "number")) return { iso: "", ms: 0 };
     const parsed = new Date(value);
     if (Number.isNaN(parsed.getTime())) return { iso: "", ms: 0 };
     return {
@@ -96,18 +118,21 @@
     };
   }
 
-  function normalizeNotification(item, index) {
+  function normalizeNotification(item, index, origin = "seed") {
     if (!item || typeof item !== "object") return null;
     const id =
       typeof item.id === "string" && item.id.trim()
         ? item.id.trim()
-        : `creator-notification-${index + 1}`;
-    const when = normalizeTimestamp(item.timestamp);
-    const title =
-      typeof item.title === "string" && item.title.trim() ? item.title.trim() : "Untitled notification";
-    const snippet = typeof item.snippet === "string" ? item.snippet.trim() : "";
+        : `${origin}-notification-${index + 1}`;
+    const when = normalizeTimestamp(
+      item.timestamp || item.time || item.created_at || item.createdAt || item.updated_at || item.updatedAt
+    );
+    const title = normalizeText(item.title, "Untitled notification");
+    const snippet = normalizeText(item.snippet || item.message || item.summary || item.body, "");
     const type = normalizeType(item.type);
-    const link = typeof item.link === "string" ? item.link.trim() : "";
+    const link = normalizeText(item.link || item.href || item.url || "", "");
+    const severity = normalizeText(item.severity || item.level || "", "");
+    const meta = normalizeMeta(item.meta);
 
     return {
       id,
@@ -116,7 +141,9 @@
       snippet,
       timestamp: when.iso,
       timestampMs: when.ms,
-      link
+      link,
+      severity,
+      meta
     };
   }
 
@@ -179,7 +206,9 @@
         new CustomEvent(UPDATE_EVENT, {
           detail: {
             total: state.notifications.length,
-            unread: getUnreadCount()
+            unread: getUnreadCount(),
+            source: state.source,
+            refreshing: state.refreshing
           }
         })
       );
@@ -188,8 +217,12 @@
     }
   }
 
-  function getNotifications() {
+  function getItems() {
     return sortNotifications(state.notifications).map((item) => ({ ...item }));
+  }
+
+  function getNotifications() {
+    return getItems();
   }
 
   function getNotificationById(id) {
@@ -219,6 +252,18 @@
       if (isMuted(item)) return count;
       return count + 1;
     }, 0);
+  }
+
+  function getSource() {
+    return state.source;
+  }
+
+  function getNotes() {
+    return state.notes.slice();
+  }
+
+  function isRefreshing() {
+    return state.refreshing;
   }
 
   function markRead(id) {
@@ -278,24 +323,134 @@
     return Array.from(new Set(state.notifications.map((item) => item.type))).sort();
   }
 
-  function setNotifications(items) {
+  function setNotifications(items, options = {}) {
     const nextItems = Array.isArray(items) ? items : [];
+    const source =
+      typeof options.source === "string" && options.source.trim() ? options.source.trim() : state.source;
     state.notifications = sortNotifications(
       nextItems
-        .map((item, index) => normalizeNotification(item, index))
+        .map((item, index) => normalizeNotification(item, index, source))
         .filter(Boolean)
     );
+    state.source = source;
     emitUpdate();
   }
 
-  function init() {
+  function getFetchWithTimeout() {
+    if (typeof window.fetchWithTimeout === "function") {
+      return window.fetchWithTimeout;
+    }
+
+    return async function fetchWithTimeout(url, opts = {}, timeoutMs = DEFAULT_REFRESH_TIMEOUT_MS) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        return await fetch(url, { ...opts, signal: controller.signal });
+      } finally {
+        clearTimeout(id);
+      }
+    };
+  }
+
+  function normalizeNotes(notes) {
+    if (!Array.isArray(notes)) return [];
+    return notes
+      .map((entry) => normalizeText(entry, ""))
+      .filter(Boolean);
+  }
+
+  function applySeedFallback() {
     state.notifications = sortNotifications(
       seedNotifications
-        .map((item, index) => normalizeNotification(item, index))
+        .map((item, index) => normalizeNotification(item, index, "seed"))
         .filter(Boolean)
     );
+    state.source = "seed";
+    state.nextCursor = "";
+    state.notes = [];
+  }
+
+  async function refresh(options = {}) {
+    const force = options?.force === true;
+    const minIntervalMs = Number.isFinite(options?.minIntervalMs)
+      ? Math.max(0, Number(options.minIntervalMs))
+      : 0;
+    const limit = Number.isFinite(options?.limit)
+      ? Math.max(1, Math.floor(Number(options.limit)))
+      : DEFAULT_REFRESH_LIMIT;
+
+    if (!force && minIntervalMs > 0 && Date.now() - state.lastRefreshAt < minIntervalMs) {
+      return getItems();
+    }
+
+    if (refreshPromise) {
+      return refreshPromise;
+    }
+
+    state.refreshing = true;
+    emitUpdate();
+
+    const fetchWithTimeout = getFetchWithTimeout();
+    const url = new URL(NOTIFICATIONS_ENDPOINT);
+    url.searchParams.set("limit", String(limit));
+
+    refreshPromise = (async () => {
+      try {
+        const response = await fetchWithTimeout(
+          url.toString(),
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              Accept: "application/json"
+            }
+          },
+          DEFAULT_REFRESH_TIMEOUT_MS
+        );
+
+        const raw = await response.text();
+        const payload = safeParse(raw);
+
+        if (!response.ok || !payload || typeof payload !== "object" || payload.success !== true) {
+          applySeedFallback();
+          state.lastRefreshAt = Date.now();
+          return getItems();
+        }
+
+        const items = Array.isArray(payload.items) ? payload.items : [];
+        state.notifications = sortNotifications(
+          items
+            .map((item, index) => normalizeNotification(item, index, "api"))
+            .filter(Boolean)
+        );
+        state.source = "api";
+        state.nextCursor = normalizeText(payload.next_cursor, "");
+        state.notes = normalizeNotes(payload.notes);
+        state.lastRefreshAt = Date.now();
+        return getItems();
+      } catch (err) {
+        applySeedFallback();
+        state.lastRefreshAt = Date.now();
+        return getItems();
+      } finally {
+        state.refreshing = false;
+        refreshPromise = null;
+        emitUpdate();
+      }
+    })();
+
+    return refreshPromise;
+  }
+
+  async function hydrate(options = {}) {
+    return refresh(options);
+  }
+
+  function init() {
     loadReadIds();
     loadMuted();
+    applySeedFallback();
   }
 
   init();
@@ -304,6 +459,9 @@
     READ_STORAGE_KEY,
     MUTED_STORAGE_KEY,
     UPDATE_EVENT,
+    refresh,
+    hydrate,
+    getItems,
     getNotifications,
     getNotificationById,
     getUnreadCount,
@@ -316,6 +474,9 @@
     getMutedState,
     isMuted,
     getTypes,
-    setNotifications
+    setNotifications,
+    getSource,
+    getNotes,
+    isRefreshing
   };
 })();
