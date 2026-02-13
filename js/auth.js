@@ -2380,6 +2380,14 @@
   };
 
   document.addEventListener("DOMContentLoaded", () => {
-    initAuth();
+    window.dispatchEvent(new CustomEvent("streamsuites:auth-init-start"));
+    Promise.resolve()
+      .then(() => initAuth())
+      .catch((err) => {
+        console.warn("[Dashboard][Auth] Initialization failed", err);
+      })
+      .finally(() => {
+        window.dispatchEvent(new CustomEvent("streamsuites:auth-init-complete"));
+      });
   });
 })();
