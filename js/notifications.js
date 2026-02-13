@@ -2,8 +2,8 @@
   "use strict";
 
   const PREVIEW_LIMIT = 5;
-  const DROPDOWN_REFRESH_DEBOUNCE_MS = 15000;
-  const VIEW_REFRESH_DEBOUNCE_MS = 5000;
+  const DROPDOWN_REFRESH_DEBOUNCE_MS = 30000;
+  const VIEW_REFRESH_DEBOUNCE_MS = 30000;
   const BACKGROUND_REFRESH_INTERVAL_MS = 90000;
   const BACKGROUND_REFRESH_MIN_INTERVAL_MS = 60000;
 
@@ -188,9 +188,14 @@
     const previewItems = getPreviewItems();
     if (!previewItems.length) {
       const refreshing = typeof store.isRefreshing === "function" && store.isRefreshing();
+      const notes = typeof store.getNotes === "function" ? store.getNotes() : [];
+      const notesText = notes.length ? escapeHtml(notes.join(" ")) : "";
       topbar.list.innerHTML = refreshing
         ? '<div class="creator-notifications-empty muted">Refreshing...</div>'
-        : '<div class="creator-notifications-empty">No notifications.</div>';
+        : `
+          <div class="creator-notifications-empty">No notifications.</div>
+          ${notesText ? `<div class="creator-notifications-empty muted">${notesText}</div>` : ""}
+        `;
       return;
     }
 
@@ -429,7 +434,10 @@
         const now = Date.now();
         if (now - state.lastDropdownRefreshAt >= DROPDOWN_REFRESH_DEBOUNCE_MS) {
           state.lastDropdownRefreshAt = now;
-          void requestRefresh({ minIntervalMs: DROPDOWN_REFRESH_DEBOUNCE_MS });
+          void requestRefresh({
+            reason: "dropdown-open",
+            minIntervalMs: DROPDOWN_REFRESH_DEBOUNCE_MS
+          });
         }
         renderTopbarList();
       }
@@ -540,7 +548,10 @@
   function initTopbar() {
     bindTopbarEvents();
     if (isSessionAuthenticated()) {
-      void requestRefresh({ minIntervalMs: VIEW_REFRESH_DEBOUNCE_MS });
+      void requestRefresh({
+        reason: "topbar-init",
+        minIntervalMs: VIEW_REFRESH_DEBOUNCE_MS
+      });
     }
     renderTopbar();
   }
@@ -551,7 +562,7 @@
 
     window.addEventListener("streamsuites:auth-init-complete", () => {
       if (!isSessionAuthenticated()) return;
-      void requestRefresh({ force: true });
+      void requestRefresh({ reason: "auth-hydrated", force: true });
     });
   }
 
@@ -562,14 +573,20 @@
     window.setInterval(() => {
       if (document.visibilityState !== "visible") return;
       if (!isSessionAuthenticated()) return;
-      void requestRefresh({ minIntervalMs: BACKGROUND_REFRESH_MIN_INTERVAL_MS });
+      void requestRefresh({
+        reason: "background-visible",
+        minIntervalMs: BACKGROUND_REFRESH_MIN_INTERVAL_MS
+      });
     }, BACKGROUND_REFRESH_INTERVAL_MS);
   }
 
   function initCenter() {
     bindCenterEvents();
     if (isSessionAuthenticated()) {
-      void requestRefresh({ minIntervalMs: VIEW_REFRESH_DEBOUNCE_MS });
+      void requestRefresh({
+        reason: "notifications-view-enter",
+        minIntervalMs: VIEW_REFRESH_DEBOUNCE_MS
+      });
     }
     renderCenter();
   }

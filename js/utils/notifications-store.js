@@ -2,13 +2,14 @@
   "use strict";
 
   const API_BASE_URL = "https://api.streamsuites.app";
-  const NOTIFICATIONS_ENDPOINT = `${API_BASE_URL}/api/creator/notifications`;
+  const NOTIFICATIONS_PATH = "/api/creator/notifications";
   const DEFAULT_REFRESH_LIMIT = 25;
   const DEFAULT_REFRESH_TIMEOUT_MS = 8000;
 
   const READ_STORAGE_KEY = "ss_creator_notifications_read";
   const MUTED_STORAGE_KEY = "ss_creator_notifications_muted";
-  const UPDATE_EVENT = "ss:creator-notifications-updated";
+  const UPDATE_EVENT = "streamsuites:notifications-updated";
+  const LEGACY_UPDATE_EVENT = "ss:creator-notifications-updated";
 
   const seedNotifications = Object.freeze([
     {
@@ -79,8 +80,10 @@
     source: "seed",
     notes: [],
     nextCursor: "",
-    refreshing: false,
-    lastRefreshAt: 0
+    isRefreshing: false,
+    lastRefreshAt: 0,
+    lastError: null,
+    lastReason: ""
   };
   let refreshPromise = null;
 
@@ -201,19 +204,33 @@
   }
 
   function emitUpdate() {
+    const detail = {
+      total: state.notifications.length,
+      unread: getUnreadCount(),
+      source: state.source,
+      refreshing: state.isRefreshing,
+      lastRefreshAt: state.lastRefreshAt,
+      lastError: state.lastError
+    };
+
     try {
       window.dispatchEvent(
         new CustomEvent(UPDATE_EVENT, {
-          detail: {
-            total: state.notifications.length,
-            unread: getUnreadCount(),
-            source: state.source,
-            refreshing: state.refreshing
-          }
+          detail
         })
       );
     } catch (err) {
       // Ignore event dispatch failures.
+    }
+
+    try {
+      window.dispatchEvent(
+        new CustomEvent(LEGACY_UPDATE_EVENT, {
+          detail
+        })
+      );
+    } catch (err) {
+      // Ignore legacy event dispatch failures.
     }
   }
 
@@ -262,8 +279,19 @@
     return state.notes.slice();
   }
 
+  function getStatus() {
+    return {
+      source: state.source,
+      lastRefreshAt: state.lastRefreshAt,
+      isRefreshing: state.isRefreshing,
+      lastError: state.lastError ? { ...state.lastError } : null,
+      notes: state.notes.slice(),
+      nextCursor: state.nextCursor
+    };
+  }
+
   function isRefreshing() {
-    return state.refreshing;
+    return state.isRefreshing;
   }
 
   function markRead(id) {
@@ -325,8 +353,9 @@
 
   function setNotifications(items, options = {}) {
     const nextItems = Array.isArray(items) ? items : [];
-    const source =
-      typeof options.source === "string" && options.source.trim() ? options.source.trim() : state.source;
+    const requestedSource =
+      typeof options.source === "string" && options.source.trim() ? options.source.trim().toLowerCase() : "";
+    const source = requestedSource === "live" || requestedSource === "seed" ? requestedSource : state.source;
     state.notifications = sortNotifications(
       nextItems
         .map((item, index) => normalizeNotification(item, index, source))
@@ -360,6 +389,28 @@
       .filter(Boolean);
   }
 
+  function resolveNotificationsEndpoint() {
+    const sessionEndpoint = window.StreamSuitesAuth?.endpoints?.session;
+    if (typeof sessionEndpoint === "string" && sessionEndpoint.trim()) {
+      try {
+        const resolved = new URL(sessionEndpoint, window.location.origin);
+        return `${resolved.origin}${NOTIFICATIONS_PATH}`;
+      } catch (err) {
+        // Fall through to static API base.
+      }
+    }
+    return `${API_BASE_URL}${NOTIFICATIONS_PATH}`;
+  }
+
+  function normalizeRefreshError(err) {
+    if (!err || typeof err !== "object") {
+      return { message: "Notifications request failed." };
+    }
+    const message = normalizeText(err.message || err.error || "", "Notifications request failed.");
+    const status = Number.isFinite(err.status) ? Number(err.status) : null;
+    return status ? { message, status } : { message };
+  }
+
   function applySeedFallback() {
     state.notifications = sortNotifications(
       seedNotifications
@@ -373,6 +424,7 @@
 
   async function refresh(options = {}) {
     const force = options?.force === true;
+    const reason = normalizeText(options?.reason, "manual");
     const minIntervalMs = Number.isFinite(options?.minIntervalMs)
       ? Math.max(0, Number(options.minIntervalMs))
       : 0;
@@ -388,11 +440,12 @@
       return refreshPromise;
     }
 
-    state.refreshing = true;
+    state.isRefreshing = true;
+    state.lastReason = reason;
     emitUpdate();
 
     const fetchWithTimeout = getFetchWithTimeout();
-    const url = new URL(NOTIFICATIONS_ENDPOINT);
+    const url = new URL(resolveNotificationsEndpoint());
     url.searchParams.set("limit", String(limit));
 
     refreshPromise = (async () => {
@@ -412,29 +465,40 @@
         const raw = await response.text();
         const payload = safeParse(raw);
 
-        if (!response.ok || !payload || typeof payload !== "object" || payload.success !== true) {
-          applySeedFallback();
-          state.lastRefreshAt = Date.now();
-          return getItems();
+        if (!response.ok) {
+          const statusError = new Error(`Notifications request failed with status ${response.status}.`);
+          statusError.status = response.status;
+          throw statusError;
+        }
+
+        if (!payload || typeof payload !== "object") {
+          throw new Error("Notifications response payload was invalid.");
+        }
+
+        if (payload.success !== true) {
+          const failureError = new Error("Notifications API returned success:false.");
+          throw failureError;
         }
 
         const items = Array.isArray(payload.items) ? payload.items : [];
         state.notifications = sortNotifications(
           items
-            .map((item, index) => normalizeNotification(item, index, "api"))
+            .map((item, index) => normalizeNotification(item, index, "live"))
             .filter(Boolean)
         );
-        state.source = "api";
+        state.source = "live";
         state.nextCursor = normalizeText(payload.next_cursor, "");
         state.notes = normalizeNotes(payload.notes);
+        state.lastError = null;
         state.lastRefreshAt = Date.now();
         return getItems();
       } catch (err) {
         applySeedFallback();
+        state.lastError = normalizeRefreshError(err);
         state.lastRefreshAt = Date.now();
         return getItems();
       } finally {
-        state.refreshing = false;
+        state.isRefreshing = false;
         refreshPromise = null;
         emitUpdate();
       }
@@ -451,6 +515,7 @@
     loadReadIds();
     loadMuted();
     applySeedFallback();
+    state.lastError = null;
   }
 
   init();
@@ -477,6 +542,7 @@
     setNotifications,
     getSource,
     getNotes,
+    getStatus,
     isRefreshing
   };
 })();
