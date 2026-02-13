@@ -20,85 +20,20 @@
   <link rel="stylesheet" href="/css/status-widget.css" />
 </head>
 <body>
-  <div class="creator-app">
-    <header class="creator-header">
-      <div class="creator-header-left">
-        <a href="https://streamsuites.app" class="creator-brand-link">
+    <div id="app" class="creator-app">
+    <aside id="app-nav" class="ss-sidebar creator-nav">
+      <div class="ss-sidebar-brand">
+        <div class="header-left">
+          <a href="https://streamsuites.app" class="creator-brand-link">
           <img class="creator-logo-img" src="/assets/logos/ssnewcon.webp" alt="StreamSuites" />
           <h1 class="creator-title">StreamSuites</h1>
           <span class="dashboard-badge creator-dashboard-badge">CREATOR DASHBOARD</span>
-        </a>
-      </div>
-      <div class="creator-header-right">
-        <div class="creator-account streamsuites-auth" data-auth-summary="true" data-account-menu="true">
-          <button
-            class="creator-account-toggle"
-            type="button"
-            data-account-toggle="true"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            <span class="streamsuites-auth-avatar">
-              <img
-                class="creator-avatar"
-                src="/assets/icons/ui/profile.svg"
-                alt="Creator avatar"
-                data-auth-avatar="true"
-              />
-            </span>
-            <span class="streamsuites-auth-meta">
-              <span class="streamsuites-auth-name" data-auth-name="true">Signed out</span>
-              <span class="streamsuites-auth-identity" data-auth-email="true">Signed out</span>
-            </span>
-            <span class="creator-account-chevron" aria-hidden="true"></span>
-          </button>
-          <span class="streamsuites-auth-role">Creator</span>
-          <span class="tier-pill" data-auth-tier="true" data-tier="CORE"></span>
-          <div class="creator-account-dropdown" data-account-dropdown="true" role="menu">
-            <div class="creator-account-details" data-account-details-panel="true" hidden>
-              <div class="creator-account-detail">
-                <span class="creator-account-detail-label">Display name</span>
-                <span class="creator-account-detail-value" data-account-detail-name="true">Signed out</span>
-              </div>
-              <div class="creator-account-detail">
-                <span class="creator-account-detail-label">Email</span>
-                <span class="creator-account-detail-value" data-account-detail-email="true">Signed out</span>
-              </div>
-              <div class="creator-account-detail">
-                <span class="creator-account-detail-label">Tier</span>
-                <span class="creator-account-detail-value" data-account-detail-tier="true"></span>
-              </div>
-            </div>
-            
-            <a class="creator-account-item" href="/views/account.html">Account settings</a>
-            <button class="creator-account-item" type="button" data-auth-logout="true">Log out</button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <section class="creator-lockout" data-creator-lockout hidden>
-      <div class="lockout-card">
-        <span class="lockout-pill">Creator access required</span>
-        <h2>This area requires creator access.</h2>
-        <p>Your StreamSuites account is authenticated, but creator access is not enabled.</p>
-        <div class="lockout-actions">
-          <a
-            class="lockout-button"
-            href="https://api.streamsuites.app/auth/login/google?surface=creator"
-          >
-            Login as Creator
-          </a>
-          <button class="lockout-button secondary" type="button" data-auth-logout="true">
-            Sign out
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <div class="creator-layout" data-creator-content>
-      <aside class="creator-nav">
-        <span class="creator-nav-title">Creator navigation</span>
+        </a>
+        </div>
+      </div>
+      <div class="nav-shell">
+        <div id="app-nav-list" class="creator-nav-list">
+          <span class="creator-nav-title">Creator navigation</span>
         <nav class="creator-nav-main">
           <a href="/index.html">Overview</a>
           <a href="/views/account.html">Account settings</a>
@@ -122,11 +57,111 @@
           <a href="https://streamsuites.app/support.html">Support</a>
           <a href="https://docs.streamsuites.app">Documentation</a>
           <a href="https://streamsuites.app/donate.html">Donate</a>
+        </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="ss-main">
+      <header id="app-header" class="ss-topbar creator-header">
+        <div class="ss-topbar-left creator-header-left">
+          <button
+            type="button"
+            id="sidebar-collapse-toggle"
+            class="sidebar-collapse-toggle"
+            aria-controls="app-nav"
+            aria-expanded="true"
+            aria-label="Collapse sidebar"
+            title="Collapse sidebar"
+          >
+            <span class="sidebar-collapse-toggle-icon" aria-hidden="true"></span>
+            <span class="sr-only">Toggle sidebar</span>
+          </button>
+          <span class="ss-topbar-title creator-topbar-page-title">YouTube Platform</span>
+        </div>
+                <div class="ss-topbar-right creator-header-right">
+          <div class="creator-account streamsuites-auth" data-auth-summary="true" data-account-menu="true">
+            <button
+              class="creator-account-toggle"
+              type="button"
+              data-account-toggle="true"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="streamsuites-auth-avatar">
+                <img
+                  class="creator-avatar"
+                  src="/assets/icons/ui/profile.svg"
+                  alt="Creator avatar"
+                  data-auth-avatar="true"
+                />
+              </span>
+              <span class="streamsuites-auth-meta">
+                <span class="streamsuites-auth-name" data-auth-name="true">Signed out</span>
+                <span class="streamsuites-auth-identity" data-auth-email="true">Signed out</span>
+              </span>
+              <span class="creator-account-chevron" aria-hidden="true"></span>
+            </button>
+            <span class="streamsuites-auth-role">Creator</span>
+            <span class="tier-pill" data-auth-tier="true" data-tier="CORE"></span>
+            <div class="creator-account-dropdown" data-account-dropdown="true" role="menu">
+              <div class="creator-account-details" data-account-details-panel="true" hidden>
+                <div class="creator-account-detail">
+                  <span class="creator-account-detail-label">Display name</span>
+                  <span class="creator-account-detail-value" data-account-detail-name="true">Signed out</span>
+                </div>
+                <div class="creator-account-detail">
+                  <span class="creator-account-detail-label">Email</span>
+                  <span class="creator-account-detail-value" data-account-detail-email="true">Signed out</span>
+                </div>
+                <div class="creator-account-detail">
+                  <span class="creator-account-detail-label">Tier</span>
+                  <span class="creator-account-detail-value" data-account-detail-tier="true"></span>
+                </div>
+              </div>
+
+              <a class="creator-account-item" href="/views/account.html">Account settings</a>
+              <button class="creator-account-item" type="button" data-auth-logout="true">Log out</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div
+        id="global-loader"
+        class="ss-global-loader"
+        role="status"
+        aria-live="polite"
+        aria-hidden="true"
+      >
+        <div class="ss-global-loader-track" aria-hidden="true">
+          <span class="ss-global-loader-bar"></span>
+        </div>
+        <span id="global-loader-text" class="ss-global-loader-text">Loading...</span>
+      </div>
+
+      <section class="creator-lockout" data-creator-lockout hidden>
+      <div class="lockout-card">
+        <span class="lockout-pill">Creator access required</span>
+        <h2>This area requires creator access.</h2>
+        <p>Your StreamSuites account is authenticated, but creator access is not enabled.</p>
+        <div class="lockout-actions">
+          <a
+            class="lockout-button"
+            href="https://api.streamsuites.app/auth/login/google?surface=creator"
+          >
+            Login as Creator
+          </a>
+          <button class="lockout-button secondary" type="button" data-auth-logout="true">
+            Sign out
+          </button>
         </div>
-      </aside>
-
-      <main class="creator-main">
-        <section class="creator-section">
+      </div>
+    </section>
+
+      <main id="app-main">
+        <div id="view-container" class="creator-main" data-creator-content>
+          <section class="creator-section">
           <div class="section-header">
             <div>
               <span class="section-kicker">Platform</span>
@@ -202,9 +237,28 @@
               </ul>
             </article>
           </div>
-        </section>
-      </main>
-    </div>
+        </section>
+        </div>
+      </main>
+    </div>
+
+        <footer id="app-footer" class="creator-footer">
+      <div>
+        <span class="footer-title">StreamSuites Creator Workspace</span>
+      </div>
+      <div class="footer-links">
+        <a href="mailto:support@streamsuites.app" target="_blank" rel="noopener noreferrer">support@streamsuites.app</a>
+        <a href="mailto:admin@streamsuites.app" target="_blank" rel="noopener noreferrer">admin@streamsuites.app</a>
+      </div>
+    </footer>
+
+    <button
+      type="button"
+      class="creator-sidebar-scrim"
+      aria-label="Close navigation menu"
+      aria-hidden="true"
+      hidden
+    ></button>
   </div>
 
   <script src="/js/app.js"></script>
@@ -217,4 +271,6 @@
 
 
 
+
+
 

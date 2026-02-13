@@ -153,15 +153,16 @@
   function setSidebarMobileOpen(open) {
     if (!shell.nav) return;
     const nextOpen = Boolean(open);
+    const mobileViewport = isMobileViewport();
     document.documentElement.classList.toggle(SIDEBAR_MOBILE_OPEN_CLASS, nextOpen);
     document.body.classList.toggle(SIDEBAR_MOBILE_OPEN_CLASS, nextOpen);
 
     if (shell.scrim) {
-      shell.scrim.hidden = !nextOpen;
-      shell.scrim.setAttribute("aria-hidden", nextOpen ? "false" : "true");
+      shell.scrim.hidden = !mobileViewport || !nextOpen;
+      shell.scrim.setAttribute("aria-hidden", mobileViewport && nextOpen ? "false" : "true");
     }
 
-    shell.nav.setAttribute("aria-hidden", nextOpen ? "false" : "true");
+    shell.nav.setAttribute("aria-hidden", mobileViewport && !nextOpen ? "true" : "false");
     updateSidebarToggleState();
   }
 
@@ -195,7 +196,7 @@
 
   function decorateSidebarLinks() {
     if (!shell.nav) return;
-    const navLinks = shell.nav.querySelectorAll("a");
+    const navLinks = shell.nav.querySelectorAll("#app-nav-list a");
     navLinks.forEach((anchor) => {
       if (anchor.dataset.navDecorated === "1") return;
       anchor.dataset.navDecorated = "1";
@@ -269,17 +270,10 @@
 
   function ensureSidebarToggle() {
     if (!shell.headerLeft) return;
-    let toggle = shell.headerLeft.querySelector("#sidebar-collapse-toggle");
-    if (!toggle) {
-      toggle = document.createElement("button");
-      toggle.type = "button";
-      toggle.id = "sidebar-collapse-toggle";
-      toggle.className = "sidebar-collapse-toggle";
-      toggle.setAttribute("aria-controls", "app-nav");
-      toggle.innerHTML =
-        '<span class="sidebar-collapse-toggle-icon" aria-hidden="true"></span><span class="sr-only">Toggle sidebar</span>';
-      shell.headerLeft.prepend(toggle);
-    }
+    const toggle =
+      document.getElementById("sidebar-collapse-toggle") ||
+      shell.headerLeft.querySelector("#sidebar-collapse-toggle");
+    if (!toggle) return;
     if (toggle.dataset.sidebarBound !== "1") {
       toggle.dataset.sidebarBound = "1";
       toggle.addEventListener("click", onSidebarToggleClick);
@@ -290,27 +284,26 @@
 
   function ensureTopbarTitle() {
     if (!shell.headerLeft) return;
-    let titleNode = shell.headerLeft.querySelector(".creator-topbar-page-title");
-    if (!titleNode) {
-      titleNode = document.createElement("span");
-      titleNode.className = "creator-topbar-page-title";
-      shell.headerLeft.append(titleNode);
-    }
+    const titleNode = shell.headerLeft.querySelector(".creator-topbar-page-title");
+    if (!titleNode) return;
     titleNode.textContent = resolvePageTitle();
   }
 
   function ensureSidebarScrim() {
     if (!shell.app || shell.scrim) return;
-    const scrim = document.createElement("button");
-    scrim.type = "button";
-    scrim.className = "creator-sidebar-scrim";
+    const scrim =
+      shell.app.querySelector(".creator-sidebar-scrim") ||
+      document.querySelector(".creator-sidebar-scrim");
+    if (!scrim) return;
     scrim.hidden = true;
-    scrim.setAttribute("aria-label", "Close navigation menu");
     scrim.setAttribute("aria-hidden", "true");
-    scrim.addEventListener("click", () => {
-      setSidebarMobileOpen(false);
-    });
-    shell.app.append(scrim);
+    scrim.setAttribute("aria-label", "Close navigation menu");
+    if (scrim.dataset.sidebarBound !== "1") {
+      scrim.dataset.sidebarBound = "1";
+      scrim.addEventListener("click", () => {
+        setSidebarMobileOpen(false);
+      });
+    }
     shell.scrim = scrim;
   }
 
@@ -321,6 +314,7 @@
     const initialCollapsed =
       storedPreference !== null ? storedPreference : isMobileViewport();
     setSidebarCollapsed(initialCollapsed, { persist: false });
+    setSidebarMobileOpen(false);
 
     if (!shell.resizeBound) {
       shell.resizeBound = true;
@@ -363,18 +357,8 @@
 
   function ensureGlobalLoaderDom() {
     if (!shell.app) return;
-    let root = document.getElementById("global-loader");
-    if (!root) {
-      root = document.createElement("div");
-      root.id = "global-loader";
-      root.className = "ss-global-loader";
-      root.setAttribute("role", "status");
-      root.setAttribute("aria-live", "polite");
-      root.setAttribute("aria-hidden", "true");
-      root.innerHTML =
-        '<div class="ss-global-loader-track" aria-hidden="true"><span class="ss-global-loader-bar"></span></div><span id="global-loader-text" class="ss-global-loader-text">Loading...</span>';
-      shell.header?.insertAdjacentElement("afterend", root);
-    }
+    const root = document.getElementById("global-loader");
+    if (!root) return;
     loaderState.root = root;
     loaderState.text = document.getElementById("global-loader-text");
   }
@@ -529,25 +513,13 @@
   }
 
   function initCreatorShell() {
-    shell.app = document.querySelector(".creator-app");
+    shell.app = document.getElementById("app") || document.querySelector(".creator-app");
     if (!shell.app) return;
 
-    shell.header = shell.app.querySelector(".creator-header");
-    shell.headerLeft = shell.app.querySelector(".creator-header-left");
-    shell.nav = shell.app.querySelector(".creator-nav");
-    shell.main = shell.app.querySelector(".creator-main");
-
-    if (shell.nav) {
-      shell.nav.id = "app-nav";
-      shell.app.classList.add("has-shell");
-    }
-    if (shell.main) {
-      shell.main.id = "app-main";
-    }
-
-    if (shell.header) {
-      shell.header.id = "app-header";
-    }
+    shell.header = document.getElementById("app-header") || shell.app.querySelector(".creator-header");
+    shell.headerLeft = shell.header?.querySelector(".creator-header-left") || shell.app.querySelector(".creator-header-left");
+    shell.nav = document.getElementById("app-nav") || shell.app.querySelector(".creator-nav");
+    shell.main = document.getElementById("app-main") || shell.app.querySelector(".creator-main");
 
     initGlobalLoader();
     syncHeaderHeightVar();
