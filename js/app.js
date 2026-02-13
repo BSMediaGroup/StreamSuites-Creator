@@ -73,6 +73,7 @@
     overview: "/assets/icons/ui/dashboard.svg",
     index: "/assets/icons/ui/dashboard.svg",
     account: "/assets/icons/ui/profile.svg",
+    notifications: "/assets/icons/ui/bell.svg",
     plans: "/assets/icons/ui/cards.svg",
     triggers: "/assets/icons/ui/tune.svg",
     settings: "/assets/icons/ui/cog.svg",
