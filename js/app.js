@@ -78,7 +78,7 @@
     triggers: "/assets/icons/ui/tune.svg",
     settings: "/assets/icons/ui/cog.svg",
     rumble: "/assets/icons/ui/globe.svg",
-    youtube: "/assets/icons/ui/globe.svg",
+    youtube: "/assets/icons/youtube-0.svg",
     twitch: "/assets/icons/ui/globe.svg",
     kick: "/assets/icons/ui/globe.svg",
     pilled: "/assets/icons/ui/globe.svg",
