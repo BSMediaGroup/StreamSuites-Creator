@@ -71,6 +71,75 @@ h3 {
   z-index: 1;
 }
 
+.creator-app :is(
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea
+) {
+  font-family: var(--creator-font);
+  font-size: inherit;
+  color: var(--creator-text);
+  background: rgba(10, 14, 20, 0.9);
+  border: 1px solid var(--creator-border);
+}
+
+.creator-app :is(
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  textarea
+)::placeholder {
+  color: rgba(214, 226, 255, 0.54);
+}
+
+.creator-app :is(
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea
+):is(:focus, :focus-visible) {
+  outline: none;
+  border-color: rgba(154, 209, 255, 0.7);
+  box-shadow: 0 0 0 1px rgba(154, 209, 255, 0.45);
+}
+
+.creator-app :is(
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea
+):disabled {
+  color: var(--creator-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--creator-border);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .creator-header {
   display: flex;
   justify-content: space-between;
