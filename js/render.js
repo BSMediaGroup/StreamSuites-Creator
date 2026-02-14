@@ -450,6 +450,7 @@
     registerView("platforms/youtube");
     registerView("platforms/twitch");
     registerView("platforms/kick");
+    registerView("platforms/discord");
     registerView("platforms/pilled");
   }
 

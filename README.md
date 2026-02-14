@@ -347,6 +347,7 @@ StreamSuites-Creator/
     ├── overview.html
     ├── plans.html
     ├── platforms
+    │   ├── discord.html
     │   ├── kick.html
     │   ├── pilled.html
     │   ├── rumble.html

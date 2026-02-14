@@ -81,6 +81,7 @@
     youtube: "/assets/icons/youtube-0.svg",
     twitch: "/assets/icons/twitch-0.svg",
     kick: "/assets/icons/kick-0.svg",
+    discord: "/assets/icons/discord-0.svg",
     pilled: "/assets/icons/pilled-0.svg",
     updates: "/assets/icons/ui/package.svg"
   });
