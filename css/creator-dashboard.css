@@ -949,8 +949,8 @@ h3 {
 }
 
 .creator-nav-title {
-  font-size: 12px;
-  letter-spacing: 0.24em;
+  font-size: 10px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--creator-muted);
   font-family: var(--creator-heading);
@@ -997,7 +997,8 @@ h3 {
 .creator-nav-label {
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 11px;
+  font-size: 10px;
+  color: var(--creator-muted);
   font-family: var(--creator-heading);
 }
 
@@ -2475,6 +2476,7 @@ html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sid
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 12px;
 }
 
 .sidebar-collapse-toggle {
