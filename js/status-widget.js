@@ -35,7 +35,17 @@
   details.hidden = true;
 
   root.append(toggle, details);
-  document.body.appendChild(root);
+
+  const host = document.querySelector("[data-status-slot]");
+  if (host) {
+    host.appendChild(root);
+  } else {
+    document.body.appendChild(root);
+  }
+  const hasFooterSlot = Boolean(host);
+  let footerOffsetRaf = 0;
+  let observedFooter = null;
+  let footerObserver = null;
 
   let userToggled = false;
 
@@ -240,4 +250,84 @@
   } else {
     fetchStatus();
   }
+
+  const parsePixels = (value, fallback = 0) => {
+    const next = Number.parseFloat(value);
+    return Number.isFinite(next) ? next : fallback;
+  };
+
+  const findFooter = () => {
+    const selectors = [
+      ".footer-shell",
+      "footer.public-footer",
+      "footer.ss-footer",
+      "footer",
+      "[role='contentinfo']",
+    ];
+    for (const selector of selectors) {
+      const match = document.querySelector(selector);
+      if (match) return match;
+    }
+    return null;
+  };
+
+  const getFooter = () => observedFooter || findFooter();
+
+  const applyFooterOffset = () => {
+    footerOffsetRaf = 0;
+    if (hasFooterSlot) {
+      root.style.bottom = "";
+      return;
+    }
+
+    const footer = getFooter();
+    if (!footer) {
+      root.style.bottom = "";
+      return;
+    }
+
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    const footerRect = footer.getBoundingClientRect();
+    const overlap = Math.max(0, viewportHeight - footerRect.top);
+    const baseBottom = parsePixels(window.getComputedStyle(root).bottom, 10);
+    const clearance = 8;
+    root.style.bottom = overlap > 0 ? `${Math.ceil(baseBottom + overlap + clearance)}px` : "";
+  };
+
+  const requestFooterOffsetUpdate = () => {
+    if (footerOffsetRaf) return;
+    footerOffsetRaf = window.requestAnimationFrame(applyFooterOffset);
+  };
+
+  const bindFooter = () => {
+    if (hasFooterSlot) return;
+    const nextFooter = findFooter();
+    if (!nextFooter || nextFooter === observedFooter) return;
+    observedFooter = nextFooter;
+    if (footerObserver) {
+      footerObserver.disconnect();
+    }
+    if ("ResizeObserver" in window) {
+      footerObserver = new ResizeObserver(requestFooterOffsetUpdate);
+      footerObserver.observe(observedFooter);
+    }
+    requestFooterOffsetUpdate();
+  };
+
+  if (!hasFooterSlot) {
+    bindFooter();
+    if ("MutationObserver" in window) {
+      const mutationObserver = new MutationObserver(() => {
+        bindFooter();
+      });
+      mutationObserver.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+      });
+    }
+  }
+
+  window.addEventListener("scroll", requestFooterOffsetUpdate, { passive: true });
+  window.addEventListener("resize", requestFooterOffsetUpdate);
+  requestFooterOffsetUpdate();
 })();
