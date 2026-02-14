@@ -2354,6 +2354,30 @@ body.creator-lockout-active .creator-lockout {
   text-decoration: none;
 }
 
+html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .header-left a {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .creator-brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .creator-logo-img {
+  height: 100%;
+  width: auto;
+  align-self: stretch;
+}
+
+html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .dashboard-badge {
+  margin-top: 0;
+}
+
 #app-nav .ss-sidebar-brand .dashboard-badge {
   display: inline-flex;
   margin-left: 0;
