@@ -324,10 +324,15 @@ h3 {
 }
 
 .creator-notifications-center {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  display: flex;
+  flex-wrap: wrap;
   gap: 14px;
   align-items: start;
+}
+
+.creator-notifications-panel {
+  flex: 1 1 660px;
+  min-width: min(100%, 560px);
 }
 
 .creator-notifications-panel .ss-panel-body {
@@ -470,6 +475,40 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.creator-notifications-settings {
+  flex: 0 1 320px;
+  min-width: min(100%, 280px);
+}
+
+.creator-notifications-center .creator-notifications-field .ss-input,
+.creator-notifications-center .creator-notifications-settings input,
+.creator-notifications-center .creator-notifications-settings select,
+.creator-notifications-center .creator-notifications-settings textarea {
+  font-family: "SuiGenerisRg", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: var(--creator-text);
+  background: rgba(10, 14, 20, 0.9);
+  border: 1px solid var(--creator-border);
+}
+
+.creator-notifications-center .creator-notifications-field .ss-input::placeholder,
+.creator-notifications-center .creator-notifications-settings input::placeholder,
+.creator-notifications-center .creator-notifications-settings textarea::placeholder {
+  color: rgba(214, 226, 255, 0.54);
+}
+
+.creator-notifications-center .creator-notifications-field .ss-input:focus,
+.creator-notifications-center .creator-notifications-field .ss-input:focus-visible,
+.creator-notifications-center .creator-notifications-settings input:focus,
+.creator-notifications-center .creator-notifications-settings input:focus-visible,
+.creator-notifications-center .creator-notifications-settings select:focus,
+.creator-notifications-center .creator-notifications-settings select:focus-visible,
+.creator-notifications-center .creator-notifications-settings textarea:focus,
+.creator-notifications-center .creator-notifications-settings textarea:focus-visible {
+  outline: none;
+  border-color: rgba(154, 209, 255, 0.7);
+  box-shadow: 0 0 0 1px rgba(154, 209, 255, 0.45);
 }
 
 .creator-notifications-setting-toggle {
@@ -2522,7 +2561,7 @@ body.ss-sidebar-collapsed .sidebar-collapse-toggle-icon {
   transform: scaleX(-1);
 }
 
-#app .ss-main {
+#app > .ss-main {
   grid-column: 2;
   grid-row: 1;
   min-width: 0;
@@ -2815,7 +2854,7 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
   }
 
   .creator-notifications-center {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .creator-notifications-controls {

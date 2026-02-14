@@ -152,6 +152,11 @@
   }
 
   function updateTopbarTitle(route) {
+    if (normalizeRoute(route) === "notifications") {
+      window.App?.creatorShell?.setTopbarTitle?.("NOTIFICATIONS CENTER");
+      return;
+    }
+
     const container = document.getElementById("view-container");
     const primaryHeading =
       container?.querySelector(
