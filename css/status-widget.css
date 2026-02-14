@@ -25,7 +25,8 @@
   --ss-status-major: #f36a5f;
   --ss-status-unknown: #9aa0a6;
   --ss-status-base-right: max(12px, calc(env(safe-area-inset-right, 0px) + 10px));
-  --ss-status-base-bottom: max(10px, calc(env(safe-area-inset-bottom, 0px) + 10px));
+  --ss-status-bottom-nudge: -0.75em;
+  --ss-status-base-bottom: max(10px, calc(env(safe-area-inset-bottom, 0px) + 10px + var(--ss-status-bottom-nudge)));
 }
 
 body:not(.status-tooltip-legacy) {
