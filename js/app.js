@@ -77,11 +77,11 @@
     plans: "/assets/icons/ui/cards.svg",
     triggers: "/assets/icons/ui/tune.svg",
     settings: "/assets/icons/ui/cog.svg",
-    rumble: "/assets/icons/ui/rumble-0.svg",
+    rumble: "/assets/icons/rumble-0.svg",
     youtube: "/assets/icons/youtube-0.svg",
-    twitch: "/assets/icons/ui/twitch-0.svg",
-    kick: "/assets/icons/ui/kick-0.svg",
-    pilled: "/assets/icons/ui/pilled-0.svg",
+    twitch: "/assets/icons/twitch-0.svg",
+    kick: "/assets/icons/kick-0.svg",
+    pilled: "/assets/icons/pilled-0.svg",
     updates: "/assets/icons/ui/package.svg"
   });
 
