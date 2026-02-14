@@ -2357,7 +2357,7 @@ body.creator-lockout-active .creator-lockout {
 html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .header-left a {
   display: flex;
   align-items: stretch;
-  gap: 12px;
+  gap: 8px;
   justify-content: center;
 }
 
