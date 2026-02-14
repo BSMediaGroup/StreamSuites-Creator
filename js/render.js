@@ -452,6 +452,10 @@
     registerView("platforms/kick");
     registerView("platforms/discord");
     registerView("platforms/pilled");
+    registerView("modules/clips");
+    registerView("modules/polls");
+    registerView("modules/overlays");
+    registerView("modules/livechat");
   }
 
   function initRouter() {

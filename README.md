@@ -342,6 +342,11 @@ StreamSuites-Creator/
     ├── creators.html
     ├── design.html
     ├── jobs.html
+    ├── modules
+    │   ├── clips.html
+    │   ├── livechat.html
+    │   ├── overlays.html
+    │   └── polls.html
     ├── notifications.html
     ├── onboarding.html
     ├── overview.html
