@@ -256,6 +256,14 @@
     return Number.isFinite(next) ? next : fallback;
   };
 
+  const readBaseBottom = () => {
+    const inlineBottom = root.style.bottom;
+    root.style.bottom = "";
+    const baseBottom = parsePixels(window.getComputedStyle(root).bottom, 10);
+    root.style.bottom = inlineBottom;
+    return baseBottom;
+  };
+
   const findFooter = () => {
     const selectors = [
       ".footer-shell",
@@ -289,7 +297,7 @@
     const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
     const footerRect = footer.getBoundingClientRect();
     const overlap = Math.max(0, viewportHeight - footerRect.top);
-    const baseBottom = parsePixels(window.getComputedStyle(root).bottom, 10);
+    const baseBottom = readBaseBottom();
     const clearance = 8;
     root.style.bottom = overlap > 0 ? `${Math.ceil(baseBottom + overlap + clearance)}px` : "";
   };
