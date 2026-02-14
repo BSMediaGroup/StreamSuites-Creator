@@ -242,7 +242,7 @@
     if (segment && NAV_ICON_BY_SEGMENT[segment]) {
       return NAV_ICON_BY_SEGMENT[segment];
     }
-    return "/assets/icons/ui/cog.svg";
+    return "/assets/icons/ui/portal.svg";
   }
 
   function decorateSidebarLinks() {
