@@ -2358,6 +2358,7 @@ html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sid
   display: flex;
   align-items: stretch;
   gap: 12px;
+  justify-content: center;
 }
 
 html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .creator-brand-text {
