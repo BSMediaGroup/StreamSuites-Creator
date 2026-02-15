@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StreamSuites™ — 404 Not Found</title>
+  <meta
+    name="description"
+    content="StreamSuites Creator Dashboard 404 page."
+  />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/theme-dark.css" />
+  <link rel="stylesheet" href="/css/creator-dashboard.css" />
+  <link rel="stylesheet" href="/css/status-widget.css" />
+
+  <style>
+    #app.creator-app {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    #app > .ss-main {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .ss-404-main {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: clamp(20px, 3.5vw, 42px);
+    }
+
+    .ss-404-card {
+      width: min(100%, 680px);
+      text-align: center;
+      display: grid;
+      gap: 16px;
+      justify-items: center;
+      padding: clamp(24px, 3.2vw, 38px);
+      border: 1px solid var(--creator-border);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(17, 24, 36, 0.88), rgba(11, 16, 26, 0.78));
+      box-shadow: 0 24px 56px rgba(2, 6, 16, 0.46);
+    }
+
+    .ss-404-logo {
+      width: clamp(88px, 10vw, 120px);
+      height: auto;
+      display: block;
+    }
+
+    .ss-404-title {
+      margin: 4px 0 0;
+      font-size: clamp(1.9rem, 4vw, 2.55rem);
+      letter-spacing: 0.02em;
+      color: var(--creator-text);
+    }
+
+    .ss-404-message {
+      margin: 0;
+      max-width: 56ch;
+      color: rgba(214, 226, 255, 0.84);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .ss-404-subtext {
+      margin: 0;
+      max-width: 62ch;
+      color: var(--creator-muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .ss-404-actions {
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .ss-404-links {
+      margin-top: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--creator-muted);
+    }
+
+    .ss-404-links .ss-link {
+      color: rgba(214, 226, 255, 0.9);
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="creator-app">
+    <div class="ss-main">
+      <header id="app-header" class="ss-topbar creator-header">
+        <div class="ss-topbar-left creator-header-left">
+          <a href="https://creator.streamsuites.app" class="creator-brand-link" aria-label="StreamSuites Creator">
+            <img class="creator-logo-img" src="/assets/logos/ssnewcon.webp" alt="StreamSuites" />
+          </a>
+          <span class="ss-topbar-title creator-topbar-page-title">404 — Not Found</span>
+        </div>
+        <div class="ss-topbar-right creator-header-right" aria-hidden="true"></div>
+      </header>
+
+      <main id="app-main" class="ss-404-main" role="main">
+        <section class="ss-404-card" aria-labelledby="ss-404-title">
+          <img class="ss-404-logo" src="/assets/logos/ssnewcon.webp" alt="StreamSuites logo" />
+          <h1 id="ss-404-title" class="ss-404-title">Page not found</h1>
+          <p class="ss-404-message">The page you are looking for does not exist or may have been moved.</p>
+          <p class="ss-404-subtext">You can return to your workspace or navigate to one of the core StreamSuites surfaces below.</p>
+
+          <div class="ss-404-actions">
+            <a class="ss-btn ss-btn-primary" href="https://creator.streamsuites.app/#overview">Return to Creator Dashboard</a>
+            <a class="ss-btn ss-btn-secondary" href="https://streamsuites.app">Visit Public Site</a>
+          </div>
+
+          <div class="ss-404-links" aria-label="Additional links">
+            <a class="ss-link" href="https://streamsuites.app/support">Support</a>
+            <span aria-hidden="true">•</span>
+            <a class="ss-link" href="https://docs.streamsuites.app">Documentation</a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer id="app-footer" class="creator-footer">
+      <div class="creator-footer-left">
+        <span class="creator-footer-title">StreamSuites Creator</span>
+      </div>
+      <div class="creator-footer-center">
+        <span class="footer-version-tooltip-container">
+          <button
+            id="footer-version"
+            type="button"
+            class="creator-footer-version creator-footer-version-trigger"
+            aria-describedby="footer-version-tooltip"
+            data-version-format="Dashboard {{version}}"
+            data-version-unavailable="Dashboard —"
+          >
+            Dashboard —
+          </button>
+          <div class="footer-version-tooltip" id="footer-version-tooltip" role="tooltip">
+            <div
+              class="footer-version-tooltip-line"
+              data-footer-version-tooltip="full"
+              data-version-format="Dashboard {{version}} • build {{build}}"
+              data-version-unavailable="Dashboard — • build —"
+            >
+              Dashboard — • build —
+            </div>
+          </div>
+        </span>
+        <span class="creator-footer-divider" aria-hidden="true">•</span>
+        <a
+          class="creator-footer-copyright"
+          href="https://brainstream.media"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          © 2026 Brainstream Media Group
+        </a>
+      </div>
+      <div class="creator-footer-right">
+        <a
+          class="creator-footer-support"
+          href="https://streamsuites.app/support"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          SUPPORT
+        </a>
+        <span class="creator-footer-status-slot" data-status-slot data-status-slot-mode="inline"></span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/utils/versioning.js"></script>
+  <script src="/js/utils/version-stamp.js"></script>
+  <script src="/js/status-widget.js" defer></script>
+  <script>
+    (() => {
+      if (window.location.pathname !== "/" && !window.location.hash) {
+        window.setTimeout(() => {
+          window.location.href = "https://creator.streamsuites.app/#overview";
+        }, 3000);
+      }
+    })();
+  </script>
+</body>
+</html>
