@@ -54,6 +54,14 @@ body:not(.status-tooltip-legacy) {
   pointer-events: auto;
 }
 
+.ss-status-indicator[data-layout='inline'] {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  z-index: 40;
+  gap: 0;
+}
+
 .ss-status-toggle {
   display: inline-flex;
   align-items: center;
@@ -97,6 +105,14 @@ body:not(.status-tooltip-legacy) {
   background: var(--ss-status-panel);
   box-shadow: var(--ss-status-shadow);
   line-height: 1.45;
+}
+
+.ss-status-indicator[data-layout='inline'] .ss-status-details {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  margin-top: 0;
+  z-index: 1300;
 }
 
 body:not(.status-tooltip-legacy) .ss-status-details {
@@ -180,6 +196,14 @@ body:not(.status-tooltip-legacy) .ss-status-details {
 
 .ss-status-indicator[data-state='unknown'] .ss-status-dot {
   background: var(--ss-status-unknown);
+}
+
+#app-footer .creator-footer-status-slot,
+[data-status-slot][data-status-slot-mode='inline'] {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  overflow: visible;
 }
 
 @media (max-width: 640px) {

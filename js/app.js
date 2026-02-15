@@ -68,6 +68,9 @@
   const SIDEBAR_MOBILE_BREAKPOINT = 980;
   const LOADER_SHOW_DELAY_MS = 120;
   const LOADER_MIN_VISIBLE_MS = 280;
+  const CREATOR_LOCAL_SESSION_KEY = "streamsuites.creator.session";
+  const CREATOR_COPY_FEEDBACK_MS = 1400;
+  const CREATOR_VERSION_ENDPOINT = "https://admin.streamsuites.app/runtime/exports/version.json";
 
   const NAV_ICON_BY_SEGMENT = Object.freeze({
     overview: "/assets/icons/ui/dashboard.svg",
@@ -571,6 +574,278 @@
     };
   }
 
+  function readCreatorIdFromSession() {
+    const sessionCode = window.App?.session?.user_code;
+    if (typeof sessionCode === "string" && sessionCode.trim()) {
+      return sessionCode.trim();
+    }
+
+    try {
+      const raw = window.localStorage.getItem(CREATOR_LOCAL_SESSION_KEY);
+      if (!raw) return "";
+      const parsed = JSON.parse(raw);
+      const localCode = parsed?.user_code;
+      if (typeof localCode === "string" && localCode.trim()) {
+        return localCode.trim();
+      }
+    } catch (err) {
+      // Ignore malformed local session payloads.
+    }
+
+    return "";
+  }
+
+  async function copyTextToClipboard(text) {
+    const payload = String(text || "");
+    if (!payload) return false;
+
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(payload);
+        return true;
+      }
+    } catch (err) {
+      // Fallback handled below.
+    }
+
+    try {
+      const area = document.createElement("textarea");
+      area.value = payload;
+      area.setAttribute("readonly", "true");
+      area.style.position = "fixed";
+      area.style.top = "-9999px";
+      area.style.left = "-9999px";
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
+      const copied = document.execCommand("copy");
+      area.remove();
+      return copied;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function formatCreatorVersion(value) {
+    const raw = typeof value === "string" ? value.trim() : "";
+    if (!raw) return "—";
+    return /^v/i.test(raw) ? raw : `v${raw}`;
+  }
+
+  function normalizeCreatorBuild(value) {
+    const raw = typeof value === "string" ? value.trim() : "";
+    return raw || "—";
+  }
+
+  async function fetchCreatorFooterVersionData() {
+    if (window.Versioning && typeof window.Versioning.fetchVersionData === "function") {
+      try {
+        const payload = await window.Versioning.fetchVersionData();
+        if (payload && typeof payload === "object") {
+          return payload;
+        }
+      } catch (err) {
+        // Fall back to direct fetch.
+      }
+    }
+
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeout = controller ? window.setTimeout(() => controller.abort(), 4000) : null;
+
+    try {
+      const response = await fetch(CREATOR_VERSION_ENDPOINT, {
+        cache: "no-store",
+        signal: controller ? controller.signal : undefined
+      });
+      if (!response.ok) return null;
+      const payload = await response.json();
+      if (!payload || typeof payload !== "object") return null;
+      return payload;
+    } catch (err) {
+      return null;
+    } finally {
+      if (timeout) clearTimeout(timeout);
+    }
+  }
+
+  async function syncCreatorFooterVersion(footer) {
+    const versionEl = footer.querySelector(".creator-footer-version");
+    const buildEl = footer.querySelector(".creator-footer-build-token");
+    const fullEl = footer.querySelector("[data-footer-version-tooltip=\"full\"]");
+    if (!versionEl || !buildEl || !fullEl) return;
+
+    const data = await fetchCreatorFooterVersionData();
+    const version = formatCreatorVersion(data?.version);
+    const build = normalizeCreatorBuild(data?.build);
+    versionEl.textContent = `Dashboard ${version}`;
+    buildEl.textContent = `build ${build}`;
+    fullEl.textContent = `Dashboard ${version} • build ${build}`;
+  }
+
+  function buildCreatorFooterMarkup() {
+    return `
+      <div class="creator-footer-left">
+        <span class="creator-footer-title">StreamSuites Creator</span>
+        <span class="creator-footer-user-code" data-creator-user-code data-empty="true" aria-label="Creator ID">--</span>
+        <button
+          type="button"
+          class="creator-footer-copy"
+          data-creator-copy
+          aria-label="Copy Creator ID"
+          disabled
+        >
+          <span
+            class="creator-footer-copy-tooltip"
+            data-text-initial="Copy to clipboard"
+            data-text-end="Copied!"
+            aria-hidden="true"
+          ></span>
+          <span class="creator-footer-copy-icons" aria-hidden="true">
+            <svg viewBox="0 0 6.35 6.35" width="14" height="14" class="creator-footer-copy-clipboard">
+              <path
+                fill="currentColor"
+                d="M2.43.265c-.3 0-.548.236-.573.53h-.328a.74.74 0 0 0-.735.734v3.822a.74.74 0 0 0 .735.734H4.82a.74.74 0 0 0 .735-.734V1.529a.74.74 0 0 0-.735-.735h-.328a.58.58 0 0 0-.573-.53zm0 .529h1.49c.032 0 .049.017.049.049v.431c0 .032-.017.049-.049.049H2.43c-.032 0-.05-.017-.05-.049V.843c0-.032.018-.05.05-.05zm-.901.53h.328c.026.292.274.528.573.528h1.49a.58.58 0 0 0 .573-.529h.328a.2.2 0 0 1 .206.206v3.822a.2.2 0 0 1-.206.205H1.53a.2.2 0 0 1-.206-.205V1.529a.2.2 0 0 1 .206-.206z"
+              ></path>
+            </svg>
+            <svg viewBox="0 0 24 24" width="13" height="13" class="creator-footer-copy-check">
+              <path
+                fill="currentColor"
+                d="M9.707 19.121a.997.997 0 0 1-1.414 0l-5.646-5.647a1.5 1.5 0 0 1 0-2.121l.707-.707a1.5 1.5 0 0 1 2.121 0L9 14.171l9.525-9.525a1.5 1.5 0 0 1 2.121 0l.707.707a1.5 1.5 0 0 1 0 2.121z"
+              ></path>
+            </svg>
+          </span>
+        </button>
+      </div>
+      <div class="creator-footer-center">
+        <span
+          id="footer-version"
+          class="creator-footer-version"
+          data-version-format="Dashboard {{version}}"
+          data-version-unavailable="Dashboard —"
+        >
+          Dashboard —
+        </span>
+        <span class="creator-footer-divider" aria-hidden="true">•</span>
+        <span class="footer-version-tooltip-container">
+          <button
+            type="button"
+            class="creator-footer-build-token"
+            aria-describedby="footer-version-tooltip"
+            data-version-format="build {{build}}"
+            data-version-unavailable="build —"
+          >
+            build —
+          </button>
+          <div class="footer-version-tooltip" id="footer-version-tooltip" role="tooltip">
+            <div
+              class="footer-version-tooltip-line"
+              data-footer-version-tooltip="full"
+              data-version-format="Dashboard {{version}} • build {{build}}"
+              data-version-unavailable="Dashboard — • build —"
+            >
+              Dashboard — • build —
+            </div>
+          </div>
+        </span>
+      </div>
+      <div class="creator-footer-right">
+        <a
+          class="creator-footer-support"
+          href="https://streamsuites.app/support.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          SUPPORT
+        </a>
+        <span class="creator-footer-status-slot" data-status-slot data-status-slot-mode="inline"></span>
+      </div>
+    `;
+  }
+
+  function initCreatorFooter() {
+    const footer = document.getElementById("app-footer");
+    if (!footer || !footer.classList.contains("creator-footer")) return;
+
+    if (footer.dataset.creatorFooterReady !== "1") {
+      const existingStatus = footer.querySelector("#ss-status-indicator");
+      if (existingStatus) {
+        existingStatus.remove();
+      }
+
+      footer.innerHTML = buildCreatorFooterMarkup();
+
+      if (existingStatus) {
+        const statusSlot = footer.querySelector("[data-status-slot]");
+        if (statusSlot) {
+          statusSlot.appendChild(existingStatus);
+          existingStatus.dataset.layout = "inline";
+        }
+      }
+
+      footer.dataset.creatorFooterReady = "1";
+    }
+
+    const codeEl = footer.querySelector("[data-creator-user-code]");
+    const copyBtn = footer.querySelector("[data-creator-copy]");
+    if (!codeEl || !copyBtn) return;
+
+    const syncCreatorId = () => {
+      const userCode = readCreatorIdFromSession();
+      if (userCode) {
+        codeEl.textContent = userCode;
+        codeEl.dataset.empty = "false";
+        copyBtn.disabled = false;
+        copyBtn.dataset.creatorCode = userCode;
+      } else {
+        codeEl.textContent = "--";
+        codeEl.dataset.empty = "true";
+        copyBtn.disabled = true;
+        delete copyBtn.dataset.creatorCode;
+      }
+    };
+
+    if (copyBtn.dataset.bound !== "1") {
+      let copyTimer = null;
+
+      copyBtn.addEventListener("click", async () => {
+        const userCode = copyBtn.dataset.creatorCode || "";
+        if (!userCode) return;
+        const copied = await copyTextToClipboard(userCode);
+        if (!copied) return;
+
+        copyBtn.dataset.copied = "1";
+        if (copyTimer) {
+          clearTimeout(copyTimer);
+        }
+        copyTimer = window.setTimeout(() => {
+          copyBtn.dataset.copied = "0";
+        }, CREATOR_COPY_FEEDBACK_MS);
+      });
+
+      copyBtn.addEventListener("blur", () => {
+        if (copyBtn.dataset.copied === "1") {
+          copyBtn.dataset.copied = "0";
+        }
+      });
+
+      copyBtn.dataset.bound = "1";
+    }
+
+    syncCreatorId();
+    void syncCreatorFooterVersion(footer);
+
+    if (footer.dataset.creatorFooterSessionBound !== "1") {
+      window.addEventListener("streamsuites:auth-init-complete", syncCreatorId);
+      window.addEventListener("focus", syncCreatorId);
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          syncCreatorId();
+        }
+      });
+      footer.dataset.creatorFooterSessionBound = "1";
+    }
+  }
+
   function initCreatorShell() {
     shell.app = document.getElementById("app") || document.querySelector(".creator-app");
     if (!shell.app) return;
@@ -581,6 +856,7 @@
     shell.main = document.getElementById("app-main") || shell.app.querySelector(".creator-main");
 
     initGlobalLoader();
+    initCreatorFooter();
     syncHeaderHeightVar();
 
     if (!shell.nav || !shell.headerLeft) return;

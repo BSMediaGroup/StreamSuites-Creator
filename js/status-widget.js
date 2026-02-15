@@ -36,11 +36,38 @@
 
   root.append(toggle, details);
 
-  const host = document.querySelector("[data-status-slot]");
+  const ensureCreatorInlineHost = () => {
+    const creatorFooter = document.querySelector("#app-footer.creator-footer, footer.creator-footer");
+    if (!creatorFooter) return null;
+
+    const existingSlot = creatorFooter.querySelector("[data-status-slot]");
+    if (existingSlot) return existingSlot;
+
+    const slot = document.createElement("span");
+    slot.className = "creator-footer-status-slot";
+    slot.setAttribute("data-status-slot", "");
+    slot.setAttribute("data-status-slot-mode", "inline");
+    const rightCluster =
+      creatorFooter.querySelector(".creator-footer-right, .footer-right") || creatorFooter;
+    rightCluster.appendChild(slot);
+    return slot;
+  };
+
+  const host = document.querySelector("[data-status-slot]") || ensureCreatorInlineHost();
+  const hasInlineMode =
+    !!host &&
+    (host.getAttribute("data-status-slot-mode") === "inline" ||
+      !!host.closest("#app-footer") ||
+      !!host.closest(".creator-footer") ||
+      !!host.closest(".footer-shell") ||
+      !!host.closest(".public-footer"));
+
   if (host) {
     host.appendChild(root);
+    root.dataset.layout = hasInlineMode ? "inline" : "embedded";
   } else {
     document.body.appendChild(root);
+    root.dataset.layout = "floating";
   }
   const hasFooterSlot = Boolean(host);
   let footerOffsetRaf = 0;

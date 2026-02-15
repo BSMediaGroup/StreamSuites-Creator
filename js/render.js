@@ -271,7 +271,11 @@
     if (!source) return html;
 
     const clone = source.cloneNode(true);
-    clone.querySelectorAll("script").forEach((node) => node.remove());
+    clone
+      .querySelectorAll(
+        "script, footer#app-footer, footer.creator-footer, footer.ss-footer, .creator-sidebar-scrim"
+      )
+      .forEach((node) => node.remove());
     return clone.innerHTML;
   }
 
