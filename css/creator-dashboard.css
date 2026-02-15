@@ -3024,12 +3024,11 @@ body.ss-sidebar-collapsed .sidebar-collapse-toggle-icon {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 8px;
-  line-height: 1;
 }
 
 #app-footer .creator-footer-support:hover,
 #app-footer .creator-footer-support:focus-visible {
-  border-color: rgba(123, 140, 255, 0.52);
+  border-color: rgba(104, 174, 255, 0.541);
   color: rgba(214, 226, 255, 0.78);
   text-decoration: none;
   outline: none;
