@@ -669,16 +669,14 @@
   }
 
   async function syncCreatorFooterVersion(footer) {
-    const versionEl = footer.querySelector(".creator-footer-version");
-    const buildEl = footer.querySelector(".creator-footer-build-token");
+    const versionEl = footer.querySelector(".creator-footer-version-trigger");
     const fullEl = footer.querySelector("[data-footer-version-tooltip=\"full\"]");
-    if (!versionEl || !buildEl || !fullEl) return;
+    if (!versionEl || !fullEl) return;
 
     const data = await fetchCreatorFooterVersionData();
     const version = formatCreatorVersion(data?.version);
     const build = normalizeCreatorBuild(data?.build);
     versionEl.textContent = `Dashboard ${version}`;
-    buildEl.textContent = `build ${build}`;
     fullEl.textContent = `Dashboard ${version} • build ${build}`;
   }
 
@@ -717,24 +715,16 @@
         </button>
       </div>
       <div class="creator-footer-center">
-        <span
-          id="footer-version"
-          class="creator-footer-version"
-          data-version-format="Dashboard {{version}}"
-          data-version-unavailable="Dashboard —"
-        >
-          Dashboard —
-        </span>
-        <span class="creator-footer-divider" aria-hidden="true">•</span>
         <span class="footer-version-tooltip-container">
           <button
+            id="footer-version"
             type="button"
-            class="creator-footer-build-token"
+            class="creator-footer-version creator-footer-version-trigger"
             aria-describedby="footer-version-tooltip"
-            data-version-format="build {{build}}"
-            data-version-unavailable="build —"
+            data-version-format="Dashboard {{version}}"
+            data-version-unavailable="Dashboard —"
           >
-            build —
+            Dashboard —
           </button>
           <div class="footer-version-tooltip" id="footer-version-tooltip" role="tooltip">
             <div
@@ -747,6 +737,15 @@
             </div>
           </div>
         </span>
+        <span class="creator-footer-divider" aria-hidden="true">•</span>
+        <a
+          class="creator-footer-copyright"
+          href="https://brainstream.media"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          © 2026 Brainstream Media Group
+        </a>
       </div>
       <div class="creator-footer-right">
         <a

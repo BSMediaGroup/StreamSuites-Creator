@@ -3,6 +3,18 @@
   const STATUS_URL = "https://streamsuites.statuspage.io/";
   const ROOT_ID = "ss-status-indicator";
   const DETAILS_ID = "ss-status-details";
+  const INDICATOR_LABELS = {
+    none: "OPERATIONAL",
+    minor: "DEGRADED",
+    major: "OUTAGE",
+    critical: "CRITICAL",
+  };
+  const INDICATOR_STATES = {
+    none: "operational",
+    minor: "degraded",
+    major: "outage",
+    critical: "critical",
+  };
 
   if (document.getElementById(ROOT_ID)) return;
 
@@ -25,7 +37,7 @@
 
   const label = document.createElement("span");
   label.className = "ss-status-label";
-  label.textContent = "Status";
+  label.textContent = "UNKNOWN";
 
   toggle.append(dot, label);
 
@@ -158,7 +170,7 @@
     return link;
   };
 
-  const computeState = (components) => {
+  const computeFallbackIndicator = (components) => {
     if (components.some((component) => component.status === "major_outage")) {
       return "major";
     }
@@ -169,13 +181,22 @@
           component.status === "degraded_performance"
       )
     ) {
-      return "partial";
+      return "minor";
     }
-    return "operational";
+    return "none";
+  };
+
+  const resolveIndicator = (summary, components) => {
+    const key = String(summary?.status?.indicator || "").toLowerCase();
+    if (Object.prototype.hasOwnProperty.call(INDICATOR_LABELS, key)) {
+      return key;
+    }
+    return computeFallbackIndicator(components);
   };
 
   const setUnavailable = () => {
     root.dataset.state = "unknown";
+    label.textContent = "UNKNOWN";
     details.innerHTML = "";
     const summary = document.createElement("div");
     summary.className = "ss-status-summary";
@@ -194,7 +215,9 @@
       (component) => component.status !== "operational"
     );
 
-    root.dataset.state = computeState(components);
+    const indicator = resolveIndicator(summary, components);
+    root.dataset.state = INDICATOR_STATES[indicator] || "unknown";
+    label.textContent = INDICATOR_LABELS[indicator] || "UNKNOWN";
 
     details.innerHTML = "";
     const description = summary?.status?.description || "Status unavailable.";
