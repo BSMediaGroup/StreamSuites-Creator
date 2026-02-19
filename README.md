@@ -103,6 +103,7 @@ StreamSuites-Creator/
 |   `-- runtime_snapshot.json
 |-- js/
 |   |-- app.js
+|   |-- account-settings.js
 |   |-- auth.js
 |   |-- creators.js
 |   |-- feature-gate.js

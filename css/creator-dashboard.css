@@ -3235,3 +3235,18 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
   }
 }
 
+.account-settings-tools {
+  margin-bottom: 1rem;
+}
+
+.account-email-change-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.account-provider-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}

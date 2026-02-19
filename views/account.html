@@ -240,6 +240,27 @@
             <article class="card">
               <h3>Login &amp; Security</h3>
               <p>Supported sign-in methods for your StreamSuites account.</p>
+              <div class="account-settings-tools">
+                <div class="account-field">
+                  <span class="account-field-label">Password</span>
+                  <span class="account-field-note" data-account-password-status="true"></span>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Change email</span>
+                  <div class="account-email-change-row">
+                    <input
+                      class="account-field-input"
+                      type="email"
+                      placeholder="new-email@example.com"
+                      data-account-email-change-input="true"
+                    />
+                    <button class="creator-button ghost" type="button" data-account-email-change-request="true">
+                      Send verification
+                    </button>
+                  </div>
+                  <span class="account-field-note" data-account-email-change-status="true"></span>
+                </div>
+              </div>
               <ul class="account-list">
                 <li class="account-list-item account-list-item-email">
                   <div class="account-list-main">
@@ -263,6 +284,10 @@
                   <span class="status-pill subtle" data-account-provider-status="discord">
                     <span class="status-dot"></span>Not connected
                   </span>
+                  <div class="account-provider-actions">
+                    <button class="creator-button ghost" type="button" data-account-provider-connect="discord">Connect</button>
+                    <button class="creator-button ghost" type="button" data-account-provider-disconnect="discord">Disconnect</button>
+                  </div>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
@@ -272,6 +297,10 @@
                   <span class="status-pill subtle" data-account-provider-status="google">
                     <span class="status-dot"></span>Not connected
                   </span>
+                  <div class="account-provider-actions">
+                    <button class="creator-button ghost" type="button" data-account-provider-connect="google">Connect</button>
+                    <button class="creator-button ghost" type="button" data-account-provider-disconnect="google">Disconnect</button>
+                  </div>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
@@ -281,6 +310,10 @@
                   <span class="status-pill subtle" data-account-provider-status="github">
                     <span class="status-dot"></span>Not connected
                   </span>
+                  <div class="account-provider-actions">
+                    <button class="creator-button ghost" type="button" data-account-provider-connect="github">Connect</button>
+                    <button class="creator-button ghost" type="button" data-account-provider-disconnect="github">Disconnect</button>
+                  </div>
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
@@ -290,9 +323,25 @@
                   <span class="status-pill subtle" data-account-provider-status="x">
                     <span class="status-dot"></span>Not connected
                   </span>
+                  <div class="account-provider-actions">
+                    <button class="creator-button ghost" type="button" data-account-provider-connect="x">Connect</button>
+                    <button class="creator-button ghost" type="button" data-account-provider-disconnect="x">Disconnect</button>
+                  </div>
+                </li>
+                <li class="account-list-item">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">Twitch</span>
+                  </div>
+                  <span class="status-pill subtle" data-account-provider-status="twitch">
+                    <span class="status-dot"></span>Not connected
+                  </span>
+                  <div class="account-provider-actions">
+                    <button class="creator-button ghost" type="button" data-account-provider-connect="twitch">Connect</button>
+                    <button class="creator-button ghost" type="button" data-account-provider-disconnect="twitch">Disconnect</button>
+                  </div>
                 </li>
               </ul>
-              <p class="account-note">Connection controls will appear once account security settings launch.</p>
+              <p class="account-note" data-account-provider-status-message="true">Manage sign-in methods for this account.</p>
             </article>
 
             <article class="card">
@@ -377,11 +426,10 @@
 
   <script src="/js/app.js"></script>
   <script src="/js/auth.js"></script>
+  <script src="/js/account-settings.js"></script>
   <script src="/js/status-widget.js" defer></script>
 </body>
 </html>
-
-
 
 
 
