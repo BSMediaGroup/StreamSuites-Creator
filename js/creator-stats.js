@@ -841,7 +841,11 @@
     if (iconPath) {
       return `
         <span class="creator-stats-quality-marker" title="${description}" aria-label="${description}">
-          <img class="creator-stats-quality-marker-icon" src="${escapeHtml(iconPath)}" alt="" aria-hidden="true" />
+          <span
+            class="creator-stats-quality-marker-icon"
+            style="--quality-marker-icon: url('${escapeHtml(iconPath)}')"
+            aria-hidden="true"
+          ></span>
         </span>
       `;
     }

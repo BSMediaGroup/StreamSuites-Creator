@@ -1889,7 +1889,7 @@ h3 {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.08);
-  color: var(--creator-text);
+  color: currentColor;
   font-size: 10px;
   line-height: 1;
 }
@@ -1898,8 +1898,15 @@ h3 {
   width: 9px;
   height: 9px;
   display: block;
-  object-fit: contain;
-  filter: brightness(1.2) contrast(1.05);
+  background-color: currentColor;
+  -webkit-mask-image: var(--quality-marker-icon);
+  mask-image: var(--quality-marker-icon);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 .creator-stats-platform-chips {
