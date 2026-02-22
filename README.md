@@ -63,6 +63,8 @@ Current creator surface includes the following implemented areas:
   - Sidebar-routed `Statistics` surface for creator metrics
   - Overview `Latest Stream Snapshot` card linked to the statistics route
   - Hydrates from `GET /api/creator/stats` with in-memory session caching
+  - Uses API-provided chart contracts (`data.growth_series.daily_points` and
+    `data.platform_share`) with client-side quality-symbol formatting
 
 ## Boundaries
 This repository is separate from:
@@ -125,6 +127,7 @@ StreamSuites-Creator/
 |   |-- triggers.js
 |   `-- utils/
 |       |-- notifications-store.js
+|       |-- stats-formatting.js
 |       |-- version-stamp.js
 |       `-- versioning.js
 `-- views/

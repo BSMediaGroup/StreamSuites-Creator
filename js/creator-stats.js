@@ -5,14 +5,7 @@
   const STATS_PATH = "/api/creator/stats";
   const UPDATE_EVENT = "streamsuites:creator-stats-updated";
   const DEFAULT_TIMEOUT_MS = 8000;
-
-  const QUALITY_MARKERS = Object.freeze({
-    exact: "+",
-    derived: "+",
-    approximate: "~",
-    partial: "*",
-    unavailable: "—"
-  });
+  const formatter = window.StreamSuitesStatsFormatting;
 
   const DEFAULT_QUALITY_LEGEND = Object.freeze({
     exact: "Direct platform metric captured from primary source.",
@@ -63,11 +56,20 @@
   }
 
   function normalizeQuality(value) {
+    if (formatter?.normalizeQuality) {
+      return formatter.normalizeQuality(value);
+    }
     const normalized = normalizeText(value, "").toLowerCase();
     if (!normalized) return "unavailable";
     if (normalized === "estimated") return "approximate";
     if (normalized === "direct") return "exact";
-    if (Object.prototype.hasOwnProperty.call(QUALITY_MARKERS, normalized)) {
+    if (
+      normalized === "exact" ||
+      normalized === "approximate" ||
+      normalized === "partial" ||
+      normalized === "derived" ||
+      normalized === "unavailable"
+    ) {
       return normalized;
     }
     return "unavailable";
@@ -160,19 +162,10 @@
   }
 
   function normalizeQualityLegend(rawLegend) {
-    const legend = { ...DEFAULT_QUALITY_LEGEND };
-    if (!rawLegend || typeof rawLegend !== "object") {
-      return legend;
+    if (formatter?.resolveLegend) {
+      return formatter.resolveLegend(rawLegend);
     }
-
-    Object.keys(legend).forEach((key) => {
-      const candidate = normalizeText(rawLegend[key], "");
-      if (candidate) {
-        legend[key] = candidate;
-      }
-    });
-
-    return legend;
+    return { ...DEFAULT_QUALITY_LEGEND };
   }
 
   function normalizeChannels(rawChannels) {
@@ -401,6 +394,24 @@
     return padded;
   }
 
+  function normalizeGrowthSeriesPoints(rawGrowthSeries) {
+    const growthSeries = rawGrowthSeries && typeof rawGrowthSeries === "object" ? rawGrowthSeries : {};
+    const dailyPoints = Array.isArray(growthSeries.daily_points) ? growthSeries.daily_points : [];
+    return dailyPoints
+      .map((point) => {
+        if (!point || typeof point !== "object") return null;
+        const totals = point.totals && typeof point.totals === "object" ? point.totals : {};
+        return {
+          dateUtc: normalizeText(point.date_utc, ""),
+          followersTotal: normalizeInteger(totals.followers_total),
+          viewsTotal: normalizeInteger(totals.views_total),
+          qualityFollowersTotal: normalizeQuality(point.quality?.followers_total),
+          qualityViewsTotal: normalizeQuality(point.quality?.views_total)
+        };
+      })
+      .filter((entry) => entry && (entry.followersTotal !== null || entry.viewsTotal !== null));
+  }
+
   function buildDeterministicSeries(payload) {
     const audienceTotal = Math.max(0, normalizeInteger(payload?.growth?.totals?.audienceTotal) || 0);
     const monthDelta = normalizeInteger(payload?.growth?.deltas?.month?.value) || 0;
@@ -426,7 +437,15 @@
     return points;
   }
 
-  function resolveGrowthSeries(rawGrowth, normalizedPayload) {
+  function resolveGrowthSeries(rawGrowthSeries, rawGrowth, normalizedPayload) {
+    const normalizedPoints = normalizeGrowthSeriesPoints(rawGrowthSeries);
+    if (normalizedPoints.length) {
+      return normalizedPoints
+        .map((entry) => entry.followersTotal)
+        .filter((entry) => entry !== null)
+        .slice(-30);
+    }
+
     const growth = rawGrowth && typeof rawGrowth === "object" ? rawGrowth : {};
     const directCandidates = [
       growth.series,
@@ -445,6 +464,63 @@
     return buildDeterministicSeries(normalizedPayload);
   }
 
+  function normalizePlatformShare(rawPlatformShare, channels) {
+    const platformShare =
+      rawPlatformShare && typeof rawPlatformShare === "object" ? rawPlatformShare : {};
+    const totals = platformShare.totals && typeof platformShare.totals === "object" ? platformShare.totals : {};
+    const byPlatformRaw =
+      platformShare.by_platform && typeof platformShare.by_platform === "object"
+        ? platformShare.by_platform
+        : {};
+    const qualityRaw = platformShare.quality && typeof platformShare.quality === "object" ? platformShare.quality : {};
+    const qualityByPlatformRaw =
+      qualityRaw.by_platform && typeof qualityRaw.by_platform === "object" ? qualityRaw.by_platform : {};
+
+    const allPlatforms = new Set();
+    Object.keys(byPlatformRaw).forEach((platform) => {
+      allPlatforms.add(normalizePlatformKey(platform));
+    });
+    (Array.isArray(channels) ? channels : []).forEach((channel) => {
+      if (channel?.platform) allPlatforms.add(normalizePlatformKey(channel.platform));
+    });
+
+    const byPlatform = Array.from(allPlatforms)
+      .filter(Boolean)
+      .map((platformKey) => {
+        const rawEntry = byPlatformRaw[platformKey];
+        const entry = rawEntry && typeof rawEntry === "object" ? rawEntry : {};
+        const fallbackChannel = (Array.isArray(channels) ? channels : []).find(
+          (channel) => channel.platform === platformKey
+        );
+        const followersTotal =
+          normalizeInteger(entry.followers_total) ?? normalizeInteger(fallbackChannel?.totalCount);
+        const qualityEntry = qualityByPlatformRaw[platformKey];
+        return {
+          platform: platformKey,
+          platformLabel: formatPlatformLabel(platformKey),
+          followersTotal,
+          quality:
+            typeof qualityEntry === "object"
+              ? normalizeQuality(qualityEntry.followers_total)
+              : normalizeQuality(qualityEntry)
+        };
+      });
+
+    const fallbackTotal = byPlatform.reduce((sum, platform) => {
+      return platform.followersTotal !== null ? sum + platform.followersTotal : sum;
+    }, 0);
+
+    return {
+      totals: {
+        followersTotal:
+          normalizeInteger(totals.followers_total) ??
+          (fallbackTotal > 0 ? fallbackTotal : null),
+        followersTotalQuality: normalizeQuality(qualityRaw.followers_total)
+      },
+      byPlatform
+    };
+  }
+
   function normalizeStatsPayload(rawPayload) {
     const payload = rawPayload && typeof rawPayload === "object" ? rawPayload : {};
     const data = payload.data && typeof payload.data === "object" ? payload.data : {};
@@ -456,7 +532,7 @@
       const weekPlatform = growth.deltas.week.byPlatform[channel.platform] || null;
       return {
         ...channel,
-        deltaWeek: weekPlatform ? weekPlatform.delta : 0,
+        deltaWeek: weekPlatform ? weekPlatform.delta : null,
         deltaWeekQuality: weekPlatform ? weekPlatform.quality : "unavailable"
       };
     });
@@ -468,12 +544,13 @@
       qualityLegend: normalizeQualityLegend(data.data_quality_legend),
       channels: channelsWithGrowth,
       growth,
+      platformShare: normalizePlatformShare(data.platform_share, channelsWithGrowth),
       latestStream: normalizeLatestStream(data.latest_stream),
       recentStreams: normalizeRecentStreams(data.recent_streams),
       automationRoi: normalizeAutomationRoi(data.automation_roi)
     };
 
-    normalized.growthSeries = resolveGrowthSeries(data.growth, normalized);
+    normalized.growthSeries = resolveGrowthSeries(data.growth_series, data.growth, normalized);
     return normalized;
   }
 
@@ -643,7 +720,7 @@
   }
 
   function formatSignedNumber(value) {
-    if (!Number.isFinite(value)) return "0";
+    if (!Number.isFinite(value)) return "—";
     if (value > 0) return `+${formatNumber(value)}`;
     if (value < 0) return `-${formatNumber(Math.abs(value))}`;
     return "0";
@@ -682,8 +759,30 @@
     }
     return `${secs}s`;
   }
-  function getQualityMarker(quality) {
-    return QUALITY_MARKERS[normalizeQuality(quality)] || QUALITY_MARKERS.unavailable;
+  function formatMetricWithQuality(value, quality, legend, metricFormatter = formatNumber) {
+    if (formatter?.formatValue) {
+      return formatter.formatValue(value, {
+        quality,
+        formatter: metricFormatter,
+        legend,
+        unavailableTitle: "Not available"
+      });
+    }
+    return {
+      displayText: value === null || value === undefined ? "—" : metricFormatter(value),
+      titleText: "Not available",
+      suffix: "",
+      quality: normalizeQuality(quality)
+    };
+  }
+
+  function getQualityMarker(quality, options = {}) {
+    const normalized = normalizeQuality(quality);
+    if (normalized === "approximate") return "~";
+    if (normalized === "partial") return "+";
+    if (normalized === "derived") return "*";
+    if (normalized === "unavailable" && options.includeUnavailable === true) return "—";
+    return "";
   }
 
   function getQualityDescription(quality, legend) {
@@ -691,15 +790,20 @@
     return legend?.[normalized] || DEFAULT_QUALITY_LEGEND[normalized] || "Quality unavailable.";
   }
 
-  function createQualityBadge(quality, legend) {
-    const marker = getQualityMarker(quality);
+  function createQualityBadge(quality, legend, options = {}) {
+    const marker = getQualityMarker(quality, options);
+    if (!marker) return "";
     const description = escapeHtml(getQualityDescription(quality, legend));
     return `<span class="creator-stats-quality-marker" title="${description}">${marker}</span>`;
   }
 
   function formatValueWithQuality(value, quality, legend, formatter = formatNumber) {
-    const display = value === null || value === undefined ? "—" : formatter(value);
-    return `${escapeHtml(display)} ${createQualityBadge(quality, legend)}`;
+    const formatted = formatMetricWithQuality(value, quality, legend, formatter);
+    const badge = createQualityBadge(quality, legend);
+    const display = escapeHtml(formatted.displayText);
+    return badge
+      ? `<span title="${escapeHtml(formatted.titleText)}">${display}</span> ${badge}`
+      : `<span title="${escapeHtml(formatted.titleText)}">${display}</span>`;
   }
 
   function indicatorClass(delta) {
@@ -775,13 +879,28 @@
     const latest = stats.latestStream;
     const platformSummary = latest.platforms
       .filter((entry) => entry.viewCount !== null)
-      .map((entry) => `${entry.platformLabel}: ${formatNumber(entry.viewCount)}`)
+      .map((entry) => {
+        const formatted = formatMetricWithQuality(
+          entry.viewCount,
+          entry.viewCountQuality,
+          stats.qualityLegend,
+          formatNumber
+        );
+        return `${entry.platformLabel}: ${formatted.displayText}`;
+      })
       .join(" | ");
+
+    const totalViewsFormatted = formatMetricWithQuality(
+      latest.viewCountTotal,
+      latest.viewCountTotalQuality,
+      stats.qualityLegend,
+      formatNumber
+    );
 
     statusPill.classList.add("success");
     statusPill.textContent = "Stats synced";
     titleEl.textContent = latest.title || "Latest stream unavailable";
-    totalEl.textContent = formatNumber(latest.viewCountTotal);
+    totalEl.textContent = totalViewsFormatted.displayText;
     metaEl.textContent = `Duration ${formatDuration(latest.durationSeconds)} | Started ${formatDateTime(
       latest.startedAtUtc
     )}`;
@@ -852,12 +971,12 @@
 
     const cards = deltas
       .map((item) => {
-        const delta = stats.growth.deltas[item.key] || { value: 0, quality: "unavailable" };
-        const value = Number(delta.value) || 0;
+        const delta = stats.growth.deltas[item.key] || { value: null, quality: "unavailable" };
+        const value = Number.isFinite(Number(delta.value)) ? Number(delta.value) : null;
         return `
           <article class="card creator-stats-delta-card">
             <h3>${escapeHtml(item.label)}</h3>
-            <p class="creator-stats-delta-value ${indicatorClass(value)}">
+            <p class="creator-stats-delta-value ${indicatorClass(value ?? 0)}">
               <span class="creator-stats-delta-indicator">${indicatorGlyph(value)}</span>
               ${escapeHtml(formatSignedNumber(value))}
               ${createQualityBadge(delta.quality, stats.qualityLegend)}
@@ -890,7 +1009,7 @@
 
     return stats.channels
       .map((channel) => {
-        const delta = Number(channel.deltaWeek) || 0;
+        const delta = Number.isFinite(Number(channel.deltaWeek)) ? Number(channel.deltaWeek) : null;
         return `
           <article class="creator-stats-platform-chip">
             <h4>${escapeHtml(channel.platformLabel)}</h4>
@@ -898,7 +1017,7 @@
               ${escapeHtml(formatNumber(channel.totalCount))}
               ${createQualityBadge(channel.totalCountQuality, stats.qualityLegend)}
             </p>
-            <span class="creator-stats-chip-delta ${indicatorClass(delta)}">
+            <span class="creator-stats-chip-delta ${indicatorClass(delta ?? 0)}">
               ${indicatorGlyph(delta)} ${escapeHtml(formatSignedNumber(delta))}
               ${createQualityBadge(channel.deltaWeekQuality, stats.qualityLegend)}
             </span>
@@ -963,16 +1082,18 @@
     `;
   }
 
-  function buildDonutChartMarkup(channels, qualityLegend) {
-    const active = Array.isArray(channels)
-      ? channels.filter((channel) => Number(channel.totalCount) > 0)
+  function buildDonutChartMarkup(platformShare, qualityLegend) {
+    const active = Array.isArray(platformShare?.byPlatform)
+      ? platformShare.byPlatform.filter((channel) => Number(channel.followersTotal) > 0)
       : [];
 
     if (!active.length) {
       return '<p class="muted">No platform share values available.</p>';
     }
 
-    const total = active.reduce((sum, channel) => sum + Number(channel.totalCount || 0), 0);
+    const total =
+      Number(platformShare?.totals?.followersTotal) ||
+      active.reduce((sum, channel) => sum + Number(channel.followersTotal || 0), 0);
     if (total <= 0) {
       return '<p class="muted">No platform share values available.</p>';
     }
@@ -1007,14 +1128,14 @@
 
     const legend = active
       .map((channel, index) => {
-        const value = Number(channel.totalCount || 0);
+        const value = Number(channel.followersTotal || 0);
         const share = total > 0 ? Math.round((value / total) * 1000) / 10 : 0;
         return `
           <li>
             <span class="creator-stats-donut-swatch" style="--swatch-color: ${colors[index % colors.length]};"></span>
             <span>${escapeHtml(channel.platformLabel)}</span>
             <span>${escapeHtml(formatNumber(value))} (${share}%) ${createQualityBadge(
-          channel.totalCountQuality,
+          channel.quality,
           qualityLegend
         )}</span>
           </li>
@@ -1093,7 +1214,7 @@
         <tbody>${platformRows}</tbody>
       </table>
       <p class="muted creator-stats-quality-note" title="${escapeHtml(stats.qualityLegend.approximate)}">
-        Quality markers: + exact/derived, ~ approximate, * partial, — unavailable.
+        Quality markers: ~ approximate, + partial, * derived, — unavailable.
       </p>
     `;
   }
@@ -1105,7 +1226,7 @@
 
     return streams.slice(0, 10)
       .map((stream, index) => {
-        const started = stream.startedAtUtc ? formatDateTime(stream.startedAtUtc) : "-";
+        const started = stream.startedAtUtc ? formatDateTime(stream.startedAtUtc) : "—";
         return `
           <li>
             <button type="button" class="creator-stats-recent-item" data-recent-index="${index}">
@@ -1199,6 +1320,7 @@
     errorPill: null,
     lastUpdated: null,
     refreshButton: null,
+    qualityLegend: null,
     kpiStrip: null,
     platformChips: null,
     lineChart: null,
@@ -1215,6 +1337,7 @@
     statisticsUi.errorPill = null;
     statisticsUi.lastUpdated = null;
     statisticsUi.refreshButton = null;
+    statisticsUi.qualityLegend = null;
     statisticsUi.kpiStrip = null;
     statisticsUi.platformChips = null;
     statisticsUi.lineChart = null;
@@ -1230,6 +1353,7 @@
     statisticsUi.errorPill = document.getElementById("creator-stats-error");
     statisticsUi.lastUpdated = document.getElementById("creator-stats-last-updated");
     statisticsUi.refreshButton = document.getElementById("creator-stats-refresh");
+    statisticsUi.qualityLegend = document.getElementById("creator-stats-quality-legend");
     statisticsUi.kpiStrip = document.getElementById("creator-stats-kpi-strip");
     statisticsUi.platformChips = document.getElementById("creator-stats-platform-chips");
     statisticsUi.lineChart = document.getElementById("creator-stats-line-chart");
@@ -1244,6 +1368,7 @@
         statisticsUi.errorPill &&
         statisticsUi.lastUpdated &&
         statisticsUi.refreshButton &&
+        statisticsUi.qualityLegend &&
         statisticsUi.kpiStrip &&
         statisticsUi.platformChips &&
         statisticsUi.lineChart &&
@@ -1274,6 +1399,9 @@
   }
 
   function renderStatisticsLoadingLayout() {
+    if (statisticsUi.qualityLegend) {
+      statisticsUi.qualityLegend.textContent = "Data quality: ~ approximate, + partial, * derived, — unavailable";
+    }
     statisticsUi.kpiStrip.innerHTML = buildLoadingCards(5, "Loading metrics");
     statisticsUi.platformChips.innerHTML = buildLoadingCards(3, "Loading platform stats");
     statisticsUi.lineChart.innerHTML = '<div class="creator-stats-chart-loading"></div>';
@@ -1286,10 +1414,22 @@
   }
 
   function renderStatisticsContent(stats) {
+    if (statisticsUi.qualityLegend) {
+      const approximate = stats.qualityLegend?.approximate || DEFAULT_QUALITY_LEGEND.approximate;
+      const partial = stats.qualityLegend?.partial || DEFAULT_QUALITY_LEGEND.partial;
+      const derived = stats.qualityLegend?.derived || DEFAULT_QUALITY_LEGEND.derived;
+      const unavailable = stats.qualityLegend?.unavailable || DEFAULT_QUALITY_LEGEND.unavailable;
+      statisticsUi.qualityLegend.innerHTML = `
+        <span title="${escapeHtml(approximate)}">~ approximate</span>
+        <span title="${escapeHtml(partial)}">+ partial</span>
+        <span title="${escapeHtml(derived)}">* derived</span>
+        <span title="${escapeHtml(unavailable)}">— unavailable</span>
+      `;
+    }
     statisticsUi.kpiStrip.innerHTML = buildDeltaCardsMarkup(stats);
     statisticsUi.platformChips.innerHTML = buildPlatformChipsMarkup(stats);
     statisticsUi.lineChart.innerHTML = buildLineChartMarkup(stats.growthSeries);
-    statisticsUi.donutChart.innerHTML = buildDonutChartMarkup(stats.channels, stats.qualityLegend);
+    statisticsUi.donutChart.innerHTML = buildDonutChartMarkup(stats.platformShare, stats.qualityLegend);
     statisticsUi.latestBreakdown.innerHTML = buildLatestStreamMarkup(stats);
     statisticsUi.recentList.innerHTML = buildRecentStreamsMarkup(stats.recentStreams);
     statisticsUi.recentDetail.innerHTML =
