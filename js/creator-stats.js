@@ -15,7 +15,7 @@
     unavailable: "Value is currently not available in Phase 0."
   });
   const QUALITY_MARKER_ICON_PATHS = Object.freeze({
-    exact: "/assets/icons/ui/tickcircle.svg",
+    exact: "/assets/icons/ui/tickyeslarge.svg",
     approximate: "/assets/icons/ui/approx.svg",
     partial: "/assets/icons/ui/add.svg",
     derived: "/assets/icons/ui/asterisk.svg",
