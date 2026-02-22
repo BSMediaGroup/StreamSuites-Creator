@@ -1804,6 +1804,368 @@ h3 {
   color: var(--creator-accent-strong);
 }
 
+.creator-overview-stats-card {
+  margin-bottom: 24px;
+}
+
+.creator-overview-stats-platforms {
+  margin-top: 2px;
+}
+
+.creator-overview-stats-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.creator-overview-stats-updated {
+  margin-top: 2px;
+}
+
+.creator-stats-view {
+  display: grid;
+  gap: 20px;
+}
+
+.creator-stats-section {
+  display: grid;
+  gap: 16px;
+}
+
+.creator-stats-error {
+  width: fit-content;
+  border-color: rgba(217, 83, 79, 0.55);
+  background: rgba(217, 83, 79, 0.15);
+  color: #ffb3b0;
+}
+
+.creator-stats-kpi-strip {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.creator-stats-total-value {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.creator-stats-delta-card h3 {
+  font-size: 14px;
+}
+
+.creator-stats-delta-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.creator-stats-delta-value.is-up,
+.creator-stats-chip-delta.is-up {
+  color: #8ccf36;
+}
+
+.creator-stats-delta-value.is-down,
+.creator-stats-chip-delta.is-down {
+  color: #fb7f7f;
+}
+
+.creator-stats-delta-value.is-flat,
+.creator-stats-chip-delta.is-flat {
+  color: var(--creator-muted);
+}
+
+.creator-stats-delta-indicator {
+  font-size: 11px;
+}
+
+.creator-stats-quality-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--creator-text);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.creator-stats-platform-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.creator-stats-platform-chip {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(9, 13, 21, 0.7);
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+}
+
+.creator-stats-platform-chip h4 {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--creator-muted);
+}
+
+.creator-stats-platform-chip p {
+  margin: 0;
+  font-size: 17px;
+  color: var(--creator-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.creator-stats-chip-delta {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.creator-stats-chart-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.creator-stats-chart {
+  min-height: 210px;
+}
+
+.creator-stats-line-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.creator-stats-grid-lines line {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1;
+}
+
+.creator-stats-line-area {
+  fill: url(#creator-stats-line-fill);
+}
+
+.creator-stats-line-path {
+  fill: none;
+  stroke: #8da0ff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.creator-stats-line-meta {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--creator-muted);
+}
+
+.creator-stats-donut-wrap {
+  width: fit-content;
+  margin: 0 auto;
+  position: relative;
+}
+
+.creator-stats-donut-svg {
+  width: min(250px, 100%);
+  display: block;
+}
+
+.creator-stats-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.creator-stats-donut-center span {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--creator-muted);
+}
+
+.creator-stats-donut-center strong {
+  font-size: 20px;
+}
+
+.creator-stats-donut-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.creator-stats-donut-legend li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.creator-stats-donut-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--swatch-color, #86a6ff);
+}
+
+.creator-stats-latest-card {
+  gap: 16px;
+}
+
+.creator-stats-latest-header {
+  display: grid;
+  gap: 8px;
+}
+
+.creator-stats-latest-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--creator-muted);
+}
+
+.creator-stats-major-stat .stat-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 24px;
+}
+
+.creator-stats-table td,
+.creator-stats-table th {
+  vertical-align: middle;
+}
+
+.creator-stats-table td:nth-child(2) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.creator-stats-quality-note {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.creator-stats-recent-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.creator-stats-recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.creator-stats-recent-item {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(9, 13, 21, 0.8);
+  color: var(--creator-text);
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.creator-stats-recent-item:hover,
+.creator-stats-recent-item:focus-visible {
+  border-color: rgba(123, 140, 255, 0.45);
+}
+
+.creator-stats-recent-detail {
+  gap: 12px;
+}
+
+.creator-stats-recent-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.creator-stats-recent-links li {
+  margin: 0;
+}
+
+.creator-stats-history-link {
+  width: fit-content;
+}
+
+.creator-stats-roi-progress .ss-progress {
+  height: 12px;
+}
+
+.creator-stats-skeleton-block,
+.creator-stats-chart-loading {
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 25%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0.08) 75%
+  );
+  background-size: 220% 100%;
+  animation: creator-stats-shimmer 1.35s linear infinite;
+}
+
+.creator-stats-skeleton-block {
+  display: block;
+  width: 100%;
+  height: 12px;
+}
+
+.creator-stats-skeleton-block.short {
+  width: 62%;
+}
+
+.creator-stats-chart-loading {
+  width: 100%;
+  min-height: 210px;
+}
+
+@keyframes creator-stats-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+
 .creator-onboarding {
   padding: 48px 32px 64px;
   display: flex;

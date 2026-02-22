@@ -59,6 +59,10 @@ Current creator surface includes the following implemented areas:
   - Runtime fetch from creator notifications API
   - Local read/mute state persistence
   - Seed fallback when live notifications are unavailable
+- Statistics view (Phase 0 placeholder):
+  - Sidebar-routed `Statistics` surface for creator metrics
+  - Overview `Latest Stream Snapshot` card linked to the statistics route
+  - Hydrates from `GET /api/creator/stats` with in-memory session caching
 
 ## Boundaries
 This repository is separate from:
@@ -105,6 +109,7 @@ StreamSuites-Creator/
 |   |-- app.js
 |   |-- account-settings.js
 |   |-- auth.js
+|   |-- creator-stats.js
 |   |-- creators.js
 |   |-- feature-gate.js
 |   |-- jobs.js
@@ -131,6 +136,7 @@ StreamSuites-Creator/
     |-- onboarding.html
     |-- overview.html
     |-- plans.html
+    |-- statistics.html
     |-- scoreboards.html
     |-- settings.html
     |-- tallies.html

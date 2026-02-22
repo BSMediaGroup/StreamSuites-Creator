@@ -1,0 +1,89 @@
+<!-- ========================================================= -->
+<!-- StreamSuites - Statistics (VIEW PARTIAL) -->
+<!-- ========================================================= -->
+
+<header class="ss-header">
+  <div class="ss-header-left">
+    <h1 class="ss-title">Statistics</h1>
+    <span class="ss-subtitle">Creator metrics (Phase 0 mock data)</span>
+  </div>
+  <div class="ss-header-right">
+    <span id="creator-stats-last-updated" class="ss-chip">Last updated: —</span>
+    <span id="creator-stats-fetch-state" class="status-pill subtle">Ready</span>
+  </div>
+</header>
+
+<main class="ss-main creator-stats-view">
+  <section class="creator-section creator-stats-section">
+    <div class="section-header">
+      <div>
+        <span class="section-kicker">Creator Statistics</span>
+        <h2>Audience growth + livestream performance</h2>
+      </div>
+      <div class="section-actions">
+        <a class="creator-button ghost" href="#overview" data-route="overview">Back to Overview</a>
+        <button id="creator-stats-refresh" type="button" class="creator-button primary">Refresh</button>
+      </div>
+    </div>
+    <div id="creator-stats-error" class="ss-chip creator-stats-error hidden"></div>
+    <div id="creator-stats-kpi-strip" class="card-grid creator-stats-kpi-strip"></div>
+    <div id="creator-stats-platform-chips" class="creator-stats-platform-chips"></div>
+  </section>
+
+  <section class="creator-section creator-stats-section">
+    <div class="section-header">
+      <div>
+        <span class="section-kicker">Growth Charts</span>
+        <h2>Trend + platform share</h2>
+      </div>
+      <p class="section-subtext">Rendered with local SVG only for Phase 0 wiring.</p>
+    </div>
+    <div class="card-grid creator-stats-chart-grid">
+      <article class="card">
+        <h3>Audience growth (30 points)</h3>
+        <div id="creator-stats-line-chart" class="creator-stats-chart"></div>
+      </article>
+      <article class="card">
+        <h3>Platform share</h3>
+        <div id="creator-stats-donut-chart" class="creator-stats-chart"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="creator-section creator-stats-section">
+    <div class="section-header">
+      <div>
+        <span class="section-kicker">Latest Livestream</span>
+        <h2>Cross-platform breakdown</h2>
+      </div>
+    </div>
+    <article id="creator-stats-latest-breakdown" class="card creator-stats-latest-card"></article>
+  </section>
+
+  <section class="creator-section creator-stats-section">
+    <div class="section-header">
+      <div>
+        <span class="section-kicker">Recent Streams</span>
+        <h2>Previous events</h2>
+      </div>
+      <a class="creator-button ghost" href="#updates" data-route="updates">Stream History placeholder</a>
+    </div>
+    <div class="card-grid creator-stats-recent-grid">
+      <article class="card">
+        <h3>Last 10 stream titles</h3>
+        <ul id="creator-stats-recent-list" class="creator-stats-recent-list"></ul>
+      </article>
+      <article id="creator-stats-recent-detail" class="card creator-stats-recent-detail"></article>
+    </div>
+  </section>
+
+  <section class="creator-section creator-stats-section">
+    <div class="section-header">
+      <div>
+        <span class="section-kicker">Automation ROI</span>
+        <h2>Trigger + clip + job outcomes</h2>
+      </div>
+    </div>
+    <article id="creator-stats-automation" class="card creator-stats-automation-card"></article>
+  </section>
+</main>

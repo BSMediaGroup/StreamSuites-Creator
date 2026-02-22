@@ -25,6 +25,8 @@
   };
 
   const ViewScripts = Object.freeze({
+    overview: ["/js/creator-stats.js"],
+    statistics: ["/js/creator-stats.js"],
     plans: ["/js/plans.js"],
     triggers: ["/js/feature-gate.js", "/js/triggers.js"],
     settings: ["/js/platforms.js", "/js/settings.js"],
@@ -438,7 +440,11 @@
   }
 
   function registerDefaultViews() {
-    registerView("overview");
+    registerView("overview", { scripts: ViewScripts.overview, controllerName: "OverviewView" });
+    registerView("statistics", {
+      scripts: ViewScripts.statistics,
+      controllerName: "StatisticsView"
+    });
     registerView("account");
     registerView("plans", { scripts: ViewScripts.plans, controllerName: "PlansView" });
     registerView("triggers", { scripts: ViewScripts.triggers, controllerName: "TriggersView" });
