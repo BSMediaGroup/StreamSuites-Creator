@@ -14,6 +14,12 @@
     derived: "Computed from other metrics in this payload.",
     unavailable: "Value is currently not available in Phase 0."
   });
+  const QUALITY_MARKER_ICON_PATHS = Object.freeze({
+    approximate: "/assets/icons/ui/approx.svg",
+    partial: "/assets/icons/ui/add.svg",
+    derived: "/assets/icons/ui/asterisk.svg",
+    unavailable: "/assets/icons/ui/minus.svg"
+  });
 
   const FETCH_STATUS = Object.freeze({
     idle: "idle",
@@ -464,6 +470,15 @@
     return buildDeterministicSeries(normalizedPayload);
   }
 
+  function resolveGrowthSeriesDateLabels(rawGrowthSeries) {
+    const normalizedPoints = normalizeGrowthSeriesPoints(rawGrowthSeries);
+    if (!normalizedPoints.length) return [];
+    return normalizedPoints
+      .filter((entry) => entry.followersTotal !== null)
+      .slice(-30)
+      .map((entry) => formatCompactDateLabel(entry.dateUtc));
+  }
+
   function normalizePlatformShare(rawPlatformShare, channels) {
     const platformShare =
       rawPlatformShare && typeof rawPlatformShare === "object" ? rawPlatformShare : {};
@@ -551,6 +566,7 @@
     };
 
     normalized.growthSeries = resolveGrowthSeries(data.growth_series, data.growth, normalized);
+    normalized.growthSeriesDateLabels = resolveGrowthSeriesDateLabels(data.growth_series);
     return normalized;
   }
 
@@ -759,6 +775,22 @@
     }
     return `${secs}s`;
   }
+
+  function formatCompactDateLabel(value) {
+    const raw = normalizeText(value, "");
+    if (!raw) return "";
+    const date = new Date(raw);
+    if (Number.isNaN(date.getTime())) return raw;
+    try {
+      return date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric"
+      });
+    } catch (_err) {
+      return raw;
+    }
+  }
+
   function formatMetricWithQuality(value, quality, legend, metricFormatter = formatNumber) {
     if (formatter?.formatValue) {
       return formatter.formatValue(value, {
@@ -785,6 +817,17 @@
     return "";
   }
 
+  function getQualityMarkerIconPath(quality, options = {}) {
+    const normalized = normalizeQuality(quality);
+    if (normalized === "approximate") return QUALITY_MARKER_ICON_PATHS.approximate;
+    if (normalized === "partial") return QUALITY_MARKER_ICON_PATHS.partial;
+    if (normalized === "derived") return QUALITY_MARKER_ICON_PATHS.derived;
+    if (normalized === "unavailable" && options.includeUnavailable === true) {
+      return QUALITY_MARKER_ICON_PATHS.unavailable;
+    }
+    return "";
+  }
+
   function getQualityDescription(quality, legend) {
     const normalized = normalizeQuality(quality);
     return legend?.[normalized] || DEFAULT_QUALITY_LEGEND[normalized] || "Quality unavailable.";
@@ -792,9 +835,24 @@
 
   function createQualityBadge(quality, legend, options = {}) {
     const marker = getQualityMarker(quality, options);
-    if (!marker) return "";
+    const iconPath = getQualityMarkerIconPath(quality, options);
+    if (!marker && !iconPath) return "";
     const description = escapeHtml(getQualityDescription(quality, legend));
+    if (iconPath) {
+      return `
+        <span class="creator-stats-quality-marker" title="${description}" aria-label="${description}">
+          <img class="creator-stats-quality-marker-icon" src="${escapeHtml(iconPath)}" alt="" aria-hidden="true" />
+        </span>
+      `;
+    }
     return `<span class="creator-stats-quality-marker" title="${description}">${marker}</span>`;
+  }
+
+  function buildQualityLegendInlineItem(quality, label, legend) {
+    const description = getQualityDescription(quality, legend);
+    return `<span title="${escapeHtml(description)}">${createQualityBadge(quality, legend, {
+      includeUnavailable: quality === "unavailable"
+    })} ${escapeHtml(label)}</span>`;
   }
 
   function formatValueWithQuality(value, quality, legend, formatter = formatNumber) {
@@ -1026,7 +1084,7 @@
       })
       .join("");
   }
-  function buildLineChartMarkup(series) {
+  function buildLineChartMarkup(series, options = {}) {
     if (!Array.isArray(series) || !series.length) {
       return '<p class="muted">No growth points available.</p>';
     }
@@ -1040,6 +1098,7 @@
     const barsTop = 208;
     const barsHeight = 52;
     const points = series.map((value) => Math.max(0, Number(value) || 0));
+    const pointLabels = Array.isArray(options.dateLabels) ? options.dateLabels : [];
     const min = Math.min(...points);
     const max = Math.max(...points);
     const range = max - min || 1;
@@ -1091,13 +1150,14 @@
     const xTicks = xTickIndexes
       .map((index) => {
         const xPos = x(index);
+        const labelText = normalizeText(pointLabels[index], `Day ${index + 1}`);
         return `
           <line x1="${xPos.toFixed(2)}" y1="${(paddingTop + chartHeight).toFixed(2)}" x2="${xPos.toFixed(
             2
           )}" y2="${(paddingTop + chartHeight + 6).toFixed(2)}" class="creator-stats-axis-tick"></line>
           <text x="${xPos.toFixed(2)}" y="${(paddingTop + chartHeight + 18).toFixed(
             2
-          )}" text-anchor="middle" class="creator-stats-axis-label">P${index + 1}</text>
+          )}" text-anchor="middle" class="creator-stats-axis-label">${escapeHtml(labelText)}</text>
         `;
       })
       .join("");
@@ -1298,7 +1358,11 @@
         <tbody>${platformRows}</tbody>
       </table>
       <p class="muted creator-stats-quality-note" title="${escapeHtml(stats.qualityLegend.approximate)}">
-        Quality markers: ~ approximate, + partial, * derived, — unavailable.
+        Quality markers:
+        ${buildQualityLegendInlineItem("approximate", "approximate", stats.qualityLegend)}
+        ${buildQualityLegendInlineItem("partial", "partial", stats.qualityLegend)}
+        ${buildQualityLegendInlineItem("derived", "derived", stats.qualityLegend)}
+        ${buildQualityLegendInlineItem("unavailable", "unavailable", stats.qualityLegend)}
       </p>
     `;
   }
@@ -1484,7 +1548,13 @@
 
   function renderStatisticsLoadingLayout() {
     if (statisticsUi.qualityLegend) {
-      statisticsUi.qualityLegend.textContent = "Data quality: ~ approximate, + partial, * derived, — unavailable";
+      statisticsUi.qualityLegend.innerHTML = `
+        Data quality:
+        ${buildQualityLegendInlineItem("approximate", "approximate", DEFAULT_QUALITY_LEGEND)}
+        ${buildQualityLegendInlineItem("partial", "partial", DEFAULT_QUALITY_LEGEND)}
+        ${buildQualityLegendInlineItem("derived", "derived", DEFAULT_QUALITY_LEGEND)}
+        ${buildQualityLegendInlineItem("unavailable", "unavailable", DEFAULT_QUALITY_LEGEND)}
+      `;
     }
     statisticsUi.kpiStrip.innerHTML = buildLoadingCards(5, "Loading metrics");
     statisticsUi.platformChips.innerHTML = buildLoadingCards(3, "Loading platform stats");
@@ -1499,20 +1569,18 @@
 
   function renderStatisticsContent(stats) {
     if (statisticsUi.qualityLegend) {
-      const approximate = stats.qualityLegend?.approximate || DEFAULT_QUALITY_LEGEND.approximate;
-      const partial = stats.qualityLegend?.partial || DEFAULT_QUALITY_LEGEND.partial;
-      const derived = stats.qualityLegend?.derived || DEFAULT_QUALITY_LEGEND.derived;
-      const unavailable = stats.qualityLegend?.unavailable || DEFAULT_QUALITY_LEGEND.unavailable;
       statisticsUi.qualityLegend.innerHTML = `
-        <span title="${escapeHtml(approximate)}">~ approximate</span>
-        <span title="${escapeHtml(partial)}">+ partial</span>
-        <span title="${escapeHtml(derived)}">* derived</span>
-        <span title="${escapeHtml(unavailable)}">— unavailable</span>
+        ${buildQualityLegendInlineItem("approximate", "approximate", stats.qualityLegend)}
+        ${buildQualityLegendInlineItem("partial", "partial", stats.qualityLegend)}
+        ${buildQualityLegendInlineItem("derived", "derived", stats.qualityLegend)}
+        ${buildQualityLegendInlineItem("unavailable", "unavailable", stats.qualityLegend)}
       `;
     }
     statisticsUi.kpiStrip.innerHTML = buildDeltaCardsMarkup(stats);
     statisticsUi.platformChips.innerHTML = buildPlatformChipsMarkup(stats);
-    statisticsUi.lineChart.innerHTML = buildLineChartMarkup(stats.growthSeries);
+    statisticsUi.lineChart.innerHTML = buildLineChartMarkup(stats.growthSeries, {
+      dateLabels: stats.growthSeriesDateLabels
+    });
     statisticsUi.donutChart.innerHTML = buildDonutChartMarkup(stats.platformShare, stats.qualityLegend);
     statisticsUi.latestBreakdown.innerHTML = buildLatestStreamMarkup(stats);
     statisticsUi.recentList.innerHTML = buildRecentStreamsMarkup(stats.recentStreams);

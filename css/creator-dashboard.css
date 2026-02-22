@@ -1894,6 +1894,14 @@ h3 {
   line-height: 1;
 }
 
+.creator-stats-quality-marker-icon {
+  width: 9px;
+  height: 9px;
+  display: block;
+  object-fit: contain;
+  filter: brightness(1.2) contrast(1.05);
+}
+
 .creator-stats-platform-chips {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
