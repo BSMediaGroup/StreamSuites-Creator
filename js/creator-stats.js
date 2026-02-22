@@ -1032,35 +1032,99 @@
     }
 
     const width = 640;
-    const height = 250;
+    const height = 292;
     const paddingX = 24;
-    const paddingY = 24;
+    const paddingTop = 22;
+    const paddingBottom = 28;
+    const chartHeight = 164;
+    const barsTop = 208;
+    const barsHeight = 52;
     const points = series.map((value) => Math.max(0, Number(value) || 0));
     const min = Math.min(...points);
     const max = Math.max(...points);
     const range = max - min || 1;
+    const deltas = points.map((value, index) => (index === 0 ? 0 : value - points[index - 1]));
+    const deltaAbsMax = Math.max(1, ...deltas.map((value) => Math.abs(value)));
+    const netChange = points[points.length - 1] - points[0];
+    const avgDelta =
+      deltas.length > 1
+        ? deltas.slice(1).reduce((sum, value) => sum + value, 0) / (deltas.length - 1)
+        : 0;
+    const movingAverage = points.map((_, index) => {
+      const start = Math.max(0, index - 6);
+      const window = points.slice(start, index + 1);
+      return Math.round(window.reduce((sum, value) => sum + value, 0) / window.length);
+    });
 
     const x = (index) =>
       paddingX + (index / Math.max(1, points.length - 1)) * (width - paddingX * 2);
     const y = (value) =>
-      height - paddingY - ((value - min) / range) * (height - paddingY * 2);
+      paddingTop + ((max - value) / range) * chartHeight;
+    const yDelta = (delta) =>
+      barsTop + barsHeight - (Math.abs(delta) / deltaAbsMax) * (barsHeight - 4);
 
     const linePath = points
       .map((value, index) => `${index === 0 ? "M" : "L"} ${x(index).toFixed(2)} ${y(value).toFixed(2)}`)
       .join(" ");
+    const movingAveragePath = movingAverage
+      .map(
+        (value, index) =>
+          `${index === 0 ? "M" : "L"} ${x(index).toFixed(2)} ${y(value).toFixed(2)}`
+      )
+      .join(" ");
 
-    const areaPath = `${linePath} L ${x(points.length - 1).toFixed(2)} ${(height - paddingY).toFixed(
+    const areaPath = `${linePath} L ${x(points.length - 1).toFixed(2)} ${(paddingTop + chartHeight).toFixed(
       2
-    )} L ${x(0).toFixed(2)} ${(height - paddingY).toFixed(2)} Z`;
+    )} L ${x(0).toFixed(2)} ${(paddingTop + chartHeight).toFixed(2)} Z`;
 
     const ticks = [0, 0.25, 0.5, 0.75, 1]
       .map((ratio) => {
-        const yPos = (height - paddingY) - ratio * (height - paddingY * 2);
+        const yPos = (paddingTop + chartHeight) - ratio * chartHeight;
         return `<line x1="${paddingX}" y1="${yPos.toFixed(2)}" x2="${(
           width - paddingX
         ).toFixed(2)}" y2="${yPos.toFixed(2)}"></line>`;
       })
       .join("");
+    const xTickIndexes = [0, 5, 10, 15, 20, 25, points.length - 1].filter(
+      (value, idx, arr) => arr.indexOf(value) === idx
+    );
+    const xTicks = xTickIndexes
+      .map((index) => {
+        const xPos = x(index);
+        return `
+          <line x1="${xPos.toFixed(2)}" y1="${(paddingTop + chartHeight).toFixed(2)}" x2="${xPos.toFixed(
+            2
+          )}" y2="${(paddingTop + chartHeight + 6).toFixed(2)}" class="creator-stats-axis-tick"></line>
+          <text x="${xPos.toFixed(2)}" y="${(paddingTop + chartHeight + 18).toFixed(
+            2
+          )}" text-anchor="middle" class="creator-stats-axis-label">P${index + 1}</text>
+        `;
+      })
+      .join("");
+    const pointMarkers = points
+      .map((value, index) => {
+        const isEmphasis = index === 0 || index === points.length - 1 || index % 5 === 0;
+        if (!isEmphasis) return "";
+        return `<circle cx="${x(index).toFixed(2)}" cy="${y(value).toFixed(
+          2
+        )}" r="${index === points.length - 1 ? "3.8" : "2.7"}" class="creator-stats-line-point"></circle>`;
+      })
+      .join("");
+    const barWidth = Math.max(4, ((width - paddingX * 2) / Math.max(1, points.length)) * 0.64);
+    const deltaBars = deltas
+      .map((delta, index) => {
+        const xPos = x(index) - barWidth / 2;
+        const yPos = yDelta(delta);
+        const h = Math.max(2, barsTop + barsHeight - yPos);
+        const tone = delta >= 0 ? "positive" : "negative";
+        return `<rect x="${xPos.toFixed(2)}" y="${yPos.toFixed(2)}" width="${barWidth.toFixed(
+          2
+        )}" height="${h.toFixed(2)}" rx="2" class="creator-stats-delta-bar ${tone}"></rect>`;
+      })
+      .join("");
+    const latestX = x(points.length - 1);
+    const latestY = y(points[points.length - 1]);
+    const avg7 = movingAverage[movingAverage.length - 1];
 
     return `
       <svg class="creator-stats-line-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Audience growth last 30 points">
@@ -1071,13 +1135,33 @@
           </linearGradient>
         </defs>
         <g class="creator-stats-grid-lines">${ticks}</g>
+        <line x1="${paddingX}" y1="${(barsTop - 6).toFixed(2)}" x2="${(width - paddingX).toFixed(
+      2
+    )}" y2="${(barsTop - 6).toFixed(2)}" class="creator-stats-separator-line"></line>
         <path class="creator-stats-line-area" d="${areaPath}"></path>
+        <path class="creator-stats-line-path creator-stats-line-path-avg" d="${movingAveragePath}"></path>
         <path class="creator-stats-line-path" d="${linePath}"></path>
+        ${pointMarkers}
+        <g class="creator-stats-delta-bars">${deltaBars}</g>
+        <g class="creator-stats-x-axis">${xTicks}</g>
+        <line x1="${latestX.toFixed(2)}" y1="${paddingTop}" x2="${latestX.toFixed(2)}" y2="${(
+      paddingTop + chartHeight
+    ).toFixed(2)}" class="creator-stats-crosshair"></line>
+        <circle cx="${latestX.toFixed(2)}" cy="${latestY.toFixed(2)}" r="5.2" class="creator-stats-line-point is-latest"></circle>
+        <text x="${Math.max(paddingX + 34, latestX - 6).toFixed(2)}" y="${Math.max(
+      14,
+      latestY - 12
+    ).toFixed(2)}" text-anchor="end" class="creator-stats-line-callout">
+          ${escapeHtml(formatNumber(points[points.length - 1]))}
+        </text>
       </svg>
       <div class="creator-stats-line-meta">
         <span>30 points</span>
         <span>Min ${escapeHtml(formatNumber(min))}</span>
         <span>Max ${escapeHtml(formatNumber(max))}</span>
+        <span>Net ${escapeHtml(formatSignedNumber(netChange))}</span>
+        <span>Avg delta ${escapeHtml(formatSignedNumber(Math.round(avgDelta)))}</span>
+        <span>7pt avg ${escapeHtml(formatNumber(avg7))}</span>
       </div>
     `;
   }
@@ -1105,7 +1189,7 @@
 
     const segments = active
       .map((channel, index) => {
-        const value = Number(channel.totalCount || 0);
+        const value = Number(channel.followersTotal ?? channel.totalCount ?? 0);
         const fraction = value / total;
         const arcLength = fraction * circumference;
         const markup = `

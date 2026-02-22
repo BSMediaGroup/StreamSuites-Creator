@@ -1965,6 +1965,66 @@ h3 {
   stroke-linejoin: round;
 }
 
+.creator-stats-line-path-avg {
+  stroke: rgba(94, 226, 205, 0.95);
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+}
+
+.creator-stats-line-point {
+  fill: #9eb0ff;
+  stroke: rgba(9, 13, 21, 0.95);
+  stroke-width: 1.5;
+}
+
+.creator-stats-line-point.is-latest {
+  fill: #d7e0ff;
+  stroke: rgba(123, 140, 255, 0.85);
+  stroke-width: 2;
+}
+
+.creator-stats-separator-line {
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 1;
+}
+
+.creator-stats-delta-bar {
+  opacity: 0.88;
+}
+
+.creator-stats-delta-bar.positive {
+  fill: rgba(94, 226, 205, 0.72);
+}
+
+.creator-stats-delta-bar.negative {
+  fill: rgba(251, 127, 127, 0.72);
+}
+
+.creator-stats-axis-tick {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 1;
+}
+
+.creator-stats-axis-label {
+  fill: var(--creator-muted);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.creator-stats-crosshair {
+  stroke: rgba(141, 160, 255, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.creator-stats-line-callout {
+  fill: #dbe4ff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
 .creator-stats-line-meta {
   margin-top: 10px;
   display: flex;

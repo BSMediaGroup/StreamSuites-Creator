@@ -74,7 +74,7 @@
 
   const NAV_ICON_BY_SEGMENT = Object.freeze({
     overview: "/assets/icons/ui/dashboard.svg",
-    statistics: "/assets/icons/ui/dashgear.svg",
+    statistics: "/assets/icons/ui/linechart.svg",
     index: "/assets/icons/ui/dashboard.svg",
     account: "/assets/icons/ui/profile.svg",
     notifications: "/assets/icons/ui/bell.svg",
