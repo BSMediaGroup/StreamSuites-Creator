@@ -11,7 +11,7 @@
 
   const QUALITY_SUFFIXES = Object.freeze({
     exact: "",
-    approximate: "~",
+    approximate: "≈",
     partial: "+",
     derived: "*",
     unavailable: ""
