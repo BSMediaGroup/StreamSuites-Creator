@@ -28,7 +28,8 @@
     installUrl: "",
     requestEpoch: 0,
     mounted: false,
-    installsError: ""
+    installsError: "",
+    installsLastRefreshAt: null
   };
 
   const el = {
@@ -43,7 +44,8 @@
     refresh: null,
     listStatus: null,
     installs: null,
-    listError: null
+    listError: null,
+    lastRefresh: null
   };
 
   const listeners = {
@@ -236,6 +238,14 @@
     }
     el.listError.classList.remove("hidden");
     el.listError.textContent = text;
+  }
+
+  function setInstallsLastRefresh(statusLabel = "Pending") {
+    if (!el.lastRefresh) return;
+    const stamp = new Date().toLocaleString(undefined, { hour12: false });
+    const status = normalizeText(statusLabel) || "Pending";
+    state.installsLastRefreshAt = stamp;
+    el.lastRefresh.textContent = `Last refresh: ${stamp} | Status: ${status}`;
   }
 
   function getGuildIdInputValue() {
@@ -461,6 +471,7 @@
     if (!isMountedRequest(epoch)) return;
 
     if (!result.ok) {
+      setInstallsLastRefresh(`HTTP ${result.status || "n/a"} (failed)`);
       state.installsError = result.error;
       state.installs = [];
       if (result.unauthorized) {
@@ -483,6 +494,7 @@
         : [];
     state.installsError = "";
     state.installs = installs;
+    setInstallsLastRefresh(`HTTP ${result.status || 200}`);
     installs.forEach((entry) => {
       const guildId = normalizeText(entry?.guild_id);
       if (!guildId) return;
@@ -539,6 +551,12 @@
   async function openInstallPage(guildId = "") {
     const epoch = state.requestEpoch;
     const normalizedGuildId = normalizeText(guildId);
+    const popup = window.open("about:blank", "_blank", "noopener,noreferrer");
+    if (!popup) {
+      setGlobalError("Popup blocked. Allow popups for this site, then retry.");
+      showAuthToast("Popup blocked. Allow popups for this site, then retry.", "warning");
+      return;
+    }
     if (normalizedGuildId) {
       state.installGuildIds.add(normalizedGuildId);
     } else {
@@ -566,7 +584,10 @@
       url = normalizeText(await loadInstallUrl());
     }
 
-    if (!isMountedRequest(epoch)) return;
+    if (!isMountedRequest(epoch)) {
+      popup.close();
+      return;
+    }
 
     if (normalizedGuildId) {
       state.installGuildIds.delete(normalizedGuildId);
@@ -575,6 +596,7 @@
     }
 
     if (!url) {
+      popup.close();
       setGlobalError("Install URL could not be loaded right now.", {
         toast: true,
         tone: "warning"
@@ -588,10 +610,11 @@
     }
 
     setGlobalError("");
-    const opened = window.open(url, "_blank", "noopener,noreferrer");
-    if (!opened) {
-      setGlobalError("Popup blocked. Allow popups for this site, then retry.");
-      showAuthToast("Popup blocked. Allow popups for this site, then retry.", "warning");
+    try {
+      popup.location.replace(url);
+    } catch (_err) {
+      popup.close();
+      setGlobalError("Install URL could not be opened right now. Please retry.");
     }
 
     if (el.openInstall) {
@@ -735,6 +758,7 @@
     el.listStatus = document.getElementById("discord-bot-list-status");
     el.installs = document.getElementById("discord-bot-installs");
     el.listError = document.getElementById("discord-bot-list-error");
+    el.lastRefresh = document.getElementById("discord-bot-last-refresh");
 
     return Boolean(
       el.statePill &&
@@ -747,7 +771,8 @@
         el.refresh &&
         el.listStatus &&
         el.installs &&
-        el.listError
+        el.listError &&
+        el.lastRefresh
     );
   }
 
@@ -799,6 +824,7 @@
     el.listStatus = null;
     el.installs = null;
     el.listError = null;
+    el.lastRefresh = null;
   }
 
   function resetTransientState() {
@@ -809,6 +835,7 @@
     state.installGuildIds.clear();
     state.verifyResult = null;
     state.installsError = "";
+    state.installsLastRefreshAt = null;
   }
 
   function init() {
@@ -828,6 +855,7 @@
         return;
       }
       updateInstallMeta(state.installMeta);
+      setInstallsLastRefresh("Pending");
       bindEvents();
       renderInstalls();
       void loadInstallUrl({ silentErrors: true });
@@ -844,6 +872,7 @@
     state.loadingInstalls = false;
     state.loadingInstallUrlGuildId = null;
     state.installsError = "";
+    state.installsLastRefreshAt = null;
     state.verifyingGuildIds.clear();
     state.disablingGuildIds.clear();
     state.installGuildIds.clear();
