@@ -6,6 +6,7 @@
   const UPDATE_EVENT = "streamsuites:creator-stats-updated";
   const DEFAULT_TIMEOUT_MS = 8000;
   const formatter = window.StreamSuitesStatsFormatting;
+  const svgCharts = window.StreamSuitesStatsSvgCharts;
 
   const DEFAULT_QUALITY_LEGEND = Object.freeze({
     exact: "Direct platform metric captured from primary source.",
@@ -166,6 +167,14 @@
       hash |= 0;
     }
     return Math.abs(hash);
+  }
+
+  function createSeededRng(seedInput) {
+    let seed = Math.max(1, Math.abs(Number(seedInput) || 1)) % 2147483647;
+    return () => {
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    };
   }
 
   function normalizeQualityLegend(rawLegend) {
@@ -426,18 +435,29 @@
     const seed = hashString(
       `${payload?.accountId || ""}|${payload?.generatedAtUtc || ""}|${audienceTotal}|${monthDelta}`
     );
+    const rng = createSeededRng(seed);
 
     const baseline = audienceTotal - monthDelta;
     const drift = monthDelta;
-    const variance = Math.max(15, Math.round(Math.max(1, Math.abs(monthDelta)) * 0.18));
+    const variance = Math.max(32, Math.round(Math.max(80, Math.abs(monthDelta)) * 0.1));
 
     for (let index = 0; index < points.length; index += 1) {
       const progress = index / (points.length - 1);
       const trend = baseline + drift * progress;
       const wave =
-        Math.sin((index + (seed % 11)) * 0.52) * variance +
-        Math.cos((index + (seed % 17)) * 0.31) * variance * 0.55;
-      points[index] = Math.max(0, Math.round(trend + wave));
+        Math.sin((index + (seed % 9)) * 0.58) * variance * 0.95 +
+        Math.cos((index + (seed % 13)) * 0.35) * variance * 0.7;
+      const noise = (rng() - 0.5) * variance * 0.9;
+      const dip = index > 2 && index % 7 === 0 ? -variance * (0.45 + rng() * 0.45) : 0;
+      const rebound = index > 3 && (index + 2) % 7 === 0 ? variance * (0.2 + rng() * 0.35) : 0;
+      points[index] = Math.max(0, Math.round(trend + wave + noise + dip + rebound));
+    }
+
+    for (let index = 1; index < points.length - 1; index += 1) {
+      points[index] = Math.max(
+        0,
+        Math.round(points[index - 1] * 0.22 + points[index] * 0.56 + points[index + 1] * 0.22)
+      );
     }
 
     points[points.length - 1] = audienceTotal;
@@ -882,6 +902,59 @@
     return "•";
   }
 
+  function buildOverviewMiniSkeletonMarkup(message) {
+    return `
+      <div class="creator-overview-stats-mini-skeleton">
+        <span class="creator-overview-stats-mini-line"></span>
+        <span class="creator-overview-stats-mini-line short"></span>
+      </div>
+      <p class="muted">${escapeHtml(normalizeText(message, "Mini analytics pending"))}</p>
+    `;
+  }
+
+  function buildOverviewMiniAnalyticsMarkup(stats) {
+    if (!stats || !svgCharts) {
+      return buildOverviewMiniSkeletonMarkup("Mini analytics unavailable");
+    }
+
+    const line = svgCharts.buildLineChartMarkup(stats.growthSeries, {
+      compact: true,
+      showAxis: false,
+      showDeltaBars: false,
+      showMeta: false,
+      showMovingAverage: false,
+      showCallout: true,
+      ariaLabel: "Audience growth mini chart",
+      formatNumber,
+      formatSignedNumber,
+      escapeHtml,
+      normalizeText
+    });
+
+    const donut = svgCharts.buildDonutChartMarkup(stats.platformShare, {
+      compact: true,
+      showLegend: false,
+      ariaLabel: "Platform share mini donut",
+      qualityLegend: stats.qualityLegend,
+      formatNumber,
+      createQualityBadge,
+      escapeHtml
+    });
+
+    return `
+      <div class="creator-overview-stats-mini-grid">
+        <section class="creator-overview-stats-mini-panel">
+          <h4>Audience growth</h4>
+          ${line}
+        </section>
+        <section class="creator-overview-stats-mini-panel">
+          <h4>Platform share</h4>
+          ${donut}
+        </section>
+      </div>
+    `;
+  }
+
   function renderOverviewSnapshotCard(status, stats) {
     const card = document.querySelector("[data-overview-stats-card]");
     if (!card) return;
@@ -893,8 +966,18 @@
     const platformsEl = card.querySelector("[data-overview-stats-platforms]");
     const updatedEl = card.querySelector("[data-overview-stats-last-updated]");
     const loadBtn = card.querySelector("[data-overview-stats-load]");
+    const miniEl = card.querySelector("[data-overview-stats-mini]");
 
-    if (!statusPill || !titleEl || !totalEl || !metaEl || !platformsEl || !updatedEl || !loadBtn) {
+    if (
+      !statusPill ||
+      !titleEl ||
+      !totalEl ||
+      !metaEl ||
+      !platformsEl ||
+      !updatedEl ||
+      !loadBtn ||
+      !miniEl
+    ) {
       return;
     }
 
@@ -913,6 +996,7 @@
       platformsEl.textContent = "Loading...";
       updatedEl.textContent = "Last updated: —";
       loadBtn.classList.add("hidden");
+      miniEl.innerHTML = buildOverviewMiniSkeletonMarkup("Hydrating mini analytics...");
       return;
     }
 
@@ -925,6 +1009,7 @@
       platformsEl.textContent = "No platform breakdown yet";
       updatedEl.textContent = "Last updated: —";
       loadBtn.classList.remove("hidden");
+      miniEl.innerHTML = buildOverviewMiniSkeletonMarkup("Mini analytics pending stats");
       return;
     }
 
@@ -937,6 +1022,7 @@
       platformsEl.textContent = "No platform breakdown yet";
       updatedEl.textContent = "Last updated: —";
       loadBtn.classList.remove("hidden");
+      miniEl.innerHTML = buildOverviewMiniSkeletonMarkup("Load stats to render mini analytics");
       return;
     }
 
@@ -971,6 +1057,7 @@
     platformsEl.textContent = platformSummary || "No per-platform view counts exported";
     updatedEl.textContent = `Last updated: ${formatDateTime(stats.generatedAtUtc)}`;
     loadBtn.classList.add("hidden");
+    miniEl.innerHTML = buildOverviewMiniAnalyticsMarkup(stats);
   }
 
   function bindOverviewHandlers() {
@@ -1091,223 +1178,30 @@
       .join("");
   }
   function buildLineChartMarkup(series, options = {}) {
-    if (!Array.isArray(series) || !series.length) {
-      return '<p class="muted">No growth points available.</p>';
+    if (!svgCharts?.buildLineChartMarkup) {
+      return '<p class="muted">Line chart renderer unavailable.</p>';
     }
 
-    const width = 640;
-    const height = 292;
-    const paddingX = 24;
-    const paddingTop = 22;
-    const paddingBottom = 28;
-    const chartHeight = 164;
-    const barsTop = 208;
-    const barsHeight = 52;
-    const points = series.map((value) => Math.max(0, Number(value) || 0));
-    const pointLabels = Array.isArray(options.dateLabels) ? options.dateLabels : [];
-    const min = Math.min(...points);
-    const max = Math.max(...points);
-    const range = max - min || 1;
-    const deltas = points.map((value, index) => (index === 0 ? 0 : value - points[index - 1]));
-    const deltaAbsMax = Math.max(1, ...deltas.map((value) => Math.abs(value)));
-    const netChange = points[points.length - 1] - points[0];
-    const avgDelta =
-      deltas.length > 1
-        ? deltas.slice(1).reduce((sum, value) => sum + value, 0) / (deltas.length - 1)
-        : 0;
-    const movingAverage = points.map((_, index) => {
-      const start = Math.max(0, index - 6);
-      const window = points.slice(start, index + 1);
-      return Math.round(window.reduce((sum, value) => sum + value, 0) / window.length);
+    return svgCharts.buildLineChartMarkup(series, {
+      ...options,
+      formatNumber,
+      formatSignedNumber,
+      escapeHtml,
+      normalizeText
     });
-
-    const x = (index) =>
-      paddingX + (index / Math.max(1, points.length - 1)) * (width - paddingX * 2);
-    const y = (value) =>
-      paddingTop + ((max - value) / range) * chartHeight;
-    const yDelta = (delta) =>
-      barsTop + barsHeight - (Math.abs(delta) / deltaAbsMax) * (barsHeight - 4);
-
-    const linePath = points
-      .map((value, index) => `${index === 0 ? "M" : "L"} ${x(index).toFixed(2)} ${y(value).toFixed(2)}`)
-      .join(" ");
-    const movingAveragePath = movingAverage
-      .map(
-        (value, index) =>
-          `${index === 0 ? "M" : "L"} ${x(index).toFixed(2)} ${y(value).toFixed(2)}`
-      )
-      .join(" ");
-
-    const areaPath = `${linePath} L ${x(points.length - 1).toFixed(2)} ${(paddingTop + chartHeight).toFixed(
-      2
-    )} L ${x(0).toFixed(2)} ${(paddingTop + chartHeight).toFixed(2)} Z`;
-
-    const ticks = [0, 0.25, 0.5, 0.75, 1]
-      .map((ratio) => {
-        const yPos = (paddingTop + chartHeight) - ratio * chartHeight;
-        return `<line x1="${paddingX}" y1="${yPos.toFixed(2)}" x2="${(
-          width - paddingX
-        ).toFixed(2)}" y2="${yPos.toFixed(2)}"></line>`;
-      })
-      .join("");
-    const xTickIndexes = [0, 5, 10, 15, 20, 25, points.length - 1].filter(
-      (value, idx, arr) => arr.indexOf(value) === idx
-    );
-    const xTicks = xTickIndexes
-      .map((index) => {
-        const xPos = x(index);
-        const labelText = normalizeText(pointLabels[index], `Day ${index + 1}`);
-        return `
-          <line x1="${xPos.toFixed(2)}" y1="${(paddingTop + chartHeight).toFixed(2)}" x2="${xPos.toFixed(
-            2
-          )}" y2="${(paddingTop + chartHeight + 6).toFixed(2)}" class="creator-stats-axis-tick"></line>
-          <text x="${xPos.toFixed(2)}" y="${(paddingTop + chartHeight + 18).toFixed(
-            2
-          )}" text-anchor="middle" class="creator-stats-axis-label">${escapeHtml(labelText)}</text>
-        `;
-      })
-      .join("");
-    const pointMarkers = points
-      .map((value, index) => {
-        const isEmphasis = index === 0 || index === points.length - 1 || index % 5 === 0;
-        if (!isEmphasis) return "";
-        return `<circle cx="${x(index).toFixed(2)}" cy="${y(value).toFixed(
-          2
-        )}" r="${index === points.length - 1 ? "3.8" : "2.7"}" class="creator-stats-line-point"></circle>`;
-      })
-      .join("");
-    const barWidth = Math.max(4, ((width - paddingX * 2) / Math.max(1, points.length)) * 0.64);
-    const deltaBars = deltas
-      .map((delta, index) => {
-        const xPos = x(index) - barWidth / 2;
-        const yPos = yDelta(delta);
-        const h = Math.max(2, barsTop + barsHeight - yPos);
-        const tone = delta >= 0 ? "positive" : "negative";
-        return `<rect x="${xPos.toFixed(2)}" y="${yPos.toFixed(2)}" width="${barWidth.toFixed(
-          2
-        )}" height="${h.toFixed(2)}" rx="2" class="creator-stats-delta-bar ${tone}"></rect>`;
-      })
-      .join("");
-    const latestX = x(points.length - 1);
-    const latestY = y(points[points.length - 1]);
-    const avg7 = movingAverage[movingAverage.length - 1];
-
-    return `
-      <svg class="creator-stats-line-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Audience growth last 30 points">
-        <defs>
-          <linearGradient id="creator-stats-line-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(123, 140, 255, 0.55)"></stop>
-            <stop offset="100%" stop-color="rgba(123, 140, 255, 0.05)"></stop>
-          </linearGradient>
-        </defs>
-        <g class="creator-stats-grid-lines">${ticks}</g>
-        <line x1="${paddingX}" y1="${(barsTop - 6).toFixed(2)}" x2="${(width - paddingX).toFixed(
-      2
-    )}" y2="${(barsTop - 6).toFixed(2)}" class="creator-stats-separator-line"></line>
-        <path class="creator-stats-line-area" d="${areaPath}"></path>
-        <path class="creator-stats-line-path creator-stats-line-path-avg" d="${movingAveragePath}"></path>
-        <path class="creator-stats-line-path" d="${linePath}"></path>
-        ${pointMarkers}
-        <g class="creator-stats-delta-bars">${deltaBars}</g>
-        <g class="creator-stats-x-axis">${xTicks}</g>
-        <line x1="${latestX.toFixed(2)}" y1="${paddingTop}" x2="${latestX.toFixed(2)}" y2="${(
-      paddingTop + chartHeight
-    ).toFixed(2)}" class="creator-stats-crosshair"></line>
-        <circle cx="${latestX.toFixed(2)}" cy="${latestY.toFixed(2)}" r="5.2" class="creator-stats-line-point is-latest"></circle>
-        <text x="${Math.max(paddingX + 34, latestX - 6).toFixed(2)}" y="${Math.max(
-      14,
-      latestY - 12
-    ).toFixed(2)}" text-anchor="end" class="creator-stats-line-callout">
-          ${escapeHtml(formatNumber(points[points.length - 1]))}
-        </text>
-      </svg>
-      <div class="creator-stats-line-meta">
-        <span>30 points</span>
-        <span>Min ${escapeHtml(formatNumber(min))}</span>
-        <span>Max ${escapeHtml(formatNumber(max))}</span>
-        <span>Net ${escapeHtml(formatSignedNumber(netChange))}</span>
-        <span>Avg delta ${escapeHtml(formatSignedNumber(Math.round(avgDelta)))}</span>
-        <span>7pt avg ${escapeHtml(formatNumber(avg7))}</span>
-      </div>
-    `;
   }
 
   function buildDonutChartMarkup(platformShare, qualityLegend) {
-    const active = Array.isArray(platformShare?.byPlatform)
-      ? platformShare.byPlatform.filter((channel) => Number(channel.followersTotal) > 0)
-      : [];
-
-    if (!active.length) {
-      return '<p class="muted">No platform share values available.</p>';
+    if (!svgCharts?.buildDonutChartMarkup) {
+      return '<p class="muted">Platform share renderer unavailable.</p>';
     }
 
-    const total =
-      Number(platformShare?.totals?.followersTotal) ||
-      active.reduce((sum, channel) => sum + Number(channel.followersTotal || 0), 0);
-    if (total <= 0) {
-      return '<p class="muted">No platform share values available.</p>';
-    }
-
-    const colors = ["#7b8cff", "#55d1b6", "#f0b253", "#fb7f7f", "#8ccf36", "#86a6ff"];
-    const radius = 56;
-    const circumference = 2 * Math.PI * radius;
-    let consumed = 0;
-
-    const segments = active
-      .map((channel, index) => {
-        const value = Number(channel.followersTotal ?? channel.totalCount ?? 0);
-        const fraction = value / total;
-        const arcLength = fraction * circumference;
-        const markup = `
-          <circle
-            cx="72"
-            cy="72"
-            r="${radius}"
-            fill="none"
-            stroke="${colors[index % colors.length]}"
-            stroke-width="14"
-            stroke-linecap="butt"
-            stroke-dasharray="${arcLength.toFixed(3)} ${(circumference - arcLength).toFixed(3)}"
-            stroke-dashoffset="${(-consumed).toFixed(3)}"
-          ></circle>
-        `;
-        consumed += arcLength;
-        return markup;
-      })
-      .join("");
-
-    const legend = active
-      .map((channel, index) => {
-        const value = Number(channel.followersTotal || 0);
-        const share = total > 0 ? Math.round((value / total) * 1000) / 10 : 0;
-        return `
-          <li>
-            <span class="creator-stats-donut-swatch" style="--swatch-color: ${colors[index % colors.length]};"></span>
-            <span>${escapeHtml(channel.platformLabel)}</span>
-            <span>${escapeHtml(formatNumber(value))} (${share}%) ${createQualityBadge(
-          channel.quality,
-          qualityLegend
-        )}</span>
-          </li>
-        `;
-      })
-      .join("");
-
-    return `
-      <div class="creator-stats-donut-wrap">
-        <svg class="creator-stats-donut-svg" viewBox="0 0 144 144" role="img" aria-label="Audience share by platform">
-          <circle cx="72" cy="72" r="${radius}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="14"></circle>
-          <g transform="rotate(-90 72 72)">
-            ${segments}
-          </g>
-        </svg>
-        <div class="creator-stats-donut-center">
-          <span>Total</span>
-          <strong>${escapeHtml(formatNumber(total))}</strong>
-        </div>
-      </div>
-      <ul class="creator-stats-donut-legend">${legend}</ul>
-    `;
+    return svgCharts.buildDonutChartMarkup(platformShare, {
+      qualityLegend,
+      formatNumber,
+      createQualityBadge,
+      escapeHtml
+    });
   }
 
   function buildLatestStreamMarkup(stats) {

@@ -50,26 +50,37 @@
         <span class="status-pill subtle" data-overview-stats-status>Ready</span>
       </div>
       <p data-overview-stats-title>Load creator stats to view your latest stream snapshot.</p>
-      <div class="stat-grid">
-        <div>
-          <span class="stat-label">Total views</span>
-          <span class="stat-value" data-overview-stats-total>—</span>
+      <div class="creator-overview-stats-layout">
+        <div class="creator-overview-stats-primary">
+          <div class="stat-grid">
+            <div>
+              <span class="stat-label">Total views</span>
+              <span class="stat-value" data-overview-stats-total>—</span>
+            </div>
+            <div>
+              <span class="stat-label">Stream summary</span>
+              <span class="stat-value" data-overview-stats-meta>Waiting for stats</span>
+            </div>
+          </div>
+          <p class="muted creator-overview-stats-platforms" data-overview-stats-platforms>
+            No per-platform breakdown loaded yet.
+          </p>
+          <div class="creator-overview-stats-actions">
+            <button type="button" class="creator-button ghost" data-overview-stats-load>Load stats</button>
+            <a class="creator-button primary" href="#statistics" data-route="statistics">View Statistics</a>
+          </div>
+          <p class="muted creator-overview-stats-updated" data-overview-stats-last-updated>
+            Last updated: —
+          </p>
         </div>
-        <div>
-          <span class="stat-label">Stream summary</span>
-          <span class="stat-value" data-overview-stats-meta>Waiting for stats</span>
-        </div>
+        <aside class="creator-overview-stats-mini" data-overview-stats-mini>
+          <div class="creator-overview-stats-mini-skeleton">
+            <span class="creator-overview-stats-mini-line"></span>
+            <span class="creator-overview-stats-mini-line short"></span>
+          </div>
+          <p class="muted">Mini analytics pending</p>
+        </aside>
       </div>
-      <p class="muted creator-overview-stats-platforms" data-overview-stats-platforms>
-        No per-platform breakdown loaded yet.
-      </p>
-      <div class="creator-overview-stats-actions">
-        <button type="button" class="creator-button ghost" data-overview-stats-load>Load stats</button>
-        <a class="creator-button primary" href="#statistics" data-route="statistics">View Statistics</a>
-      </div>
-      <p class="muted creator-overview-stats-updated" data-overview-stats-last-updated>
-        Last updated: —
-      </p>
     </article>
     <div class="card-grid overview-grid">
       <article class="card highlight">

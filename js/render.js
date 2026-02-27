@@ -25,8 +25,16 @@
   };
 
   const ViewScripts = Object.freeze({
-    overview: ["/js/utils/stats-formatting.js", "/js/creator-stats.js"],
-    statistics: ["/js/utils/stats-formatting.js", "/js/creator-stats.js"],
+    overview: [
+      "/js/utils/stats-formatting.js",
+      "/js/utils/stats-svg-charts.js",
+      "/js/creator-stats.js"
+    ],
+    statistics: [
+      "/js/utils/stats-formatting.js",
+      "/js/utils/stats-svg-charts.js",
+      "/js/creator-stats.js"
+    ],
     plans: ["/js/plans.js"],
     triggers: ["/js/feature-gate.js", "/js/triggers.js"],
     settings: ["/js/platforms.js", "/js/settings.js"],
