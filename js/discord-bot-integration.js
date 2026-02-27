@@ -9,6 +9,8 @@
     disable: "/api/creator/discord/bot/disable"
   });
   const DEFAULT_TIMEOUT_MS = 10000;
+  const INSTALL_URL_TIMEOUT_MS = 15000;
+  const INSTALLS_TIMEOUT_MS = 15000;
 
   const state = {
     installs: [],
@@ -23,6 +25,7 @@
       scopes: ["bot", "applications.commands"],
       permissions: null
     },
+    installUrl: "",
     requestEpoch: 0,
     mounted: false,
     installsError: ""
@@ -452,7 +455,7 @@
 
     const result = await requestJson(ENDPOINTS.installs, {
       method: "GET",
-      timeoutMs: 8000
+      timeoutMs: INSTALLS_TIMEOUT_MS
     });
 
     if (!isMountedRequest(epoch)) return;
@@ -494,10 +497,48 @@
     renderInstalls();
   }
 
-  async function openInstallPage(guildId = "", preOpenedWindow = null) {
+  async function loadInstallUrl(options = {}) {
+    const query = options.query && typeof options.query === "object" ? options.query : null;
+    const result = await requestJson(ENDPOINTS.installUrl, {
+      method: "GET",
+      query,
+      timeoutMs: INSTALL_URL_TIMEOUT_MS
+    });
+
+    if (!result.ok) {
+      if (result.unauthorized) {
+        handleUnauthorized();
+      } else if (options.silentErrors !== true) {
+        setGlobalError(result.error, {
+          toast: true,
+          tone: "warning"
+        });
+      }
+      return null;
+    }
+
+    const container = extractPayloadContainer(result.payload);
+    updateInstallMeta(container || null);
+    const url = normalizeText(container?.url || container?.install_url);
+    if (!url) {
+      if (options.silentErrors !== true) {
+        setGlobalError("Install URL could not be loaded right now.", {
+          toast: true,
+          tone: "warning"
+        });
+      }
+      return null;
+    }
+
+    if (!query) {
+      state.installUrl = url;
+    }
+    return url;
+  }
+
+  async function openInstallPage(guildId = "") {
     const epoch = state.requestEpoch;
     const normalizedGuildId = normalizeText(guildId);
-    let popup = preOpenedWindow || null;
     if (normalizedGuildId) {
       state.installGuildIds.add(normalizedGuildId);
     } else {
@@ -509,25 +550,23 @@
       el.openInstall.textContent = "Opening...";
     }
 
-    const query = {};
+    let url = "";
     if (normalizedGuildId) {
-      query.guild_id = normalizedGuildId;
-      query.disable_guild_select = "1";
+      url = normalizeText(
+        await loadInstallUrl({
+          query: {
+            guild_id: normalizedGuildId,
+            disable_guild_select: "1"
+          }
+        })
+      );
+    } else if (state.installUrl) {
+      url = normalizeText(state.installUrl);
+    } else {
+      url = normalizeText(await loadInstallUrl());
     }
 
-    const result = await requestJson(ENDPOINTS.installUrl, {
-      method: "GET",
-      query
-    });
-
-    if (!isMountedRequest(epoch)) {
-      try {
-        popup?.close?.();
-      } catch (_err) {
-        // Ignore close failures for browser-managed windows.
-      }
-      return;
-    }
+    if (!isMountedRequest(epoch)) return;
 
     if (normalizedGuildId) {
       state.installGuildIds.delete(normalizedGuildId);
@@ -535,41 +574,11 @@
       state.loadingInstallUrlGuildId = null;
     }
 
-    if (!result.ok) {
-      if (result.unauthorized) {
-        handleUnauthorized();
-      } else {
-        setGlobalError(result.error, {
-          toast: true,
-          tone: "warning"
-        });
-      }
-      try {
-        popup?.close?.();
-      } catch (_err) {
-        // Ignore close failures for browser-managed windows.
-      }
-      if (el.openInstall) {
-        el.openInstall.disabled = false;
-        el.openInstall.textContent = "Open Install Page";
-      }
-      renderInstalls();
-      return;
-    }
-
-    const container = extractPayloadContainer(result.payload);
-    updateInstallMeta(container || null);
-    const url = normalizeText(container?.url || container?.install_url);
     if (!url) {
-      setGlobalError("Install URL was not returned by the API.", {
+      setGlobalError("Install URL could not be loaded right now.", {
         toast: true,
         tone: "warning"
       });
-      try {
-        popup?.close?.();
-      } catch (_err) {
-        // Ignore close failures for browser-managed windows.
-      }
       if (el.openInstall) {
         el.openInstall.disabled = false;
         el.openInstall.textContent = "Open Install Page";
@@ -579,22 +588,8 @@
     }
 
     setGlobalError("");
-    try {
-      if (!popup || popup.closed) {
-        popup = window.open("about:blank", "_blank");
-      }
-      if (popup) {
-        popup.location = url;
-      } else {
-        setGlobalError("Popup blocked. Allow popups for this site, then retry.");
-        showAuthToast("Popup blocked. Allow popups for this site, then retry.", "warning");
-      }
-    } catch (_err) {
-      try {
-        popup?.close?.();
-      } catch (_closeErr) {
-        // Ignore close failures for browser-managed windows.
-      }
+    const opened = window.open(url, "_blank", "noopener,noreferrer");
+    if (!opened) {
       setGlobalError("Popup blocked. Allow popups for this site, then retry.");
       showAuthToast("Popup blocked. Allow popups for this site, then retry.", "warning");
     }
@@ -694,13 +689,7 @@
 
   function handleInstallClick() {
     const guildId = getGuildIdInputValue();
-    const popup = window.open("about:blank", "_blank");
-    if (!popup) {
-      const message = "Popup blocked. Allow popups for this site, then retry.";
-      setGlobalError(message, { toast: true, tone: "warning" });
-      return;
-    }
-    void openInstallPage(guildId, popup);
+    void openInstallPage(guildId);
   }
 
   function handleVerifyClick() {
@@ -723,13 +712,7 @@
       return;
     }
     if (action === "install") {
-      const popup = window.open("about:blank", "_blank");
-      if (!popup) {
-        const message = "Popup blocked. Allow popups for this site, then retry.";
-        setGlobalError(message, { toast: true, tone: "warning" });
-        return;
-      }
-      void openInstallPage(guildId, popup);
+      void openInstallPage(guildId);
       return;
     }
     if (action === "disable") {
@@ -829,24 +812,30 @@
   }
 
   function init() {
-    if (state.mounted) {
-      unbindEvents();
-      clearElements();
-      state.mounted = false;
-    }
+    try {
+      if (state.mounted) {
+        unbindEvents();
+        clearElements();
+        state.mounted = false;
+      }
 
-    state.requestEpoch += 1;
-    state.mounted = true;
-    resetTransientState();
+      state.requestEpoch += 1;
+      state.mounted = true;
+      resetTransientState();
 
-    if (!cacheElements()) {
-      state.mounted = false;
-      return;
+      if (!cacheElements()) {
+        state.mounted = false;
+        return;
+      }
+      updateInstallMeta(state.installMeta);
+      bindEvents();
+      renderInstalls();
+      void loadInstallUrl({ silentErrors: true });
+      void refreshInstalls();
+    } catch (err) {
+      setGlobalError("Discord page failed to initialize. Refresh and try again.");
+      console.error("[DiscordPlatformView] init failed", err);
     }
-    updateInstallMeta(state.installMeta);
-    bindEvents();
-    renderInstalls();
-    void refreshInstalls();
   }
 
   function destroy() {
