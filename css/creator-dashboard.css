@@ -1808,6 +1808,10 @@ h3 {
   font-size: 12px;
 }
 
+.discord-bot-list-error {
+  margin: 0;
+}
+
 .discord-bot-linked {
   margin-top: 2px;
 }

@@ -24,7 +24,8 @@
       permissions: null
     },
     requestEpoch: 0,
-    mounted: false
+    mounted: false,
+    installsError: ""
   };
 
   const el = {
@@ -38,7 +39,8 @@
     verifyResult: null,
     refresh: null,
     listStatus: null,
-    installs: null
+    installs: null,
+    listError: null
   };
 
   const listeners = {
@@ -52,6 +54,12 @@
     if (typeof value === "string") return value.trim();
     if (typeof value === "number") return String(value);
     return "";
+  }
+
+  function extractPayloadContainer(payload) {
+    if (!payload || typeof payload !== "object") return {};
+    if (payload.data && typeof payload.data === "object") return payload.data;
+    return payload;
   }
 
   function escapeHtml(value) {
@@ -167,7 +175,10 @@
       );
       const raw = await response.text();
       const payload = safeParse(raw);
-      const payloadError = normalizeText(payload?.error || payload?.message);
+      const payloadContainer = extractPayloadContainer(payload);
+      const payloadError = normalizeText(
+        payload?.error || payload?.message || payloadContainer?.error || payloadContainer?.message
+      );
       const isUnauthorized = response.status === 401 || response.status === 403;
 
       if (!response.ok || (payload && payload.success === false)) {
@@ -212,17 +223,32 @@
     }
   }
 
+  function setListError(message) {
+    if (!el.listError) return;
+    const text = normalizeText(message);
+    if (!text) {
+      el.listError.classList.add("hidden");
+      el.listError.textContent = "";
+      return;
+    }
+    el.listError.classList.remove("hidden");
+    el.listError.textContent = text;
+  }
+
   function getGuildIdInputValue() {
     return normalizeText(el.guildId?.value);
   }
 
   function setVerifyResult(payload, guildIdOverride = "") {
     if (!el.verifyResult) return;
-    const resultGuildId = normalizeText(payload?.guild_id || guildIdOverride);
-    const guildName = normalizeText(payload?.guild_name);
-    const installed = payload?.is_installed === true;
-    const verifiedAt = formatTimestamp(payload?.last_verified_at);
-    const errorText = normalizeText(payload?.error);
+    const container = extractPayloadContainer(payload);
+    const resultGuildId = normalizeText(container?.guild_id || payload?.guild_id || guildIdOverride);
+    const guildName = normalizeText(container?.guild_name || payload?.guild_name);
+    const installed = container?.is_installed === true;
+    const verifiedAt = formatTimestamp(container?.last_verified_at);
+    const errorText = normalizeText(
+      container?.error || container?.last_verify_error || payload?.error || payload?.message
+    );
     const targetLabel = guildName || resultGuildId || "Guild";
 
     const errorMarkup = errorText
@@ -330,6 +356,7 @@
   function renderInstalls() {
     if (!el.installs || !el.listStatus) return;
     updateHeaderStatus();
+    setListError(state.installsError);
 
     if (state.loadingInstalls) {
       el.listStatus.textContent = "Loading linked servers…";
@@ -431,17 +458,27 @@
     if (!isMountedRequest(epoch)) return;
 
     if (!result.ok) {
+      state.installsError = result.error;
+      state.installs = [];
       if (result.unauthorized) {
         handleUnauthorized();
       } else {
-        setGlobalError(options.silentErrors ? "" : result.error);
+        if (!options.silentErrors) {
+          setGlobalError(result.error);
+        }
       }
       state.loadingInstalls = false;
       renderInstalls();
       return;
     }
 
-    const installs = Array.isArray(result.payload?.installs) ? result.payload.installs : [];
+    const container = extractPayloadContainer(result.payload);
+    const installs = Array.isArray(container?.installs)
+      ? container.installs
+      : Array.isArray(container?.items)
+        ? container.items
+        : [];
+    state.installsError = "";
     state.installs = installs;
     installs.forEach((entry) => {
       const guildId = normalizeText(entry?.guild_id);
@@ -502,7 +539,10 @@
       if (result.unauthorized) {
         handleUnauthorized();
       } else {
-        setGlobalError(result.error);
+        setGlobalError(result.error, {
+          toast: true,
+          tone: "warning"
+        });
       }
       try {
         popup?.close?.();
@@ -517,10 +557,14 @@
       return;
     }
 
-    updateInstallMeta(result.payload || null);
-    const url = normalizeText(result.payload?.url);
+    const container = extractPayloadContainer(result.payload);
+    updateInstallMeta(container || null);
+    const url = normalizeText(container?.url || container?.install_url);
     if (!url) {
-      setGlobalError("Install URL was not returned by the API.");
+      setGlobalError("Install URL was not returned by the API.", {
+        toast: true,
+        tone: "warning"
+      });
       try {
         popup?.close?.();
       } catch (_err) {
@@ -537,7 +581,7 @@
     setGlobalError("");
     try {
       if (!popup || popup.closed) {
-        popup = window.open("", "_blank", "noopener");
+        popup = window.open("about:blank", "_blank");
       }
       if (popup) {
         popup.location = url;
@@ -593,16 +637,18 @@
     }
 
     if (!result.ok) {
+      setVerifyResult(result.payload || { error: result.error }, normalizedGuildId);
       if (result.unauthorized) {
         handleUnauthorized();
       } else {
         setGlobalError(result.error);
       }
       renderInstalls();
+      await refreshInstalls({ preserveError: true, silentErrors: true });
       return;
     }
 
-    const payload = result.payload || {};
+    const payload = extractPayloadContainer(result.payload || {});
     setVerifyResult(payload, normalizedGuildId);
     if (payload.is_installed === true) {
       state.disabledGuildIds.delete(normalizedGuildId);
@@ -647,7 +693,12 @@
 
   function handleInstallClick() {
     const guildId = getGuildIdInputValue();
-    const popup = window.open("", "_blank", "noopener");
+    const popup = window.open("about:blank", "_blank");
+    if (!popup) {
+      const message = "Popup blocked. Allow popups for this site, then retry.";
+      setGlobalError(message, { toast: true, tone: "warning" });
+      return;
+    }
     void openInstallPage(guildId, popup);
   }
 
@@ -671,7 +722,12 @@
       return;
     }
     if (action === "install") {
-      const popup = window.open("", "_blank", "noopener");
+      const popup = window.open("about:blank", "_blank");
+      if (!popup) {
+        const message = "Popup blocked. Allow popups for this site, then retry.";
+        setGlobalError(message, { toast: true, tone: "warning" });
+        return;
+      }
       void openInstallPage(guildId, popup);
       return;
     }
@@ -694,6 +750,7 @@
     el.refresh = document.getElementById("discord-bot-refresh");
     el.listStatus = document.getElementById("discord-bot-list-status");
     el.installs = document.getElementById("discord-bot-installs");
+    el.listError = document.getElementById("discord-bot-list-error");
 
     return Boolean(
       el.statePill &&
@@ -705,11 +762,13 @@
         el.verifyResult &&
         el.refresh &&
         el.listStatus &&
-        el.installs
+        el.installs &&
+        el.listError
     );
   }
 
   function bindEvents() {
+    unbindEvents();
     listeners.openInstall = handleInstallClick;
     listeners.verify = handleVerifyClick;
     listeners.refresh = () => {
@@ -755,11 +814,29 @@
     el.refresh = null;
     el.listStatus = null;
     el.installs = null;
+    el.listError = null;
+  }
+
+  function resetTransientState() {
+    state.loadingInstalls = false;
+    state.loadingInstallUrlGuildId = null;
+    state.verifyingGuildIds.clear();
+    state.disablingGuildIds.clear();
+    state.installGuildIds.clear();
+    state.verifyResult = null;
+    state.installsError = "";
   }
 
   function init() {
+    if (state.mounted) {
+      unbindEvents();
+      clearElements();
+      state.mounted = false;
+    }
+
     state.requestEpoch += 1;
     state.mounted = true;
+    resetTransientState();
 
     if (!cacheElements()) {
       state.mounted = false;
@@ -776,6 +853,7 @@
     state.mounted = false;
     state.loadingInstalls = false;
     state.loadingInstallUrlGuildId = null;
+    state.installsError = "";
     state.verifyingGuildIds.clear();
     state.disablingGuildIds.clear();
     state.installGuildIds.clear();
