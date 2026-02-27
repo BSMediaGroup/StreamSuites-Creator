@@ -1909,35 +1909,43 @@ h3 {
 
 .creator-overview-stats-layout {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   align-items: stretch;
 }
 
 .creator-overview-stats-primary {
   display: grid;
-  gap: 8px;
+  gap: 9px;
 }
 
 .creator-overview-stats-mini {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   background: rgba(12, 17, 30, 0.55);
-  padding: 10px 12px;
+  padding: 12px;
   display: grid;
-  gap: 10px;
-  min-height: 132px;
+  gap: 12px;
+  min-height: 148px;
+  align-content: stretch;
 }
 
 .creator-overview-stats-mini-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 10px;
-  align-items: center;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 0.75fr);
+  gap: 12px;
+  align-items: stretch;
+  height: 100%;
 }
 
 .creator-overview-stats-mini-panel {
   display: grid;
   gap: 6px;
+  align-content: start;
+}
+
+.creator-overview-stats-mini-panel:last-child {
+  justify-items: center;
+  align-content: center;
 }
 
 .creator-overview-stats-mini-panel h4 {
@@ -1952,12 +1960,17 @@ h3 {
   font-size: 9px;
 }
 
+.creator-overview-stats-mini .creator-stats-line-svg {
+  width: 100%;
+}
+
 .creator-overview-stats-mini .creator-stats-donut-wrap {
   margin: 0 auto;
+  align-self: center;
 }
 
 .creator-overview-stats-mini .creator-stats-donut-svg {
-  width: 104px;
+  width: min(112px, 100%);
 }
 
 .creator-overview-stats-mini-skeleton {
@@ -3763,7 +3776,7 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
 
 @media (min-width: 980px) {
   .creator-overview-stats-layout {
-    grid-template-columns: minmax(320px, 1fr) minmax(260px, 0.9fr);
+    grid-template-columns: minmax(300px, 0.9fr) minmax(360px, 1.1fr);
   }
 }
 
@@ -3877,6 +3890,11 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
 
   .creator-overview-stats-mini-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .creator-overview-stats-mini .creator-stats-donut-wrap {
+    margin-left: 0;
   }
 }
 

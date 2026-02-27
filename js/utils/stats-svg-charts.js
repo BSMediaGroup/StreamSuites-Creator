@@ -30,6 +30,10 @@
     return fallback;
   }
 
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
   function buildLineChartMarkup(series, options = {}) {
     if (!Array.isArray(series) || !series.length) {
       return '<p class="muted">No growth points available.</p>';
@@ -246,6 +250,8 @@
     const center = viewSize / 2;
     const radius = compact ? 52 : 56;
     const strokeWidth = compact ? 12 : 14;
+    const centerTopFontSize = clamp(radius * 0.14, compact ? 6.5 : 7.5, compact ? 8 : 9);
+    const centerValueFontSize = clamp(radius * 0.28, compact ? 12 : 14, compact ? 14 : 16);
     const circumference = 2 * Math.PI * radius;
     let consumed = 0;
 
@@ -303,8 +309,12 @@
             ${segments}
           </g>
           <text x="${center}" y="${center}" text-anchor="middle" dominant-baseline="middle" class="creator-stats-donut-center-label">
-            <tspan x="${center}" dy="-0.55em" class="creator-stats-donut-center-label-top">TOTAL</tspan>
-            <tspan x="${center}" dy="1.15em" class="creator-stats-donut-center-label-value">${escapeHtml(
+            <tspan x="${center}" dy="-0.55em" class="creator-stats-donut-center-label-top" style="font-size:${centerTopFontSize.toFixed(
+      2
+    )}px;">TOTAL</tspan>
+            <tspan x="${center}" dy="1.15em" class="creator-stats-donut-center-label-value" style="font-size:${centerValueFontSize.toFixed(
+      2
+    )}px;">${escapeHtml(
               formatNumber(total)
             )}</tspan>
           </text>

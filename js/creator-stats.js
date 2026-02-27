@@ -428,10 +428,48 @@
       .filter((entry) => entry && (entry.followersTotal !== null || entry.viewsTotal !== null));
   }
 
-  function buildDeterministicSeries(payload) {
+  function isSeriesAlmostLinear(points) {
+    if (!Array.isArray(points) || points.length < 8) return false;
+
+    const deltas = points
+      .map((value, index) => (index === 0 ? null : Number(value) - Number(points[index - 1])))
+      .slice(1)
+      .filter((delta) => Number.isFinite(delta));
+
+    if (deltas.length < 4) return false;
+
+    const mean = deltas.reduce((sum, value) => sum + value, 0) / deltas.length;
+    const variance =
+      deltas.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / deltas.length;
+    const stdDev = Math.sqrt(variance);
+    const threshold = Math.max(1.75, Math.abs(mean) * 0.08);
+
+    return stdDev < threshold;
+  }
+
+  function ensureVariedGrowthSeries(series, payload) {
+    const normalized = normalizeSeriesFromArray(series);
+    if (!normalized.length) {
+      return buildDeterministicSeries(payload);
+    }
+    if (!isSeriesAlmostLinear(normalized)) {
+      return normalized;
+    }
+
+    const fallback = buildDeterministicSeries(payload, { waveStrength: 1.75 });
+    if (window?.console?.warn) {
+      window.console.warn(
+        "[creator-stats] growth series was near-linear; regenerated deterministic placeholder series."
+      );
+    }
+    return fallback;
+  }
+
+  function buildDeterministicSeries(payload, options = {}) {
     const audienceTotal = Math.max(0, normalizeInteger(payload?.growth?.totals?.audienceTotal) || 0);
     const monthDelta = normalizeInteger(payload?.growth?.deltas?.month?.value) || 0;
     const points = new Array(30).fill(audienceTotal);
+    const waveStrength = Math.max(1, Number(options.waveStrength) || 1);
     const seed = hashString(
       `${payload?.accountId || ""}|${payload?.generatedAtUtc || ""}|${audienceTotal}|${monthDelta}`
     );
@@ -439,7 +477,10 @@
 
     const baseline = audienceTotal - monthDelta;
     const drift = monthDelta;
-    const variance = Math.max(32, Math.round(Math.max(80, Math.abs(monthDelta)) * 0.1));
+    const variance = Math.max(
+      32,
+      Math.round(Math.max(80, Math.abs(monthDelta)) * 0.1 * waveStrength)
+    );
 
     for (let index = 0; index < points.length; index += 1) {
       const progress = index / (points.length - 1);
@@ -465,12 +506,12 @@
   }
 
   function resolveGrowthSeries(rawGrowthSeries, rawGrowth, normalizedPayload) {
-    const normalizedPoints = normalizeGrowthSeriesPoints(rawGrowthSeries);
+    const normalizedPoints = normalizeGrowthSeriesPoints(rawGrowthSeries)
+      .map((entry) => entry.followersTotal)
+      .filter((entry) => entry !== null)
+      .slice(-30);
     if (normalizedPoints.length) {
-      return normalizedPoints
-        .map((entry) => entry.followersTotal)
-        .filter((entry) => entry !== null)
-        .slice(-30);
+      return ensureVariedGrowthSeries(normalizedPoints, normalizedPayload);
     }
 
     const growth = rawGrowth && typeof rawGrowth === "object" ? rawGrowth : {};
@@ -484,8 +525,8 @@
     ];
 
     for (const candidate of directCandidates) {
-      const normalized = normalizeSeriesFromArray(candidate);
-      if (normalized.length) return normalized;
+      const ensured = ensureVariedGrowthSeries(candidate, normalizedPayload);
+      if (ensured.length) return ensured;
     }
 
     return buildDeterministicSeries(normalizedPayload);
