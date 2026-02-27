@@ -1779,6 +1779,101 @@ h3 {
   margin-top: auto;
 }
 
+.discord-bot-card {
+  gap: 18px;
+}
+
+.discord-bot-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.discord-bot-section {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px;
+  background: rgba(9, 13, 22, 0.62);
+  display: grid;
+  gap: 10px;
+}
+
+.discord-bot-section h4,
+.discord-bot-install-card h5 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.discord-bot-meta {
+  margin: 0;
+  font-size: 12px;
+}
+
+.discord-bot-linked {
+  margin-top: 2px;
+}
+
+.discord-bot-installs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.discord-bot-install-card {
+  min-height: 100%;
+  gap: 10px;
+}
+
+.discord-bot-guild-id {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.discord-bot-install-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  color: var(--creator-muted);
+  font-size: 12px;
+}
+
+.discord-bot-error-pill {
+  margin-left: auto;
+}
+
+.discord-bot-verify-result {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(8, 12, 20, 0.7);
+}
+
+.discord-bot-verify-grid .stat-value {
+  font-size: 14px;
+}
+
+.discord-bot-error-details summary {
+  cursor: pointer;
+  color: var(--creator-muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.discord-bot-error-details pre {
+  margin: 8px 0 0;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #ffc7be;
+  border: 1px solid rgba(217, 83, 79, 0.35);
+  overflow: auto;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+}
+
 .platform-card {
   color: inherit;
   text-decoration: none;

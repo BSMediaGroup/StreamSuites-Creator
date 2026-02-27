@@ -65,6 +65,11 @@ Current creator surface includes the following implemented areas:
   - Hydrates from `GET /api/creator/stats` with in-memory session caching
   - Uses API-provided chart contracts (`data.growth_series.daily_points` and
     `data.platform_share`) with client-side quality-symbol formatting
+- Discord bot integration panel (creator Discord platform view):
+  - Hydrates linked guild install records from `GET /api/creator/discord/bot/installs`
+  - Retrieves OAuth install URL from `GET /api/creator/discord/bot/install-url`
+  - Verifies installation state with `POST /api/creator/discord/bot/verify`
+  - Disables stored install records with `POST /api/creator/discord/bot/disable`
 
 ## Boundaries
 This repository is separate from:
@@ -113,6 +118,7 @@ StreamSuites-Creator/
 |   |-- auth.js
 |   |-- creator-stats.js
 |   |-- creators.js
+|   |-- discord-bot-integration.js
 |   |-- feature-gate.js
 |   |-- jobs.js
 |   |-- notifications.js

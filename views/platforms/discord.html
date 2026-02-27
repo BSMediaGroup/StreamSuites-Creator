@@ -247,7 +247,7 @@
 
                 <span class="status-dot"></span>
 
-                Not linked
+                Bot controls
 
               </span>
 
@@ -282,127 +282,63 @@
 
 
 
-          <div class="card-grid">
+          <article class="card discord-bot-card" data-discord-bot-panel>
+            <div class="card-top">
+              <h3>Discord Bot</h3>
+              <span id="discord-bot-link-state" class="status-pill subtle">Not linked</span>
+            </div>
 
-            <article class="card">
+            <div id="discord-bot-error" class="ss-alert ss-alert-danger hidden" role="alert"></div>
 
-              <h3>Bot connection</h3>
-
-              <p>Connect StreamSuites to one Discord server for creator operations.</p>
-
-              <ul>
-
-                <li>Server selection will be available during setup.</li>
-
-                <li>Only eligible guilds will be listed for linking.</li>
-
-                <li>Bot health and connection state will appear here.</li>
-
-              </ul>
-
-            </article>
-
-            <article class="card">
-
-              <h3>Roles and permissions</h3>
-
-              <p>Choose role-based access controls for dashboard and bot interactions.</p>
-
-              <ul>
-
-                <li>Map moderator and admin roles.</li>
-
-                <li>Configure read-only versus control actions.</li>
-
-                <li>Review permission summaries before save.</li>
-
-              </ul>
-
-            </article>
-
-            <article class="card">
-
-              <h3>Alert routing</h3>
-
-              <p>Route creator alerts and notifications to channels inside your Discord server.</p>
-
-              <ul>
-
-                <li>Runtime health and export updates.</li>
-
-                <li>Automation and trigger activity summaries.</li>
-
-                <li>Optional channel-level routing presets.</li>
-
-              </ul>
-
-            </article>
-
-            <article class="card">
-
-              <h3>Connection status</h3>
-
-              <div class="stat-grid">
-
-                <div>
-
-                  <span class="stat-label">Link state</span>
-
-                  <span class="stat-value">Not linked</span>
-
+            <div class="card-grid discord-bot-grid">
+              <section class="discord-bot-section">
+                <h4>Install StreamSuites Bot</h4>
+                <p class="muted">
+                  Open Discord OAuth for bot install. If Guild ID is provided, install opens pre-filled for that
+                  server.
+                </p>
+                <div class="platform-actions">
+                  <button id="discord-bot-open-install" class="creator-button primary" type="button">
+                    Open Install Page
+                  </button>
                 </div>
+                <p id="discord-bot-install-meta" class="muted discord-bot-meta">
+                  Required scopes: bot, applications.commands.
+                </p>
+              </section>
 
-                <div>
-
-                  <span class="stat-label">Guild</span>
-
-                  <span class="stat-value">Not selected</span>
-
+              <section class="discord-bot-section">
+                <h4>Verify / Link a Server</h4>
+                <div class="ss-form-row">
+                  <label for="discord-bot-guild-id">Guild ID</label>
+                  <input
+                    id="discord-bot-guild-id"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    placeholder="123456789012345678"
+                  />
+                  <small class="muted">
+                    Enable Discord Developer Mode, then right-click your server and choose Copy Server ID.
+                  </small>
                 </div>
-
-                <div>
-
-                  <span class="stat-label">OAuth</span>
-
-                  <span class="stat-value">Pending</span>
-
+                <div class="platform-actions">
+                  <button id="discord-bot-verify" class="creator-button ghost" type="button">
+                    Verify Install
+                  </button>
                 </div>
+                <div id="discord-bot-verify-result" class="discord-bot-verify-result hidden"></div>
+              </section>
+            </div>
 
-                <div>
-
-                  <span class="stat-label">Status</span>
-
-                  <span class="stat-value">Coming soon</span>
-
-                </div>
-
+            <section class="discord-bot-section discord-bot-linked">
+              <div class="card-top">
+                <h4>Linked Servers</h4>
+                <button id="discord-bot-refresh" class="creator-button ghost" type="button">Refresh</button>
               </div>
-
-              <div class="platform-actions">
-
-                <button class="creator-button ghost" type="button" disabled aria-disabled="true">
-
-                  Link Discord
-
-                </button>
-
-              </div>
-
-            </article>
-
-          </div>
-
-          <article class="card">
-
-            <h3>Coming soon</h3>
-
-            <p>
-
-              Discord linking requires an OAuth authorization flow and server-level permission checks.
-              This scaffold is UI-only and connection logic will be wired in a future release.
-
-            </p>
-
+              <p id="discord-bot-list-status" class="muted">Loading linked servers…</p>
+              <div id="discord-bot-installs" class="discord-bot-installs"></div>
+            </section>
           </article>
 
         </section>
@@ -426,6 +362,7 @@
   <script src="/js/app.js"></script>
 
   <script src="/js/auth.js"></script>
+  <script src="/js/discord-bot-integration.js"></script>
   <script src="/js/status-widget.js" defer></script>
 </body>
 
