@@ -683,6 +683,7 @@
         setGlobalError(result.error);
       }
       renderInstalls();
+      await refreshInstalls({ preserveError: true, silentErrors: true });
       return;
     }
 
