@@ -31,7 +31,8 @@
     triggers: ["/js/feature-gate.js", "/js/triggers.js"],
     settings: ["/js/platforms.js", "/js/settings.js"],
     creators: ["/js/creators.js"],
-    jobs: ["/js/jobs.js"]
+    jobs: ["/js/jobs.js"],
+    discordPlatform: ["/js/discord-bot-integration.js"]
   });
 
   function getApp() {
@@ -460,7 +461,10 @@
     registerView("platforms/youtube");
     registerView("platforms/twitch");
     registerView("platforms/kick");
-    registerView("platforms/discord");
+    registerView("platforms/discord", {
+      scripts: ViewScripts.discordPlatform,
+      controllerName: "DiscordPlatformView"
+    });
     registerView("platforms/pilled");
     registerView("modules/clips");
     registerView("modules/polls");

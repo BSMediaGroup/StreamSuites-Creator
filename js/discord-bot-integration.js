@@ -22,7 +22,9 @@
     installMeta: {
       scopes: ["bot", "applications.commands"],
       permissions: null
-    }
+    },
+    requestEpoch: 0,
+    mounted: false
   };
 
   const el = {
@@ -36,6 +38,13 @@
     verifyResult: null,
     refresh: null,
     listStatus: null,
+    installs: null
+  };
+
+  const listeners = {
+    openInstall: null,
+    verify: null,
+    refresh: null,
     installs: null
   };
 
@@ -110,6 +119,17 @@
     if (typeof showToast === "function") {
       showToast(message, { tone });
     }
+  }
+
+  function handleUnauthorized(message = "Your session is no longer authorized. Please log in again.") {
+    setGlobalError(message, {
+      toast: true,
+      tone: "warning"
+    });
+  }
+
+  function isMountedRequest(epoch) {
+    return state.mounted === true && epoch === state.requestEpoch;
   }
 
   async function requestJson(path, options = {}) {
@@ -399,6 +419,7 @@
   }
 
   async function refreshInstalls(options = {}) {
+    const epoch = state.requestEpoch;
     state.loadingInstalls = true;
     renderInstalls();
 
@@ -407,12 +428,11 @@
       timeoutMs: 8000
     });
 
+    if (!isMountedRequest(epoch)) return;
+
     if (!result.ok) {
       if (result.unauthorized) {
-        setGlobalError("Your session is no longer authorized. Please log in again.", {
-          toast: true,
-          tone: "warning"
-        });
+        handleUnauthorized();
       } else {
         setGlobalError(options.silentErrors ? "" : result.error);
       }
@@ -437,8 +457,10 @@
     renderInstalls();
   }
 
-  async function openInstallPage(guildId = "") {
+  async function openInstallPage(guildId = "", preOpenedWindow = null) {
+    const epoch = state.requestEpoch;
     const normalizedGuildId = normalizeText(guildId);
+    let popup = preOpenedWindow || null;
     if (normalizedGuildId) {
       state.installGuildIds.add(normalizedGuildId);
     } else {
@@ -461,6 +483,15 @@
       query
     });
 
+    if (!isMountedRequest(epoch)) {
+      try {
+        popup?.close?.();
+      } catch (_err) {
+        // Ignore close failures for browser-managed windows.
+      }
+      return;
+    }
+
     if (normalizedGuildId) {
       state.installGuildIds.delete(normalizedGuildId);
     } else {
@@ -469,12 +500,14 @@
 
     if (!result.ok) {
       if (result.unauthorized) {
-        setGlobalError("Your session is no longer authorized. Please log in again.", {
-          toast: true,
-          tone: "warning"
-        });
+        handleUnauthorized();
       } else {
         setGlobalError(result.error);
+      }
+      try {
+        popup?.close?.();
+      } catch (_err) {
+        // Ignore close failures for browser-managed windows.
       }
       if (el.openInstall) {
         el.openInstall.disabled = false;
@@ -488,6 +521,11 @@
     const url = normalizeText(result.payload?.url);
     if (!url) {
       setGlobalError("Install URL was not returned by the API.");
+      try {
+        popup?.close?.();
+      } catch (_err) {
+        // Ignore close failures for browser-managed windows.
+      }
       if (el.openInstall) {
         el.openInstall.disabled = false;
         el.openInstall.textContent = "Open Install Page";
@@ -497,8 +535,23 @@
     }
 
     setGlobalError("");
-    const popup = window.open(url, "_blank", "noopener");
-    if (!popup) {
+    try {
+      if (!popup || popup.closed) {
+        popup = window.open("", "_blank", "noopener");
+      }
+      if (popup) {
+        popup.location = url;
+      } else {
+        setGlobalError("Popup blocked. Allow popups for this site, then retry.");
+        showAuthToast("Popup blocked. Allow popups for this site, then retry.", "warning");
+      }
+    } catch (_err) {
+      try {
+        popup?.close?.();
+      } catch (_closeErr) {
+        // Ignore close failures for browser-managed windows.
+      }
+      setGlobalError("Popup blocked. Allow popups for this site, then retry.");
       showAuthToast("Popup blocked. Allow popups for this site, then retry.", "warning");
     }
 
@@ -510,6 +563,7 @@
   }
 
   async function verifyGuild(guildId, options = {}) {
+    const epoch = state.requestEpoch;
     const normalizedGuildId = normalizeText(guildId);
     if (!normalizedGuildId) {
       setGlobalError("Guild ID is required to verify install.");
@@ -531,6 +585,8 @@
     });
 
     state.verifyingGuildIds.delete(normalizedGuildId);
+    if (!isMountedRequest(epoch)) return;
+
     if (el.verify) {
       el.verify.disabled = false;
       el.verify.textContent = "Verify Install";
@@ -538,10 +594,7 @@
 
     if (!result.ok) {
       if (result.unauthorized) {
-        setGlobalError("Your session is no longer authorized. Please log in again.", {
-          toast: true,
-          tone: "warning"
-        });
+        handleUnauthorized();
       } else {
         setGlobalError(result.error);
       }
@@ -561,6 +614,7 @@
   }
 
   async function disableGuild(guildId) {
+    const epoch = state.requestEpoch;
     const normalizedGuildId = normalizeText(guildId);
     if (!normalizedGuildId) return;
     state.disablingGuildIds.add(normalizedGuildId);
@@ -574,12 +628,11 @@
     });
 
     state.disablingGuildIds.delete(normalizedGuildId);
+    if (!isMountedRequest(epoch)) return;
+
     if (!result.ok) {
       if (result.unauthorized) {
-        setGlobalError("Your session is no longer authorized. Please log in again.", {
-          toast: true,
-          tone: "warning"
-        });
+        handleUnauthorized();
       } else {
         setGlobalError(result.error);
       }
@@ -594,7 +647,8 @@
 
   function handleInstallClick() {
     const guildId = getGuildIdInputValue();
-    void openInstallPage(guildId);
+    const popup = window.open("", "_blank", "noopener");
+    void openInstallPage(guildId, popup);
   }
 
   function handleVerifyClick() {
@@ -617,7 +671,8 @@
       return;
     }
     if (action === "install") {
-      void openInstallPage(guildId);
+      const popup = window.open("", "_blank", "noopener");
+      void openInstallPage(guildId, popup);
       return;
     }
     if (action === "disable") {
@@ -655,25 +710,94 @@
   }
 
   function bindEvents() {
-    el.openInstall?.addEventListener("click", handleInstallClick);
-    el.verify?.addEventListener("click", handleVerifyClick);
-    el.refresh?.addEventListener("click", () => {
+    listeners.openInstall = handleInstallClick;
+    listeners.verify = handleVerifyClick;
+    listeners.refresh = () => {
       void refreshInstalls();
-    });
-    el.installs?.addEventListener("click", handleRowActions);
+    };
+    listeners.installs = handleRowActions;
+
+    el.openInstall?.addEventListener("click", listeners.openInstall);
+    el.verify?.addEventListener("click", listeners.verify);
+    el.refresh?.addEventListener("click", listeners.refresh);
+    el.installs?.addEventListener("click", listeners.installs);
+  }
+
+  function unbindEvents() {
+    if (listeners.openInstall) {
+      el.openInstall?.removeEventListener("click", listeners.openInstall);
+    }
+    if (listeners.verify) {
+      el.verify?.removeEventListener("click", listeners.verify);
+    }
+    if (listeners.refresh) {
+      el.refresh?.removeEventListener("click", listeners.refresh);
+    }
+    if (listeners.installs) {
+      el.installs?.removeEventListener("click", listeners.installs);
+    }
+
+    listeners.openInstall = null;
+    listeners.verify = null;
+    listeners.refresh = null;
+    listeners.installs = null;
+  }
+
+  function clearElements() {
+    el.panel = null;
+    el.statePill = null;
+    el.globalError = null;
+    el.openInstall = null;
+    el.installMeta = null;
+    el.guildId = null;
+    el.verify = null;
+    el.verifyResult = null;
+    el.refresh = null;
+    el.listStatus = null;
+    el.installs = null;
   }
 
   function init() {
-    if (!cacheElements()) return;
+    state.requestEpoch += 1;
+    state.mounted = true;
+
+    if (!cacheElements()) {
+      state.mounted = false;
+      return;
+    }
     updateInstallMeta(state.installMeta);
     bindEvents();
     renderInstalls();
     void refreshInstalls();
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
-  } else {
-    init();
+  function destroy() {
+    state.requestEpoch += 1;
+    state.mounted = false;
+    state.loadingInstalls = false;
+    state.loadingInstallUrlGuildId = null;
+    state.verifyingGuildIds.clear();
+    state.disablingGuildIds.clear();
+    state.installGuildIds.clear();
+
+    unbindEvents();
+    clearElements();
+  }
+
+  window.DiscordPlatformView = {
+    init,
+    destroy
+  };
+
+  const pathname = String(window.location.pathname || "").toLowerCase();
+  const standaloneDiscordView = pathname.endsWith("/views/platforms/discord.html");
+  if (standaloneDiscordView) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        window.DiscordPlatformView.init();
+      }, { once: true });
+    } else {
+      window.DiscordPlatformView.init();
+    }
   }
 })();
