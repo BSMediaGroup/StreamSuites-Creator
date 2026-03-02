@@ -1121,6 +1121,47 @@
     return isCreatorDebugModeActive(session);
   }
 
+  function setProfileHoverAttr(node, attr, value) {
+    if (!(node instanceof Element) || !attr) return;
+    const text = String(value || "").trim();
+    if (text) {
+      node.setAttribute(attr, text);
+      return;
+    }
+    node.removeAttribute(attr);
+  }
+
+  function applyProfileHoverSummaryAttrs(node, session) {
+    if (!(node instanceof Element)) return;
+    if (node.closest('[data-ss-profile-hover="off"], .ss-no-profile-hover')) return;
+    if (!session?.authenticated) {
+      node.classList.remove("ss-profile-hover");
+      return;
+    }
+    const displayName = getDisplayName(session);
+    const userCode = coerceText(session?.user_code);
+    const avatarUrl = coerceText(session?.avatar);
+    const role = normalizeRole(session?.role);
+    const profileHref = userCode
+      ? `https://streamsuites.app/community/profile.html?u=${encodeURIComponent(userCode)}`
+      : "";
+
+    node.classList.add("ss-profile-hover");
+    setProfileHoverAttr(node, "data-ss-display-name", displayName);
+    setProfileHoverAttr(node, "data-ss-user-code", userCode);
+    setProfileHoverAttr(node, "data-ss-user-id", userCode);
+    setProfileHoverAttr(node, "data-ss-avatar-url", avatarUrl);
+    setProfileHoverAttr(node, "data-ss-role", role ? role.toUpperCase() : "CREATOR");
+    setProfileHoverAttr(node, "data-ss-profile-href", profileHref);
+  }
+
+  function ensureTopbarProfileHoverOptOut() {
+    document.querySelectorAll('#app-header [data-auth-summary], .ss-topbar [data-auth-summary]').forEach((node) => {
+      node.setAttribute("data-ss-profile-hover", "off");
+      node.classList.add("ss-no-profile-hover");
+    });
+  }
+
   function updateAuthSummary(session) {
     const summaries = document.querySelectorAll("[data-auth-summary]");
     summaries.forEach((summary) => {
@@ -1141,6 +1182,8 @@
         tierEl.hidden = true;
         logoutEl.hidden = true;
         if (avatarEl) avatarEl.src = "/assets/icons/ui/profile.svg";
+        if (nameEl) nameEl.classList.remove("ss-profile-hover");
+        if (avatarEl) avatarEl.classList.remove("ss-profile-hover");
         return;
       }
 
@@ -1159,6 +1202,8 @@
       if (avatarEl) {
         avatarEl.src = session.avatar || "/assets/icons/ui/profile.svg";
       }
+      applyProfileHoverSummaryAttrs(nameEl, session);
+      applyProfileHoverSummaryAttrs(avatarEl, session);
     });
     updateAccountMenuState(session);
     updateAccountSettingsPanel(session);
@@ -1236,6 +1281,10 @@
     if (avatarImage instanceof HTMLImageElement) {
       avatarImage.src = authenticated && session?.avatar ? session.avatar : "/assets/icons/ui/profile.svg";
     }
+    applyProfileHoverSummaryAttrs(nameInput, session);
+    applyProfileHoverSummaryAttrs(userCodeValue, session);
+    applyProfileHoverSummaryAttrs(profileEmailValue, session);
+    applyProfileHoverSummaryAttrs(avatarImage, session);
 
     const emailValue = coerceText(session?.email);
     if (profileEmailValue) {
@@ -2539,6 +2588,7 @@
     const isOnboarding = pathname === "/views/onboarding.html";
 
     ensureAuthSummaryMounts();
+    ensureTopbarProfileHoverOptOut();
     wireLogoutButtons();
     wireCreatorDebugControls();
     wireAccountMenus();

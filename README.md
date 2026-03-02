@@ -94,6 +94,10 @@ StreamSuites-Creator/
 |-- favicon.ico
 |-- index.html
 |-- assets/
+|   |-- css/
+|   |   `-- ss-profile-hovercard.css
+|   |-- js/
+|   |   `-- ss-profile-hovercard.js
 |   `-- [truncated: backgrounds/, fonts/, icons/, illustrations/, logos/, placeholders/, files...]
 |-- auth/
 |   |-- login.html

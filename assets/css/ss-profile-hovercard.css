@@ -1,0 +1,291 @@
+:root {
+  --ss-hovercard-bg: rgba(10, 12, 18, 0.78);
+  --ss-hovercard-border: rgba(140, 121, 255, 0.35);
+  --ss-hovercard-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+  --ss-hovercard-muted: rgba(186, 198, 225, 0.78);
+  --ss-hovercard-accent: rgba(154, 209, 255, 0.92);
+}
+
+.ss-profile-hovercard {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(320px, calc(100vw - 24px));
+  border-radius: 16px;
+  border: 1px solid var(--ss-hovercard-border);
+  background: var(--ss-hovercard-bg);
+  box-shadow: var(--ss-hovercard-shadow);
+  backdrop-filter: blur(18px) saturate(138%);
+  color: rgba(237, 243, 255, 0.96);
+  overflow: hidden;
+  z-index: 2147483640;
+  opacity: 0;
+  transform: translateY(4px) scale(0.985);
+  transition: opacity 120ms ease, transform 120ms ease;
+  pointer-events: none;
+}
+
+.ss-profile-hovercard.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.ss-profile-hovercard-cover {
+  position: relative;
+  height: 68px;
+  background:
+    radial-gradient(120% 120% at 0% 10%, rgba(128, 118, 255, 0.42) 0%, rgba(128, 118, 255, 0) 65%),
+    radial-gradient(120% 120% at 100% 100%, rgba(95, 232, 237, 0.26) 0%, rgba(95, 232, 237, 0) 62%),
+    linear-gradient(135deg, rgba(25, 33, 52, 0.95), rgba(32, 17, 44, 0.9));
+}
+
+.ss-profile-hovercard-cover-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.ss-profile-hovercard.has-cover-image .ss-profile-hovercard-cover-image {
+  opacity: 1;
+}
+
+.ss-profile-hovercard-body {
+  position: relative;
+  padding: 0 14px 14px;
+}
+
+.ss-profile-hovercard-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(190, 202, 236, 0.72);
+  background: linear-gradient(145deg, rgba(145, 205, 255, 0.92), rgba(112, 220, 255, 0.9));
+  box-shadow: 0 0 0 3px rgba(10, 14, 23, 0.92), 0 10px 28px rgba(78, 141, 216, 0.34);
+  background-size: cover;
+  background-position: center;
+  color: #06111c;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -28px;
+}
+
+.ss-profile-hovercard-head {
+  margin-top: 10px;
+  display: grid;
+  gap: 2px;
+}
+
+.ss-profile-hovercard-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ss-profile-hovercard-name {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.24;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ss-profile-hovercard-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.ss-profile-hovercard-badge {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.ss-profile-hovercard-subtitle {
+  margin: 0;
+  color: var(--ss-hovercard-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ss-profile-hovercard-bio {
+  margin: 10px 0 0;
+  color: rgba(198, 210, 234, 0.9);
+  font-size: 0.73rem;
+  line-height: 1.52;
+  min-height: 34px;
+}
+
+.ss-profile-hovercard-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ss-profile-hovercard-social-row {
+  margin-top: 9px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ss-profile-hovercard-social-row[hidden] {
+  display: none;
+}
+
+.ss-profile-hovercard-social {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 209, 255, 0.3);
+  background: linear-gradient(135deg, rgba(33, 46, 72, 0.5), rgba(18, 24, 36, 0.6));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.ss-profile-hovercard-social img {
+  width: 12px;
+  height: 12px;
+  display: block;
+}
+
+.ss-profile-hovercard-social:hover,
+.ss-profile-hovercard-social:focus-visible {
+  border-color: rgba(154, 209, 255, 0.58);
+  box-shadow: 0 0 0 1px rgba(154, 209, 255, 0.16), 0 0 12px rgba(116, 150, 255, 0.28);
+  outline: none;
+}
+
+.ss-profile-hovercard-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 209, 255, 0.3);
+  background: linear-gradient(135deg, rgba(33, 46, 72, 0.5), rgba(18, 24, 36, 0.6));
+  color: var(--ss-hovercard-accent);
+  text-decoration: none;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 10px;
+  transition: border-color 120ms ease, box-shadow 120ms ease, color 120ms ease;
+}
+
+.ss-profile-hovercard-action:hover,
+.ss-profile-hovercard-action:focus-visible {
+  color: #e3f4ff;
+  border-color: rgba(154, 209, 255, 0.6);
+  box-shadow: 0 0 0 1px rgba(154, 209, 255, 0.16), 0 0 12px rgba(116, 150, 255, 0.28);
+  outline: none;
+}
+
+.ss-profile-hovercard-skeleton {
+  display: none;
+  margin-top: 10px;
+  gap: 7px;
+}
+
+.ss-profile-hovercard.is-loading .ss-profile-hovercard-bio,
+.ss-profile-hovercard.is-loading .ss-profile-hovercard-social-row,
+.ss-profile-hovercard.is-loading .ss-profile-hovercard-actions {
+  display: none;
+}
+
+.ss-profile-hovercard.is-loading .ss-profile-hovercard-skeleton {
+  display: grid;
+}
+
+.ss-profile-hovercard-skeleton-line {
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(
+    110deg,
+    rgba(80, 95, 128, 0.26) 8%,
+    rgba(129, 153, 204, 0.36) 28%,
+    rgba(79, 96, 129, 0.24) 45%
+  );
+  background-size: 220% 100%;
+  animation: ss-hovercard-shimmer 1.2s linear infinite;
+}
+
+.ss-profile-hovercard-skeleton-line:nth-child(1) {
+  width: 82%;
+}
+
+.ss-profile-hovercard-skeleton-line:nth-child(2) {
+  width: 68%;
+}
+
+.item-thumb .ss-thumb-skeleton,
+.thumb .ss-thumb-skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(120deg, rgba(68, 83, 114, 0.16), rgba(88, 112, 154, 0.22), rgba(68, 83, 114, 0.14)),
+    linear-gradient(180deg, rgba(15, 24, 39, 0.85), rgba(19, 24, 35, 0.72));
+  background-size: 220% 100%, 100% 100%;
+  transition: opacity 120ms ease;
+}
+
+.item-thumb.is-loading .ss-thumb-skeleton,
+.thumb.is-loading .ss-thumb-skeleton {
+  opacity: 1;
+  animation: ss-hovercard-shimmer 1.2s linear infinite;
+}
+
+.item-thumb img,
+.item-thumb video,
+.thumb img,
+.thumb video {
+  position: relative;
+  z-index: 2;
+}
+
+.item-thumb .item-duration,
+.thumb .item-duration {
+  z-index: 3;
+}
+
+@keyframes ss-hovercard-shimmer {
+  0% {
+    background-position: 110% 0, 0 0;
+  }
+  100% {
+    background-position: -110% 0, 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ss-profile-hovercard {
+    transition: none;
+  }
+
+  .ss-profile-hovercard-skeleton-line,
+  .item-thumb.is-loading .ss-thumb-skeleton,
+  .thumb.is-loading .ss-thumb-skeleton {
+    animation: none;
+  }
+}

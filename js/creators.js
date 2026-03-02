@@ -212,10 +212,15 @@
 
     visibleCreators.forEach((creator) => {
       const tr = document.createElement("tr");
+      const creatorCode = escapeHtml(creator.creator_id);
+      const displayName = escapeHtml(creator.display_name || creator.creator_id || "Creator");
+      const profileHref = `https://streamsuites.app/community/profile.html?u=${encodeURIComponent(
+        creator.creator_id || ""
+      )}`;
 
       tr.innerHTML = `
-        <td>${escapeHtml(creator.creator_id)}</td>
-        <td>${escapeHtml(creator.display_name || "")}</td>
+        <td><span class="ss-profile-hover" data-ss-user-code="${creatorCode}" data-ss-user-id="${creatorCode}" data-ss-display-name="${displayName}" data-ss-role="CREATOR" data-ss-profile-href="${escapeHtml(profileHref)}">${creatorCode}</span></td>
+        <td><span class="ss-profile-hover" data-ss-user-code="${creatorCode}" data-ss-user-id="${creatorCode}" data-ss-display-name="${displayName}" data-ss-role="CREATOR" data-ss-profile-href="${escapeHtml(profileHref)}">${displayName}</span></td>
         <td>${renderPlatforms(creator)}</td>
         <td>${renderStatus(creator)}</td>
         <td>${renderNotes(creator)}</td>
