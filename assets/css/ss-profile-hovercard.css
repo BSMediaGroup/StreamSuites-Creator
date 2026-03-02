@@ -82,6 +82,7 @@
   margin-top: 10px;
   display: grid;
   gap: 2px;
+  overflow: visible;
 }
 
 .ss-profile-hovercard-name-row {
@@ -89,6 +90,7 @@
   align-items: center;
   gap: 6px;
   min-width: 0;
+  overflow: visible;
 }
 
 .ss-profile-hovercard-name {
@@ -105,12 +107,35 @@
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
+  min-height: 16px;
+  color: var(--ss-hovercard-accent);
+  overflow: visible;
 }
 
 .ss-profile-hovercard-badge {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   display: block;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.ss-profile-hovercard-badges .ss-hover-badge-icon,
+.ss-profile-hovercard-badges svg,
+.ss-profile-hovercard-badges img {
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  min-height: 15px;
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+.ss-profile-hovercard-badges svg {
+  overflow: visible;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 0;
 }
 
 .ss-profile-hovercard-subtitle {

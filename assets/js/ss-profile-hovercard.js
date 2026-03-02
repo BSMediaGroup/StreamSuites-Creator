@@ -40,6 +40,21 @@
     "github",
     "website"
   ]);
+  const BADGE_QUERY = '[data-ss-badge], [data-badge], .ss-badge, .badge, .badge-icon, .creator-badges img, .creator-badges svg';
+  const BADGE_CONTAINER_QUERY = ".creator-badges, .ss-badges, .badge-row, [data-ss-badge-row]";
+  const NAME_QUERY = '[data-ss-display-name], .creator-name, .display-name, .user-name, .username, .name';
+  const BADGE_ANCESTOR_RADIUS = 3;
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const XLINK_NS = "http://www.w3.org/1999/xlink";
+  const FALLBACK_BADGE_ICON_MAP = Object.freeze({
+    admin: "M8 1.1 13.4 3.1v4.2c0 3.2-2.2 5.9-5.4 7.7C4.8 13.2 2.6 10.5 2.6 7.3V3.1L8 1.1zm2.6 5.2L7.4 9.5 5.8 8l-1.1 1.1 2.7 2.7 4.3-4.3-1.1-1.2z",
+    creator: "M8 1.2 9.9 5l4.2.6-3 2.9.7 4.1L8 10.7 4.2 12.6l.7-4.1-3-2.9L6.1 5 8 1.2z",
+    core: "M8 2.1a5.9 5.9 0 1 1 0 11.8A5.9 5.9 0 0 1 8 2.1zm0 2a3.9 3.9 0 1 0 0 7.8 3.9 3.9 0 0 0 0-7.8z",
+    gold: "M8 1.3 11 2.6l2.8 1.6-.6 3.2a6.5 6.5 0 0 1-5.2 5.3A6.5 6.5 0 0 1 2.8 7.4l-.6-3.2L5 2.6 8 1.3zm0 2.2-1.1 2.1-2.3.3 1.7 1.6-.4 2.3L8 8.7l2.1 1.1-.4-2.3 1.7-1.6-2.3-.3L8 3.5z",
+    pro: "M8 1.4 3.2 8h3L5.5 14.6 12.8 6H9.9L11 1.4H8z",
+    staff: "M8 1.1 13.6 3v4.4c0 3.4-2.4 6.2-5.6 7.8C4.8 13.6 2.4 10.8 2.4 7.4V3L8 1.1z",
+    verified: "M8 1.3a6.7 6.7 0 1 1 0 13.4A6.7 6.7 0 0 1 8 1.3zm2.7 4.3L7.1 9.4 5.3 7.7 4.2 8.8l2.9 2.9 4.9-4.9-1-1.2z"
+  });
 
   let card = null;
   let activeTrigger = null;
@@ -47,6 +62,7 @@
   let fetchController = null;
   let activeFetchToken = 0;
   let cardHovered = false;
+  let badgeCloneCounter = 0;
 
   const profileCache = new Map();
 
@@ -173,6 +189,170 @@
     return "";
   }
 
+  function isLikelyBadgeIconElement(node) {
+    if (!(node instanceof Element)) return false;
+    if (node.closest(".ss-profile-hovercard")) return false;
+    const className = safeText(node.className || "").toLowerCase();
+    if (/avatar|profile-avatar|creator-avatar/.test(className)) return false;
+    if (node.matches(BADGE_QUERY)) return true;
+    if (node.matches("svg, img")) return true;
+    return false;
+  }
+
+  function collectBadgeCandidates(root, out, seen) {
+    if (!(root instanceof Element)) return;
+    root.querySelectorAll(BADGE_CONTAINER_QUERY).forEach((container) => {
+      if (!(container instanceof Element)) return;
+      container.querySelectorAll("svg, img, [data-ss-badge], [data-badge], .ss-badge, .badge, .badge-icon").forEach((node) => {
+        if (!isLikelyBadgeIconElement(node) || seen.has(node)) return;
+        seen.add(node);
+        out.push(node);
+      });
+    });
+    root.querySelectorAll(BADGE_QUERY).forEach((node) => {
+      if (!isLikelyBadgeIconElement(node) || seen.has(node)) return;
+      seen.add(node);
+      out.push(node);
+    });
+    root.querySelectorAll(NAME_QUERY).forEach((nameNode) => {
+      if (!(nameNode instanceof Element)) return;
+      [nameNode.previousElementSibling, nameNode.nextElementSibling].forEach((sibling) => {
+        if (!(sibling instanceof Element)) return;
+        if (isLikelyBadgeIconElement(sibling) && !seen.has(sibling)) {
+          seen.add(sibling);
+          out.push(sibling);
+        }
+        sibling.querySelectorAll("svg, img, [data-ss-badge], [data-badge], .ss-badge, .badge, .badge-icon").forEach((node) => {
+          if (!isLikelyBadgeIconElement(node) || seen.has(node)) return;
+          seen.add(node);
+          out.push(node);
+        });
+      });
+    });
+  }
+
+  function findBadgeNodes(triggerEl) {
+    if (!(triggerEl instanceof Element)) return [];
+    const nodes = [];
+    const seen = new Set();
+    collectBadgeCandidates(triggerEl, nodes, seen);
+    let cursor = triggerEl;
+    for (let depth = 0; depth < BADGE_ANCESTOR_RADIUS; depth += 1) {
+      cursor = cursor?.parentElement || null;
+      if (!cursor || cursor === document.body) break;
+      collectBadgeCandidates(cursor, nodes, seen);
+    }
+    return nodes.slice(0, 6);
+  }
+
+  function patchSvgUseReferences(svg) {
+    if (!(svg instanceof SVGElement)) return;
+    svg.querySelectorAll("use").forEach((useNode) => {
+      const hrefValue = safeText(useNode.getAttribute("href") || useNode.getAttributeNS(XLINK_NS, "href"));
+      if (!hrefValue) return;
+      useNode.setAttribute("href", hrefValue);
+      useNode.setAttributeNS(XLINK_NS, "xlink:href", hrefValue);
+    });
+  }
+
+  function dedupeSvgIds(svg) {
+    if (!(svg instanceof SVGElement)) return;
+    const renamed = new Map();
+    svg.querySelectorAll("[id]").forEach((node) => {
+      const oldId = safeText(node.id);
+      if (!oldId) return;
+      badgeCloneCounter += 1;
+      const newId = `ss-hover-badge-${badgeCloneCounter}`;
+      node.id = newId;
+      renamed.set(oldId, newId);
+    });
+    if (!renamed.size) return;
+    const attrs = ["href", "xlink:href", "fill", "stroke", "filter", "mask", "clip-path"];
+    svg.querySelectorAll("*").forEach((node) => {
+      attrs.forEach((attr) => {
+        const raw = safeText(node.getAttribute(attr));
+        if (!raw) return;
+        let next = raw;
+        renamed.forEach((newId, oldId) => {
+          next = next
+            .replaceAll(`#${oldId}`, `#${newId}`)
+            .replaceAll(`url(#${oldId})`, `url(#${newId})`);
+        });
+        if (next !== raw) {
+          node.setAttribute(attr, next);
+        }
+      });
+    });
+  }
+
+  function cloneBadgeNode(node) {
+    if (!(node instanceof Element)) return null;
+    let clone = node.cloneNode(true);
+    if (!(clone instanceof Element)) return null;
+    if (!clone.matches("svg, img")) {
+      const embeddedIcon = clone.querySelector("svg, img");
+      if (!(embeddedIcon instanceof Element)) return null;
+      clone = embeddedIcon;
+    }
+    clone.classList.add("ss-hover-badge-icon");
+    clone.removeAttribute("id");
+    clone.removeAttribute("aria-hidden");
+    clone.setAttribute("aria-hidden", "true");
+    if (clone instanceof SVGElement) {
+      patchSvgUseReferences(clone);
+      dedupeSvgIds(clone);
+    }
+    return clone;
+  }
+
+  function normalizeFallbackBadgeTokens(trigger, badges) {
+    const tokens = [];
+    const pushToken = (value) => {
+      const token = safeText(value).toLowerCase();
+      if (!token || tokens.includes(token)) return;
+      tokens.push(token);
+    };
+    normalizeBadges(badges, "PUBLIC", "core").forEach((badge) => {
+      pushToken(badge.value);
+    });
+    const rawAttr = safeText(trigger?.getAttribute("data-ss-badges") || trigger?.dataset?.ssBadges);
+    if (!rawAttr) return tokens;
+    try {
+      const parsed = JSON.parse(rawAttr);
+      if (Array.isArray(parsed)) {
+        parsed.forEach((entry) => {
+          if (typeof entry === "string") {
+            pushToken(entry);
+            return;
+          }
+          if (!entry || typeof entry !== "object") return;
+          pushToken(entry.value || entry.kind);
+        });
+        return tokens;
+      }
+      if (parsed && typeof parsed === "object") {
+        pushToken(parsed.value || parsed.kind);
+        return tokens;
+      }
+    } catch (_err) {
+      rawAttr.split(",").forEach((entry) => pushToken(entry));
+    }
+    return tokens;
+  }
+
+  function createFallbackBadgeSvg(token) {
+    const pathData = FALLBACK_BADGE_ICON_MAP[token];
+    if (!pathData) return null;
+    const svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("viewBox", "0 0 16 16");
+    svg.setAttribute("aria-hidden", "true");
+    svg.classList.add("ss-hover-badge-icon");
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", pathData);
+    svg.appendChild(path);
+    return svg;
+  }
+
   function parseTriggerData(trigger) {
     const ds = trigger?.dataset || {};
     const displayName =
@@ -264,19 +444,37 @@
     return card?.querySelector(`[data-slot="${name}"]`) || null;
   }
 
-  function renderBadgeSuffix(row, badges) {
+  function renderBadgeSuffix(row, badges, trigger) {
     if (!row) return;
-    row.innerHTML = "";
-    const normalized = normalizeBadges(badges, "PUBLIC", "core");
-    normalized.forEach((badge) => {
-      const iconPath = resolveBadgeIconPath(badge.kind, badge.value);
-      if (!iconPath) return;
-      const icon = document.createElement("img");
-      icon.className = "ss-profile-hovercard-badge";
-      icon.src = iconPath;
-      icon.alt = "";
-      row.appendChild(icon);
+    row.textContent = "";
+    const sourceBadges = findBadgeNodes(trigger);
+    sourceBadges.forEach((node) => {
+      const clone = cloneBadgeNode(node);
+      if (!clone) return;
+      row.appendChild(clone);
     });
+
+    if (!row.childElementCount) {
+      const normalized = normalizeBadges(badges, "PUBLIC", "core");
+      normalized.forEach((badge) => {
+        const iconPath = resolveBadgeIconPath(badge.kind, badge.value);
+        if (!iconPath) return;
+        const icon = document.createElement("img");
+        icon.className = "ss-profile-hovercard-badge ss-hover-badge-icon";
+        icon.src = iconPath;
+        icon.alt = "";
+        row.appendChild(icon);
+      });
+    }
+
+    if (!row.childElementCount) {
+      normalizeFallbackBadgeTokens(trigger, badges).forEach((token) => {
+        const icon = createFallbackBadgeSvg(token);
+        if (!icon) return;
+        row.appendChild(icon);
+      });
+    }
+
     row.hidden = row.childElementCount === 0;
   }
 
@@ -319,7 +517,7 @@
     coverImage.src = source;
   }
 
-  function updateCardContent(profile) {
+  function updateCardContent(profile, trigger) {
     if (!card) return;
     const avatarEl = getSlot("avatar");
     const nameEl = getSlot("name");
@@ -344,7 +542,7 @@
       nameEl.textContent = safeText(profile.displayName, "Public User");
     }
     if (badgesEl) {
-      renderBadgeSuffix(badgesEl, profile.badges);
+      renderBadgeSuffix(badgesEl, profile.badges, trigger || activeTrigger);
     }
     if (subtitleEl) {
       subtitleEl.textContent = safeText(profile.role, "PUBLIC");
@@ -515,7 +713,7 @@
 
       if (token !== activeFetchToken || !activeTrigger) return;
       const merged = mergeProfile(baseProfile, profile);
-      updateCardContent(merged);
+      updateCardContent(merged, activeTrigger);
       setLoading(false);
       positionCard(activeTrigger);
     } catch (_err) {
@@ -537,7 +735,7 @@
     const merged = cached ? mergeProfile(initial, cached) : initial;
 
     activeTrigger = trigger;
-    updateCardContent(merged);
+    updateCardContent(merged, trigger);
     setLoading(false);
     showCard();
     positionCard(trigger);
