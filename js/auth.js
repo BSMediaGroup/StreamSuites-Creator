@@ -216,19 +216,22 @@
     if (!element) return;
     const normalized = normalizeTier(tierLabel);
     element.classList.add("tier-pill");
+    element.classList.add("ss-role-badges");
     element.classList.remove("tier-core", "tier-gold", "tier-pro");
     element.dataset.tier = normalized;
+    element.setAttribute("data-ss-badge-kind", "tier");
     const content = document.createElement("span");
     content.className = "tier-pill-content";
 
     const iconSrc = TIER_ICON_SOURCES.get(normalized);
     if (iconSrc) {
       const icon = document.createElement("img");
-      icon.className = "tier-pill-icon";
+      icon.className = "tier-pill-icon ss-tier-badge";
       icon.src = iconSrc;
       icon.alt = "";
       icon.decoding = "async";
       icon.setAttribute("aria-hidden", "true");
+      icon.setAttribute("data-ss-role-badge", normalized.toLowerCase());
       content.appendChild(icon);
     }
 

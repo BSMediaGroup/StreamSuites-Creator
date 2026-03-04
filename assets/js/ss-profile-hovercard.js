@@ -40,9 +40,28 @@
     "github",
     "website"
   ]);
-  const BADGE_QUERY = '[data-ss-badge], [data-badge], .ss-badge, .badge, .badge-icon, .creator-badges img, .creator-badges svg';
-  const BADGE_CONTAINER_QUERY = ".creator-badges, .ss-badges, .badge-row, [data-ss-badge-row]";
-  const NAME_QUERY = '[data-ss-display-name], .creator-name, .display-name, .user-name, .username, .name';
+  const ROLE_BADGE_WRAPPER_QUERY = ".ss-role-badges";
+  const ROLE_BADGE_PRIMARY_QUERY =
+    ".ss-role-badges svg, .ss-role-badges img, .ss-role-badges [data-ss-role-badge]";
+  const ROLE_BADGE_SECONDARY_QUERY =
+    "[data-ss-badge-kind='role'] svg, [data-ss-badge-kind='role'] img, [data-ss-badge-kind='tier'] svg, [data-ss-badge-kind='tier'] img, .ss-role-badge, .ss-tier-badge, [data-ss-role-badge]";
+  const ROLE_BADGE_MARKER_QUERY =
+    "[data-ss-role-badge], [data-ss-badge-kind='role'], [data-ss-badge-kind='tier'], .ss-role-badge, .ss-tier-badge, .ss-role-badges";
+  const ROLE_BADGE_INCLUDE_TOKENS = Object.freeze(["tier", "core", "gold", "pro", "admin", "role"]);
+  const ROLE_BADGE_EXCLUDE_TOKENS = Object.freeze([
+    "youtube",
+    "twitch",
+    "rumble",
+    "kick",
+    "twitter",
+    "x",
+    "discord",
+    "tiktok",
+    "instagram",
+    "facebook",
+    "platform",
+    "source"
+  ]);
   const BADGE_ANCESTOR_RADIUS = 3;
   const SVG_NS = "http://www.w3.org/2000/svg";
   const XLINK_NS = "http://www.w3.org/1999/xlink";
@@ -192,42 +211,51 @@
   function isLikelyBadgeIconElement(node) {
     if (!(node instanceof Element)) return false;
     if (node.closest(".ss-profile-hovercard")) return false;
+    if (!node.matches("svg, img, [data-ss-role-badge], .ss-role-badge, .ss-tier-badge")) return false;
     const className = safeText(node.className || "").toLowerCase();
     if (/avatar|profile-avatar|creator-avatar/.test(className)) return false;
-    if (node.matches(BADGE_QUERY)) return true;
-    if (node.matches("svg, img")) return true;
-    return false;
+    return true;
   }
 
-  function collectBadgeCandidates(root, out, seen) {
-    if (!(root instanceof Element)) return;
-    root.querySelectorAll(BADGE_CONTAINER_QUERY).forEach((container) => {
-      if (!(container instanceof Element)) return;
-      container.querySelectorAll("svg, img, [data-ss-badge], [data-badge], .ss-badge, .badge, .badge-icon").forEach((node) => {
-        if (!isLikelyBadgeIconElement(node) || seen.has(node)) return;
-        seen.add(node);
-        out.push(node);
-      });
-    });
-    root.querySelectorAll(BADGE_QUERY).forEach((node) => {
-      if (!isLikelyBadgeIconElement(node) || seen.has(node)) return;
+  function nodeRoleBadgeTokenText(node) {
+    if (!(node instanceof Element)) return "";
+    const parts = [
+      node.getAttribute("class"),
+      node.getAttribute("id"),
+      node.getAttribute("data-ss-role-badge"),
+      node.getAttribute("data-ss-badge-kind"),
+      node.getAttribute("data-badge"),
+      node.getAttribute("aria-label"),
+      node.getAttribute("title")
+    ];
+    const useNode = node.matches("use") ? node : node.querySelector("use");
+    if (useNode instanceof Element) {
+      parts.push(useNode.getAttribute("href"));
+      parts.push(useNode.getAttribute("xlink:href"));
+    }
+    return parts
+      .map((value) => safeText(value).toLowerCase())
+      .filter(Boolean)
+      .join(" ");
+  }
+
+  function isRoleBadgeNode(node) {
+    if (!isLikelyBadgeIconElement(node)) return false;
+    if (node.matches(ROLE_BADGE_MARKER_QUERY) || node.closest(ROLE_BADGE_MARKER_QUERY)) return true;
+    const tokenText = nodeRoleBadgeTokenText(node);
+    if (!tokenText) return false;
+    const hasExcluded = ROLE_BADGE_EXCLUDE_TOKENS.some((token) => tokenText.includes(token));
+    if (hasExcluded) return false;
+    return ROLE_BADGE_INCLUDE_TOKENS.some((token) => tokenText.includes(token));
+  }
+
+  function collectRoleBadgeCandidates(root, query, out, seen) {
+    if (!(root instanceof Element) || !query) return;
+    root.querySelectorAll(query).forEach((node) => {
+      if (!(node instanceof Element)) return;
+      if (seen.has(node) || !isRoleBadgeNode(node)) return;
       seen.add(node);
       out.push(node);
-    });
-    root.querySelectorAll(NAME_QUERY).forEach((nameNode) => {
-      if (!(nameNode instanceof Element)) return;
-      [nameNode.previousElementSibling, nameNode.nextElementSibling].forEach((sibling) => {
-        if (!(sibling instanceof Element)) return;
-        if (isLikelyBadgeIconElement(sibling) && !seen.has(sibling)) {
-          seen.add(sibling);
-          out.push(sibling);
-        }
-        sibling.querySelectorAll("svg, img, [data-ss-badge], [data-badge], .ss-badge, .badge, .badge-icon").forEach((node) => {
-          if (!isLikelyBadgeIconElement(node) || seen.has(node)) return;
-          seen.add(node);
-          out.push(node);
-        });
-      });
     });
   }
 
@@ -235,12 +263,30 @@
     if (!(triggerEl instanceof Element)) return [];
     const nodes = [];
     const seen = new Set();
-    collectBadgeCandidates(triggerEl, nodes, seen);
+    const roots = [triggerEl];
     let cursor = triggerEl;
     for (let depth = 0; depth < BADGE_ANCESTOR_RADIUS; depth += 1) {
       cursor = cursor?.parentElement || null;
       if (!cursor || cursor === document.body) break;
-      collectBadgeCandidates(cursor, nodes, seen);
+      roots.push(cursor);
+    }
+
+    let hasRoleWrapper = false;
+    roots.forEach((root) => {
+      if (!root.matches?.(ROLE_BADGE_WRAPPER_QUERY) && !root.querySelector(ROLE_BADGE_WRAPPER_QUERY)) return;
+      hasRoleWrapper = true;
+      collectRoleBadgeCandidates(root, ROLE_BADGE_PRIMARY_QUERY, nodes, seen);
+    });
+    if (hasRoleWrapper) return nodes.slice(0, 6);
+
+    let hasRoleMarker = false;
+    roots.forEach((root) => {
+      if (!root.matches?.(ROLE_BADGE_MARKER_QUERY) && !root.querySelector(ROLE_BADGE_MARKER_QUERY)) return;
+      hasRoleMarker = true;
+      collectRoleBadgeCandidates(root, ROLE_BADGE_SECONDARY_QUERY, nodes, seen);
+    });
+    if (!hasRoleMarker) {
+      return [];
     }
     return nodes.slice(0, 6);
   }

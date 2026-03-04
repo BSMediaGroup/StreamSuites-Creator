@@ -112,6 +112,12 @@
   overflow: visible;
 }
 
+.ss-role-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .ss-profile-hovercard-badge {
   width: 15px;
   height: 15px;
