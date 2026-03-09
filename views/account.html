@@ -219,10 +219,13 @@
                       <input
                         class="account-field-input"
                         type="text"
-                        value="Nova Creator"
+                        placeholder="Your display name"
                         data-account-profile-name="true"
-                        disabled
+                        data-profile-identity-input="display_name"
                       />
+                      <span class="account-field-note" data-profile-display-name-feedback="true">
+                        Display name loads from the authoritative account identity.
+                      </span>
                     </div>
                     <div class="account-field">
                       <span class="account-field-label">Canonical public slug</span>
@@ -267,8 +270,18 @@
                             data-account-profile-avatar="true"
                           />
                         </span>
-                        <span class="account-avatar-note">Avatar uploads are still managed outside this surface.</span>
+                        <span class="account-avatar-note">Authoritative avatar preview.</span>
                       </div>
+                      <input
+                        class="account-field-input"
+                        type="url"
+                        placeholder="https://cdn.example.com/avatar.webp"
+                        data-profile-identity-input="avatar_url"
+                        data-profile-avatar-url="true"
+                      />
+                      <span class="account-field-note" data-profile-avatar-feedback="true">
+                        Avatar editing uses the grounded backend method when available.
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -648,7 +661,6 @@
   <script src="/js/status-widget.js" defer></script>
 </body>
 </html>
-
 
 
 

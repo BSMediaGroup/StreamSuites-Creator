@@ -33,6 +33,8 @@ The creator footer/version UI and version stamp utilities consume runtime export
 - Non-creator authenticated sessions are soft-locked out of creator content.
 - Public creator profile settings hydrate from and save to `https://api.streamsuites.app/api/public/profile/me`
   for supported authoritative fields.
+- The account settings page resolves its profile/auth requests against the same runtime auth origin as
+  the active creator session so local and production load/save paths stay aligned.
 - No admin mutation endpoints are owned or authored here.
 
 ## Auth + Access
@@ -57,6 +59,7 @@ Current creator surface includes the following implemented areas:
   - Authoritative canonical public slug visibility surfaced on the account page
   - Independent StreamSuites profile visibility and FindMeHere listing controls
   - Truthful share preview URLs for both public surfaces
+  - Session-backed account identity hydration aligned with the authoritative public profile payload
   - Authoritative cover/banner and background media field editing
   - Bio/about and grounded public social-link editing
 - Footer/status UX upgrades:

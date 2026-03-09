@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  function detectApiBase() {
+  function detectFallbackApiBase() {
     const host = (window.location.hostname || "").toLowerCase();
     if (host === "localhost" || host === "127.0.0.1") {
       return "http://127.0.0.1:18087";
@@ -9,7 +9,19 @@
     return "https://api.streamsuites.app";
   }
 
-  const API_BASE = detectApiBase();
+  function resolveApiBase() {
+    const sessionEndpoint = window.StreamSuitesAuth?.endpoints?.session;
+    if (sessionEndpoint) {
+      try {
+        return new URL(sessionEndpoint).origin;
+      } catch (err) {
+        // Fall back to local detection below.
+      }
+    }
+    return detectFallbackApiBase();
+  }
+
+  const API_BASE = resolveApiBase();
   const AUTH_METHODS_ENDPOINT = `${API_BASE}/api/account/auth-methods`;
   const AUTH_UNLINK_ENDPOINT = `${API_BASE}/api/account/auth-methods/unlink`;
   const EMAIL_CHANGE_REQUEST_ENDPOINT = `${API_BASE}/api/account/email/change/request`;
@@ -128,10 +140,17 @@
       findmePreviewUrl: document.querySelector("[data-profile-findme-url]"),
       streamsuitesPreviewNote: document.querySelector("[data-profile-streamsuites-preview-note]"),
       findmePreviewNote: document.querySelector("[data-profile-findme-preview-note]"),
+      displayNameInput: document.querySelector("[data-account-profile-name]"),
+      displayNameFeedback: document.querySelector("[data-profile-display-name-feedback]"),
+      userCodeValue: document.querySelector("[data-account-profile-user-code]"),
+      avatarImage: document.querySelector("[data-account-profile-avatar]"),
+      avatarUrlInput: document.querySelector("[data-profile-avatar-url]"),
+      avatarFeedback: document.querySelector("[data-profile-avatar-feedback]"),
       coverImageInput: document.querySelector("[data-profile-cover-image]"),
       backgroundImageInput: document.querySelector("[data-profile-background-image]"),
       bioInput: document.querySelector("[data-profile-bio]"),
       linkInputs: Array.from(document.querySelectorAll("[data-profile-link]")),
+      identityInputs: Array.from(document.querySelectorAll("[data-profile-identity-input]")),
       saveButtons: Array.from(document.querySelectorAll("[data-profile-save]")),
       resetButtons: Array.from(document.querySelectorAll("[data-profile-reset]")),
       copyButtons: Array.from(document.querySelectorAll("[data-profile-copy-url]")),
@@ -326,6 +345,9 @@
     return {
       public_slug: coerceText(profile?.public_slug || profile?.slug),
       slug_aliases: Array.isArray(profile?.slug_aliases) ? profile.slug_aliases.map((item) => coerceText(item)).filter(Boolean) : [],
+      user_code: coerceText(profile?.user_code),
+      display_name: coerceText(profile?.display_name),
+      avatar_url: coerceText(profile?.avatar_url),
       creator_capable: profile?.creator_capable === true,
       public_surface_account_type: coerceText(profile?.public_surface_account_type),
       streamsuites_profile_enabled: profile?.streamsuites_profile_enabled !== false,
@@ -369,6 +391,11 @@
         button.disabled = busy || !state.profile;
       }
     });
+    els.identityInputs.forEach((field) => {
+      if (field instanceof HTMLInputElement) {
+        field.disabled = busy || !state.profile;
+      }
+    });
   }
 
   function setStatusPill(element, text, tone) {
@@ -405,6 +432,8 @@
     });
 
     return {
+      display_name: coerceText(els.displayNameInput?.value),
+      avatar_url: coerceText(els.avatarUrlInput?.value),
       public_slug_input: coerceText(els.slugInput?.value),
       streamsuites_profile_enabled: !!els.streamsuitesToggle?.checked,
       findmehere_enabled: !!els.findmeToggle?.checked,
@@ -426,6 +455,20 @@
     };
   }
 
+  function getIdentityDraftSnapshot(draft) {
+    return {
+      display_name: coerceText(draft.display_name),
+      avatar_url: coerceText(draft.avatar_url),
+    };
+  }
+
+  function getIdentitySavedSnapshot(profile) {
+    return {
+      display_name: coerceText(profile?.display_name),
+      avatar_url: coerceText(profile?.avatar_url),
+    };
+  }
+
   function getSupportedSavedSnapshot(profile) {
     return {
       streamsuites_profile_enabled: !!profile?.streamsuites_profile_enabled,
@@ -440,6 +483,12 @@
   function isSupportedProfileDirty() {
     const draft = getSupportedDraftSnapshot(getEditableDraft());
     const saved = getSupportedSavedSnapshot(state.profile);
+    return JSON.stringify(draft) !== JSON.stringify(saved);
+  }
+
+  function isIdentityProfileDirty() {
+    const draft = getIdentityDraftSnapshot(getEditableDraft());
+    const saved = getIdentitySavedSnapshot(state.profile);
     return JSON.stringify(draft) !== JSON.stringify(saved);
   }
 
@@ -486,6 +535,34 @@
       els.slugAliases.appendChild(chip);
     });
     els.slugAliasesWrap.hidden = false;
+  }
+
+  function renderIdentityFeedback() {
+    const els = getProfileElements();
+    const saved = getIdentitySavedSnapshot(state.profile);
+    const draft = getIdentityDraftSnapshot(getEditableDraft());
+    const dirty = JSON.stringify(saved) !== JSON.stringify(draft);
+
+    if (els.displayNameFeedback) {
+      els.displayNameFeedback.textContent = dirty
+        ? "Display name edits are staged here, but the current creator API does not expose a self-serve write route yet."
+        : "Display name loads from the authoritative account identity.";
+      els.displayNameFeedback.dataset.tone = dirty ? "warning" : "neutral";
+    }
+
+    if (els.avatarFeedback) {
+      els.avatarFeedback.textContent = dirty
+        ? "Avatar URL edits are staged here, but the current creator API does not expose a self-serve avatar write route yet."
+        : "Avatar URL loads from the authoritative account identity. Future upload-based media can replace this URL field cleanly.";
+      els.avatarFeedback.dataset.tone = dirty ? "warning" : "neutral";
+    }
+  }
+
+  function updateAvatarPreview() {
+    const els = getProfileElements();
+    if (!(els.avatarImage instanceof HTMLImageElement)) return;
+    const inputValue = coerceText(els.avatarUrlInput?.value);
+    els.avatarImage.src = inputValue || coerceText(state.profile?.avatar_url) || "/assets/icons/ui/profile.svg";
   }
 
   function renderVisibilityStatus(profile) {
@@ -545,6 +622,18 @@
     state.profile = cloneProfile(normalized);
 
     const els = getProfileElements();
+    if (els.displayNameInput instanceof HTMLInputElement) {
+      els.displayNameInput.value = normalized.display_name;
+    }
+    if (els.userCodeValue instanceof HTMLElement) {
+      els.userCodeValue.textContent = normalized.user_code || "Not available";
+    }
+    if (els.avatarImage instanceof HTMLImageElement) {
+      els.avatarImage.src = normalized.avatar_url || "/assets/icons/ui/profile.svg";
+    }
+    if (els.avatarUrlInput instanceof HTMLInputElement) {
+      els.avatarUrlInput.value = normalized.avatar_url;
+    }
     if (els.slugInput instanceof HTMLInputElement) {
       els.slugInput.value = normalized.public_slug;
     }
@@ -572,6 +661,7 @@
 
     renderSlugAliases(normalized);
     renderSlugFeedback();
+    renderIdentityFeedback();
     renderVisibilityStatus(normalized);
     renderSharePreviews(normalized);
     setStatusPill(els.loadPill, "Profile loaded", "success");
@@ -615,17 +705,31 @@
     const savedSlug = coerceText(state.profile.public_slug);
     const slugChanged = slugValidation.valid && slugValidation.normalized !== savedSlug;
     const supportedDirty = isSupportedProfileDirty();
+    const identityDirty = isIdentityProfileDirty();
 
     if (!supportedDirty) {
-      if (slugChanged) {
+      if (slugChanged && identityDirty) {
+        setMessage(
+          "[data-profile-save-status=\"true\"]",
+          `Supported profile fields are unchanged. Slug, display name, and avatar edits are not persisted because the current creator self-serve backend only exposes public profile settings writes here.`,
+          "warning"
+        );
+      } else if (slugChanged) {
         setMessage(
           "[data-profile-save-status=\"true\"]",
           `Slug updates are not yet exposed by the creator API. The saved canonical slug remains "${savedSlug || "unset"}".`,
           "warning"
         );
+      } else if (identityDirty) {
+        setMessage(
+          "[data-profile-save-status=\"true\"]",
+          "Display name and avatar edits are not persisted because the current creator API does not expose identity write routes here.",
+          "warning"
+        );
       } else {
         setMessage("[data-profile-save-status=\"true\"]", "No supported profile changes to save.", "neutral");
       }
+      renderIdentityFeedback();
       return;
     }
 
@@ -648,10 +752,17 @@
         body: JSON.stringify(payload),
       });
       applyProfile(response?.profile || response);
-      if (slugChanged) {
+      if (slugChanged || identityDirty) {
+        const limitations = [];
+        if (slugChanged) {
+          limitations.push(`canonical slug remains "${state.profile.public_slug || "unset"}"`);
+        }
+        if (identityDirty) {
+          limitations.push("display name and avatar remain on their saved authoritative account identity values");
+        }
         setMessage(
           "[data-profile-save-status=\"true\"]",
-          `Saved supported profile settings. Slug updates are still waiting on a backend write route, so the canonical slug remains "${state.profile.public_slug || "unset"}".`,
+          `Saved supported profile settings. ${limitations.join(", ")} because those write routes are not exposed by the current creator API.`,
           "warning"
         );
       } else {
@@ -664,6 +775,7 @@
       state.savingProfile = false;
       setProfileBusy(false);
       renderSlugFeedback();
+      renderIdentityFeedback();
     }
   }
 
@@ -675,6 +787,15 @@
 
   function wirePublicProfileControls() {
     const els = getProfileElements();
+    if (els.displayNameInput instanceof HTMLInputElement) {
+      els.displayNameInput.addEventListener("input", renderIdentityFeedback);
+    }
+    if (els.avatarUrlInput instanceof HTMLInputElement) {
+      els.avatarUrlInput.addEventListener("input", () => {
+        updateAvatarPreview();
+        renderIdentityFeedback();
+      });
+    }
     if (els.slugInput instanceof HTMLInputElement) {
       els.slugInput.addEventListener("input", renderSlugFeedback);
     }
