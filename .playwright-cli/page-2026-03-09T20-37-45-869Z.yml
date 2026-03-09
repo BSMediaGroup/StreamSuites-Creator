@@ -1,0 +1,82 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - link "StreamSuites StreamSuites™ CREATOR DASHBOARD" [ref=e6] [cursor=pointer]:
+      - /url: https://streamsuites.app
+      - img "StreamSuites" [ref=e7]
+      - generic [ref=e8]:
+        - heading "StreamSuites™" [level=1] [ref=e9]
+        - generic [ref=e10]: CREATOR DASHBOARD
+    - generic [ref=e12]:
+      - generic [ref=e13]: Creator navigation
+      - navigation [ref=e14]:
+        - link "Overview" [ref=e15] [cursor=pointer]:
+          - /url: /index.html
+          - generic [ref=e17]: Overview
+        - link "Account settings" [ref=e18] [cursor=pointer]:
+          - /url: /views/account.html
+          - generic [ref=e20]: Account settings
+        - link "Plans & Tiers" [ref=e21] [cursor=pointer]:
+          - /url: /views/plans.html
+          - generic [ref=e23]: Plans & Tiers
+        - link "Chat Triggers" [ref=e24] [cursor=pointer]:
+          - /url: /views/triggers.html
+          - generic [ref=e26]: Chat Triggers
+        - link "Settings / Preferences" [ref=e27] [cursor=pointer]:
+          - /url: /views/settings.html
+          - generic [ref=e29]: Settings / Preferences
+      - generic [ref=e30]:
+        - generic [ref=e31]: Platforms
+        - link "Rumble" [ref=e32] [cursor=pointer]:
+          - /url: /views/platforms/rumble.html
+          - generic [ref=e34]: Rumble
+        - link "YouTube" [ref=e35] [cursor=pointer]:
+          - /url: /views/platforms/youtube.html
+          - generic [ref=e37]: YouTube
+        - link "Twitch" [ref=e38] [cursor=pointer]:
+          - /url: /views/platforms/twitch.html
+          - generic [ref=e40]: Twitch
+        - link "Kick" [ref=e41] [cursor=pointer]:
+          - /url: /views/platforms/kick.html
+          - generic [ref=e43]: Kick
+        - link "Pilled" [disabled] [ref=e44] [cursor=pointer]:
+          - /url: /views/platforms/pilled.html
+          - generic [ref=e46]: Pilled
+      - generic [ref=e47]:
+        - generic [ref=e48]: Quick links
+        - link "Public site" [ref=e49] [cursor=pointer]:
+          - /url: https://streamsuites.app
+          - generic [ref=e51]: Public site
+        - link "Clips gallery" [ref=e52] [cursor=pointer]:
+          - /url: https://streamsuites.app/clips
+          - generic [ref=e54]: Clips gallery
+        - link "Scoreboards" [ref=e55] [cursor=pointer]:
+          - /url: https://streamsuites.app/scoreboards
+          - generic [ref=e57]: Scoreboards
+        - link "Support" [ref=e58] [cursor=pointer]:
+          - /url: https://streamsuites.app/support.html
+          - generic [ref=e60]: Support
+        - link "Documentation" [ref=e61] [cursor=pointer]:
+          - /url: https://docs.streamsuites.app
+          - generic [ref=e63]: Documentation
+        - link "Donate" [ref=e64] [cursor=pointer]:
+          - /url: https://streamsuites.app/donate.html
+          - generic [ref=e66]: Donate
+  - generic [ref=e67]:
+    - banner [ref=e68]:
+      - generic [ref=e69]:
+        - button "Collapse sidebar" [expanded] [ref=e70] [cursor=pointer]:
+          - generic [ref=e72]: Toggle sidebar
+        - generic [ref=e73]: Account settings
+      - button "Creator avatar Signed out Signed out" [disabled] [ref=e76]:
+        - img "Creator avatar" [ref=e78]
+        - generic [ref=e79]:
+          - generic [ref=e80]: Signed out
+          - generic [ref=e81]: Signed out
+    - status [ref=e84]:
+      - generic [ref=e87]: Idle
+    - generic [ref=e347]:
+      - generic [ref=e348]: Not logged in
+      - heading "Sign in to continue." [level=2] [ref=e349]
+      - paragraph [ref=e350]: Your creator session is not active.
+      - link "Retry login" [ref=e352] [cursor=pointer]:
+        - /url: /auth/login.html

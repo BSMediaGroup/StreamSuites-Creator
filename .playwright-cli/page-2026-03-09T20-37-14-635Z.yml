@@ -1,0 +1,319 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - link "StreamSuites StreamSuites™ CREATOR DASHBOARD" [ref=e6] [cursor=pointer]:
+      - /url: https://streamsuites.app
+      - img "StreamSuites" [ref=e7]
+      - generic [ref=e8]:
+        - heading "StreamSuites™" [level=1] [ref=e9]
+        - generic [ref=e10]: CREATOR DASHBOARD
+    - generic [ref=e12]:
+      - generic [ref=e13]: Creator navigation
+      - navigation [ref=e14]:
+        - link "Overview" [ref=e15] [cursor=pointer]:
+          - /url: /index.html
+          - generic [ref=e17]: Overview
+        - link "Account settings" [ref=e18] [cursor=pointer]:
+          - /url: /views/account.html
+          - generic [ref=e20]: Account settings
+        - link "Plans & Tiers" [ref=e21] [cursor=pointer]:
+          - /url: /views/plans.html
+          - generic [ref=e23]: Plans & Tiers
+        - link "Chat Triggers" [ref=e24] [cursor=pointer]:
+          - /url: /views/triggers.html
+          - generic [ref=e26]: Chat Triggers
+        - link "Settings / Preferences" [ref=e27] [cursor=pointer]:
+          - /url: /views/settings.html
+          - generic [ref=e29]: Settings / Preferences
+      - generic [ref=e30]:
+        - generic [ref=e31]: Platforms
+        - link "Rumble" [ref=e32] [cursor=pointer]:
+          - /url: /views/platforms/rumble.html
+          - generic [ref=e34]: Rumble
+        - link "YouTube" [ref=e35] [cursor=pointer]:
+          - /url: /views/platforms/youtube.html
+          - generic [ref=e37]: YouTube
+        - link "Twitch" [ref=e38] [cursor=pointer]:
+          - /url: /views/platforms/twitch.html
+          - generic [ref=e40]: Twitch
+        - link "Kick" [ref=e41] [cursor=pointer]:
+          - /url: /views/platforms/kick.html
+          - generic [ref=e43]: Kick
+        - link "Pilled" [disabled] [ref=e44] [cursor=pointer]:
+          - /url: /views/platforms/pilled.html
+          - generic [ref=e46]: Pilled
+      - generic [ref=e47]:
+        - generic [ref=e48]: Quick links
+        - link "Public site" [ref=e49] [cursor=pointer]:
+          - /url: https://streamsuites.app
+          - generic [ref=e51]: Public site
+        - link "Clips gallery" [ref=e52] [cursor=pointer]:
+          - /url: https://streamsuites.app/clips
+          - generic [ref=e54]: Clips gallery
+        - link "Scoreboards" [ref=e55] [cursor=pointer]:
+          - /url: https://streamsuites.app/scoreboards
+          - generic [ref=e57]: Scoreboards
+        - link "Support" [ref=e58] [cursor=pointer]:
+          - /url: https://streamsuites.app/support.html
+          - generic [ref=e60]: Support
+        - link "Documentation" [ref=e61] [cursor=pointer]:
+          - /url: https://docs.streamsuites.app
+          - generic [ref=e63]: Documentation
+        - link "Donate" [ref=e64] [cursor=pointer]:
+          - /url: https://streamsuites.app/donate.html
+          - generic [ref=e66]: Donate
+  - generic [ref=e67]:
+    - banner [ref=e68]:
+      - generic [ref=e69]:
+        - button "Collapse sidebar" [expanded] [ref=e70] [cursor=pointer]:
+          - generic [ref=e72]: Toggle sidebar
+        - generic [ref=e73]: Account settings
+      - button "Creator avatar Signed out Signed out" [ref=e76] [cursor=pointer]:
+        - img "Creator avatar" [ref=e78]
+        - generic [ref=e79]:
+          - generic [ref=e80]: Signed out
+          - generic [ref=e81]: Signed out
+    - status [ref=e84]:
+      - generic [ref=e87]: Loading...
+    - main [ref=e88]:
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e92]:
+            - text: Account
+            - heading "Account settings" [level=2] [ref=e93]
+            - paragraph [ref=e94]: Manage the canonical profile identity that powers your StreamSuites profile and FindMeHere listing, alongside sign-in methods and plan details.
+          - generic [ref=e96]: Authoritative profile settings
+        - generic [ref=e98]:
+          - generic [ref=e99]:
+            - heading "Public identity and account controls live here." [level=3] [ref=e100]
+            - paragraph [ref=e101]: Control your canonical slug, public visibility, FindMeHere listing, media, and public links from the same creator-facing surface that reflects the backend's current authoritative profile state.
+          - generic [ref=e102]:
+            - button "Save profile changes" [disabled] [ref=e103]
+            - link "Support" [ref=e104] [cursor=pointer]:
+              - /url: https://streamsuites.app/support.html
+        - generic [ref=e105]:
+          - article [ref=e106]:
+            - generic [ref=e107]:
+              - generic [ref=e108]:
+                - heading "Creator profile identity" [level=3] [ref=e109]
+                - paragraph [ref=e110]: Authoritative slug, public surface visibility, and creator eligibility status.
+              - generic [ref=e111]: Loading profile
+            - paragraph [ref=e113]: Loading profile settings...
+            - generic [ref=e114]:
+              - generic [ref=e116]:
+                - generic [ref=e117]:
+                  - text: Display name
+                  - textbox "Your display name" [disabled] [ref=e118]
+                  - generic [ref=e119]: Display name loads from the authoritative account identity.
+                - generic [ref=e120]:
+                  - text: Canonical public slug
+                  - textbox "your-canonical-slug" [disabled] [ref=e121]
+                  - generic [ref=e122]: Canonical slug validation loads from the authoritative profile model.
+                - generic [ref=e123]:
+                  - text: Creator ID
+                  - generic [ref=e124]: Not available
+                  - generic [ref=e125]: Email or username syncs from your login method.
+                - generic [ref=e126]: Email
+                - generic [ref=e127]:
+                  - text: Avatar
+                  - generic [ref=e128]:
+                    - img "Avatar placeholder" [ref=e130]
+                    - generic [ref=e131]: Authoritative avatar preview.
+                  - textbox "https://cdn.example.com/avatar.webp" [disabled] [ref=e132]
+                  - generic [ref=e133]: Avatar editing uses the grounded backend method when available.
+              - generic [ref=e134]:
+                - generic [ref=e135]:
+                  - generic [ref=e136]:
+                    - generic [ref=e137]:
+                      - generic [ref=e138]: StreamSuites public profile
+                      - generic [ref=e139]: Controls whether your canonical StreamSuites profile is visible on the main public site.
+                    - generic [ref=e140]:
+                      - generic [ref=e141]: Checking
+                      - checkbox "StreamSuites public profile Controls whether your canonical StreamSuites profile is visible on the main public site. Checking" [disabled] [ref=e143]
+                  - generic [ref=e144]:
+                    - generic [ref=e145]:
+                      - generic [ref=e146]: FindMeHere listing
+                      - generic [ref=e147]: Separate public-facing creator listing powered by the same profile identity and canonical slug.
+                    - generic [ref=e148]:
+                      - generic [ref=e149]: Checking
+                      - checkbox "FindMeHere listing Separate public-facing creator listing powered by the same profile identity and canonical slug. Checking" [disabled] [ref=e151]
+                - generic [ref=e152]:
+                  - generic [ref=e153]:
+                    - generic [ref=e154]: Creator capability
+                    - generic [ref=e155]: Checking...
+                  - generic [ref=e156]:
+                    - generic [ref=e157]: Authoritative surface type
+                    - generic [ref=e158]: Checking...
+                  - generic [ref=e159]:
+                    - generic [ref=e160]: Saved visibility
+                    - generic [ref=e161]: Checking...
+                - generic [ref=e162]:
+                  - button "Save profile changes" [disabled] [ref=e163]
+                  - button "Reset" [disabled] [ref=e164]
+          - article [ref=e165]:
+            - generic [ref=e166]:
+              - generic [ref=e167]:
+                - heading "Share previews" [level=3] [ref=e168]
+                - paragraph [ref=e169]: Truthful current URLs for the saved canonical profile identity.
+              - generic [ref=e170]: Authoritative URLs
+            - generic [ref=e172]:
+              - generic [ref=e173]:
+                - generic [ref=e174]:
+                  - generic [ref=e176]: StreamSuites profile
+                  - button "Copy" [disabled] [ref=e177]
+                - code [ref=e178]: Loading...
+              - generic [ref=e179]:
+                - generic [ref=e180]:
+                  - generic [ref=e182]: FindMeHere profile
+                  - button "Copy" [disabled] [ref=e183]
+                - code [ref=e184]: Loading...
+            - paragraph [ref=e185]: Share previews always reflect the current saved canonical slug and backend visibility state.
+          - article [ref=e186]:
+            - heading "Media & customization" [level=3] [ref=e187]
+            - paragraph [ref=e188]: Stored profile media fields that shape current and future public surfaces.
+            - generic [ref=e189]:
+              - generic [ref=e190]:
+                - text: Cover / banner image URL
+                - textbox "https://cdn.example.com/cover.webp" [disabled] [ref=e191]
+                - generic [ref=e192]: Used by the current authoritative public profile payload.
+              - generic [ref=e193]:
+                - text: Background image URL
+                - textbox "https://cdn.example.com/background.webp" [disabled] [ref=e194]
+                - generic [ref=e195]: Reserved future-facing media field. Editable and stored now even where it is not yet surfaced elsewhere.
+            - generic [ref=e196]:
+              - button "Save media" [disabled] [ref=e197]
+              - button "Reset" [disabled] [ref=e198]
+          - article [ref=e199]:
+            - heading "Public content & links" [level=3] [ref=e200]
+            - paragraph [ref=e201]: Creator-facing profile content stored on the authoritative backend model.
+            - generic [ref=e202]:
+              - generic [ref=e203]:
+                - text: Bio / about
+                - textbox "Tell viewers who you are, what you stream, and where to follow you." [disabled] [ref=e204]
+                - generic [ref=e205]: Saved to the authoritative public profile payload.
+              - generic [ref=e206]:
+                - text: Website
+                - textbox "https://example.com" [disabled] [ref=e207]
+              - generic [ref=e208]:
+                - text: X
+                - textbox "https://x.com/yourhandle" [disabled] [ref=e209]
+              - generic [ref=e210]:
+                - text: YouTube
+                - textbox "https://youtube.com/@yourhandle" [disabled] [ref=e211]
+              - generic [ref=e212]:
+                - text: Twitch
+                - textbox "https://twitch.tv/yourhandle" [disabled] [ref=e213]
+              - generic [ref=e214]:
+                - text: Discord
+                - textbox "https://discord.gg/yourserver" [disabled] [ref=e215]
+              - generic [ref=e216]:
+                - text: Instagram
+                - textbox "https://instagram.com/yourhandle" [disabled] [ref=e217]
+              - generic [ref=e218]:
+                - text: TikTok
+                - textbox "https://tiktok.com/@yourhandle" [disabled] [ref=e219]
+            - generic [ref=e220]:
+              - button "Save public content" [disabled] [ref=e221]
+              - button "Reset" [disabled] [ref=e222]
+          - article [ref=e223]:
+            - heading "Login & Security" [level=3] [ref=e224]
+            - paragraph [ref=e225]: Supported sign-in methods for your StreamSuites account.
+            - generic [ref=e226]:
+              - generic [ref=e227]: Password
+              - generic [ref=e228]:
+                - text: Change email
+                - generic [ref=e229]:
+                  - textbox "new-email@example.com" [ref=e230]
+                  - button "Send verification" [ref=e231]
+            - list [ref=e232]:
+              - listitem [ref=e233]:
+                - generic [ref=e235]:
+                  - generic [ref=e237]: Email
+                  - generic [ref=e239]: Not connected
+              - listitem [ref=e241]:
+                - generic [ref=e243]: Discord
+                - generic [ref=e245]: Not connected
+                - generic [ref=e247]:
+                  - button "Connect" [ref=e248]
+                  - button "Disconnect" [ref=e249]
+              - listitem [ref=e250]:
+                - generic [ref=e252]: Google
+                - generic [ref=e254]: Not connected
+                - generic [ref=e256]:
+                  - button "Connect" [ref=e257]
+                  - button "Disconnect" [ref=e258]
+              - listitem [ref=e259]:
+                - generic [ref=e261]: GitHub
+                - generic [ref=e263]: Not connected
+                - generic [ref=e265]:
+                  - button "Connect" [ref=e266]
+                  - button "Disconnect" [ref=e267]
+              - listitem [ref=e268]:
+                - generic [ref=e270]: X
+                - generic [ref=e272]: Not connected
+                - generic [ref=e274]:
+                  - button "Connect" [ref=e275]
+                  - button "Disconnect" [ref=e276]
+              - listitem [ref=e277]:
+                - generic [ref=e279]: Twitch
+                - generic [ref=e280]: Not connected
+                - generic [ref=e282]:
+                  - button "Connect" [ref=e283]
+                  - button "Disconnect" [ref=e284]
+            - paragraph [ref=e285]: Manage sign-in methods for this account.
+          - article [ref=e286]:
+            - heading "Platform integrations" [level=3] [ref=e287]
+            - paragraph [ref=e288]: Connection status for creator platforms.
+            - list [ref=e289]:
+              - listitem [ref=e290]:
+                - generic [ref=e291]:
+                  - generic [ref=e292]: Rumble
+                  - generic [ref=e293]: Managed on the Rumble platform page
+                - generic [ref=e294]: Connected
+              - listitem [ref=e296]:
+                - generic [ref=e297]:
+                  - generic [ref=e298]: YouTube
+                  - generic [ref=e299]: Managed on the YouTube platform page
+                - generic [ref=e300]: Available
+              - listitem [ref=e302]:
+                - generic [ref=e303]:
+                  - generic [ref=e304]: Twitch
+                  - generic [ref=e305]: Managed on the Twitch platform page
+                - generic [ref=e306]: Available
+              - listitem [ref=e308]:
+                - generic [ref=e309]:
+                  - generic [ref=e310]: Kick
+                  - generic [ref=e311]: Managed on the Kick platform page
+                - generic [ref=e312]: Available
+            - paragraph [ref=e314]: Connect and manage per-platform credentials on each platform page.
+          - article [ref=e315]:
+            - heading "Billing & Plan" [level=3] [ref=e316]
+            - paragraph [ref=e317]: Your current plan and billing preview.
+            - generic [ref=e318]:
+              - generic [ref=e319]: Current plan
+              - generic [ref=e320]:
+                - text: Billing status
+                - generic [ref=e321]: Preview only
+              - generic [ref=e322]:
+                - text: Next invoice
+                - generic [ref=e323]: Not scheduled
+              - generic [ref=e324]:
+                - text: Plan upgrades
+                - generic [ref=e325]: Coming soon
+            - link "Go to Plans & Tiers ->" [ref=e326] [cursor=pointer]:
+              - /url: /views/plans.html
+  - contentinfo [ref=e327]:
+    - generic [ref=e328]:
+      - generic [ref=e329]: StreamSuites Creator
+      - generic "Creator ID" [ref=e330]: "--"
+      - button "Copy Creator ID" [disabled] [ref=e331]:
+        - img [ref=e332]
+    - generic [ref=e334]:
+      - button "Dashboard v0.4.1-alpha" [ref=e336]
+      - generic [ref=e337]: •
+      - link "© 2026 Brainstream Media Group" [ref=e338] [cursor=pointer]:
+        - /url: https://brainstream.media
+    - generic [ref=e339]:
+      - link "SUPPORT" [ref=e340] [cursor=pointer]:
+        - /url: https://streamsuites.app/support.html
+      - button "Service status details" [ref=e343] [cursor=pointer]:
+        - generic [ref=e345]: UNKNOWN

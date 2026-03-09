@@ -1,0 +1,6 @@
+[    5197ms] [ERROR] Access to fetch at 'https://api.streamsuites.app/auth/session' from origin 'http://127.0.0.1:4173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://127.0.0.1:4173/views/account.html:0
+[    5198ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.streamsuites.app/auth/session:0
+[    5201ms] [ERROR] Access to fetch at 'https://api.streamsuites.app/api/public/profile/me' from origin 'http://127.0.0.1:4173' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://127.0.0.1:4173/views/account.html:0
+[    5201ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.streamsuites.app/api/public/profile/me:0
+[    5209ms] [ERROR] Access to fetch at 'https://api.streamsuites.app/api/account/auth-methods' from origin 'http://127.0.0.1:4173' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://127.0.0.1:4173/views/account.html:0
+[    5209ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.streamsuites.app/api/account/auth-methods:0

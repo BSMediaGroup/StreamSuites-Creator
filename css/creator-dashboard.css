@@ -25,6 +25,8 @@
   --creator-btn-secondary-1: #2d3656;
   --creator-btn-secondary-2: #3c466d;
   --creator-btn-text: #ffffff;
+  --creator-mono-font: "SUSEMono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 }
 
 * {
@@ -1603,8 +1605,25 @@ h3 {
   align-items: stretch;
 }
 
+.account-settings .account-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 26px;
+  align-items: start;
+}
+
+.account-settings .account-grid > .card:not(.account-profile-card) {
+  gap: 16px;
+  padding: 24px;
+}
+
 .account-settings .account-field-grid {
   gap: 16px;
+}
+
+.account-settings .account-grid > .card:not(.account-profile-card) .account-field-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 16px 18px;
+  align-items: start;
 }
 
 .account-settings .account-list {
@@ -1723,6 +1742,7 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  flex-wrap: wrap;
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1795,6 +1815,7 @@ h3 {
 .profile-settings-panel {
   display: grid;
   gap: 14px;
+  min-width: 0;
 }
 
 .profile-toggle-stack {
@@ -1916,6 +1937,7 @@ h3 {
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .share-preview-title {
@@ -1942,10 +1964,24 @@ h3 {
   word-break: break-word;
   font-size: 12px;
   line-height: 1.5;
+  font-family: var(--creator-mono-font);
+  font-variation-settings: "wght" 460;
 }
 
 .share-preview-copy {
   align-self: start;
+}
+
+.creator-mono,
+.account-system-text {
+  font-family: var(--creator-mono-font);
+  font-variation-settings: "wght" 460;
+  letter-spacing: 0.01em;
+}
+
+.account-system-text {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .card-top {
@@ -3030,6 +3066,20 @@ body.creator-lockout-active .creator-lockout {
   .profile-status-line {
     flex-direction: column;
   }
+
+  .account-settings .account-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-email-change-row {
+    grid-template-columns: 1fr;
+  }
+
+  .account-provider-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
 }
 
 /* Creator chat triggers */
@@ -4107,16 +4157,27 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
 
 .account-settings-tools {
   margin-bottom: 1rem;
+  display: grid;
+  gap: 16px;
+}
+
+@media (max-width: 1180px) {
+  .account-settings .account-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  }
 }
 
 .account-email-change-row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: start;
 }
 
 .account-provider-actions {
   display: flex;
   gap: 0.5rem;
   margin-left: auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
