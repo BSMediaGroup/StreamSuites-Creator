@@ -30,6 +30,7 @@
       "/js/utils/stats-svg-charts.js",
       "/js/creator-stats.js"
     ],
+    account: ["/js/account-settings.js"],
     statistics: [
       "/js/utils/stats-formatting.js",
       "/js/utils/stats-svg-charts.js",
@@ -454,7 +455,7 @@
       scripts: ViewScripts.statistics,
       controllerName: "StatisticsView"
     });
-    registerView("account");
+    registerView("account", { scripts: ViewScripts.account, controllerName: "AccountSettingsView" });
     registerView("plans", { scripts: ViewScripts.plans, controllerName: "PlansView" });
     registerView("triggers", { scripts: ViewScripts.triggers, controllerName: "TriggersView" });
     registerView("settings", { scripts: ViewScripts.settings, controllerName: "SettingsView" });

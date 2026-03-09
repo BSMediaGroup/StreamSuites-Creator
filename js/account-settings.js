@@ -78,6 +78,7 @@
     profile: null,
     loadingProfile: false,
     savingProfile: false,
+    controlsWired: false,
   };
 
   function setMessage(selector, message, tone) {
@@ -89,6 +90,10 @@
     } else {
       delete el.dataset.tone;
     }
+  }
+
+  function hasAccountSettingsSurface() {
+    return !!document.querySelector("[data-profile-load-pill]");
   }
 
   async function requestJson(url, options = {}) {
@@ -216,6 +221,10 @@
 
   function wireProviderButtons() {
     document.querySelectorAll("[data-account-provider-connect]").forEach((button) => {
+      if (button.dataset.accountSettingsWired === "true") {
+        return;
+      }
+      button.dataset.accountSettingsWired = "true";
       button.addEventListener("click", () => {
         const provider = button.getAttribute("data-account-provider-connect") || "";
         if (!provider) return;
@@ -224,6 +233,10 @@
     });
 
     document.querySelectorAll("[data-account-provider-disconnect]").forEach((button) => {
+      if (button.dataset.accountSettingsWired === "true") {
+        return;
+      }
+      button.dataset.accountSettingsWired = "true";
       button.addEventListener("click", async () => {
         const provider = button.getAttribute("data-account-provider-disconnect") || "";
         if (!provider) return;
@@ -251,6 +264,10 @@
     if (!(input instanceof HTMLInputElement) || !(button instanceof HTMLButtonElement)) {
       return;
     }
+    if (button.dataset.accountSettingsWired === "true") {
+      return;
+    }
+    button.dataset.accountSettingsWired = "true";
     button.addEventListener("click", async () => {
       const newEmail = String(input.value || "").trim().toLowerCase();
       if (!newEmail) {
@@ -786,6 +803,8 @@
   }
 
   function wirePublicProfileControls() {
+    if (state.controlsWired) return;
+    state.controlsWired = true;
     const els = getProfileElements();
     if (els.displayNameInput instanceof HTMLInputElement) {
       els.displayNameInput.addEventListener("input", renderIdentityFeedback);
@@ -811,6 +830,8 @@
     });
     els.copyButtons.forEach((button) => {
       if (!(button instanceof HTMLButtonElement)) return;
+      if (button.dataset.accountSettingsWired === "true") return;
+      button.dataset.accountSettingsWired = "true";
       button.addEventListener("click", () => {
         copyShareUrl(button.getAttribute("data-profile-copy-url") || "streamsuites");
       });
@@ -818,7 +839,7 @@
   }
 
   async function init() {
-    if (!window.location.pathname.endsWith("/views/account.html")) return;
+    if (!hasAccountSettingsSurface()) return;
     wireProviderButtons();
     wireEmailChange();
     wirePublicProfileControls();
@@ -854,5 +875,19 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", init);
+  function destroy() {
+    state.profile = null;
+    state.loadingProfile = false;
+    state.savingProfile = false;
+    state.controlsWired = false;
+  }
+
+  window.AccountSettingsView = {
+    init,
+    destroy,
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    void init();
+  });
 })();
