@@ -1606,7 +1606,7 @@ h3 {
 }
 
 .account-settings .account-grid {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
   gap: 26px;
   align-items: start;
 }
@@ -1621,7 +1621,7 @@ h3 {
 }
 
 .account-settings .account-grid > .card:not(.account-profile-card) .account-field-grid {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 16px 18px;
   align-items: start;
 }
@@ -4163,7 +4163,7 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
 
 @media (max-width: 1180px) {
   .account-settings .account-grid {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
   }
 }
 
