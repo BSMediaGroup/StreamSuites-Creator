@@ -9,7 +9,8 @@ This repository contains the **static creator web surface** deployed from the re
 
 The surface is a static frontend that hydrates at runtime from authoritative services. It now includes
 creator-facing public profile settings for supported account/profile fields and otherwise remains a
-consumer of backend-owned state.
+consumer of backend-owned state. The creator shell now supports clean path-based dashboard routes for
+major authenticated surfaces and includes a Cloudflare Pages rewrite manifest for deep-link readiness.
 
 Runtime sources include:
 
@@ -55,6 +56,11 @@ Tier scaffolding present in current creator UI:
 Current creator surface includes the following implemented areas:
 
 - Creator shell refresh with sidebar/topbar route model and creator dashboard views.
+- Clean creator route support for major dashboard surfaces:
+  - Canonical path-based routes such as `/overview`, `/account`, `/statistics`, `/notifications`,
+    `/integrations/youtube`, `/integrations/twitch`, and `/modules/clips`
+  - Legacy hash-route and legacy `/platforms/*` route compatibility shims preserved in the client router
+  - Cloudflare Pages deep-link rewrite support via the root `_redirects` manifest
 - Creator account/profile settings foundation:
   - Authoritative canonical public slug visibility surfaced on the account page
   - Independent StreamSuites profile visibility and FindMeHere listing controls
@@ -99,6 +105,7 @@ This repository is separate from:
 ```text
 StreamSuites-Creator/
 |-- .gitignore
+|-- _redirects
 |-- 404.html
 |-- CNAME
 |-- COMMERCIAL-LICENSE-NOTICE.md
@@ -146,6 +153,7 @@ StreamSuites-Creator/
 |   |-- plans.js
 |   |-- platforms.js
 |   |-- render.js
+|   |-- routes.js
 |   |-- settings.js
 |   |-- state.js
 |   |-- status-widget.js

@@ -165,7 +165,7 @@
 
   function oauthStartUrl(provider) {
     const normalized = String(provider || "").trim().toLowerCase();
-    const returnTo = `${window.location.origin}/views/account.html`;
+    const returnTo = `${window.location.origin}/account`;
     if (normalized === "twitch") {
       return `${API_BASE}/oauth/twitch/start?surface=creator&mode=link&return_to=${encodeURIComponent(returnTo)}`;
     }

@@ -1,0 +1,16 @@
+/overview /index.html 200
+/statistics /index.html 200
+/notifications /index.html 200
+/account /index.html 200
+/plans /index.html 200
+/triggers /index.html 200
+/settings /index.html 200
+/updates /index.html 200
+/creators /index.html 200
+/jobs /index.html 200
+/scoreboards /index.html 200
+/tallies /index.html 200
+/design /index.html 200
+/integrations/* /index.html 200
+/modules/* /index.html 200
+/platforms/* /index.html 200

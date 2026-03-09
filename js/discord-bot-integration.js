@@ -887,7 +887,8 @@
   };
 
   const pathname = String(window.location.pathname || "").toLowerCase();
-  const standaloneDiscordView = pathname.endsWith("/views/platforms/discord.html");
+  const standaloneDiscordView =
+    pathname.endsWith("/views/platforms/discord.html") || pathname.endsWith("/integrations/discord");
   if (standaloneDiscordView) {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => {

@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const DEFAULT_ROUTE = "overview";
+  const DEFAULT_ROUTE = window.StreamSuitesCreatorRoutes?.DEFAULT_ROUTE || "overview";
   const VIEW_FETCH_TIMEOUT_MS = 2500;
   const BLOCKED_ROUTES = new Set(["onboarding"]);
   const CORE_SHELL_SCRIPTS = new Set([
@@ -71,30 +71,12 @@
   }
 
   function normalizeRoute(rawRoute) {
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.resolveRoute) {
+      return routeHelper.resolveRoute(rawRoute);
+    }
     if (typeof rawRoute !== "string") return "";
-    let route = decodeURIComponent(rawRoute.trim()).toLowerCase();
-    if (!route) return "";
-
-    route = route
-      .replace(/^[#!]+/, "")
-      .replace(/^\/+/, "")
-      .replace(/\/+$/, "")
-      .replace(/\.html$/i, "");
-
-    if (!route) {
-      return "";
-    }
-    if (route === "index" || route === "home") {
-      return DEFAULT_ROUTE;
-    }
-    if (route.startsWith("views/")) {
-      route = route.slice("views/".length);
-    }
-    if (route.endsWith("/index")) {
-      route = route.slice(0, -"/index".length);
-    }
-
-    return route || DEFAULT_ROUTE;
+    return rawRoute.trim().toLowerCase();
   }
 
   function normalizeAssetPath(value) {
@@ -110,23 +92,11 @@
   }
 
   function parseRouteFromUrl(url) {
-    if (!url || !(url instanceof URL)) return "";
-    if (url.origin !== window.location.origin) return "";
-
-    const hashRoute = normalizeRoute(url.hash);
-    if (hashRoute) return hashRoute;
-
-    const queryRoute = normalizeRoute(url.searchParams.get("view") || "");
-    if (queryRoute) return queryRoute;
-
-    const pathname = (url.pathname || "").toLowerCase();
-    if (pathname === "/" || pathname === "/index.html") {
-      return DEFAULT_ROUTE;
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.resolveRouteFromUrlLike) {
+      return routeHelper.resolveRouteFromUrlLike(url);
     }
-    if (!pathname.startsWith("/views/") || !pathname.endsWith(".html")) {
-      return "";
-    }
-    return normalizeRoute(pathname.slice("/views/".length));
+    return "";
   }
 
   function resolveRouteFromHref(href) {
@@ -150,8 +120,43 @@
     }
   }
 
-  function getCurrentHashRoute() {
-    return normalizeRoute(window.location.hash);
+  function getCurrentLocationRoute() {
+    return parseRouteFromUrl(new URL(window.location.href));
+  }
+
+  function getCanonicalPath(route) {
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.getCanonicalPath) {
+      return routeHelper.getCanonicalPath(route);
+    }
+    const normalized = normalizeRoute(route) || DEFAULT_ROUTE;
+    return `/${normalized}`;
+  }
+
+  function shouldCanonicalizeCurrentUrl(route) {
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (!routeHelper?.isLegacyUrl) {
+      return window.location.pathname !== getCanonicalPath(route) || Boolean(window.location.hash);
+    }
+    return routeHelper.isLegacyUrl(window.location.href);
+  }
+
+  function syncBrowserUrl(route, options = {}) {
+    const normalized = normalizeRoute(route);
+    if (!normalized) return;
+    const targetPath = getCanonicalPath(normalized);
+    const currentPath = window.location.pathname || "/";
+    const hasLegacyQuery = new URLSearchParams(window.location.search).has("view");
+    if (
+      !options.force &&
+      currentPath === targetPath &&
+      !window.location.hash &&
+      !hasLegacyQuery
+    ) {
+      return;
+    }
+    const historyMethod = options.replace === true ? "replaceState" : "pushState";
+    window.history[historyMethod]({ route: normalized }, "", targetPath);
   }
 
   function setActiveNavState(route) {
@@ -190,7 +195,7 @@
             <span class="section-kicker">Not found</span>
             <h2>View unavailable</h2>
             <p class="section-subtext">
-              No creator view is mapped for <code>#${escapeHtml(route)}</code>.
+              No creator view is mapped for <code>${escapeHtml(getCanonicalPath(route))}</code>.
             </p>
           </div>
         </div>
@@ -358,6 +363,7 @@
       container.innerHTML = extractViewMarkup(html);
       app.currentView = normalized;
       routerState.currentRoute = normalized;
+      window.App?.creatorShell?.syncRouteAnchors?.(container);
 
       await ensureScriptsForView(view);
       if (requestId !== routerState.requestId) return;
@@ -377,7 +383,7 @@
               <span class="section-kicker">Error</span>
               <h2>Unable to load this view</h2>
               <p class="section-subtext">
-                We could not fetch <code>views/${escapeHtml(normalized)}.html</code>.
+                We could not fetch <code>views/${escapeHtml(app.views?.[normalized]?.templatePath || normalized)}.html</code>.
               </p>
             </div>
           </div>
@@ -397,21 +403,28 @@
     const normalized = normalizeRoute(route);
     if (!normalized || BLOCKED_ROUTES.has(normalized)) return;
 
-    const current = getCurrentHashRoute();
+    const current = getCurrentLocationRoute();
     if (current === normalized) {
+      if (shouldCanonicalizeCurrentUrl(normalized)) {
+        syncBrowserUrl(normalized, { replace: true, force: true });
+      }
       if (options.forceReload === true) {
         void loadRoute(normalized);
       }
       return;
     }
-    window.location.hash = `#${normalized}`;
+    syncBrowserUrl(normalized, { replace: options.replace === true });
+    void loadRoute(normalized);
   }
 
-  function onHashChange() {
-    const route = getCurrentHashRoute();
+  function onLocationChange() {
+    const route = getCurrentLocationRoute();
     if (!route) {
-      navigateToRoute(DEFAULT_ROUTE);
+      navigateToRoute(DEFAULT_ROUTE, { replace: true });
       return;
+    }
+    if (shouldCanonicalizeCurrentUrl(route)) {
+      syncBrowserUrl(route, { replace: true, force: true });
     }
     void loadRoute(route);
   }
@@ -466,15 +479,16 @@
     registerView("scoreboards");
     registerView("tallies");
     registerView("design");
-    registerView("platforms/rumble");
-    registerView("platforms/youtube");
-    registerView("platforms/twitch");
-    registerView("platforms/kick");
-    registerView("platforms/discord", {
+    registerView("integrations/rumble", { templatePath: "platforms/rumble" });
+    registerView("integrations/youtube", { templatePath: "platforms/youtube" });
+    registerView("integrations/twitch", { templatePath: "platforms/twitch" });
+    registerView("integrations/kick", { templatePath: "platforms/kick" });
+    registerView("integrations/discord", {
+      templatePath: "platforms/discord",
       scripts: ViewScripts.discordPlatform,
       controllerName: "DiscordPlatformView"
     });
-    registerView("platforms/pilled");
+    registerView("integrations/pilled", { templatePath: "platforms/pilled" });
     registerView("modules/clips");
     registerView("modules/polls");
     registerView("modules/overlays");
@@ -484,20 +498,28 @@
   function initRouter() {
     if (routerState.mounted) return;
     routerState.mounted = true;
+    const app = getApp();
+    app.renderRouter = {
+      navigateToRoute,
+      loadRoute(route) {
+        return loadRoute(route);
+      },
+      resolveCurrentRoute() {
+        return getCurrentLocationRoute();
+      }
+    };
 
     registerDefaultViews();
     bindLinkInterception();
-    window.addEventListener("hashchange", onHashChange);
+    window.addEventListener("popstate", onLocationChange);
 
-    const initial = getCurrentHashRoute();
+    const initial = getCurrentLocationRoute();
     if (!initial) {
-      const queryRoute = normalizeRoute(new URLSearchParams(window.location.search).get("view") || "");
-      if (queryRoute && !BLOCKED_ROUTES.has(queryRoute)) {
-        navigateToRoute(queryRoute);
-        return;
-      }
-      navigateToRoute(DEFAULT_ROUTE);
+      navigateToRoute(DEFAULT_ROUTE, { replace: true });
       return;
+    }
+    if (shouldCanonicalizeCurrentUrl(initial)) {
+      syncBrowserUrl(initial, { replace: true, force: true });
     }
     void loadRoute(initial);
   }

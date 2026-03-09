@@ -74,12 +74,21 @@
   }
 
   function normalizeRoute(routeLike) {
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.resolveRoute) {
+      return routeHelper.resolveRoute(routeLike);
+    }
     if (typeof routeLike !== "string") return "";
-    return routeLike
-      .trim()
-      .replace(/^#+/, "")
-      .replace(/^\/+/, "")
-      .toLowerCase();
+    return routeLike.trim().replace(/^#+/, "").replace(/^\/+/, "").toLowerCase();
+  }
+
+  function buildRouteHref(routeLike) {
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.getCanonicalPath) {
+      return routeHelper.getCanonicalPath(routeLike);
+    }
+    const normalized = normalizeRoute(routeLike);
+    return normalized ? `/${normalized}` : "/notifications";
   }
 
   function formatTimeLabel(timestamp, timestampMs) {
@@ -110,18 +119,23 @@
   function navigateToTarget(target) {
     const normalized = typeof target === "string" ? target.trim() : "";
     if (!normalized) {
-      window.location.hash = "#notifications";
+      window.App?.renderRouter?.navigateToRoute?.("notifications");
       return;
     }
-    if (normalized.startsWith("#")) {
-      window.location.hash = normalized;
+
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    const resolvedRoute = routeHelper?.resolveRouteFromHref
+      ? routeHelper.resolveRouteFromHref(normalized)
+      : normalizeRoute(normalized);
+    if (resolvedRoute) {
+      window.App?.renderRouter?.navigateToRoute?.(resolvedRoute);
       return;
     }
     if (normalized.startsWith("/")) {
       window.location.assign(normalized);
       return;
     }
-    window.location.hash = `#${normalizeRoute(normalized)}`;
+    window.location.assign(buildRouteHref(normalized));
   }
 
   function formatBadgeCount(unreadCount) {
@@ -419,7 +433,7 @@
     const link = notificationButton.dataset.notificationLink || "";
     if (id) store.markRead(id);
     setDropdownOpen(false);
-    navigateToTarget(link || "#notifications");
+    navigateToTarget(link || "/notifications");
   }
 
   function bindTopbarEvents() {
@@ -464,9 +478,12 @@
       setDropdownOpen(false);
     });
 
-    window.addEventListener("hashchange", () => {
+    const closeDropdown = () => {
       setDropdownOpen(false);
-    });
+    };
+
+    window.addEventListener("hashchange", closeDropdown);
+    window.addEventListener("popstate", closeDropdown);
 
     window.addEventListener(store.UPDATE_EVENT, renderAll);
   }

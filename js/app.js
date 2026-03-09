@@ -192,55 +192,49 @@
   }
 
   function normalizeRouteValue(value) {
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.normalizeRouteValue) {
+      return routeHelper.normalizeRouteValue(value);
+    }
     if (typeof value !== "string") return "";
-    return value
-      .trim()
-      .replace(/^#+/, "")
-      .replace(/^\/+/, "")
-      .replace(/\.html$/i, "")
-      .replace(/\/index$/i, "")
-      .toLowerCase();
+    return value.trim().replace(/^#+/, "").replace(/^\/+/, "").toLowerCase();
   }
 
   function resolveRouteFromUrl(urlLike) {
-    if (!urlLike) return "";
-
-    let url = null;
-    if (urlLike instanceof URL) {
-      url = urlLike;
-    } else {
-      try {
-        url = new URL(String(urlLike), window.location.href);
-      } catch (err) {
-        return "";
-      }
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.resolveRouteFromUrlLike) {
+      return routeHelper.resolveRouteFromUrlLike(urlLike);
     }
-
-    if (url.origin !== window.location.origin) return "";
-
-    const hashRoute = normalizeRouteValue(url.hash);
-    if (hashRoute) return hashRoute;
-
-    const queryRoute = normalizeRouteValue(url.searchParams.get("view") || "");
-    if (queryRoute) return queryRoute;
-
-    const pathname = normalizeRouteValue(url.pathname || "");
-    if (!pathname || pathname === "index") return "overview";
-
-    if (pathname.startsWith("views/")) {
-      return normalizeRouteValue(pathname.slice("views/".length));
-    }
-
     return "";
   }
 
   function resolveRouteFromHref(href) {
-    if (typeof href !== "string" || !href.trim()) return "";
-    const routeFromHash = normalizeRouteValue(href);
-    if (href.trim().startsWith("#") && routeFromHash) {
-      return routeFromHash;
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.resolveRouteFromHref) {
+      return routeHelper.resolveRouteFromHref(href);
     }
-    return resolveRouteFromUrl(href);
+    return "";
+  }
+
+  function buildRouteHref(route) {
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.getCanonicalPath) {
+      return routeHelper.getCanonicalPath(route);
+    }
+    const normalized = normalizeRouteValue(route);
+    return normalized ? `/${normalized}` : "/overview";
+  }
+
+  function syncRouteAnchors(root = document) {
+    if (!root?.querySelectorAll) return;
+    root.querySelectorAll("a[data-route], a[href]").forEach((anchor) => {
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      const declaredRoute = normalizeRouteValue(anchor.dataset.route || "");
+      const resolvedRoute = declaredRoute || resolveRouteFromHref(anchor.getAttribute("href") || "");
+      if (!resolvedRoute) return;
+      anchor.dataset.route = resolvedRoute;
+      anchor.setAttribute("href", buildRouteHref(resolvedRoute));
+    });
   }
 
   function resolveNavIconPath(anchor) {
@@ -256,6 +250,7 @@
 
   function decorateSidebarLinks() {
     if (!shell.nav) return;
+    syncRouteAnchors(shell.nav);
     const navLinks = shell.nav.querySelectorAll("#app-nav-list a");
     navLinks.forEach((anchor) => {
       if (anchor.dataset.navDecorated === "1") return;
@@ -861,6 +856,7 @@
 
     if (!shell.nav || !shell.headerLeft) return;
     decorateSidebarLinks();
+    syncRouteAnchors(shell.app);
     ensureSidebarToggle();
     ensureTopbarTitle();
     ensureSidebarScrim();
@@ -868,8 +864,10 @@
     updateNavTitles();
 
     window.App.creatorShell = {
+      buildRouteHref,
       resolveRouteFromHref,
       resolveRouteFromUrl,
+      syncRouteAnchors,
       setTopbarTitle(title) {
         if (!shell.headerLeft) return;
         const titleNode = shell.headerLeft.querySelector(".creator-topbar-page-title");

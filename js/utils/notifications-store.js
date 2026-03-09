@@ -18,7 +18,7 @@
       title: "Clip queue is building",
       snippet: "Three jobs are waiting for worker capacity in the render queue.",
       timestamp: "2026-02-12T22:18:00Z",
-      link: "#jobs"
+      link: "/jobs"
     },
     {
       id: "creator-trigger-deploy",
@@ -26,7 +26,7 @@
       title: "Trigger set published",
       snippet: "Night-show trigger bundle was staged and applied to your active profile.",
       timestamp: "2026-02-12T20:06:00Z",
-      link: "#triggers"
+      link: "/triggers"
     },
     {
       id: "creator-platform-youtube",
@@ -34,7 +34,7 @@
       title: "YouTube token refresh due soon",
       snippet: "Reconnect within 48 hours to avoid automation pauses during stream start.",
       timestamp: "2026-02-11T19:24:00Z",
-      link: "#platforms/youtube"
+      link: "/integrations/youtube"
     },
     {
       id: "creator-system-export",
@@ -42,7 +42,7 @@
       title: "State export completed",
       snippet: "Latest runtime export finished successfully with no schema drift detected.",
       timestamp: "2026-02-11T14:11:00Z",
-      link: "#updates"
+      link: "/updates"
     },
     {
       id: "creator-billing-renewal",
@@ -50,7 +50,7 @@
       title: "Billing cycle reminder",
       snippet: "Your plan renews in five days. Review active seats before renewal.",
       timestamp: "2026-02-10T18:42:00Z",
-      link: "#plans"
+      link: "/plans"
     },
     {
       id: "creator-platform-rumble",
@@ -58,7 +58,7 @@
       title: "Rumble destination healthy",
       snippet: "Connection heartbeat stabilized after transport retry on the last session.",
       timestamp: "2026-02-10T09:15:00Z",
-      link: "#platforms/rumble"
+      link: "/integrations/rumble"
     },
     {
       id: "creator-trigger-fallback",
@@ -66,7 +66,7 @@
       title: "Fallback response armed",
       snippet: "Default response path is now active for unmatched command aliases.",
       timestamp: "2026-02-09T22:57:00Z",
-      link: "#triggers"
+      link: "/triggers"
     }
   ]);
 

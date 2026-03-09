@@ -124,7 +124,7 @@
           <p class="ss-404-subtext">You can return to your workspace or navigate to one of the core StreamSuites surfaces below.</p>
 
           <div class="ss-404-actions">
-            <a class="ss-btn ss-btn-primary" href="https://creator.streamsuites.app/#overview">Return to Creator Dashboard</a>
+            <a class="ss-btn ss-btn-primary" href="https://creator.streamsuites.app/overview">Return to Creator Dashboard</a>
             <a class="ss-btn ss-btn-secondary" href="https://streamsuites.app">Visit Public Site</a>
           </div>
 
@@ -188,16 +188,19 @@
     </footer>
   </div>
 
+  <script src="/js/routes.js"></script>
   <script src="/js/utils/versioning.js"></script>
   <script src="/js/utils/version-stamp.js"></script>
   <script src="/assets/js/ss-profile-hovercard.js"></script>
   <script src="/js/status-widget.js" defer></script>
   <script>
     (() => {
-      if (window.location.pathname !== "/" && !window.location.hash) {
+      const routes = window.StreamSuitesCreatorRoutes;
+      const route = routes?.resolveRouteFromUrlLike?.(window.location.href) || "";
+      if (route && routes?.isKnownRoute?.(route)) {
         window.setTimeout(() => {
-          window.location.href = "https://creator.streamsuites.app/#overview";
-        }, 3000);
+          window.location.replace(routes.getCanonicalPath(route));
+        }, 300);
       }
     })();
   </script>
