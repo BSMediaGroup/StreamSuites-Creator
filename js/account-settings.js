@@ -13,12 +13,70 @@
   const AUTH_METHODS_ENDPOINT = `${API_BASE}/api/account/auth-methods`;
   const AUTH_UNLINK_ENDPOINT = `${API_BASE}/api/account/auth-methods/unlink`;
   const EMAIL_CHANGE_REQUEST_ENDPOINT = `${API_BASE}/api/account/email/change/request`;
+  const PUBLIC_PROFILE_ENDPOINT = `${API_BASE}/api/public/profile/me`;
+  const KNOWN_SOCIAL_KEYS = Object.freeze([
+    "website",
+    "x",
+    "youtube",
+    "twitch",
+    "discord",
+    "instagram",
+    "tiktok",
+  ]);
+  const RESERVED_PUBLIC_SLUGS = new Set([
+    "u",
+    "live",
+    "community",
+    "search",
+    "login",
+    "signup",
+    "admin",
+    "about",
+    "privacy",
+    "terms",
+    "clips",
+    "polls",
+    "scores",
+    "api",
+    "auth",
+    "settings",
+    "dashboard",
+    "creator",
+    "docs",
+    "members",
+    "public",
+    "profile",
+    "profiles",
+    "account",
+    "accounts",
+    "support",
+    "help",
+    "static",
+    "assets",
+    "status",
+    "legal",
+    "pricing",
+    "billing",
+    "subscribe",
+    "unsubscribe",
+    "me",
+  ]);
+
+  const state = {
+    profile: null,
+    loadingProfile: false,
+    savingProfile: false,
+  };
 
   function setMessage(selector, message, tone) {
     const el = document.querySelector(selector);
     if (!el) return;
     el.textContent = message || "";
-    el.dataset.tone = tone || "neutral";
+    if (tone) {
+      el.dataset.tone = tone;
+    } else {
+      delete el.dataset.tone;
+    }
   }
 
   async function requestJson(url, options = {}) {
@@ -43,6 +101,42 @@
       throw error;
     }
     return payload || {};
+  }
+
+  function coerceText(value) {
+    return typeof value === "string" ? value.trim() : "";
+  }
+
+  function getProfileElements() {
+    return {
+      loadPill: document.querySelector("[data-profile-load-pill]"),
+      saveStatus: document.querySelector("[data-profile-save-status]"),
+      slugInput: document.querySelector("[data-profile-slug-input]"),
+      slugFeedback: document.querySelector("[data-profile-slug-feedback]"),
+      slugAliasesWrap: document.querySelector("[data-profile-slug-aliases-wrap]"),
+      slugAliases: document.querySelector("[data-profile-slug-aliases]"),
+      streamsuitesToggle: document.querySelector("[data-profile-streamsuites-toggle]"),
+      findmeToggle: document.querySelector("[data-profile-findme-toggle]"),
+      streamsuitesStatus: document.querySelector("[data-profile-streamsuites-status]"),
+      findmeStatus: document.querySelector("[data-profile-findme-status]"),
+      streamsuitesReason: document.querySelector("[data-profile-streamsuites-reason]"),
+      findmeReason: document.querySelector("[data-profile-findme-reason]"),
+      creatorCapability: document.querySelector("[data-profile-creator-capability]"),
+      surfaceAccountType: document.querySelector("[data-profile-surface-account-type]"),
+      visibilitySummary: document.querySelector("[data-profile-visibility-summary]"),
+      streamsuitesPreviewUrl: document.querySelector("[data-profile-streamsuites-url]"),
+      findmePreviewUrl: document.querySelector("[data-profile-findme-url]"),
+      streamsuitesPreviewNote: document.querySelector("[data-profile-streamsuites-preview-note]"),
+      findmePreviewNote: document.querySelector("[data-profile-findme-preview-note]"),
+      coverImageInput: document.querySelector("[data-profile-cover-image]"),
+      backgroundImageInput: document.querySelector("[data-profile-background-image]"),
+      bioInput: document.querySelector("[data-profile-bio]"),
+      linkInputs: Array.from(document.querySelectorAll("[data-profile-link]")),
+      saveButtons: Array.from(document.querySelectorAll("[data-profile-save]")),
+      resetButtons: Array.from(document.querySelectorAll("[data-profile-reset]")),
+      copyButtons: Array.from(document.querySelectorAll("[data-profile-copy-url]")),
+      profileFields: Array.from(document.querySelectorAll("[data-profile-field]")),
+    };
   }
 
   function oauthStartUrl(provider) {
@@ -165,23 +259,477 @@
     });
   }
 
+  function normalizePublicSlug(value) {
+    const raw = String(value || "").normalize("NFKD");
+    const asciiValue = raw.replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const cleaned = [];
+    for (const char of asciiValue) {
+      if ((char >= "a" && char <= "z") || (char >= "0" && char <= "9")) {
+        cleaned.push(char);
+        continue;
+      }
+      if (char === "-" || char === "_") {
+        cleaned.push(char);
+      }
+    }
+    return cleaned.join("").replace(/^[-_]+|[-_]+$/g, "").replace(/[-_]{2,}/g, (match) => match[0]);
+  }
+
+  function validatePublicSlug(value) {
+    const normalized = normalizePublicSlug(value);
+    if (!normalized) {
+      return { valid: false, reason: "public_slug_empty", normalized };
+    }
+    if (normalized.length > 64) {
+      return { valid: false, reason: "public_slug_too_long", normalized };
+    }
+    if (RESERVED_PUBLIC_SLUGS.has(normalized)) {
+      return { valid: false, reason: "public_slug_reserved", normalized };
+    }
+    return { valid: true, reason: null, normalized };
+  }
+
+  function humanizeSurfaceReason(reason) {
+    switch (String(reason || "").trim().toLowerCase()) {
+      case "visible":
+        return "Visible on the saved canonical profile.";
+      case "disabled_by_account":
+        return "Saved as disabled in the authoritative account profile.";
+      case "missing_public_slug":
+        return "Needs a saved canonical slug before the surface can go live.";
+      case "creator_capable_required":
+        return "Requires creator-capable eligibility from the backend account role.";
+      default:
+        return "Status comes directly from the authoritative backend profile export.";
+    }
+  }
+
+  function humanizeSlugReason(reason) {
+    switch (reason) {
+      case "public_slug_empty":
+        return "Enter a canonical slug to make public profile URLs possible.";
+      case "public_slug_too_long":
+        return "Canonical slugs are limited to 64 characters.";
+      case "public_slug_reserved":
+        return "That slug is reserved by the authoritative backend and cannot be used.";
+      default:
+        return "Slug feedback mirrors the authoritative validation rules where the current API exposes them.";
+    }
+  }
+
+  function cloneProfile(profile) {
+    return JSON.parse(JSON.stringify(profile || {}));
+  }
+
+  function normalizeProfilePayload(payload) {
+    const profile = payload?.profile && typeof payload.profile === "object" ? payload.profile : payload;
+    return {
+      public_slug: coerceText(profile?.public_slug || profile?.slug),
+      slug_aliases: Array.isArray(profile?.slug_aliases) ? profile.slug_aliases.map((item) => coerceText(item)).filter(Boolean) : [],
+      creator_capable: profile?.creator_capable === true,
+      public_surface_account_type: coerceText(profile?.public_surface_account_type),
+      streamsuites_profile_enabled: profile?.streamsuites_profile_enabled !== false,
+      streamsuites_profile_visible: profile?.streamsuites_profile_visible === true,
+      streamsuites_profile_url: coerceText(profile?.streamsuites_profile_url),
+      streamsuites_share_url: coerceText(profile?.streamsuites_share_url),
+      streamsuites_profile_status_reason: coerceText(profile?.streamsuites_profile_status_reason),
+      findmehere_enabled: profile?.findmehere_enabled !== false,
+      findmehere_eligible: profile?.findmehere_eligible === true,
+      findmehere_visible: profile?.findmehere_visible === true,
+      findmehere_profile_url: coerceText(profile?.findmehere_profile_url),
+      findmehere_share_url: coerceText(profile?.findmehere_share_url),
+      findmehere_status_reason: coerceText(profile?.findmehere_status_reason),
+      cover_image_url: coerceText(profile?.cover_image_url || profile?.banner_image_url),
+      background_image_url: coerceText(profile?.background_image_url),
+      bio: coerceText(profile?.bio),
+      social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
+    };
+  }
+
+  function setProfileBusy(busy) {
+    const els = getProfileElements();
+    els.profileFields.forEach((field) => {
+      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+        const locked = field.dataset.lockDisabled === "true";
+        field.disabled = busy || locked;
+      }
+    });
+    els.saveButtons.forEach((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = busy || !state.profile;
+      }
+    });
+    els.resetButtons.forEach((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = busy || !state.profile;
+      }
+    });
+    els.copyButtons.forEach((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = busy || !state.profile;
+      }
+    });
+  }
+
+  function setStatusPill(element, text, tone) {
+    if (!(element instanceof HTMLElement)) return;
+    element.classList.remove("success", "subtle", "warning");
+    element.classList.add(tone || "subtle");
+    const dot = element.querySelector(".status-dot");
+    element.textContent = text;
+    if (dot) {
+      element.prepend(dot);
+    }
+  }
+
+  function getEditableDraft() {
+    const els = getProfileElements();
+    const profile = state.profile || normalizeProfilePayload({});
+    const unknownLinks = {};
+    Object.entries(profile.social_links || {}).forEach(([key, value]) => {
+      if (!KNOWN_SOCIAL_KEYS.includes(String(key))) {
+        const text = coerceText(value);
+        if (text) {
+          unknownLinks[key] = text;
+        }
+      }
+    });
+
+    const socialLinks = { ...unknownLinks };
+    els.linkInputs.forEach((input) => {
+      const key = input.getAttribute("data-profile-link") || "";
+      const value = coerceText(input.value);
+      if (key && value) {
+        socialLinks[key] = value;
+      }
+    });
+
+    return {
+      public_slug_input: coerceText(els.slugInput?.value),
+      streamsuites_profile_enabled: !!els.streamsuitesToggle?.checked,
+      findmehere_enabled: !!els.findmeToggle?.checked,
+      cover_image_url: coerceText(els.coverImageInput?.value),
+      background_image_url: coerceText(els.backgroundImageInput?.value),
+      bio: coerceText(els.bioInput?.value),
+      social_links: socialLinks,
+    };
+  }
+
+  function getSupportedDraftSnapshot(draft) {
+    return {
+      streamsuites_profile_enabled: !!draft.streamsuites_profile_enabled,
+      findmehere_enabled: !!draft.findmehere_enabled,
+      cover_image_url: coerceText(draft.cover_image_url),
+      background_image_url: coerceText(draft.background_image_url),
+      bio: coerceText(draft.bio),
+      social_links: { ...(draft.social_links || {}) },
+    };
+  }
+
+  function getSupportedSavedSnapshot(profile) {
+    return {
+      streamsuites_profile_enabled: !!profile?.streamsuites_profile_enabled,
+      findmehere_enabled: !!profile?.findmehere_enabled,
+      cover_image_url: coerceText(profile?.cover_image_url),
+      background_image_url: coerceText(profile?.background_image_url),
+      bio: coerceText(profile?.bio),
+      social_links: { ...(profile?.social_links || {}) },
+    };
+  }
+
+  function isSupportedProfileDirty() {
+    const draft = getSupportedDraftSnapshot(getEditableDraft());
+    const saved = getSupportedSavedSnapshot(state.profile);
+    return JSON.stringify(draft) !== JSON.stringify(saved);
+  }
+
+  function renderSlugFeedback() {
+    const els = getProfileElements();
+    if (!(els.slugInput instanceof HTMLInputElement) || !(els.slugFeedback instanceof HTMLElement)) return;
+
+    const rawValue = els.slugInput.value;
+    const validation = validatePublicSlug(rawValue);
+    const savedSlug = coerceText(state.profile?.public_slug);
+    if (!rawValue && savedSlug) {
+      els.slugFeedback.textContent = `Saved canonical slug: ${savedSlug}`;
+      els.slugFeedback.dataset.tone = "neutral";
+      return;
+    }
+    if (!validation.valid) {
+      els.slugFeedback.textContent = humanizeSlugReason(validation.reason);
+      els.slugFeedback.dataset.tone = "danger";
+      return;
+    }
+    if (validation.normalized === savedSlug) {
+      els.slugFeedback.textContent = `Saved canonical slug: ${savedSlug}`;
+      els.slugFeedback.dataset.tone = "success";
+      return;
+    }
+    els.slugFeedback.textContent =
+      `Valid as "${validation.normalized}", but the current creator API does not expose slug updates yet. Share previews stay locked to the saved canonical slug until that route exists.`;
+    els.slugFeedback.dataset.tone = "warning";
+  }
+
+  function renderSlugAliases(profile) {
+    const els = getProfileElements();
+    if (!(els.slugAliases instanceof HTMLElement) || !(els.slugAliasesWrap instanceof HTMLElement)) return;
+    const aliases = Array.isArray(profile?.slug_aliases) ? profile.slug_aliases : [];
+    els.slugAliases.replaceChildren();
+    if (!aliases.length) {
+      els.slugAliasesWrap.hidden = true;
+      return;
+    }
+    aliases.forEach((alias) => {
+      const chip = document.createElement("span");
+      chip.className = "alias-chip";
+      chip.textContent = alias;
+      els.slugAliases.appendChild(chip);
+    });
+    els.slugAliasesWrap.hidden = false;
+  }
+
+  function renderVisibilityStatus(profile) {
+    const els = getProfileElements();
+    setStatusPill(
+      els.streamsuitesStatus,
+      profile.streamsuites_profile_visible ? "Visible" : "Hidden",
+      profile.streamsuites_profile_visible ? "success" : profile.streamsuites_profile_enabled ? "warning" : "subtle"
+    );
+    setStatusPill(
+      els.findmeStatus,
+      profile.findmehere_visible ? "Listed" : profile.findmehere_eligible ? "Not listed" : "Ineligible",
+      profile.findmehere_visible ? "success" : profile.findmehere_eligible ? "warning" : "subtle"
+    );
+    if (els.streamsuitesReason) {
+      els.streamsuitesReason.textContent = humanizeSurfaceReason(profile.streamsuites_profile_status_reason);
+    }
+    if (els.findmeReason) {
+      els.findmeReason.textContent = humanizeSurfaceReason(profile.findmehere_status_reason);
+    }
+    if (els.creatorCapability) {
+      els.creatorCapability.textContent = profile.creator_capable
+        ? "Creator-capable account can manage FindMeHere listing visibility."
+        : "Backend currently marks this account as not creator-capable for FindMeHere.";
+    }
+    if (els.surfaceAccountType) {
+      els.surfaceAccountType.textContent = profile.public_surface_account_type || "creator_capable";
+    }
+    if (els.visibilitySummary) {
+      els.visibilitySummary.textContent =
+        `StreamSuites: ${profile.streamsuites_profile_visible ? "visible" : "hidden"} | FindMeHere: ${profile.findmehere_visible ? "listed" : profile.findmehere_eligible ? "not listed" : "ineligible"}`;
+    }
+  }
+
+  function renderSharePreviews(profile) {
+    const els = getProfileElements();
+    if (els.streamsuitesPreviewUrl) {
+      els.streamsuitesPreviewUrl.textContent = profile.streamsuites_profile_url || "No saved canonical URL yet";
+    }
+    if (els.findmePreviewUrl) {
+      els.findmePreviewUrl.textContent = profile.findmehere_profile_url || "No eligible FindMeHere URL yet";
+    }
+    if (els.streamsuitesPreviewNote) {
+      els.streamsuitesPreviewNote.textContent = profile.streamsuites_share_url
+        ? "Current saved share link is live."
+        : humanizeSurfaceReason(profile.streamsuites_profile_status_reason);
+    }
+    if (els.findmePreviewNote) {
+      els.findmePreviewNote.textContent = profile.findmehere_share_url
+        ? "Current saved FindMeHere share link is live."
+        : humanizeSurfaceReason(profile.findmehere_status_reason);
+    }
+  }
+
+  function applyProfile(profile) {
+    const normalized = normalizeProfilePayload(profile);
+    state.profile = cloneProfile(normalized);
+
+    const els = getProfileElements();
+    if (els.slugInput instanceof HTMLInputElement) {
+      els.slugInput.value = normalized.public_slug;
+    }
+    if (els.streamsuitesToggle instanceof HTMLInputElement) {
+      els.streamsuitesToggle.checked = normalized.streamsuites_profile_enabled;
+    }
+    if (els.findmeToggle instanceof HTMLInputElement) {
+      els.findmeToggle.checked = normalized.findmehere_enabled;
+      els.findmeToggle.dataset.lockDisabled = normalized.creator_capable ? "false" : "true";
+      els.findmeToggle.disabled = state.savingProfile || !normalized.creator_capable;
+    }
+    if (els.coverImageInput instanceof HTMLInputElement) {
+      els.coverImageInput.value = normalized.cover_image_url;
+    }
+    if (els.backgroundImageInput instanceof HTMLInputElement) {
+      els.backgroundImageInput.value = normalized.background_image_url;
+    }
+    if (els.bioInput instanceof HTMLTextAreaElement) {
+      els.bioInput.value = normalized.bio;
+    }
+    els.linkInputs.forEach((input) => {
+      const key = input.getAttribute("data-profile-link") || "";
+      input.value = coerceText(normalized.social_links[key]);
+    });
+
+    renderSlugAliases(normalized);
+    renderSlugFeedback();
+    renderVisibilityStatus(normalized);
+    renderSharePreviews(normalized);
+    setStatusPill(els.loadPill, "Profile loaded", "success");
+    setMessage("[data-profile-save-status=\"true\"]", "Authoritative profile settings are ready to edit.", "neutral");
+  }
+
+  async function loadPublicProfile() {
+    state.loadingProfile = true;
+    setProfileBusy(true);
+    try {
+      const payload = await requestJson(PUBLIC_PROFILE_ENDPOINT, { method: "GET" });
+      applyProfile(payload?.profile || payload);
+      return payload;
+    } finally {
+      state.loadingProfile = false;
+      setProfileBusy(state.savingProfile);
+    }
+  }
+
+  async function copyShareUrl(surface) {
+    const profile = state.profile;
+    if (!profile) return;
+    const url = surface === "findmehere" ? profile.findmehere_profile_url : profile.streamsuites_profile_url;
+    if (!url) {
+      setMessage("[data-profile-save-status=\"true\"]", "No saved URL is available to copy yet.", "warning");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setMessage("[data-profile-save-status=\"true\"]", `Copied ${surface === "findmehere" ? "FindMeHere" : "StreamSuites"} URL.`, "success");
+    } catch (err) {
+      setMessage("[data-profile-save-status=\"true\"]", "Copy failed. Your browser blocked clipboard access.", "danger");
+    }
+  }
+
+  async function savePublicProfile() {
+    if (!state.profile || state.savingProfile) return;
+
+    const draft = getEditableDraft();
+    const slugValidation = validatePublicSlug(draft.public_slug_input);
+    const savedSlug = coerceText(state.profile.public_slug);
+    const slugChanged = slugValidation.valid && slugValidation.normalized !== savedSlug;
+    const supportedDirty = isSupportedProfileDirty();
+
+    if (!supportedDirty) {
+      if (slugChanged) {
+        setMessage(
+          "[data-profile-save-status=\"true\"]",
+          `Slug updates are not yet exposed by the creator API. The saved canonical slug remains "${savedSlug || "unset"}".`,
+          "warning"
+        );
+      } else {
+        setMessage("[data-profile-save-status=\"true\"]", "No supported profile changes to save.", "neutral");
+      }
+      return;
+    }
+
+    const payload = {
+      streamsuites_profile_enabled: draft.streamsuites_profile_enabled,
+      findmehere_enabled: draft.findmehere_enabled,
+      cover_image_url: draft.cover_image_url,
+      background_image_url: draft.background_image_url,
+      bio: draft.bio,
+      social_links: draft.social_links,
+    };
+
+    state.savingProfile = true;
+    setProfileBusy(true);
+    setStatusPill(getProfileElements().loadPill, "Saving profile", "warning");
+    setMessage("[data-profile-save-status=\"true\"]", "Saving authoritative profile settings...", "neutral");
+    try {
+      const response = await requestJson(PUBLIC_PROFILE_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      applyProfile(response?.profile || response);
+      if (slugChanged) {
+        setMessage(
+          "[data-profile-save-status=\"true\"]",
+          `Saved supported profile settings. Slug updates are still waiting on a backend write route, so the canonical slug remains "${state.profile.public_slug || "unset"}".`,
+          "warning"
+        );
+      } else {
+        setMessage("[data-profile-save-status=\"true\"]", "Authoritative public profile settings saved.", "success");
+      }
+    } catch (err) {
+      setStatusPill(getProfileElements().loadPill, "Profile save failed", "warning");
+      setMessage("[data-profile-save-status=\"true\"]", err?.message || "Unable to save public profile settings.", "danger");
+    } finally {
+      state.savingProfile = false;
+      setProfileBusy(false);
+      renderSlugFeedback();
+    }
+  }
+
+  function resetPublicProfileForm() {
+    if (!state.profile || state.savingProfile) return;
+    applyProfile(state.profile);
+    setMessage("[data-profile-save-status=\"true\"]", "Profile form reset to the saved authoritative values.", "neutral");
+  }
+
+  function wirePublicProfileControls() {
+    const els = getProfileElements();
+    if (els.slugInput instanceof HTMLInputElement) {
+      els.slugInput.addEventListener("input", renderSlugFeedback);
+    }
+    els.saveButtons.forEach((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.addEventListener("click", savePublicProfile);
+      }
+    });
+    els.resetButtons.forEach((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.addEventListener("click", resetPublicProfileForm);
+      }
+    });
+    els.copyButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener("click", () => {
+        copyShareUrl(button.getAttribute("data-profile-copy-url") || "streamsuites");
+      });
+    });
+  }
+
   async function init() {
     if (!window.location.pathname.endsWith("/views/account.html")) return;
     wireProviderButtons();
     wireEmailChange();
-    try {
-      const payload = await refreshAuthMethods();
-      if (window.location.search.includes("linked_provider=")) {
-        setMessage(
-          "[data-account-provider-status-message=\"true\"]",
-          `Linked ${window.location.search.split("linked_provider=")[1]?.split("&")[0] || "provider"}.`,
-          "success"
-        );
-      } else if (payload?.pending_email) {
-        setPendingEmailStatus(payload);
-      }
-    } catch (err) {
-      setMessage("[data-account-provider-status-message=\"true\"]", err?.message || "Unable to load sign-in methods.", "danger");
+    wirePublicProfileControls();
+
+    const tasks = await Promise.allSettled([refreshAuthMethods(), loadPublicProfile()]);
+
+    const authResult = tasks[0];
+    const profileResult = tasks[1];
+
+    if (window.location.search.includes("linked_provider=")) {
+      setMessage(
+        "[data-account-provider-status-message=\"true\"]",
+        `Linked ${window.location.search.split("linked_provider=")[1]?.split("&")[0] || "provider"}.`,
+        "success"
+      );
+    } else if (authResult.status === "fulfilled" && authResult.value?.pending_email) {
+      setPendingEmailStatus(authResult.value);
+    } else if (authResult.status === "rejected") {
+      setMessage(
+        "[data-account-provider-status-message=\"true\"]",
+        authResult.reason?.message || "Unable to load sign-in methods.",
+        "danger"
+      );
+    }
+
+    if (profileResult.status === "rejected") {
+      setStatusPill(getProfileElements().loadPill, "Profile unavailable", "warning");
+      setMessage(
+        "[data-profile-save-status=\"true\"]",
+        profileResult.reason?.message || "Unable to load authoritative public profile settings.",
+        "danger"
+      );
     }
   }
 

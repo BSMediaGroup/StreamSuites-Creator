@@ -170,71 +170,287 @@
               <span class="section-kicker">Account</span>
               <h2>Account settings</h2>
               <p class="section-subtext">
-                Keep your creator identity, sign-in methods, and plan details in one place.
-                Changes are preview-only until this surface is fully activated.
+                Manage the canonical profile identity that powers your StreamSuites profile and
+                FindMeHere listing, alongside sign-in methods and plan details.
               </p>
             </div>
             <div class="section-actions">
-              <span class="status-pill subtle">
+              <span class="status-pill success">
                 <span class="status-dot"></span>
-                Read-only preview
+                Authoritative profile settings
               </span>
             </div>
           </div>
 
           <div class="creator-hero">
             <div>
-              <h3>Your creator profile lives here.</h3>
+              <h3>Public identity and account controls live here.</h3>
               <p>
-                Review profile basics, confirm how you sign in, and see where platform connections
-                are managed. Updates will unlock once account management goes live.
+                Control your canonical slug, public visibility, FindMeHere listing, media, and
+                public links from the same creator-facing surface that reflects the backend's
+                current authoritative profile state.
               </p>
             </div>
             <div class="creator-hero-actions">
-              <a class="creator-button primary" href="/views/plans.html">View plans</a>
+              <button class="creator-button primary" type="button" data-profile-save="true">Save profile changes</button>
               <a class="creator-button ghost" href="https://streamsuites.app/support.html">Support</a>
             </div>
           </div>
 
           <div class="card-grid account-grid">
-            <article class="card">
-              <h3>Profile</h3>
-              <p>Profile details visible across your creator workspace.</p>
-              <div class="account-field-grid">
-                <div class="account-field">
-                  <span class="account-field-label">Display name</span>
-                  <input
-                    class="account-field-input"
-                    type="text"
-                    value="Nova Creator"
-                    data-account-profile-name="true"
-                    disabled
-                  />
+            <article class="card account-profile-card">
+              <div class="card-top">
+                <div>
+                  <h3>Creator profile identity</h3>
+                  <p>Authoritative slug, public surface visibility, and creator eligibility status.</p>
                 </div>
-                <div class="account-field">
-                  <span class="account-field-label">Avatar</span>
-                  <div class="account-avatar-row">
-                    <span class="account-avatar-frame">
-                      <img
-                        src="/assets/icons/ui/profile.svg"
-                        alt="Avatar placeholder"
-                        data-account-profile-avatar="true"
+                <span class="status-pill subtle" data-profile-load-pill="true">
+                  <span class="status-dot"></span>Loading profile
+                </span>
+              </div>
+              <p class="account-note profile-save-status" data-profile-save-status="true">
+                Loading profile settings...
+              </p>
+              <div class="profile-settings-grid">
+                <div class="profile-settings-panel">
+                  <div class="account-field-grid">
+                    <div class="account-field">
+                      <span class="account-field-label">Display name</span>
+                      <input
+                        class="account-field-input"
+                        type="text"
+                        value="Nova Creator"
+                        data-account-profile-name="true"
+                        disabled
                       />
-                    </span>
-                    <span class="account-avatar-note">Avatar uploads are coming soon.</span>
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Canonical public slug</span>
+                      <input
+                        class="account-field-input"
+                        type="text"
+                        placeholder="your-canonical-slug"
+                        autocomplete="off"
+                        spellcheck="false"
+                        data-profile-field="true"
+                        data-profile-slug-input="true"
+                      />
+                      <span class="account-field-note" data-profile-slug-feedback="true">
+                        Canonical slug validation loads from the authoritative profile model.
+                      </span>
+                    </div>
+                    <div class="account-field" data-profile-slug-aliases-wrap="true" hidden>
+                      <span class="account-field-label">Previous slug aliases</span>
+                      <div class="alias-chip-row" data-profile-slug-aliases="true"></div>
+                      <span class="account-field-note">
+                        Previous aliases stay attached to the authoritative profile identity.
+                      </span>
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Creator ID</span>
+                      <span class="account-field-value" data-account-profile-user-code="true">
+                        Not available
+                      </span>
+                      <span class="account-field-note">Email or username syncs from your login method.</span>
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Email</span>
+                      <span class="account-field-value" data-account-profile-email="true"></span>
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Avatar</span>
+                      <div class="account-avatar-row">
+                        <span class="account-avatar-frame">
+                          <img
+                            src="/assets/icons/ui/profile.svg"
+                            alt="Avatar placeholder"
+                            data-account-profile-avatar="true"
+                          />
+                        </span>
+                        <span class="account-avatar-note">Avatar uploads are still managed outside this surface.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                <div class="profile-settings-panel">
+                  <div class="profile-toggle-stack">
+                    <label class="profile-toggle-card">
+                      <span class="profile-toggle-copy">
+                        <span class="profile-toggle-title">StreamSuites public profile</span>
+                        <span class="profile-toggle-help">
+                          Controls whether your canonical StreamSuites profile is visible on the main public site.
+                        </span>
+                        <span class="account-field-note" data-profile-streamsuites-reason="true"></span>
+                      </span>
+                      <span class="profile-toggle-control">
+                        <span class="status-pill subtle" data-profile-streamsuites-status="true">
+                          <span class="status-dot"></span>Checking
+                        </span>
+                        <input type="checkbox" data-profile-field="true" data-profile-streamsuites-toggle="true" />
+                      </span>
+                    </label>
+                    <label class="profile-toggle-card">
+                      <span class="profile-toggle-copy">
+                        <span class="profile-toggle-title">FindMeHere listing</span>
+                        <span class="profile-toggle-help">
+                          Separate public-facing creator listing powered by the same profile identity and canonical slug.
+                        </span>
+                        <span class="account-field-note" data-profile-findme-reason="true"></span>
+                      </span>
+                      <span class="profile-toggle-control">
+                        <span class="status-pill subtle" data-profile-findme-status="true">
+                          <span class="status-dot"></span>Checking
+                        </span>
+                        <input type="checkbox" data-profile-field="true" data-profile-findme-toggle="true" />
+                      </span>
+                    </label>
+                  </div>
+                  <div class="profile-surface-meta">
+                    <div class="profile-status-line">
+                      <span class="profile-status-label">Creator capability</span>
+                      <span class="profile-status-value" data-profile-creator-capability="true">Checking...</span>
+                    </div>
+                    <div class="profile-status-line">
+                      <span class="profile-status-label">Authoritative surface type</span>
+                      <span class="profile-status-value" data-profile-surface-account-type="true">Checking...</span>
+                    </div>
+                    <div class="profile-status-line">
+                      <span class="profile-status-label">Saved visibility</span>
+                      <span class="profile-status-value" data-profile-visibility-summary="true">Checking...</span>
+                    </div>
+                  </div>
+                  <div class="profile-action-row">
+                    <button class="creator-button primary" type="button" data-profile-save="true">Save profile changes</button>
+                    <button class="creator-button ghost" type="button" data-profile-reset="true">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <div>
+                  <h3>Share previews</h3>
+                  <p>Truthful current URLs for the saved canonical profile identity.</p>
+                </div>
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>Authoritative URLs
+                </span>
+              </div>
+              <div class="share-preview-list">
+                <div class="share-preview-card">
+                  <div class="share-preview-header">
+                    <div>
+                      <span class="share-preview-title">StreamSuites profile</span>
+                      <span class="share-preview-note" data-profile-streamsuites-preview-note="true"></span>
+                    </div>
+                    <button class="creator-button ghost share-preview-copy" type="button" data-profile-copy-url="streamsuites">
+                      Copy
+                    </button>
+                  </div>
+                  <code class="share-preview-url" data-profile-streamsuites-url="true">Loading...</code>
+                </div>
+                <div class="share-preview-card">
+                  <div class="share-preview-header">
+                    <div>
+                      <span class="share-preview-title">FindMeHere profile</span>
+                      <span class="share-preview-note" data-profile-findme-preview-note="true"></span>
+                    </div>
+                    <button class="creator-button ghost share-preview-copy" type="button" data-profile-copy-url="findmehere">
+                      Copy
+                    </button>
+                  </div>
+                  <code class="share-preview-url" data-profile-findme-url="true">Loading...</code>
+                </div>
+              </div>
+              <p class="account-note">
+                Share previews always reflect the current saved canonical slug and backend visibility state.
+              </p>
+            </article>
+
+            <article class="card">
+              <h3>Media &amp; customization</h3>
+              <p>Stored profile media fields that shape current and future public surfaces.</p>
+              <div class="account-field-grid">
                 <div class="account-field">
-                  <span class="account-field-label">Creator ID</span>
-                  <span class="account-field-value" data-account-profile-user-code="true">
-                    Not available
+                  <span class="account-field-label">Cover / banner image URL</span>
+                  <input
+                    class="account-field-input"
+                    type="url"
+                    placeholder="https://cdn.example.com/cover.webp"
+                    data-profile-field="true"
+                    data-profile-cover-image="true"
+                  />
+                  <span class="account-field-note">Used by the current authoritative public profile payload.</span>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Background image URL</span>
+                  <input
+                    class="account-field-input"
+                    type="url"
+                    placeholder="https://cdn.example.com/background.webp"
+                    data-profile-field="true"
+                    data-profile-background-image="true"
+                  />
+                  <span class="account-field-note">
+                    Reserved future-facing media field. Editable and stored now even where it is not yet surfaced elsewhere.
                   </span>
-                  <span class="account-field-note">Email or username syncs from your login method.</span>
+                </div>
+              </div>
+              <div class="profile-action-row">
+                <button class="creator-button primary" type="button" data-profile-save="true">Save media</button>
+                <button class="creator-button ghost" type="button" data-profile-reset="true">Reset</button>
+              </div>
+            </article>
+
+            <article class="card">
+              <h3>Public content &amp; links</h3>
+              <p>Creator-facing profile content stored on the authoritative backend model.</p>
+              <div class="account-field-grid">
+                <div class="account-field account-field-span-full">
+                  <span class="account-field-label">Bio / about</span>
+                  <textarea
+                    class="account-field-input account-field-textarea"
+                    rows="5"
+                    maxlength="1200"
+                    placeholder="Tell viewers who you are, what you stream, and where to follow you."
+                    data-profile-field="true"
+                    data-profile-bio="true"
+                  ></textarea>
+                  <span class="account-field-note">Saved to the authoritative public profile payload.</span>
                 </div>
                 <div class="account-field">
-                  <span class="account-field-label">Email</span>
-                  <span class="account-field-value" data-account-profile-email="true"></span>
+                  <span class="account-field-label">Website</span>
+                  <input class="account-field-input" type="url" placeholder="https://example.com" data-profile-field="true" data-profile-link="website" />
                 </div>
+                <div class="account-field">
+                  <span class="account-field-label">X</span>
+                  <input class="account-field-input" type="url" placeholder="https://x.com/yourhandle" data-profile-field="true" data-profile-link="x" />
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">YouTube</span>
+                  <input class="account-field-input" type="url" placeholder="https://youtube.com/@yourhandle" data-profile-field="true" data-profile-link="youtube" />
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Twitch</span>
+                  <input class="account-field-input" type="url" placeholder="https://twitch.tv/yourhandle" data-profile-field="true" data-profile-link="twitch" />
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Discord</span>
+                  <input class="account-field-input" type="url" placeholder="https://discord.gg/yourserver" data-profile-field="true" data-profile-link="discord" />
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Instagram</span>
+                  <input class="account-field-input" type="url" placeholder="https://instagram.com/yourhandle" data-profile-field="true" data-profile-link="instagram" />
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">TikTok</span>
+                  <input class="account-field-input" type="url" placeholder="https://tiktok.com/@yourhandle" data-profile-field="true" data-profile-link="tiktok" />
+                </div>
+              </div>
+              <div class="profile-action-row">
+                <button class="creator-button primary" type="button" data-profile-save="true">Save public content</button>
+                <button class="creator-button ghost" type="button" data-profile-reset="true">Reset</button>
               </div>
             </article>
 
@@ -432,7 +648,6 @@
   <script src="/js/status-widget.js" defer></script>
 </body>
 </html>
-
 
 
 

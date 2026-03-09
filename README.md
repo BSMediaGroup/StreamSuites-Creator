@@ -7,7 +7,11 @@ This repository contains the **static creator web surface** deployed from the re
 
 - https://creator.streamsuites.app
 
-The surface is read-only and does **not** originate authoritative state. It hydrates at runtime from:
+The surface is a static frontend that hydrates at runtime from authoritative services. It now includes
+creator-facing public profile settings for supported account/profile fields and otherwise remains a
+consumer of backend-owned state.
+
+Runtime sources include:
 
 - Runtime export endpoints (including version/build metadata)
 - StreamSuites Auth/API responses
@@ -27,6 +31,8 @@ The creator footer/version UI and version stamp utilities consume runtime export
 - Logout uses `https://api.streamsuites.app/auth/logout`.
 - Authenticated creator role is required for dashboard surfaces.
 - Non-creator authenticated sessions are soft-locked out of creator content.
+- Public creator profile settings hydrate from and save to `https://api.streamsuites.app/api/public/profile/me`
+  for supported authoritative fields.
 - No admin mutation endpoints are owned or authored here.
 
 ## Auth + Access
@@ -46,7 +52,13 @@ Tier scaffolding present in current creator UI:
 ## What's New / Highlights (v0.4.1-alpha)
 Current creator surface includes the following implemented areas:
 
-- Creator shell refresh with sidebar/topbar route model and read-only dashboard views.
+- Creator shell refresh with sidebar/topbar route model and creator dashboard views.
+- Creator account/profile settings foundation:
+  - Authoritative canonical public slug visibility surfaced on the account page
+  - Independent StreamSuites profile visibility and FindMeHere listing controls
+  - Truthful share preview URLs for both public surfaces
+  - Authoritative cover/banner and background media field editing
+  - Bio/about and grounded public social-link editing
 - Footer/status UX upgrades:
   - Runtime-driven version/build stamp in footer
   - Creator ID display/copy control
