@@ -1972,6 +1972,109 @@ h3 {
   align-self: start;
 }
 
+.account-public-preview-card {
+  display: grid;
+  gap: 14px;
+}
+
+.account-public-preview {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 12, 20, 0.72);
+}
+
+.account-public-preview-cover {
+  min-height: 120px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(140deg, rgba(105, 214, 255, 0.28), rgba(8, 12, 20, 0.92));
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.account-public-preview-body {
+  display: grid;
+  gap: 12px;
+}
+
+.account-public-preview-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(105, 214, 255, 0.38);
+  background: radial-gradient(circle at 25% 25%, rgba(105, 214, 255, 0.38), rgba(15, 26, 42, 0.92));
+  font-family: var(--creator-display-font, "RechargeBd", sans-serif);
+  color: #eef8ff;
+  font-size: 22px;
+}
+
+.account-public-preview-avatar.has-image {
+  background: rgba(6, 10, 16, 0.92);
+}
+
+.account-public-preview-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.account-public-preview-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.account-public-preview-head strong {
+  display: block;
+  font-size: 18px;
+  color: var(--creator-text);
+}
+
+.account-public-preview-head span {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--creator-muted);
+}
+
+.account-public-preview-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.account-public-preview-badges img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.account-public-preview-bio {
+  margin: 0;
+  color: var(--creator-text);
+  font-size: var(--creator-body-size-sm);
+  line-height: 1.6;
+}
+
+.account-public-preview-links {
+  color: var(--creator-muted);
+  font-size: var(--creator-body-size-sm);
+  line-height: 1.6;
+}
+
 .creator-mono,
 .account-system-text {
   font-family: var(--creator-mono-font);

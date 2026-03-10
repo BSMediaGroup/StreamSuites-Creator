@@ -124,6 +124,15 @@
     return typeof value === "string" ? value.trim() : "";
   }
 
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   function getProfileElements() {
     return {
       loadPill: document.querySelector("[data-profile-load-pill]"),
@@ -160,6 +169,14 @@
       resetButtons: Array.from(document.querySelectorAll("[data-profile-reset]")),
       copyButtons: Array.from(document.querySelectorAll("[data-profile-copy-url]")),
       profileFields: Array.from(document.querySelectorAll("[data-profile-field]")),
+      previewSurface: document.querySelector("[data-profile-preview-surface]"),
+      previewCover: document.querySelector("[data-profile-preview-cover]"),
+      previewAvatar: document.querySelector("[data-profile-preview-avatar]"),
+      previewName: document.querySelector("[data-profile-preview-name]"),
+      previewSubtitle: document.querySelector("[data-profile-preview-subtitle]"),
+      previewBadges: document.querySelector("[data-profile-preview-badges]"),
+      previewBio: document.querySelector("[data-profile-preview-bio]"),
+      previewLinks: document.querySelector("[data-profile-preview-links]"),
     };
   }
 
@@ -426,6 +443,69 @@
     }
   }
 
+  function getActiveSession() {
+    return window.App?.session && typeof window.App.session === "object" ? window.App.session : {};
+  }
+
+  function resolvePreviewBadges(profile) {
+    const session = getActiveSession();
+    const badges = [];
+    const role = coerceText(session.role).toLowerCase();
+    const tier = coerceText(session.tier || session?.effectiveTier?.tierId).toLowerCase() || "core";
+    if (["gold", "pro"].includes(tier)) {
+      badges.push(`/assets/icons/tierbadge-${tier}.svg`);
+    } else if (role === "creator") {
+      badges.push("/assets/icons/tierbadge-core.svg");
+    }
+    if (role === "admin") {
+      badges.push("/assets/icons/tierbadge-admin.svg");
+    }
+    return badges;
+  }
+
+  function renderPreviewSurface() {
+    const els = getProfileElements();
+    if (!els.previewSurface) return;
+    const draft = getEditableDraft();
+    const session = getActiveSession();
+    const displayName = draft.display_name || coerceText(state.profile?.display_name) || coerceText(session.name) || "Public User";
+    const avatarUrl = draft.avatar_url || coerceText(state.profile?.avatar_url) || coerceText(session.avatar);
+    const coverImageUrl = draft.cover_image_url || coerceText(state.profile?.cover_image_url);
+    const subtitle = `${(coerceText(state.profile?.public_surface_account_type) || coerceText(session.role) || "creator").replace(/_/g, " ").toUpperCase()}${coerceText(session.tier) ? ` · ${coerceText(session.tier).toUpperCase()}` : ""}`;
+    if (els.previewCover) {
+      els.previewCover.style.backgroundImage = coverImageUrl ? `url("${coverImageUrl}")` : "";
+    }
+    if (els.previewAvatar) {
+      els.previewAvatar.classList.toggle("has-image", Boolean(avatarUrl));
+      els.previewAvatar.innerHTML = avatarUrl
+        ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar" loading="lazy" decoding="async" />`
+        : escapeHtml(displayName.charAt(0).toUpperCase() || "P");
+    }
+    if (els.previewName) {
+      els.previewName.textContent = displayName;
+    }
+    if (els.previewSubtitle) {
+      els.previewSubtitle.textContent = subtitle;
+    }
+    if (els.previewBadges) {
+      els.previewBadges.innerHTML = resolvePreviewBadges(state.profile)
+        .map((src) => `<img src="${src}" alt="" />`)
+        .join("");
+    }
+    if (els.previewBio) {
+      els.previewBio.textContent = draft.bio || coerceText(state.profile?.bio) || "No public bio saved.";
+    }
+    if (els.previewLinks) {
+      const links = Object.entries(draft.social_links || {})
+        .filter(([, value]) => coerceText(value))
+        .map(
+          ([key, value]) =>
+            `<a class="ss-link" href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">${escapeHtml(key)}</a>`
+        );
+      els.previewLinks.innerHTML = links.join(" · ") || '<span class="account-note">No public links saved.</span>';
+    }
+  }
+
   function getEditableDraft() {
     const els = getProfileElements();
     const profile = state.profile || normalizeProfilePayload({});
@@ -681,6 +761,7 @@
     renderIdentityFeedback();
     renderVisibilityStatus(normalized);
     renderSharePreviews(normalized);
+    renderPreviewSurface();
     setStatusPill(els.loadPill, "Profile loaded", "success");
     setMessage("[data-profile-save-status=\"true\"]", "Authoritative profile settings are ready to edit.", "neutral");
   }
@@ -807,17 +888,26 @@
     state.controlsWired = true;
     const els = getProfileElements();
     if (els.displayNameInput instanceof HTMLInputElement) {
-      els.displayNameInput.addEventListener("input", renderIdentityFeedback);
+      els.displayNameInput.addEventListener("input", () => {
+        renderIdentityFeedback();
+        renderPreviewSurface();
+      });
     }
     if (els.avatarUrlInput instanceof HTMLInputElement) {
       els.avatarUrlInput.addEventListener("input", () => {
         updateAvatarPreview();
         renderIdentityFeedback();
+        renderPreviewSurface();
       });
     }
     if (els.slugInput instanceof HTMLInputElement) {
       els.slugInput.addEventListener("input", renderSlugFeedback);
     }
+    els.profileFields.forEach((field) => {
+      const eventName = field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement ? "input" : "change";
+      field.addEventListener(eventName, renderPreviewSurface);
+      field.addEventListener("change", renderPreviewSurface);
+    });
     els.saveButtons.forEach((button) => {
       if (button instanceof HTMLButtonElement) {
         button.addEventListener("click", savePublicProfile);
