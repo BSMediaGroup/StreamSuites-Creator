@@ -81,6 +81,17 @@
     controlsWired: false,
   };
 
+  function showToast(message, tone = "info", options = {}) {
+    if (!message) return;
+    const mappedTone = tone === "danger" ? "danger" : tone === "warning" ? "warning" : tone === "success" ? "success" : "info";
+    window.StreamSuitesAuth?.showToast?.(message, {
+      tone: mappedTone,
+      title: options.title || (mappedTone === "danger" ? "Error" : mappedTone),
+      autoHideMs: options.autoHideMs,
+      key: options.key
+    });
+  }
+
   function setMessage(selector, message, tone) {
     const el = document.querySelector(selector);
     if (!el) return;
@@ -784,14 +795,23 @@
     if (!profile) return;
     const url = surface === "findmehere" ? profile.findmehere_profile_url : profile.streamsuites_profile_url;
     if (!url) {
-      setMessage("[data-profile-save-status=\"true\"]", "No saved URL is available to copy yet.", "warning");
+      showToast("No saved URL is available to copy yet.", "warning", {
+        key: "creator-profile-copy"
+      });
       return;
     }
     try {
       await navigator.clipboard.writeText(url);
-      setMessage("[data-profile-save-status=\"true\"]", `Copied ${surface === "findmehere" ? "FindMeHere" : "StreamSuites"} URL.`, "success");
+      showToast(`Copied ${surface === "findmehere" ? "FindMeHere" : "StreamSuites"} URL.`, "success", {
+        key: "creator-profile-copy",
+        title: "Copied"
+      });
     } catch (err) {
-      setMessage("[data-profile-save-status=\"true\"]", "Copy failed. Your browser blocked clipboard access.", "danger");
+      showToast("Copy failed. Your browser blocked clipboard access.", "danger", {
+        key: "creator-profile-copy",
+        title: "Copy failed",
+        autoHideMs: 6800
+      });
     }
   }
 
@@ -863,12 +883,30 @@
           `Saved supported profile settings. ${limitations.join(", ")} because those write routes are not exposed by the current creator API.`,
           "warning"
         );
+        showToast(
+          `Saved supported profile settings. ${limitations.join(", ")} because those write routes are not exposed by the current creator API.`,
+          "warning",
+          {
+            key: "creator-profile-save",
+            title: "Saved with limits",
+            autoHideMs: 6800
+          }
+        );
       } else {
-        setMessage("[data-profile-save-status=\"true\"]", "Authoritative public profile settings saved.", "success");
+        setMessage("[data-profile-save-status=\"true\"]", "");
+        showToast("Authoritative public profile settings saved.", "success", {
+          key: "creator-profile-save",
+          title: "Saved"
+        });
       }
     } catch (err) {
       setStatusPill(getProfileElements().loadPill, "Profile save failed", "warning");
-      setMessage("[data-profile-save-status=\"true\"]", err?.message || "Unable to save public profile settings.", "danger");
+      setMessage("[data-profile-save-status=\"true\"]", "");
+      showToast(err?.message || "Unable to save public profile settings.", "danger", {
+        key: "creator-profile-save",
+        title: "Save failed",
+        autoHideMs: 6800
+      });
     } finally {
       state.savingProfile = false;
       setProfileBusy(false);
@@ -880,7 +918,11 @@
   function resetPublicProfileForm() {
     if (!state.profile || state.savingProfile) return;
     applyProfile(state.profile);
-    setMessage("[data-profile-save-status=\"true\"]", "Profile form reset to the saved authoritative values.", "neutral");
+    setMessage("[data-profile-save-status=\"true\"]", "");
+    showToast("Profile form reset to the saved authoritative values.", "info", {
+      key: "creator-profile-reset",
+      title: "Form reset"
+    });
   }
 
   function wirePublicProfileControls() {
@@ -940,27 +982,37 @@
     const profileResult = tasks[1];
 
     if (window.location.search.includes("linked_provider=")) {
-      setMessage(
-        "[data-account-provider-status-message=\"true\"]",
+      setMessage("[data-account-provider-status-message=\"true\"]", "");
+      showToast(
         `Linked ${window.location.search.split("linked_provider=")[1]?.split("&")[0] || "provider"}.`,
-        "success"
+        "success",
+        {
+          key: "creator-provider-linked",
+          title: "Provider linked"
+        }
       );
     } else if (authResult.status === "fulfilled" && authResult.value?.pending_email) {
       setPendingEmailStatus(authResult.value);
     } else if (authResult.status === "rejected") {
-      setMessage(
-        "[data-account-provider-status-message=\"true\"]",
-        authResult.reason?.message || "Unable to load sign-in methods.",
-        "danger"
-      );
+      setMessage("[data-account-provider-status-message=\"true\"]", "");
+      showToast(authResult.reason?.message || "Unable to load sign-in methods.", "danger", {
+        key: "creator-provider-load",
+        title: "Load failed",
+        autoHideMs: 6800
+      });
     }
 
     if (profileResult.status === "rejected") {
       setStatusPill(getProfileElements().loadPill, "Profile unavailable", "warning");
-      setMessage(
-        "[data-profile-save-status=\"true\"]",
+      setMessage("[data-profile-save-status=\"true\"]", "");
+      showToast(
         profileResult.reason?.message || "Unable to load authoritative public profile settings.",
-        "danger"
+        "danger",
+        {
+          key: "creator-profile-load",
+          title: "Load failed",
+          autoHideMs: 6800
+        }
       );
     }
   }

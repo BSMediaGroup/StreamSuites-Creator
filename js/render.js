@@ -347,6 +347,7 @@
       window.StreamSuitesGlobalLoader?.startLoading?.(`Loading ${normalized} view...`) || null;
 
     try {
+      window.StreamSuitesAuth?.clearToasts?.();
       invokeViewUnload(previousRoute, previousView);
 
       const view = app.views?.[normalized];

@@ -2352,40 +2352,72 @@
   }
 
   function buildAuthToast() {
+    const title = document.createElement("strong");
+    title.className = "ss-auth-toast-title";
+    const message = document.createElement("span");
+    message.className = "ss-auth-toast-message";
+    const dismiss = document.createElement("button");
+    dismiss.type = "button";
+    dismiss.className = "ss-auth-toast-dismiss";
+    dismiss.setAttribute("aria-label", "Dismiss notification");
+    dismiss.textContent = "×";
     const toast = document.createElement("div");
     toast.className = "ss-alert ss-auth-toast";
     toast.dataset.authToast = "true";
-    toast.setAttribute("role", "status");
-    toast.setAttribute("aria-live", "polite");
-    toast.hidden = true;
+    toast.append(title, message, dismiss);
     return toast;
   }
 
-  function getAuthToast() {
-    let toast = document.querySelector("[data-auth-toast]");
-    if (!toast) {
-      toast = buildAuthToast();
-      document.body.appendChild(toast);
+  function getAuthToastStack() {
+    let stack = document.querySelector("[data-auth-toast-stack]");
+    if (!stack) {
+      stack = document.createElement("div");
+      stack.className = "ss-auth-toast-stack";
+      stack.dataset.authToastStack = "true";
+      stack.setAttribute("aria-live", "polite");
+      stack.setAttribute("aria-atomic", "false");
+      document.body.appendChild(stack);
     }
-    return toast;
+    return stack;
   }
 
   function showAuthToast(message, options = {}) {
     if (!message) return;
-    const { tone = "warning", autoHideMs = 4200 } = options;
-    const toast = getAuthToast();
-    toast.textContent = message;
-    toast.classList.toggle("ss-alert-danger", tone === "danger");
-    toast.hidden = false;
-
-    if (toast._hideTimer) {
-      clearTimeout(toast._hideTimer);
+    const { tone = "warning", autoHideMs = 4200, key = "", title = tone } = options;
+    const toastId = String(key || `${tone}:${message}`).trim();
+    const existing = document.querySelector(`[data-auth-toast-id="${CSS.escape(toastId)}"]`);
+    if (existing) {
+      existing.querySelector(".ss-auth-toast-dismiss")?.click();
     }
+    const toast = buildAuthToast();
+    toast.dataset.authToastId = toastId;
+    toast.dataset.tone = tone;
+    toast.classList.toggle("ss-alert-danger", tone === "danger" || tone === "error");
+    toast.setAttribute("role", tone === "danger" || tone === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", tone === "danger" || tone === "error" ? "assertive" : "polite");
+    toast.querySelector(".ss-auth-toast-title").textContent = title;
+    toast.querySelector(".ss-auth-toast-message").textContent = message;
+    toast.querySelector(".ss-auth-toast-dismiss").addEventListener("click", () => {
+      if (toast._hideTimer) {
+        clearTimeout(toast._hideTimer);
+      }
+      toast.classList.remove("is-visible");
+      toast.classList.add("is-leaving");
+      window.setTimeout(() => toast.remove(), 220);
+    });
+    getAuthToastStack().appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add("is-visible"));
     if (autoHideMs > 0) {
       toast._hideTimer = setTimeout(() => {
-        toast.hidden = true;
+        toast.querySelector(".ss-auth-toast-dismiss")?.click();
       }, autoHideMs);
     }
+  }
+
+  function clearAuthToasts() {
+    document.querySelectorAll("[data-auth-toast-id]").forEach((toast) => {
+      toast.querySelector(".ss-auth-toast-dismiss")?.click();
+    });
   }
 
   function removeXEmailBanner() {
@@ -2701,6 +2733,7 @@
       return sessionState.value;
     },
     showToast: showAuthToast,
+    clearToasts: clearAuthToasts,
     debugMode: {
       key: CREATOR_DEBUG_MODE_KEY,
       isEnabled: () => isCreatorDebugModeActive(sessionState.value),
