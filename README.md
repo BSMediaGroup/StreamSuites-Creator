@@ -1,106 +1,30 @@
-# StreamSuites-Creator (v0.4.1-alpha)
+# StreamSuites-Creator
 
-Creator dashboard for StreamSuites.
+Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://creator.streamsuites.app`.
 
-## About
-This repository contains the **static creator web surface** deployed from the repository root to:
+## Release State
 
-- https://creator.streamsuites.app
+- README state prepared for `v0.4.2-alpha`.
+- Runtime-displayed version/build labels are consumed from `https://admin.streamsuites.app/runtime/exports/version.json`.
+- This repo is a static frontend that hydrates from authoritative runtime and Auth API services and does not own backend state.
 
-The surface is a static frontend that hydrates at runtime from authoritative services. It now includes
-creator-facing public profile settings for supported account/profile fields and otherwise remains a
-consumer of backend-owned state. The creator shell now supports clean path-based dashboard routes for
-major authenticated surfaces and includes a Cloudflare Pages rewrite manifest for deep-link readiness.
+## Current Surface Model
 
-Runtime sources include:
+- Clean path-based creator routes are the primary navigation model, with Cloudflare Pages deep-link handling in the root `_redirects`.
+- Legacy hash-fragment and older `/platforms/*` compatibility remains in the client router, but canonical creator links now use path routes such as `/overview`, `/account`, `/statistics`, `/notifications`, `/integrations/...`, and `/modules/...`.
+- The account/settings experience is the authoritative creator-facing profile control surface for supported fields exposed by the public profile API.
+- Creator account settings currently surface canonical slug editing and visibility, StreamSuites public profile visibility, FindMeHere listing controls, truthful dual share previews, reserved media fields including background image URL, bio/about, and grounded public social links.
+- The updated account/settings layout includes the recent typography and polish work where the current UI already reflects it.
+- Notifications, statistics, onboarding, and Discord bot install panels remain consumers of backend-owned data and permissions.
 
-- Runtime export endpoints (including version/build metadata)
-- StreamSuites Auth/API responses
+## Auth and Boundaries
 
-## Versioning
-Release target for this repository surface is **v0.4.1-alpha**.
-
-Canonical displayed version/build values are runtime-provided (not hardcoded in this repo):
-
-- `https://admin.streamsuites.app/runtime/exports/version.json`
-
-The creator footer/version UI and version stamp utilities consume runtime export metadata at runtime.
-
-## Creator Surface Model
-- Static frontend only (HTML/CSS/JS served from repo root).
-- Session/auth state comes from `https://api.streamsuites.app/auth/session`.
-- Logout uses `https://api.streamsuites.app/auth/logout`.
-- Authenticated creator role is required for dashboard surfaces.
-- Non-creator authenticated sessions are soft-locked out of creator content.
-- Public creator profile settings hydrate from and save to `https://api.streamsuites.app/api/public/profile/me`
-  for supported authoritative fields.
-- The account settings page resolves its profile/auth requests against the same runtime auth origin as
-  the active creator session so local and production load/save paths stay aligned.
-- No admin mutation endpoints are owned or authored here.
-
-## Auth + Access
-Implemented login/auth flows include:
-
-- OAuth: Google, GitHub, Discord, X, Twitch
-- Email/password login
-- Email signup + verification resend
-- Session polling/rehydration and lockout UX
-
-Tier scaffolding present in current creator UI:
-
-- `CORE`
-- `GOLD`
-- `PRO`
-
-## What's New / Highlights (v0.4.1-alpha)
-Current creator surface includes the following implemented areas:
-
-- Creator shell refresh with sidebar/topbar route model and creator dashboard views.
-- Clean creator route support for major dashboard surfaces:
-  - Canonical path-based routes such as `/overview`, `/account`, `/statistics`, `/notifications`,
-    `/integrations/youtube`, `/integrations/twitch`, and `/modules/clips`
-  - Legacy hash-route and legacy `/platforms/*` route compatibility shims preserved in the client router
-  - Cloudflare Pages deep-link rewrite support via the root `_redirects` manifest
-- Creator account/profile settings foundation:
-  - Authoritative canonical public slug visibility surfaced on the account page
-  - Independent StreamSuites profile visibility and FindMeHere listing controls
-  - Truthful share preview URLs for both public surfaces
-  - Session-backed account identity hydration aligned with the authoritative public profile payload
-  - Authoritative cover/banner and background media field editing
-  - Bio/about and grounded public social-link editing
-- Footer/status UX upgrades:
-  - Runtime-driven version/build stamp in footer
-  - Creator ID display/copy control
-  - Inline service-status widget (Statuspage-backed)
-- Expanded auth UX:
-  - OAuth + manual auth panels
-  - Role-aware lockout and session-expiration handling
-  - Onboarding-required routing behavior
-- Notifications hydration path:
-  - Runtime fetch from creator notifications API
-  - Local read/mute state persistence
-  - Seed fallback when live notifications are unavailable
-- Statistics view (Phase 0 placeholder):
-  - Sidebar-routed `Statistics` surface for creator metrics
-  - Overview `Latest Stream Snapshot` card linked to the statistics route
-  - Hydrates from `GET /api/creator/stats` with in-memory session caching
-  - Uses API-provided chart contracts (`data.growth_series.daily_points` and
-    `data.platform_share`) with client-side quality-symbol formatting
-- Discord bot integration panel (creator Discord platform view):
-  - Hydrates linked guild install records from `GET /api/creator/discord/bot/installs`
-  - Retrieves OAuth install URL from `GET /api/creator/discord/bot/install-url`
-  - Verifies installation state with `POST /api/creator/discord/bot/verify`
-  - Disables stored install records with `POST /api/creator/discord/bot/disable`
-
-## Boundaries
-This repository is separate from:
-
-- Public site: https://streamsuites.app
-- Admin dashboard/runtime: https://admin.streamsuites.app
-- Core systems that persist authoritative state
+- Session and auth state are runtime/Auth API owned.
+- Authenticated creator access is required for dashboard surfaces.
+- Non-creator authenticated sessions are soft-locked out rather than treated as creator-authoritative.
+- No admin mutation endpoints are authored here.
 
 ## Repository Structure (Abridged, Accurate)
-> `assets/` is intentionally redacted/truncated below. No build/temp output directories are present at repo root.
 
 ```text
 StreamSuites-Creator/
@@ -112,18 +36,17 @@ StreamSuites-Creator/
 |-- EULA.md
 |-- LICENSE
 |-- README.md
-|-- Thumbs.db
 |-- favicon.ico
 |-- index.html
+|-- auth/
+|   |-- login.html
+|   `-- success.html
 |-- assets/
 |   |-- css/
 |   |   `-- ss-profile-hovercard.css
 |   |-- js/
 |   |   `-- ss-profile-hovercard.js
-|   `-- [truncated: backgrounds/, fonts/, icons/, illustrations/, logos/, placeholders/, files...]
-|-- auth/
-|   |-- login.html
-|   `-- success.html
+|   `-- [truncated: backgrounds/, fonts/, icons/, illustrations/, logos/, placeholders/]
 |-- css/
 |   |-- base.css
 |   |-- components.css
@@ -161,6 +84,7 @@ StreamSuites-Creator/
 |   `-- utils/
 |       |-- notifications-store.js
 |       |-- stats-formatting.js
+|       |-- stats-svg-charts.js
 |       |-- version-stamp.js
 |       `-- versioning.js
 `-- views/
@@ -172,9 +96,9 @@ StreamSuites-Creator/
     |-- onboarding.html
     |-- overview.html
     |-- plans.html
-    |-- statistics.html
     |-- scoreboards.html
     |-- settings.html
+    |-- statistics.html
     |-- tallies.html
     |-- triggers.html
     |-- updates.html
