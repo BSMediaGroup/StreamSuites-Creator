@@ -47,8 +47,8 @@
   });
 
   const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/login`;
-  const CREATOR_LOGIN_SUCCESS_PAGE = `${CREATOR_ORIGIN}/login-success.html`;
-  const CREATOR_ONBOARDING_PAGE = `${CREATOR_ORIGIN}/onboarding`;
+  const CREATOR_LOGIN_SUCCESS_PAGE = `${CREATOR_ORIGIN}/login-success`;
+  const CREATOR_ONBOARDING_PAGE = `${CREATOR_ORIGIN}/views/onboarding.html`;
   const LOGOUT_REASON = "logout";
   const REDIRECT_GUARD_KEY = "streamsuites.creator.loginRedirected";
   const LOGOUT_GUARD_KEY = "streamsuites.creator.loggedOut";
@@ -75,11 +75,30 @@
   const SESSION_INVALID_REDIRECT_DELAY_MS = 1400;
   const SESSION_IDLE_REASON = "cookie_missing";
   const SESSION_RETRY_MIN_INTERVAL_MS = 7000;
+  const AUTH_BOOT_STATES = Object.freeze({
+    bootstrapping: "bootstrapping",
+    authenticated: "authenticated",
+    unauthenticated: "unauthenticated",
+    degraded: "auth-available-but-hydration-failed"
+  });
+  const AUTH_STATE_EVENT = "streamsuites:auth-state-changed";
 
   const sessionState = {
     value: null,
     loading: false
   };
+  const authBootstrap = {
+    status: AUTH_BOOT_STATES.bootstrapping,
+    protectedDataStatus: "idle",
+    protectedDataSource: "",
+    message: "",
+    sessionChecked: false,
+    readyPromise: null,
+    resolveReady: null
+  };
+  authBootstrap.readyPromise = new Promise((resolve) => {
+    authBootstrap.resolveReady = resolve;
+  });
   const sessionMonitor = {
     timer: null,
     checking: false,
@@ -100,6 +119,63 @@
   function ensureAppNamespace() {
     if (!window.App) {
       window.App = {};
+    }
+  }
+
+  function resolveAuthorityApiUrl(path = "/") {
+    const normalizedPath = typeof path === "string" && path.trim() ? path.trim() : "/";
+    return new URL(normalizedPath, `${API_BASE_URL}/`).toString();
+  }
+
+  function getAuthBootstrapState() {
+    return {
+      status: authBootstrap.status,
+      protectedDataStatus: authBootstrap.protectedDataStatus,
+      protectedDataSource: authBootstrap.protectedDataSource,
+      message: authBootstrap.message,
+      sessionChecked: authBootstrap.sessionChecked
+    };
+  }
+
+  function syncAuthBootstrapState() {
+    ensureAppNamespace();
+    window.App.authBootstrap = getAuthBootstrapState();
+  }
+
+  function setAuthBootstrapState(status, details = {}) {
+    const nextStatus = AUTH_BOOT_STATES[status] || status || AUTH_BOOT_STATES.bootstrapping;
+    authBootstrap.status = nextStatus;
+    authBootstrap.protectedDataStatus =
+      typeof details.protectedDataStatus === "string"
+        ? details.protectedDataStatus
+        : authBootstrap.protectedDataStatus;
+    authBootstrap.protectedDataSource =
+      typeof details.protectedDataSource === "string"
+        ? details.protectedDataSource
+        : authBootstrap.protectedDataSource;
+    authBootstrap.message =
+      typeof details.message === "string" ? details.message : authBootstrap.message;
+    if (details.sessionChecked === true || details.sessionChecked === false) {
+      authBootstrap.sessionChecked = details.sessionChecked;
+    }
+    syncAuthBootstrapState();
+    document.documentElement.dataset.creatorAuthBootstrap = nextStatus;
+    window.dispatchEvent(
+      new CustomEvent(AUTH_STATE_EVENT, {
+        detail: getAuthBootstrapState()
+      })
+    );
+    if (
+      authBootstrap.resolveReady &&
+      nextStatus !== AUTH_BOOT_STATES.bootstrapping
+    ) {
+      authBootstrap.resolveReady(getAuthBootstrapState());
+      authBootstrap.resolveReady = null;
+    }
+    if (nextStatus !== AUTH_BOOT_STATES.bootstrapping) {
+      console.info(
+        `[Creator][Auth] bootstrap=${nextStatus} protected=${authBootstrap.protectedDataStatus || "idle"}`
+      );
     }
   }
 
@@ -963,6 +1039,7 @@
       features: session?.features || {},
       onboardingRequired: session?.onboardingRequired === true
     };
+    syncAuthBootstrapState();
   }
 
   function persistLocalSession(session) {
@@ -986,6 +1063,15 @@
       localStorage.setItem(LOCAL_SESSION_UPDATED_AT_KEY, String(Date.now()));
     } catch (err) {
       console.warn("[Dashboard][Auth] Failed to persist session", err);
+    }
+  }
+
+  function clearPersistedLocalSession() {
+    try {
+      localStorage.removeItem(LOCAL_SESSION_KEY);
+      localStorage.removeItem(LOCAL_SESSION_UPDATED_AT_KEY);
+    } catch (err) {
+      console.warn("[Dashboard][Auth] Failed to clear persisted session", err);
     }
   }
 
@@ -1465,15 +1551,55 @@
     updateAppSession(sessionState.value);
     updateAuthSummary(sessionState.value);
     updateXEmailBanner(sessionState.value, isPublicPath(getPathname()));
+    setAuthBootstrapState(AUTH_BOOT_STATES.unauthenticated, {
+      sessionChecked: true,
+      protectedDataStatus: "idle",
+      protectedDataSource: "",
+      message: ""
+    });
     if (window.App?.state) {
       window.App.state = {};
     }
-    try {
-      localStorage.removeItem(LOCAL_SESSION_KEY);
-      localStorage.removeItem(LOCAL_SESSION_UPDATED_AT_KEY);
-    } catch (err) {
-      console.warn("[Dashboard][Auth] Failed to clear persisted session", err);
+    clearPersistedLocalSession();
+  }
+
+  function markProtectedDataReady(source = "") {
+    if (authBootstrap.status === AUTH_BOOT_STATES.unauthenticated) return;
+    setAuthBootstrapState(AUTH_BOOT_STATES.authenticated, {
+      sessionChecked: true,
+      protectedDataStatus: "ready",
+      protectedDataSource: source,
+      message: ""
+    });
+  }
+
+  function reportProtectedDataFailure({ status = null, message = "", source = "" } = {}) {
+    const normalizedStatus = Number.isFinite(Number(status)) ? Number(status) : null;
+    const normalizedSource = typeof source === "string" ? source : "";
+    if (normalizedStatus === 401 || normalizedStatus === 403) {
+      console.warn(
+        `[Creator][Auth] Protected data unauthorized from ${normalizedSource || "unknown-source"}`
+      );
+      handleSessionInvalidation("expired", "PROTECTED_DATA_UNAUTHORIZED");
+      return true;
     }
+
+    const fallbackMessage =
+      message || "Authenticated session is present, but creator data could not be hydrated.";
+    console.warn(
+      `[Creator][Auth] Protected data degraded from ${normalizedSource || "unknown-source"}: ${fallbackMessage}`
+    );
+    setAuthBootstrapState(AUTH_BOOT_STATES.degraded, {
+      sessionChecked: true,
+      protectedDataStatus: "failed",
+      protectedDataSource: normalizedSource,
+      message: fallbackMessage
+    });
+    showAuthToast(fallbackMessage, {
+      tone: "warning",
+      key: `creator-protected-data:${normalizedSource || "unknown"}`
+    });
+    return false;
   }
 
   function wireLogoutButtons() {
@@ -2699,7 +2825,13 @@
   async function initAuth() {
     const pathname = getPathname();
     const isPublic = isPublicPath(pathname);
-    const isOnboarding = pathname === "/views/onboarding.html" || pathname === "/onboarding";
+    const isOnboarding = pathname === "/views/onboarding.html";
+    setAuthBootstrapState(AUTH_BOOT_STATES.bootstrapping, {
+      sessionChecked: false,
+      protectedDataStatus: "idle",
+      protectedDataSource: "",
+      message: ""
+    });
 
     ensureAuthSummaryMounts();
     ensureTopbarProfileHoverOptOut();
@@ -2713,10 +2845,17 @@
     syncCreatorDebugModeState(sessionState.value);
 
     if (shouldSkipSessionFetch(isPublic)) {
+      clearPersistedLocalSession();
       sessionState.value = { authenticated: false };
       updateAppSession(sessionState.value);
       updateAuthSummary(sessionState.value);
       updateXEmailBanner(sessionState.value, isPublic);
+      setAuthBootstrapState(AUTH_BOOT_STATES.unauthenticated, {
+        sessionChecked: true,
+        protectedDataStatus: "idle",
+        protectedDataSource: "",
+        message: ""
+      });
       showAuthModalAndHaltAppInit(sessionState.value);
       return;
     }
@@ -2727,10 +2866,20 @@
 
     const session = await loadSession();
     if (!isPublic && isCookieMissingSessionState(session)) {
+      clearPersistedLocalSession();
+      setAuthBootstrapState(AUTH_BOOT_STATES.unauthenticated, {
+        sessionChecked: true,
+        protectedDataStatus: "idle",
+        protectedDataSource: "",
+        message: ""
+      });
       redirectToLoginReplace();
       return;
     }
 
+    if (!session?.authenticated) {
+      clearPersistedLocalSession();
+    }
     updateAppSession(session);
     if (session?.authenticated) {
       persistLocalSession(session);
@@ -2747,6 +2896,15 @@
       ) {
         window.StreamSuitesAuth.loginHint = "Auth service is unreachable. Please try again.";
       }
+      setAuthBootstrapState(AUTH_BOOT_STATES.unauthenticated, {
+        sessionChecked: true,
+        protectedDataStatus: "idle",
+        protectedDataSource: "",
+        message:
+          typeof window.StreamSuitesAuth?.loginHint === "string"
+            ? window.StreamSuitesAuth.loginHint
+            : ""
+      });
       showAuthModalAndHaltAppInit(session);
       return;
     }
@@ -2767,6 +2925,12 @@
       setCreatorShellVisible(true);
       startSessionMonitor({ isPublic });
     }
+    setAuthBootstrapState(AUTH_BOOT_STATES.authenticated, {
+      sessionChecked: true,
+      protectedDataStatus: "pending",
+      protectedDataSource: "",
+      message: ""
+    });
 
     if (session?.authenticated) {
       if (session?.onboardingRequired && !isOnboarding) {
@@ -2803,10 +2967,16 @@
   };
 
   window.StreamSuitesAuth = {
+    apiBaseUrl: API_BASE_URL,
     endpoints: AUTH_ENDPOINTS,
     loadSession,
     logout,
     routeAfterAuth,
+    resolveApiUrl: (path = "/") => resolveAuthorityApiUrl(path),
+    whenReady: () => authBootstrap.readyPromise,
+    getBootstrapState: () => getAuthBootstrapState(),
+    markProtectedDataReady,
+    reportProtectedDataFailure,
     refreshSummary: async () => {
       updateAuthSummary(sessionState.value);
       return sessionState.value;
@@ -2831,6 +3001,12 @@
       sessionUpdatedAt: LOCAL_SESSION_UPDATED_AT_KEY
     }
   };
+
+  syncAuthBootstrapState();
+  if (!isPublicPath(getPathname())) {
+    document.documentElement.dataset.creatorAuthBootstrap = AUTH_BOOT_STATES.bootstrapping;
+    setCreatorShellVisible(false);
+  }
 
   document.addEventListener("DOMContentLoaded", () => {
     window.dispatchEvent(new CustomEvent("streamsuites:auth-init-start"));

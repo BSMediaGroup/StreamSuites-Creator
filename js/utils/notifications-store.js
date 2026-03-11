@@ -11,65 +11,6 @@
   const UPDATE_EVENT = "streamsuites:notifications-updated";
   const LEGACY_UPDATE_EVENT = "ss:creator-notifications-updated";
 
-  const seedNotifications = Object.freeze([
-    {
-      id: "creator-job-queue-lag",
-      type: "job",
-      title: "Clip queue is building",
-      snippet: "Three jobs are waiting for worker capacity in the render queue.",
-      timestamp: "2026-02-12T22:18:00Z",
-      link: "/jobs"
-    },
-    {
-      id: "creator-trigger-deploy",
-      type: "trigger",
-      title: "Trigger set published",
-      snippet: "Night-show trigger bundle was staged and applied to your active profile.",
-      timestamp: "2026-02-12T20:06:00Z",
-      link: "/triggers"
-    },
-    {
-      id: "creator-platform-youtube",
-      type: "platform",
-      title: "YouTube token refresh due soon",
-      snippet: "Reconnect within 48 hours to avoid automation pauses during stream start.",
-      timestamp: "2026-02-11T19:24:00Z",
-      link: "/integrations/youtube"
-    },
-    {
-      id: "creator-system-export",
-      type: "system",
-      title: "State export completed",
-      snippet: "Latest runtime export finished successfully with no schema drift detected.",
-      timestamp: "2026-02-11T14:11:00Z",
-      link: "/updates"
-    },
-    {
-      id: "creator-billing-renewal",
-      type: "billing",
-      title: "Billing cycle reminder",
-      snippet: "Your plan renews in five days. Review active seats before renewal.",
-      timestamp: "2026-02-10T18:42:00Z",
-      link: "/plans"
-    },
-    {
-      id: "creator-platform-rumble",
-      type: "platform",
-      title: "Rumble destination healthy",
-      snippet: "Connection heartbeat stabilized after transport retry on the last session.",
-      timestamp: "2026-02-10T09:15:00Z",
-      link: "/integrations/rumble"
-    },
-    {
-      id: "creator-trigger-fallback",
-      type: "trigger",
-      title: "Fallback response armed",
-      snippet: "Default response path is now active for unmatched command aliases.",
-      timestamp: "2026-02-09T22:57:00Z",
-      link: "/triggers"
-    }
-  ]);
-
   const state = {
     notifications: [],
     readIds: new Set(),
@@ -77,7 +18,7 @@
       all: false,
       types: new Set()
     },
-    source: "seed",
+    source: "idle",
     notes: [],
     nextCursor: "",
     isRefreshing: false,
@@ -390,14 +331,9 @@
   }
 
   function resolveNotificationsEndpoint() {
-    const sessionEndpoint = window.StreamSuitesAuth?.endpoints?.session;
-    if (typeof sessionEndpoint === "string" && sessionEndpoint.trim()) {
-      try {
-        const resolved = new URL(sessionEndpoint, window.location.origin);
-        return `${resolved.origin}${NOTIFICATIONS_PATH}`;
-      } catch (err) {
-        // Fall through to static API base.
-      }
+    const apiBaseUrl = window.StreamSuitesAuth?.apiBaseUrl;
+    if (typeof apiBaseUrl === "string" && apiBaseUrl.trim()) {
+      return `${apiBaseUrl.replace(/\/$/, "")}${NOTIFICATIONS_PATH}`;
     }
     return `${API_BASE_URL}${NOTIFICATIONS_PATH}`;
   }
@@ -411,15 +347,11 @@
     return status ? { message, status } : { message };
   }
 
-  function applySeedFallback() {
-    state.notifications = sortNotifications(
-      seedNotifications
-        .map((item, index) => normalizeNotification(item, index, "seed"))
-        .filter(Boolean)
-    );
-    state.source = "seed";
+  function applyEmptyState(notes = []) {
+    state.notifications = [];
+    state.source = "empty";
     state.nextCursor = "";
-    state.notes = [];
+    state.notes = Array.isArray(notes) ? notes.slice() : [];
   }
 
   async function refresh(options = {}) {
@@ -491,11 +423,21 @@
         state.notes = normalizeNotes(payload.notes);
         state.lastError = null;
         state.lastRefreshAt = Date.now();
+        window.StreamSuitesAuth?.markProtectedDataReady?.("notifications");
         return getItems();
       } catch (err) {
-        applySeedFallback();
         state.lastError = normalizeRefreshError(err);
         state.lastRefreshAt = Date.now();
+        if (state.lastError?.status === 401 || state.lastError?.status === 403) {
+          applyEmptyState(["Sign in again to load creator notifications."]);
+          window.StreamSuitesAuth?.reportProtectedDataFailure?.({
+            status: state.lastError.status,
+            message: "Creator notifications are no longer authorized.",
+            source: "notifications"
+          });
+          return getItems();
+        }
+        applyEmptyState(["Creator notifications are temporarily unavailable."]);
         return getItems();
       } finally {
         state.isRefreshing = false;
@@ -514,7 +456,7 @@
   function init() {
     loadReadIds();
     loadMuted();
-    applySeedFallback();
+    applyEmptyState();
     state.lastError = null;
   }
 

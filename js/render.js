@@ -418,7 +418,24 @@
     void loadRoute(normalized);
   }
 
-  function onLocationChange() {
+  async function waitForAuthBootstrap() {
+    const auth = window.StreamSuitesAuth;
+    if (!auth || typeof auth.whenReady !== "function") {
+      return null;
+    }
+    try {
+      await auth.whenReady();
+    } catch (err) {
+      console.warn("[Creator] Auth bootstrap wait failed", err);
+    }
+    return typeof auth.getBootstrapState === "function" ? auth.getBootstrapState() : null;
+  }
+
+  async function onLocationChange() {
+    const authState = await waitForAuthBootstrap();
+    if (authState && authState.status === "unauthenticated") {
+      return;
+    }
     const route = getCurrentLocationRoute();
     if (!route) {
       navigateToRoute(DEFAULT_ROUTE, { replace: true });
@@ -496,7 +513,7 @@
     registerView("modules/livechat");
   }
 
-  function initRouter() {
+  async function initRouter() {
     if (routerState.mounted) return;
     routerState.mounted = true;
     const app = getApp();
@@ -512,7 +529,14 @@
 
     registerDefaultViews();
     bindLinkInterception();
-    window.addEventListener("popstate", onLocationChange);
+    window.addEventListener("popstate", () => {
+      void onLocationChange();
+    });
+
+    const authState = await waitForAuthBootstrap();
+    if (authState && authState.status === "unauthenticated") {
+      return;
+    }
 
     const initial = getCurrentLocationRoute();
     if (!initial) {
@@ -526,8 +550,10 @@
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initRouter, { once: true });
+    document.addEventListener("DOMContentLoaded", () => {
+      void initRouter();
+    }, { once: true });
   } else {
-    initRouter();
+    void initRouter();
   }
 })();

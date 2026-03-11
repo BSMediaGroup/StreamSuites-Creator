@@ -68,10 +68,9 @@
     (() => {
       "use strict";
 
-      const RUNTIME_BASE_URL = "https://api.streamsuites.app";
-      const SESSION_URL = `${RUNTIME_BASE_URL}/auth/session`;
       const CREATOR_HOME_URL = "https://creator.streamsuites.app/";
-      const CREATOR_ONBOARDING_URL = "https://creator.streamsuites.app/onboarding";
+      const SESSION_URL = new URL("/auth/session", CREATOR_HOME_URL).toString();
+      const CREATOR_ONBOARDING_URL = "https://creator.streamsuites.app/views/onboarding.html";
       const AUTH_PATHS = new Set(["/login", "/login.html", "/login-success", "/login-success.html"]);
       const statusEl = document.querySelector("[data-auth-status]");
       const errorEl = document.querySelector("[data-auth-error]");

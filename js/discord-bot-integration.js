@@ -105,14 +105,9 @@
   }
 
   function resolveEndpoint(path) {
-    const sessionEndpoint = window.StreamSuitesAuth?.endpoints?.session;
-    if (typeof sessionEndpoint === "string" && sessionEndpoint.trim()) {
-      try {
-        const resolved = new URL(sessionEndpoint, window.location.origin);
-        return `${resolved.origin}${path}`;
-      } catch (_err) {
-        // Fall through to static base.
-      }
+    const apiBaseUrl = window.StreamSuitesAuth?.apiBaseUrl;
+    if (typeof apiBaseUrl === "string" && apiBaseUrl.trim()) {
+      return `${apiBaseUrl.replace(/\/$/, "")}${path}`;
     }
     return `${API_BASE_URL}${path}`;
   }
@@ -135,6 +130,11 @@
   }
 
   function handleUnauthorized(message = "Your session is no longer authorized. Please log in again.") {
+    window.StreamSuitesAuth?.reportProtectedDataFailure?.({
+      status: 401,
+      message,
+      source: "discord-bot-integration"
+    });
     setGlobalError(message, {
       toast: true,
       tone: "warning"

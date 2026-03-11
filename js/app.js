@@ -68,7 +68,6 @@
   const SIDEBAR_MOBILE_BREAKPOINT = 980;
   const LOADER_SHOW_DELAY_MS = 120;
   const LOADER_MIN_VISIBLE_MS = 280;
-  const CREATOR_LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const CREATOR_COPY_FEEDBACK_MS = 1400;
   const CREATOR_VERSION_ENDPOINT = "https://admin.streamsuites.app/runtime/exports/version.json";
 
@@ -571,21 +570,10 @@
   }
 
   function readCreatorIdFromSession() {
-    const sessionCode = window.App?.session?.user_code;
+    const isAuthenticated = window.App?.session?.authenticated === true;
+    const sessionCode = isAuthenticated ? window.App?.session?.user_code : "";
     if (typeof sessionCode === "string" && sessionCode.trim()) {
       return sessionCode.trim();
-    }
-
-    try {
-      const raw = window.localStorage.getItem(CREATOR_LOCAL_SESSION_KEY);
-      if (!raw) return "";
-      const parsed = JSON.parse(raw);
-      const localCode = parsed?.user_code;
-      if (typeof localCode === "string" && localCode.trim()) {
-        return localCode.trim();
-      }
-    } catch (err) {
-      // Ignore malformed local session payloads.
     }
 
     return "";

@@ -10,13 +10,9 @@
   }
 
   function resolveApiBase() {
-    const sessionEndpoint = window.StreamSuitesAuth?.endpoints?.session;
-    if (sessionEndpoint) {
-      try {
-        return new URL(sessionEndpoint).origin;
-      } catch (err) {
-        // Fall back to local detection below.
-      }
+    const apiBaseUrl = window.StreamSuitesAuth?.apiBaseUrl;
+    if (typeof apiBaseUrl === "string" && apiBaseUrl.trim()) {
+      return apiBaseUrl.replace(/\/$/, "");
     }
     return detectFallbackApiBase();
   }
@@ -124,8 +120,16 @@
     }
     if (!response.ok) {
       const message = payload?.error || payload?.message || `Request failed (${response.status})`;
+      if (response.status === 401 || response.status === 403) {
+        window.StreamSuitesAuth?.reportProtectedDataFailure?.({
+          status: response.status,
+          message,
+          source: "account-settings"
+        });
+      }
       const error = new Error(message);
       error.payload = payload;
+      error.status = response.status;
       throw error;
     }
     return payload || {};
@@ -244,6 +248,7 @@
   async function refreshAuthMethods() {
     const payload = await requestJson(AUTH_METHODS_ENDPOINT, { method: "GET" });
     applyAuthMethods(payload);
+    window.StreamSuitesAuth?.markProtectedDataReady?.("account-auth-methods");
     return payload;
   }
 
@@ -783,6 +788,7 @@
     try {
       const payload = await requestJson(PUBLIC_PROFILE_ENDPOINT, { method: "GET" });
       applyProfile(payload?.profile || payload);
+      window.StreamSuitesAuth?.markProtectedDataReady?.("account-public-profile");
       return payload;
     } finally {
       state.loadingProfile = false;

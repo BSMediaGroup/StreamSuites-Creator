@@ -23,7 +23,7 @@ export async function onRequest(context) {
   }
 
   if (url.pathname === "/auth/success.html") {
-    return Response.redirect(`${url.origin}/login-success.html${url.search}`, 302);
+    return Response.redirect(`${url.origin}/login-success${url.search}`, 302);
   }
 
   return proxyAuthApiRequest(context, ALLOWED_AUTH_PATHS);

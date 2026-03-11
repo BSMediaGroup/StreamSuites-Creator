@@ -128,14 +128,9 @@
   }
 
   function resolveStatsEndpoint() {
-    const sessionEndpoint = window.StreamSuitesAuth?.endpoints?.session;
-    if (typeof sessionEndpoint === "string" && sessionEndpoint.trim()) {
-      try {
-        const resolved = new URL(sessionEndpoint, window.location.origin);
-        return `${resolved.origin}${STATS_PATH}`;
-      } catch (_err) {
-        // Fall through.
-      }
+    const apiBaseUrl = window.StreamSuitesAuth?.apiBaseUrl;
+    if (typeof apiBaseUrl === "string" && apiBaseUrl.trim()) {
+      return `${apiBaseUrl.replace(/\/$/, "")}${STATS_PATH}`;
     }
     return `${API_BASE_URL}${STATS_PATH}`;
   }
@@ -669,6 +664,14 @@
     return err;
   }
 
+  function reportStatsFailure(err, source = "creator-stats") {
+    window.StreamSuitesAuth?.reportProtectedDataFailure?.({
+      status: err?.status ?? null,
+      message: err?.message || "Creator statistics failed to load.",
+      source
+    });
+  }
+
   async function hydrateStats(options = {}) {
     const force = options?.force === true;
     const timeoutMs = Number.isFinite(options?.timeoutMs)
@@ -737,12 +740,14 @@
         storeState.status = FETCH_STATUS.success;
         storeState.hasAttempted = true;
         storeState.lastFetchAt = Date.now();
+        window.StreamSuitesAuth?.markProtectedDataReady?.("creator-stats");
         return normalized;
       } catch (err) {
         const normalizedError = normalizeRequestError(err);
         storeState.error = normalizedError;
         storeState.hasAttempted = true;
         storeState.status = storeState.cache ? FETCH_STATUS.success : FETCH_STATUS.error;
+        reportStatsFailure(normalizedError);
 
         if (!storeState.cache) {
           throw createStatusError(normalizedError.message, normalizedError.status ?? null);
@@ -1133,7 +1138,7 @@
 
   let unbindOverview = () => {};
 
-  function initOverviewView() {
+  async function initOverviewView() {
     const store = getStatsStore();
     const status = store.getStatus();
 
@@ -1142,7 +1147,7 @@
     renderOverviewSnapshotCard(status, store.getCachedStats());
 
     if (!status.hasCache && !status.hasAttempted) {
-      void store.hydrate().catch(() => {
+      await store.hydrate().catch(() => {
         // UI state is updated via store event.
       });
     }
