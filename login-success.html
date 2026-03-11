@@ -5,12 +5,12 @@
   <title>StreamSuites · Login Successful</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link rel="stylesheet" href="../css/base.css" />
-  <link rel="stylesheet" href="../css/layout.css" />
-  <link rel="stylesheet" href="../css/components.css" />
-  <link rel="stylesheet" href="../css/overrides.css" />
-  <link rel="stylesheet" href="../css/theme-dark.css" />
-  <link rel="stylesheet" href="../css/updates.css" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/overrides.css" />
+  <link rel="stylesheet" href="/css/theme-dark.css" />
+  <link rel="stylesheet" href="/css/updates.css" />
 
   <style>
     body {
@@ -61,7 +61,7 @@
     </p>
     <p class="error" data-auth-error hidden>
       <span data-auth-error-message></span>
-      <a class="error-link" href="/auth/login.html">Return to login</a>
+      <a class="error-link" href="/login">Return to login</a>
     </p>
   </div>
   <script>
@@ -71,6 +71,8 @@
       const RUNTIME_BASE_URL = "https://api.streamsuites.app";
       const SESSION_URL = `${RUNTIME_BASE_URL}/auth/session`;
       const CREATOR_HOME_URL = "https://creator.streamsuites.app/";
+      const CREATOR_ONBOARDING_URL = "https://creator.streamsuites.app/onboarding";
+      const AUTH_PATHS = new Set(["/login", "/login.html", "/login-success", "/login-success.html"]);
       const statusEl = document.querySelector("[data-auth-status]");
       const errorEl = document.querySelector("[data-auth-error]");
       const errorMessageEl = document.querySelector("[data-auth-error-message]");
@@ -97,6 +99,32 @@
         if (!trimmed) return "";
         if (trimmed.includes("cookie_missing")) return "cookie_missing";
         return trimmed;
+      }
+
+      function normalizeCreatorReturnTarget(value, fallback = CREATOR_HOME_URL) {
+        if (typeof value !== "string" || !value.trim()) return fallback;
+        try {
+          const parsed = new URL(value, CREATOR_HOME_URL);
+          if (parsed.origin !== new URL(CREATOR_HOME_URL).origin) return fallback;
+          if (AUTH_PATHS.has(parsed.pathname || "/")) return fallback;
+          return `${parsed.origin}${parsed.pathname}${parsed.search}${parsed.hash}`;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function getRequestedReturnTarget() {
+        const params = new URLSearchParams(window.location.search);
+        return normalizeCreatorReturnTarget(params.get("return_to") || "", CREATOR_HOME_URL);
+      }
+
+      function buildLoginUrl(reason = "") {
+        const url = new URL("/login", CREATOR_HOME_URL);
+        url.searchParams.set("return_to", getRequestedReturnTarget());
+        if (reason) {
+          url.searchParams.set("reason", reason);
+        }
+        return url.toString();
       }
 
       function resolveReason(payload, response) {
@@ -146,17 +174,13 @@
       async function finalizeAuth() {
         setStatus("Confirming your session...");
 
-        console.log("[Creator][Auth] Session confirmation request sent");
         let response;
         try {
           response = await fetch(SESSION_URL, { credentials: "include" });
         } catch (err) {
-          console.log("[Creator][Auth] Session error", err);
           showError("We could not confirm your session. Please try again.");
           return;
         }
-
-        console.log(`[Creator][Auth] Session status: ${response.status}`);
 
         let payload = null;
         try {
@@ -170,10 +194,9 @@
           (payload?.ok === true ||
             payload?.authenticated === true ||
             payload?.session_valid === true);
-        console.log(`[Creator][Auth] Session ok: ${isSessionValid ? "ok" : "error"}`);
 
         if (isCookieMissing(response, payload)) {
-          window.location.replace("/auth/login.html");
+          window.location.replace(buildLoginUrl("expired"));
           return;
         }
 
@@ -183,7 +206,11 @@
         }
 
         setStatus("Session confirmed. Redirecting...");
-        window.location.replace(CREATOR_HOME_URL);
+        if (payload?.onboarding_required === true || payload?.onboardingRequired === true) {
+          window.location.replace(CREATOR_ONBOARDING_URL);
+          return;
+        }
+        window.location.replace(getRequestedReturnTarget());
       }
 
       document.addEventListener("DOMContentLoaded", finalizeAuth);
@@ -191,4 +218,3 @@
   </script>
 </body>
 </html>
-

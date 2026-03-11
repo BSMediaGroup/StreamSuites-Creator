@@ -37,7 +37,7 @@
     ["PRO", "/assets/icons/tier-pro.svg"]
   ]);
   const TIER_ID_OPTIONS = new Set(["core", "gold", "pro"]);
-  const PUBLIC_PATHS = new Set(["/auth/login.html", "/auth/success.html"]);
+  const PUBLIC_PATHS = new Set(["/login", "/login.html", "/login-success", "/login-success.html"]);
   const ACCOUNT_AUTH_PROVIDER_ALIASES = Object.freeze({
     email: Object.freeze(["email", "password", "credentials", "local"]),
     discord: Object.freeze(["discord"]),
@@ -46,8 +46,9 @@
     x: Object.freeze(["x", "twitter"])
   });
 
-  const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/auth/login.html`;
-  const CREATOR_ONBOARDING_PAGE = `${CREATOR_ORIGIN}/views/onboarding.html`;
+  const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/login`;
+  const CREATOR_LOGIN_SUCCESS_PAGE = `${CREATOR_ORIGIN}/login-success.html`;
+  const CREATOR_ONBOARDING_PAGE = `${CREATOR_ORIGIN}/onboarding`;
   const LOGOUT_REASON = "logout";
   const REDIRECT_GUARD_KEY = "streamsuites.creator.loginRedirected";
   const LOGOUT_GUARD_KEY = "streamsuites.creator.loggedOut";
@@ -65,7 +66,7 @@
     "superadmin",
     "owner"
   ]);
-  const CREATOR_RETRY_LOGIN_URL = "/auth/login.html";
+  const CREATOR_RETRY_LOGIN_URL = "/login";
   const LOCKOUT_VARIANT_SESSION_INVALID = "session_invalid";
   const LOCKOUT_VARIANT_ROLE_MISMATCH = "role_mismatch";
   const SESSION_POLL_INTERVAL_MS = 20000;
@@ -112,7 +113,82 @@
 
   function isPublicPath(pathname) {
     if (PUBLIC_PATHS.has(pathname)) return true;
-    return pathname.startsWith("/auth/");
+    return false;
+  }
+
+  function isCreatorAuthPath(pathname) {
+    return PUBLIC_PATHS.has(pathname);
+  }
+
+  function parseCreatorUrl(value, base = CREATOR_ORIGIN) {
+    if (typeof value !== "string" || !value.trim()) return null;
+    try {
+      return new URL(value, base);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function normalizeCreatorReturnTarget(value, fallback = `${CREATOR_ORIGIN}/`) {
+    const parsed = parseCreatorUrl(value);
+    if (!parsed || parsed.origin !== CREATOR_ORIGIN) {
+      return fallback;
+    }
+    if (isCreatorAuthPath(parsed.pathname || "/")) {
+      return fallback;
+    }
+    return `${parsed.origin}${parsed.pathname}${parsed.search}${parsed.hash}`;
+  }
+
+  function getRequestedReturnTarget() {
+    const params = new URLSearchParams(window.location.search);
+    for (const key of ["return_to", "redirect_to", "next"]) {
+      const raw = params.get(key);
+      if (raw) {
+        return normalizeCreatorReturnTarget(raw, "");
+      }
+    }
+    return "";
+  }
+
+  function getCurrentReturnTarget() {
+    return normalizeCreatorReturnTarget(window.location.href, `${CREATOR_ORIGIN}/`);
+  }
+
+  function buildCreatorLoginPageUrl({ reason = "", returnTo = "" } = {}) {
+    const url = new URL(CREATOR_LOGIN_PAGE);
+    const safeReturnTo = normalizeCreatorReturnTarget(
+      returnTo || getRequestedReturnTarget() || getCurrentReturnTarget(),
+      ""
+    );
+    if (safeReturnTo) {
+      url.searchParams.set("return_to", safeReturnTo);
+    }
+    if (reason) {
+      url.searchParams.set("reason", reason);
+    }
+    return url.toString();
+  }
+
+  function buildCreatorLoginSuccessUrl(returnTo = "") {
+    const url = new URL(CREATOR_LOGIN_SUCCESS_PAGE);
+    const safeReturnTo = normalizeCreatorReturnTarget(
+      returnTo || getRequestedReturnTarget() || `${CREATOR_ORIGIN}/`,
+      ""
+    );
+    if (safeReturnTo) {
+      url.searchParams.set("return_to", safeReturnTo);
+    }
+    return url.toString();
+  }
+
+  function buildCreatorOauthUrl(provider) {
+    const raw = AUTH_ENDPOINTS.oauth[provider];
+    const endpoint = parseCreatorUrl(raw, CREATOR_ORIGIN);
+    if (!endpoint) return "";
+    endpoint.searchParams.set("surface", "creator");
+    endpoint.searchParams.set("return_to", buildCreatorLoginSuccessUrl());
+    return endpoint.toString();
   }
 
   function normalizeRole(role) {
@@ -1380,7 +1456,7 @@
       } catch (err) {
         console.warn("[Dashboard][Auth] Failed to set logout guard", err);
       }
-      window.location.assign(`/auth/login.html?reason=${LOGOUT_REASON}`);
+      window.location.assign(buildCreatorLoginPageUrl({ reason: LOGOUT_REASON }));
     }
   }
 
@@ -1812,7 +1888,10 @@
       return `${CREATOR_ORIGIN}/index.html`;
     }
     const needsOnboarding = session?.onboardingRequired === true;
-    return needsOnboarding ? CREATOR_ONBOARDING_PAGE : `${CREATOR_ORIGIN}/index.html`;
+    if (needsOnboarding) {
+      return CREATOR_ONBOARDING_PAGE;
+    }
+    return getRequestedReturnTarget() || `${CREATOR_ORIGIN}/index.html`;
   }
 
   async function routeAfterAuth(payload = null) {
@@ -2146,7 +2225,7 @@
       const provider = button.getAttribute("data-auth-oauth");
       if (!provider) return;
       const normalizedProvider = normalizeProvider(provider);
-      const url = AUTH_ENDPOINTS.oauth[provider];
+      const url = buildCreatorOauthUrl(provider);
       if (!url) return;
       if (button instanceof HTMLAnchorElement) {
         button.href = url;
@@ -2229,7 +2308,7 @@
           <div class="lockout-actions">
             <a
               class="lockout-button"
-              href="/auth/login/google?surface=creator"
+              href="/login"
             >
               Login as Creator
             </a>
@@ -2337,19 +2416,18 @@
   }
 
   function redirectToLoginReplace() {
-    window.location.replace("/auth/login.html");
+    window.location.replace(buildCreatorLoginPageUrl());
   }
 
   function redirectToLogin(reason = "expired") {
-    if (getPathname().startsWith("/auth/")) return;
+    if (isCreatorAuthPath(getPathname())) return;
     try {
       if (sessionStorage.getItem(REDIRECT_GUARD_KEY) === "true") return;
       sessionStorage.setItem(REDIRECT_GUARD_KEY, "true");
     } catch (err) {
       console.warn("[Dashboard][Auth] Failed to set redirect guard", err);
     }
-    const suffix = reason ? `?reason=${encodeURIComponent(reason)}` : "";
-    window.location.assign(`${CREATOR_LOGIN_PAGE}${suffix}`);
+    window.location.assign(buildCreatorLoginPageUrl({ reason }));
   }
 
   function buildAuthToast() {
@@ -2493,7 +2571,7 @@
   function showAuthModalAndHaltAppInit(session) {
     setCreatorShellVisible(false);
     const pathname = getPathname();
-    if (pathname === "/auth/login.html") {
+    if (pathname === "/login" || pathname === "/login.html") {
       toggleCreatorLockout(false);
       forceLoginModal();
       return true;
@@ -2621,7 +2699,7 @@
   async function initAuth() {
     const pathname = getPathname();
     const isPublic = isPublicPath(pathname);
-    const isOnboarding = pathname === "/views/onboarding.html";
+    const isOnboarding = pathname === "/views/onboarding.html" || pathname === "/onboarding";
 
     ensureAuthSummaryMounts();
     ensureTopbarProfileHoverOptOut();

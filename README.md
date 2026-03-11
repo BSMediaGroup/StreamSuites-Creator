@@ -38,9 +38,8 @@ StreamSuites-Creator/
 |-- README.md
 |-- favicon.ico
 |-- index.html
-|-- auth/
-|   |-- login.html
-|   `-- success.html
+|-- login.html
+|-- login-success.html
 |-- assets/
 |   |-- css/
 |   |   `-- ss-profile-hovercard.css

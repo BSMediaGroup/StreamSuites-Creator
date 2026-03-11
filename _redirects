@@ -1,3 +1,6 @@
+/login /login.html 200
+/login-success /login-success.html 200
+/onboarding /views/onboarding.html 200
 /overview /index.html 200
 /statistics /index.html 200
 /notifications /index.html 200
