@@ -15,15 +15,15 @@ const ALLOWED_AUTH_PATHS = [
 export async function onRequest(context) {
   const url = new URL(context.request.url);
   if (url.pathname === "/auth" || url.pathname === "/auth/") {
-    return Response.redirect(`${url.origin}/login${url.search}`, 302);
+    return Response.redirect(`${url.origin}/login/${url.search}`, 302);
   }
 
   if (url.pathname === "/auth/login.html") {
-    return Response.redirect(`${url.origin}/login${url.search}`, 302);
+    return Response.redirect(`${url.origin}/login/${url.search}`, 302);
   }
 
   if (url.pathname === "/auth/success.html") {
-    return Response.redirect(`${url.origin}/login-success${url.search}`, 302);
+    return Response.redirect(`${url.origin}/login-success/${url.search}`, 302);
   }
 
   return proxyAuthApiRequest(context, ALLOWED_AUTH_PATHS);

@@ -1,5 +1,7 @@
-/login /login.html 200
-/login-success /login-success.html 200
+/login /login/ 302
+/login.html /login/ 301
+/login-success /login-success/ 302
+/login-success.html /login-success/ 301
 /onboarding /views/onboarding.html 200
 /overview /index.html 200
 /statistics /index.html 200

@@ -61,7 +61,7 @@
     </p>
     <p class="error" data-auth-error hidden>
       <span data-auth-error-message></span>
-      <a class="error-link" href="/login">Return to login</a>
+      <a class="error-link" href="/login/">Return to login</a>
     </p>
   </div>
   <script>
@@ -70,8 +70,18 @@
 
       const CREATOR_HOME_URL = "https://creator.streamsuites.app/";
       const SESSION_URL = new URL("/auth/session", CREATOR_HOME_URL).toString();
+      const CREATOR_LOGIN_URL = "https://creator.streamsuites.app/login/";
       const CREATOR_ONBOARDING_URL = "https://creator.streamsuites.app/views/onboarding.html";
-      const AUTH_PATHS = new Set(["/login", "/login.html", "/login-success", "/login-success.html"]);
+      const AUTH_PATHS = new Set([
+        "/login",
+        "/login/",
+        "/login.html",
+        "/login-success",
+        "/login-success/",
+        "/login-success.html"
+      ]);
+      const POST_AUTH_SETTLE_KEY = "streamsuites.creator.postAuthSettle";
+      const SESSION_RETRY_DELAYS_MS = [180, 360, 720, 1280];
       const statusEl = document.querySelector("[data-auth-status]");
       const errorEl = document.querySelector("[data-auth-error]");
       const errorMessageEl = document.querySelector("[data-auth-error-message]");
@@ -90,6 +100,10 @@
           errorEl.textContent = message;
         }
         errorEl.hidden = false;
+      }
+
+      function wait(ms) {
+        return new Promise((resolve) => window.setTimeout(resolve, ms));
       }
 
       function normalizeReason(value) {
@@ -118,7 +132,7 @@
       }
 
       function buildLoginUrl(reason = "") {
-        const url = new URL("/login", CREATOR_HOME_URL);
+        const url = new URL(CREATOR_LOGIN_URL);
         url.searchParams.set("return_to", getRequestedReturnTarget());
         if (reason) {
           url.searchParams.set("reason", reason);
@@ -170,26 +184,85 @@
         return resolveReason(payload, response) === "cookie_missing";
       }
 
-      async function finalizeAuth() {
-        setStatus("Confirming your session...");
-
-        let response;
-        try {
-          response = await fetch(SESSION_URL, { credentials: "include" });
-        } catch (err) {
-          showError("We could not confirm your session. Please try again.");
-          return;
-        }
-
+      async function fetchSessionPayload() {
+        const response = await fetch(SESSION_URL, { credentials: "include", cache: "no-store" });
         let payload = null;
         try {
           payload = await response.json();
         } catch (err) {
           payload = null;
         }
+        return { response, payload };
+      }
 
+      async function confirmSession() {
+        let lastResult = null;
+        for (let attempt = 0; attempt <= SESSION_RETRY_DELAYS_MS.length; attempt += 1) {
+          if (attempt > 0) {
+            setStatus("Finalizing your session...");
+            await wait(SESSION_RETRY_DELAYS_MS[attempt - 1]);
+          }
+
+          lastResult = await fetchSessionPayload();
+          const { response, payload } = lastResult;
+          const isSessionValid =
+            response.ok === true &&
+            (payload?.ok === true ||
+              payload?.authenticated === true ||
+              payload?.session_valid === true);
+          if (isSessionValid) {
+            return lastResult;
+          }
+          if (!isCookieMissing(response, payload)) {
+            return lastResult;
+          }
+        }
+        return lastResult;
+      }
+
+      function resolvePostAuthDestination(payload) {
+        if (payload?.onboarding_required === true || payload?.onboardingRequired === true) {
+          return CREATOR_ONBOARDING_URL;
+        }
+        return getRequestedReturnTarget();
+      }
+
+      function stagePostAuthRedirect(target, source = "callback") {
+        const destination = normalizeCreatorReturnTarget(target, CREATOR_HOME_URL);
+        try {
+          sessionStorage.setItem(
+            POST_AUTH_SETTLE_KEY,
+            JSON.stringify({
+              target: destination,
+              source,
+              createdAt: Date.now()
+            })
+          );
+        } catch (err) {
+          console.warn("[Creator][Auth] Failed to stage callback redirect", err);
+        }
+        return destination;
+      }
+
+      async function finalizeAuth() {
+        const requestedReturnTo = getRequestedReturnTarget();
+        console.info("[Creator][Auth] callback_landing", {
+          landingUrl: window.location.href,
+          continueTo: requestedReturnTo
+        });
+        setStatus("Confirming your session...");
+
+        let sessionResult;
+        try {
+          sessionResult = await confirmSession();
+        } catch (err) {
+          showError("We could not confirm your session. Please try again.");
+          return;
+        }
+
+        const { response, payload } = sessionResult || {};
         const isSessionValid =
-          response.ok === true &&
+          response?.ok === true &&
           (payload?.ok === true ||
             payload?.authenticated === true ||
             payload?.session_valid === true);
@@ -199,17 +272,18 @@
           return;
         }
 
-        if (!isSessionValid || response.status === 401) {
+        if (!isSessionValid || response?.status === 401) {
           showError("We could not confirm your session. Please return to login.");
           return;
         }
 
+        const destination = stagePostAuthRedirect(resolvePostAuthDestination(payload));
+        console.info("[Creator][Auth] post_auth_navigate", {
+          source: "callback",
+          destination
+        });
         setStatus("Session confirmed. Redirecting...");
-        if (payload?.onboarding_required === true || payload?.onboardingRequired === true) {
-          window.location.replace(CREATOR_ONBOARDING_URL);
-          return;
-        }
-        window.location.replace(getRequestedReturnTarget());
+        window.location.replace(destination);
       }
 
       document.addEventListener("DOMContentLoaded", finalizeAuth);

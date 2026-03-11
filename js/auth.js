@@ -37,7 +37,14 @@
     ["PRO", "/assets/icons/tier-pro.svg"]
   ]);
   const TIER_ID_OPTIONS = new Set(["core", "gold", "pro"]);
-  const PUBLIC_PATHS = new Set(["/login", "/login.html", "/login-success", "/login-success.html"]);
+  const PUBLIC_PATHS = new Set([
+    "/login",
+    "/login/",
+    "/login.html",
+    "/login-success",
+    "/login-success/",
+    "/login-success.html"
+  ]);
   const ACCOUNT_AUTH_PROVIDER_ALIASES = Object.freeze({
     email: Object.freeze(["email", "password", "credentials", "local"]),
     discord: Object.freeze(["discord"]),
@@ -46,12 +53,15 @@
     x: Object.freeze(["x", "twitter"])
   });
 
-  const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/login`;
-  const CREATOR_LOGIN_SUCCESS_PAGE = `${CREATOR_ORIGIN}/login-success`;
+  const CREATOR_LOGIN_PAGE = `${CREATOR_ORIGIN}/login/`;
+  const CREATOR_LOGIN_SUCCESS_PAGE = `${CREATOR_ORIGIN}/login-success/`;
   const CREATOR_ONBOARDING_PAGE = `${CREATOR_ORIGIN}/views/onboarding.html`;
   const LOGOUT_REASON = "logout";
   const REDIRECT_GUARD_KEY = "streamsuites.creator.loginRedirected";
   const LOGOUT_GUARD_KEY = "streamsuites.creator.loggedOut";
+  const POST_AUTH_SETTLE_KEY = "streamsuites.creator.postAuthSettle";
+  const POST_AUTH_SETTLE_TTL_MS = 15000;
+  const POST_AUTH_SETTLE_RETRY_DELAYS_MS = Object.freeze([180, 360, 720, 1280]);
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
   const LAST_OAUTH_PROVIDER_KEY = "streamsuites.creator.lastOauthProvider";
@@ -66,7 +76,7 @@
     "superadmin",
     "owner"
   ]);
-  const CREATOR_RETRY_LOGIN_URL = "/login";
+  const CREATOR_RETRY_LOGIN_URL = "/login/";
   const LOCKOUT_VARIANT_SESSION_INVALID = "session_invalid";
   const LOCKOUT_VARIANT_ROLE_MISMATCH = "role_mismatch";
   const SESSION_POLL_INTERVAL_MS = 20000;
@@ -205,6 +215,10 @@
     }
   }
 
+  function wait(ms) {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
+  }
+
   function normalizeCreatorReturnTarget(value, fallback = `${CREATOR_ORIGIN}/`) {
     const parsed = parseCreatorUrl(value);
     if (!parsed || parsed.origin !== CREATOR_ORIGIN) {
@@ -256,6 +270,126 @@
       url.searchParams.set("return_to", safeReturnTo);
     }
     return url.toString();
+  }
+
+  function readSessionStorageJson(key) {
+    try {
+      const raw = sessionStorage.getItem(key);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function writeSessionStorageJson(key, payload) {
+    try {
+      sessionStorage.setItem(key, JSON.stringify(payload));
+    } catch (err) {
+      console.warn("[Creator][Auth] Failed to persist session state", err);
+    }
+  }
+
+  function clearPostAuthSettleState() {
+    try {
+      sessionStorage.removeItem(POST_AUTH_SETTLE_KEY);
+    } catch (err) {
+      console.warn("[Creator][Auth] Failed to clear post-auth settle state", err);
+    }
+  }
+
+  function readPostAuthSettleState() {
+    const payload = readSessionStorageJson(POST_AUTH_SETTLE_KEY);
+    if (!payload) return null;
+
+    const createdAt = Number(payload.createdAt || 0);
+    const target = normalizeCreatorReturnTarget(payload.target || "", "");
+    if (!target || !Number.isFinite(createdAt) || Date.now() - createdAt > POST_AUTH_SETTLE_TTL_MS) {
+      clearPostAuthSettleState();
+      return null;
+    }
+
+    return {
+      target,
+      source: typeof payload.source === "string" ? payload.source.trim() : "",
+      createdAt
+    };
+  }
+
+  function stagePostAuthSettleState(target, { source = "" } = {}) {
+    const normalizedTarget = normalizeCreatorReturnTarget(target, "");
+    if (!normalizedTarget) {
+      return "";
+    }
+    writeSessionStorageJson(POST_AUTH_SETTLE_KEY, {
+      target: normalizedTarget,
+      source: typeof source === "string" ? source.trim() : "",
+      createdAt: Date.now()
+    });
+    return normalizedTarget;
+  }
+
+  function logGuardDecision(decision, details = {}) {
+    console.info("[Creator][Auth] guard", {
+      decision,
+      path: getPathname(),
+      ...details
+    });
+  }
+
+  async function settlePostAuthSession(pendingState, initialSession = null) {
+    let session = initialSession;
+    logGuardDecision("pending", {
+      source: pendingState?.source || "",
+      continueTo: pendingState?.target || ""
+    });
+
+    if (isCookieMissingSessionState(session)) {
+      sessionRetry.idle = false;
+      sessionRetry.idleReason = "";
+      sessionRetry.notified = false;
+      sessionRetry.lastAttemptAt = 0;
+    }
+
+    for (const delayMs of POST_AUTH_SETTLE_RETRY_DELAYS_MS) {
+      if (session?.authenticated || !isCookieMissingSessionState(session)) {
+        return session;
+      }
+      await wait(delayMs);
+      session = await loadSession({ force: true });
+    }
+
+    return session;
+  }
+
+  function logCreatorLoginTarget(provider, endpointUrl) {
+    const providerName = normalizeProvider(provider);
+    try {
+      const endpoint = new URL(endpointUrl, window.location.origin);
+      const callbackLanding = endpoint.searchParams.get("return_to") || buildCreatorLoginSuccessUrl();
+      let continueTo = `${CREATOR_ORIGIN}/`;
+      try {
+        const callbackUrl = new URL(callbackLanding, CREATOR_ORIGIN);
+        continueTo = normalizeCreatorReturnTarget(
+          callbackUrl.searchParams.get("return_to") || "",
+          `${CREATOR_ORIGIN}/`
+        );
+      } catch (err) {
+        continueTo = `${CREATOR_ORIGIN}/`;
+      }
+      console.info("[Creator][Auth] login_target", {
+        provider: providerName,
+        callbackLanding,
+        continueTo
+      });
+    } catch (err) {
+      console.info("[Creator][Auth] login_target", {
+        provider: providerName,
+        callbackLanding: endpointUrl || "",
+        continueTo: `${CREATOR_ORIGIN}/`
+      });
+    }
   }
 
   function buildCreatorOauthUrl(provider) {
@@ -2021,17 +2155,28 @@
   }
 
   async function routeAfterAuth(payload = null) {
+    let session = null;
+    let source = "session_refresh";
     if (payload && typeof payload === "object") {
       const sessionFromPayload = normalizeSessionPayload(payload);
       if (sessionFromPayload.authenticated) {
-        window.location.assign(resolvePostAuthRedirect(sessionFromPayload));
-        return;
+        session = sessionFromPayload;
+        source = "direct_login";
       }
     }
 
-    const session = await loadSession({ force: true });
+    if (!session) {
+      session = await loadSession({ force: true });
+    }
     if (session?.authenticated) {
-      window.location.assign(resolvePostAuthRedirect(session));
+      applySessionUpdate(session);
+      const redirectTarget = resolvePostAuthRedirect(session);
+      const stagedTarget = stagePostAuthSettleState(redirectTarget, { source }) || redirectTarget;
+      console.info("[Creator][Auth] post_auth_navigate", {
+        source,
+        destination: stagedTarget
+      });
+      window.location.assign(stagedTarget);
     }
   }
 
@@ -2357,12 +2502,14 @@
         button.href = url;
         button.addEventListener("click", () => {
           persistLastOauthProvider(normalizedProvider);
+          logCreatorLoginTarget(normalizedProvider, url);
         });
         return;
       }
       button.addEventListener("click", (event) => {
         event.preventDefault();
         persistLastOauthProvider(normalizedProvider);
+        logCreatorLoginTarget(normalizedProvider, url);
         window.location.assign(url);
       });
     });
@@ -2434,7 +2581,7 @@
           <div class="lockout-actions">
             <a
               class="lockout-button"
-              href="/login"
+              href="/login/"
             >
               Login as Creator
             </a>
@@ -2697,7 +2844,7 @@
   function showAuthModalAndHaltAppInit(session) {
     setCreatorShellVisible(false);
     const pathname = getPathname();
-    if (pathname === "/login" || pathname === "/login.html") {
+    if (pathname === "/login" || pathname === "/login/" || pathname === "/login.html") {
       toggleCreatorLockout(false);
       forceLoginModal();
       return true;
@@ -2826,6 +2973,7 @@
     const pathname = getPathname();
     const isPublic = isPublicPath(pathname);
     const isOnboarding = pathname === "/views/onboarding.html";
+    const pendingPostAuth = !isPublic ? readPostAuthSettleState() : null;
     setAuthBootstrapState(AUTH_BOOT_STATES.bootstrapping, {
       sessionChecked: false,
       protectedDataStatus: "idle",
@@ -2845,6 +2993,7 @@
     syncCreatorDebugModeState(sessionState.value);
 
     if (shouldSkipSessionFetch(isPublic)) {
+      clearPostAuthSettleState();
       clearPersistedLocalSession();
       sessionState.value = { authenticated: false };
       updateAppSession(sessionState.value);
@@ -2864,8 +3013,25 @@
       setCreatorShellVisible(false);
     }
 
-    const session = await loadSession();
+    let session = await loadSession();
+    if (!isPublic && pendingPostAuth && !session?.authenticated && isCookieMissingSessionState(session)) {
+      setAuthBootstrapState(AUTH_BOOT_STATES.bootstrapping, {
+        sessionChecked: false,
+        protectedDataStatus: "pending",
+        protectedDataSource: pendingPostAuth.source || "callback",
+        message: "Finalizing your creator session..."
+      });
+      session = await settlePostAuthSession(pendingPostAuth, session);
+    }
+
+    logGuardDecision(session?.authenticated ? "authenticated" : "unauthenticated", {
+      pendingPostAuth: Boolean(pendingPostAuth),
+      source: pendingPostAuth?.source || "",
+      reasonEnum: session?.errorReasonEnum || session?.reasonEnum || ""
+    });
+
     if (!isPublic && isCookieMissingSessionState(session)) {
+      clearPostAuthSettleState();
       clearPersistedLocalSession();
       setAuthBootstrapState(AUTH_BOOT_STATES.unauthenticated, {
         sessionChecked: true,
@@ -2878,6 +3044,7 @@
     }
 
     if (!session?.authenticated) {
+      clearPostAuthSettleState();
       clearPersistedLocalSession();
     }
     updateAppSession(session);
@@ -2910,6 +3077,7 @@
     }
 
     if (session?.authenticated) {
+      clearPostAuthSettleState();
       clearRedirectGuards();
     }
 
