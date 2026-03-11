@@ -20,6 +20,7 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 ## Auth and Boundaries
 
 - Session and auth state are runtime/Auth API owned.
+- Creator login surfaces now consume `/auth/access-state` and the short-lived `/auth/debug/unlock` bypass flow so runtime maintenance or development mode can gate new auth starts without disrupting existing valid sessions.
 - Authenticated creator access is required for dashboard surfaces.
 - Non-creator authenticated sessions are soft-locked out rather than treated as creator-authoritative.
 - No admin mutation endpoints are authored here.

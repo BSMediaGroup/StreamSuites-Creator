@@ -36,6 +36,35 @@
             <p class="muted" data-auth-subtitle>
               Authenticate with OAuth or email/password.
             </p>
+            <section class="ss-auth-access-gate" data-auth-access-gate hidden>
+              <div class="ss-auth-access-gate__summary">
+                <p class="ss-auth-access-gate__message" data-auth-access-message></p>
+                <button
+                  class="ss-auth-access-gate__toggle"
+                  type="button"
+                  data-auth-access-toggle
+                  aria-expanded="false"
+                  aria-controls="creator-auth-access-form"
+                  aria-label="Unlock temporary auth access"
+                  hidden
+                >
+                  <img class="ss-auth-access-gate__icon" src="/assets/icons/ui/key.svg" alt="" aria-hidden="true" />
+                </button>
+              </div>
+              <form id="creator-auth-access-form" class="ss-auth-access-gate__form" data-auth-access-form hidden novalidate>
+                <label class="ss-auth-access-gate__label" for="creator-auth-access-code">Access code</label>
+                <input
+                  id="creator-auth-access-code"
+                  class="ss-auth-access-gate__input"
+                  type="password"
+                  autocomplete="current-password"
+                  spellcheck="false"
+                  data-auth-access-input
+                />
+                <button class="ss-auth-access-gate__submit" type="submit" data-auth-access-submit>Unlock</button>
+              </form>
+              <p class="ss-auth-access-gate__feedback" data-auth-access-feedback hidden></p>
+            </section>
           </div>
         </header>
 

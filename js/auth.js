@@ -5,6 +5,8 @@
   const AUTH_BASE_URL = "";
   const CREATOR_ORIGIN = "https://creator.streamsuites.app";
   const AUTH_ENDPOINTS = Object.freeze({
+    accessState: `${AUTH_BASE_URL}/auth/access-state`,
+    debugUnlock: `${AUTH_BASE_URL}/auth/debug/unlock`,
     session: `${AUTH_BASE_URL}/auth/session`,
     logout: `${AUTH_BASE_URL}/auth/logout`,
     emailLogin: `${AUTH_BASE_URL}/auth/login/password`,
@@ -64,6 +66,13 @@
   const POST_AUTH_SETTLE_RETRY_DELAYS_MS = Object.freeze([180, 360, 720, 1280]);
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
+  const AUTH_ACCESS_UNLOCK_STATE_KEY = "streamsuites.creator.authAccessGate";
+  const AUTH_ACCESS_CACHE_MS = 30000;
+  const AUTH_ACCESS_FALLBACK_MESSAGES = Object.freeze({
+    normal: "Authentication is operating normally.",
+    maintenance: "Authentication is temporarily unavailable while maintenance is in progress.",
+    development: "Authentication is temporarily limited while development access mode is active."
+  });
   const PUBLIC_SESSION_HINT_TTL_MS = 12 * 60 * 60 * 1000;
   const LAST_OAUTH_PROVIDER_KEY = "streamsuites.creator.lastOauthProvider";
   const X_EMAIL_BANNER_DISMISSED_KEY = "streamsuites.creator.banner.xMissingEmail.dismissed";
@@ -121,6 +130,12 @@
     idleReason: "",
     lastAttemptAt: 0,
     notified: false
+  };
+  const authAccess = {
+    state: null,
+    loadedAt: 0,
+    refreshPromise: null,
+    formOpen: false
   };
   let accountMenuWired = false;
   let isAccountMenuOpen = false;
@@ -291,6 +306,65 @@
       console.warn("[Creator][Auth] Failed to persist session state", err);
     }
   }
+
+  function clearAuthAccessUnlockState() {
+    try {
+      sessionStorage.removeItem(AUTH_ACCESS_UNLOCK_STATE_KEY);
+    } catch (err) {
+      console.warn("[Creator][Auth] Failed to clear auth access unlock state", err);
+    }
+  }
+
+  function readAuthAccessUnlockState() {
+    const payload = readSessionStorageJson(AUTH_ACCESS_UNLOCK_STATE_KEY);
+    if (!payload) return { active: false, expiresAt: "" };
+
+    const expiresAt = typeof payload.expiresAt === "string" ? payload.expiresAt.trim() : "";
+    const expiresAtMs = Date.parse(expiresAt);
+    if (!expiresAt || !Number.isFinite(expiresAtMs) || expiresAtMs <= Date.now()) {
+      clearAuthAccessUnlockState();
+      return { active: false, expiresAt: "" };
+    }
+
+    return { active: true, expiresAt };
+  }
+
+  function persistAuthAccessUnlockState(expiresAt) {
+    if (typeof expiresAt !== "string" || !expiresAt.trim()) return;
+    writeSessionStorageJson(AUTH_ACCESS_UNLOCK_STATE_KEY, {
+      unlocked: true,
+      expiresAt: expiresAt.trim()
+    });
+  }
+
+  function fallbackAuthAccessMessage(mode) {
+    return AUTH_ACCESS_FALLBACK_MESSAGES[mode] || AUTH_ACCESS_FALLBACK_MESSAGES.normal;
+  }
+
+  function normalizeAuthAccessState(payload, available = true) {
+    const rawMode = typeof payload?.mode === "string" ? payload.mode.trim().toLowerCase() : "";
+    const mode = rawMode === "maintenance" || rawMode === "development" ? rawMode : "normal";
+    const gateActive = mode !== "normal";
+    const bypassEnabled = gateActive && payload?.bypass_enabled === true;
+    const unlockState = bypassEnabled ? readAuthAccessUnlockState() : { active: false, expiresAt: "" };
+    if (!gateActive || !bypassEnabled) {
+      clearAuthAccessUnlockState();
+    }
+    return {
+      available,
+      mode,
+      gateActive,
+      message:
+        typeof payload?.message === "string" && payload.message.trim()
+          ? payload.message.trim()
+          : fallbackAuthAccessMessage(mode),
+      bypassEnabled,
+      bypassUnlocked: bypassEnabled && unlockState.active,
+      unlockExpiresAt: unlockState.expiresAt
+    };
+  }
+
+  authAccess.state = normalizeAuthAccessState(null, false);
 
   function clearPostAuthSettleState() {
     try {
@@ -2241,6 +2315,230 @@
           ? "Authenticate with OAuth or email/password."
           : "Create your creator account with OAuth or email/password.";
     }
+    syncAuthAccessUi();
+  }
+
+  function getAuthAccessElements() {
+    const modal = document.querySelector("[data-auth-modal]");
+    if (!modal) return null;
+    return {
+      modal,
+      gate: modal.querySelector("[data-auth-access-gate]"),
+      message: modal.querySelector("[data-auth-access-message]"),
+      toggle: modal.querySelector("[data-auth-access-toggle]"),
+      form: modal.querySelector("[data-auth-access-form]"),
+      input: modal.querySelector("[data-auth-access-input]"),
+      submit: modal.querySelector("[data-auth-access-submit]"),
+      feedback: modal.querySelector("[data-auth-access-feedback]")
+    };
+  }
+
+  function isAuthAccessBlocked(state = authAccess.state) {
+    return Boolean(state?.gateActive && !state?.bypassUnlocked);
+  }
+
+  function setAuthAccessFeedback(message, tone = "") {
+    const ui = getAuthAccessElements();
+    if (!ui?.feedback) return;
+    const text = typeof message === "string" ? message.trim() : "";
+    ui.feedback.hidden = !text;
+    ui.feedback.textContent = text;
+    ui.feedback.dataset.tone = tone;
+  }
+
+  function setAuthAccessFormOpen(open) {
+    const ui = getAuthAccessElements();
+    authAccess.formOpen = Boolean(
+      open &&
+      authAccess.state?.gateActive &&
+      authAccess.state?.bypassEnabled &&
+      !authAccess.state?.bypassUnlocked
+    );
+    if (!ui) return;
+    if (ui.form) {
+      ui.form.hidden = !authAccess.formOpen;
+    }
+    if (ui.toggle instanceof HTMLButtonElement) {
+      ui.toggle.setAttribute("aria-expanded", authAccess.formOpen ? "true" : "false");
+      ui.toggle.classList.toggle("is-active", authAccess.formOpen);
+    }
+    if (authAccess.formOpen && ui.input instanceof HTMLInputElement) {
+      window.setTimeout(() => ui.input.focus(), 0);
+    }
+  }
+
+  function syncAuthAccessUi() {
+    const ui = getAuthAccessElements();
+    if (!ui) return;
+
+    if (ui.gate) {
+      ui.gate.hidden = !authAccess.state?.gateActive;
+      ui.gate.classList.toggle("is-unlocked", authAccess.state?.bypassUnlocked === true);
+    }
+    if (ui.message) {
+      ui.message.textContent = authAccess.state?.gateActive ? authAccess.state.message : "";
+    }
+    if (ui.toggle instanceof HTMLButtonElement) {
+      ui.toggle.hidden = !(authAccess.state?.gateActive && authAccess.state?.bypassEnabled);
+    }
+    if (!authAccess.state?.gateActive || !authAccess.state?.bypassEnabled || authAccess.state?.bypassUnlocked) {
+      setAuthAccessFormOpen(false);
+    } else if (ui.form) {
+      ui.form.hidden = !authAccess.formOpen;
+    }
+
+    const blocked = isAuthAccessBlocked();
+    document.querySelectorAll("[data-auth-oauth]").forEach((button) => {
+      button.classList.toggle("is-disabled", blocked);
+      button.setAttribute("aria-disabled", blocked ? "true" : "false");
+    });
+    document.querySelectorAll("[data-auth-manual-toggle]").forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.disabled = blocked;
+    });
+    document
+      .querySelectorAll("[data-auth-login-submit], [data-auth-signup-submit]")
+      .forEach((button) => {
+        if (!(button instanceof HTMLButtonElement)) return;
+        const form = button.closest("form");
+        const busy = form?.dataset.authBusy === "true";
+        button.disabled = blocked || busy;
+      });
+  }
+
+  async function loadAuthAccessState(force = false) {
+    if (!isPublicPath(getPathname())) {
+      return authAccess.state;
+    }
+
+    const shouldUseCache =
+      !force &&
+      authAccess.loadedAt > 0 &&
+      Date.now() - authAccess.loadedAt < AUTH_ACCESS_CACHE_MS;
+    if (shouldUseCache) {
+      syncAuthAccessUi();
+      return authAccess.state;
+    }
+    if (authAccess.refreshPromise) return authAccess.refreshPromise;
+
+    authAccess.refreshPromise = fetchJson(
+      AUTH_ENDPOINTS.accessState,
+      {
+        method: "GET",
+        cache: "no-store"
+      },
+      5000
+    )
+      .then((payload) => {
+        authAccess.state = normalizeAuthAccessState(payload, true);
+        authAccess.loadedAt = Date.now();
+        syncAuthAccessUi();
+        return authAccess.state;
+      })
+      .catch(() => {
+        authAccess.state = normalizeAuthAccessState(null, false);
+        authAccess.loadedAt = Date.now();
+        syncAuthAccessUi();
+        return authAccess.state;
+      })
+      .finally(() => {
+        authAccess.refreshPromise = null;
+      });
+
+    return authAccess.refreshPromise;
+  }
+
+  async function unlockAuthAccess(code) {
+    const payload = await requestJson(
+      AUTH_ENDPOINTS.debugUnlock,
+      {
+        method: "POST",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ code })
+      },
+      5000
+    );
+    const expiresAt = typeof payload?.expires_at === "string" ? payload.expires_at.trim() : "";
+    if (expiresAt) {
+      persistAuthAccessUnlockState(expiresAt);
+    }
+    authAccess.state = {
+      ...normalizeAuthAccessState(
+        {
+          mode: payload?.mode || authAccess.state?.mode,
+          message: payload?.message || authAccess.state?.message,
+          bypass_enabled: true
+        },
+        true
+      ),
+      bypassUnlocked: true,
+      unlockExpiresAt: expiresAt || authAccess.state?.unlockExpiresAt || ""
+    };
+    authAccess.loadedAt = Date.now();
+    setAuthAccessFormOpen(false);
+    setAuthAccessFeedback("Access unlocked.", "success");
+    syncAuthAccessUi();
+    return authAccess.state;
+  }
+
+  async function ensureAuthAccessReady(options = {}) {
+    const { force = false, reveal = false } = options;
+    const nextState = await loadAuthAccessState(force);
+    if (reveal && isAuthAccessBlocked(nextState) && nextState?.bypassEnabled) {
+      setAuthAccessFormOpen(true);
+    }
+    return nextState;
+  }
+
+  function wireAuthAccessGate() {
+    const ui = getAuthAccessElements();
+    if (!ui) return;
+
+    ui.toggle?.addEventListener("click", () => {
+      setAuthAccessFeedback("", "");
+      setAuthAccessFormOpen(!authAccess.formOpen);
+    });
+
+    ui.form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const code = ui.input instanceof HTMLInputElement ? ui.input.value.trim() : "";
+      if (!code) {
+        setAuthAccessFeedback("Enter the access code.", "error");
+        return;
+      }
+
+      if (ui.submit instanceof HTMLButtonElement) {
+        ui.submit.disabled = true;
+        ui.submit.textContent = "Unlocking...";
+      }
+      setAuthAccessFeedback("", "");
+
+      try {
+        await unlockAuthAccess(code);
+        if (ui.input instanceof HTMLInputElement) {
+          ui.input.value = "";
+        }
+      } catch (err) {
+        const message =
+          err?.status === 403
+            ? "Invalid access code."
+            : err?.status === 429
+              ? "Too many attempts. Please wait and try again."
+              : "Unlock is unavailable right now.";
+        setAuthAccessFeedback(message, "error");
+      } finally {
+        if (ui.submit instanceof HTMLButtonElement) {
+          ui.submit.disabled = false;
+          ui.submit.textContent = "Unlock";
+        }
+        syncAuthAccessUi();
+      }
+    });
+
+    syncAuthAccessUi();
   }
 
   function wireAuthToggle() {
@@ -2381,9 +2679,11 @@
       }
 
       const isLoading = state === "loading";
+      form.dataset.authBusy = isLoading ? "true" : "false";
       inputs.forEach((input) => {
         input.disabled = isLoading;
       });
+      syncAuthAccessUi();
     }
 
     if (loginForm) {
@@ -2399,6 +2699,14 @@
 
       loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+        const accessState = await ensureAuthAccessReady({ reveal: true });
+        if (isAuthAccessBlocked(accessState)) {
+          setFormState(loginForm, {
+            state: "hint",
+            message: accessState?.bypassEnabled ? "Unlock access to continue." : accessState.message
+          });
+          return;
+        }
         const emailInput = loginForm.querySelector("[data-auth-login-email]");
         const passwordInput = loginForm.querySelector("[data-auth-login-password]");
         if (!(emailInput instanceof HTMLInputElement)) return;
@@ -2462,6 +2770,14 @@
 
       signupForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+        const accessState = await ensureAuthAccessReady({ reveal: true });
+        if (isAuthAccessBlocked(accessState)) {
+          setFormState(signupForm, {
+            state: "hint",
+            message: accessState?.bypassEnabled ? "Unlock access to continue." : accessState.message
+          });
+          return;
+        }
         const emailInput = signupForm.querySelector("[data-auth-signup-email]");
         const confirmInput = signupForm.querySelector("[data-auth-signup-confirm]");
         if (!(emailInput instanceof HTMLInputElement)) return;
@@ -2535,14 +2851,24 @@
       if (!url) return;
       if (button instanceof HTMLAnchorElement) {
         button.href = url;
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async (event) => {
+          event.preventDefault();
+          const accessState = await ensureAuthAccessReady({ reveal: true });
+          if (isAuthAccessBlocked(accessState)) {
+            return;
+          }
           persistLastOauthProvider(normalizedProvider);
           logCreatorLoginTarget(normalizedProvider, url);
+          window.location.assign(url);
         });
         return;
       }
-      button.addEventListener("click", (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
+        const accessState = await ensureAuthAccessReady({ reveal: true });
+        if (isAuthAccessBlocked(accessState)) {
+          return;
+        }
         persistLastOauthProvider(normalizedProvider);
         logCreatorLoginTarget(normalizedProvider, url);
         window.location.assign(url);
@@ -2565,7 +2891,11 @@
       if (toggle.dataset.manualWired === "true") return;
       toggle.dataset.manualWired = "true";
 
-      toggle.addEventListener("click", () => {
+      toggle.addEventListener("click", async () => {
+        const accessState = await ensureAuthAccessReady({ reveal: true });
+        if (isAuthAccessBlocked(accessState)) {
+          return;
+        }
         const shouldOpen = panel.hidden;
         panel.hidden = !shouldOpen;
         toggle.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
@@ -3026,7 +3356,11 @@
     wireAuthToggle();
     wireManualAuthSections();
     wirePasswordForms();
+    wireAuthAccessGate();
     syncCreatorDebugModeState(sessionState.value);
+    if (isPublic) {
+      void loadAuthAccessState(true);
+    }
 
     if (shouldSkipSessionFetch(isPublic)) {
       clearPostAuthSettleState();
