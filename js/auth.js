@@ -1,7 +1,8 @@
 (() => {
   "use strict";
 
-  const AUTH_BASE_URL = "https://api.streamsuites.app";
+  const API_BASE_URL = "https://api.streamsuites.app";
+  const AUTH_BASE_URL = "";
   const CREATOR_ORIGIN = "https://creator.streamsuites.app";
   const AUTH_ENDPOINTS = Object.freeze({
     session: `${AUTH_BASE_URL}/auth/session`,
@@ -10,15 +11,15 @@
     resendVerify: `${AUTH_BASE_URL}/auth/verify/resend`,
     signup: `${AUTH_BASE_URL}/auth/signup/email`,
     oauth: Object.freeze({
-      google: `${AUTH_BASE_URL}/auth/google`,
-      github: `${AUTH_BASE_URL}/auth/github`,
-      discord: `${AUTH_BASE_URL}/auth/discord`,
+      google: `${AUTH_BASE_URL}/auth/login/google?surface=creator`,
+      github: `${AUTH_BASE_URL}/auth/login/github?surface=creator`,
+      discord: `${AUTH_BASE_URL}/auth/login/discord?surface=creator`,
       x: `${AUTH_BASE_URL}/auth/x/start?surface=creator`,
-      twitch: `${AUTH_BASE_URL}/oauth/twitch/start`
+      twitch: `${AUTH_BASE_URL}/oauth/twitch/start?surface=creator`
     })
   });
   const ACCOUNT_ENDPOINTS = Object.freeze({
-    me: `${AUTH_BASE_URL}/account/me`
+    me: `${API_BASE_URL}/account/me`
   });
 
   const CREATOR_ROLE = "creator";
@@ -2228,7 +2229,7 @@
           <div class="lockout-actions">
             <a
               class="lockout-button"
-              href="https://api.streamsuites.app/auth/login/google?surface=creator"
+              href="/auth/login/google?surface=creator"
             >
               Login as Creator
             </a>
