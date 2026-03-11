@@ -64,6 +64,7 @@
   const POST_AUTH_SETTLE_RETRY_DELAYS_MS = Object.freeze([180, 360, 720, 1280]);
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
+  const PUBLIC_SESSION_HINT_TTL_MS = 12 * 60 * 60 * 1000;
   const LAST_OAUTH_PROVIDER_KEY = "streamsuites.creator.lastOauthProvider";
   const X_EMAIL_BANNER_DISMISSED_KEY = "streamsuites.creator.banner.xMissingEmail.dismissed";
   const CREATOR_DEBUG_MODE_KEY = "ss_creator_debug_mode";
@@ -1207,6 +1208,40 @@
     } catch (err) {
       console.warn("[Dashboard][Auth] Failed to clear persisted session", err);
     }
+  }
+
+  function readPersistedLocalSession() {
+    try {
+      const raw = localStorage.getItem(LOCAL_SESSION_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function hasRecentAuthenticatedSessionHint() {
+    const persisted = readPersistedLocalSession();
+    if (!persisted || persisted.authenticated !== true) {
+      return false;
+    }
+    try {
+      const updatedAt = Number(localStorage.getItem(LOCAL_SESSION_UPDATED_AT_KEY) || 0);
+      if (!Number.isFinite(updatedAt) || updatedAt <= 0) {
+        return true;
+      }
+      return Date.now() - updatedAt <= PUBLIC_SESSION_HINT_TTL_MS;
+    } catch (err) {
+      return true;
+    }
+  }
+
+  function shouldBootstrapPublicSession(pendingPostAuth = null) {
+    if (pendingPostAuth) {
+      return true;
+    }
+    return hasRecentAuthenticatedSessionHint();
   }
 
   function buildAuthSummary() {
@@ -2973,7 +3008,8 @@
     const pathname = getPathname();
     const isPublic = isPublicPath(pathname);
     const isOnboarding = pathname === "/views/onboarding.html";
-    const pendingPostAuth = !isPublic ? readPostAuthSettleState() : null;
+    const pendingPostAuth = readPostAuthSettleState();
+    const shouldBootstrapSession = !isPublic || shouldBootstrapPublicSession(pendingPostAuth);
     setAuthBootstrapState(AUTH_BOOT_STATES.bootstrapping, {
       sessionChecked: false,
       protectedDataStatus: "idle",
@@ -3013,8 +3049,27 @@
       setCreatorShellVisible(false);
     }
 
+    if (isPublic && !shouldBootstrapSession) {
+      sessionState.value = {
+        authenticated: false,
+        idle: true,
+        bootstrapDeferred: true
+      };
+      updateAppSession(sessionState.value);
+      updateAuthSummary(sessionState.value);
+      updateXEmailBanner(sessionState.value, isPublic);
+      setAuthBootstrapState(AUTH_BOOT_STATES.unauthenticated, {
+        sessionChecked: false,
+        protectedDataStatus: "idle",
+        protectedDataSource: "",
+        message: ""
+      });
+      showAuthModalAndHaltAppInit(sessionState.value);
+      return;
+    }
+
     let session = await loadSession();
-    if (!isPublic && pendingPostAuth && !session?.authenticated && isCookieMissingSessionState(session)) {
+    if (pendingPostAuth && !session?.authenticated && isCookieMissingSessionState(session)) {
       setAuthBootstrapState(AUTH_BOOT_STATES.bootstrapping, {
         sessionChecked: false,
         protectedDataStatus: "pending",

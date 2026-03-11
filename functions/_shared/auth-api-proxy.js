@@ -113,6 +113,7 @@ export async function proxyAuthApiRequest(context, allowedMatchers) {
   const upstreamUrl = new URL(requestUrl.pathname + requestUrl.search, upstreamOrigin);
   const headers = new Headers(request.headers);
   headers.delete("host");
+  headers.set("x-streamsuites-proxy-origin", requestUrl.origin);
   headers.set("x-streamsuites-creator-proxy", "cloudflare-pages");
 
   const init = {

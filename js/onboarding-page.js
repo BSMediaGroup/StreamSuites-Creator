@@ -5,11 +5,9 @@
 
   const RUNTIME_BASE_URL = "https://api.streamsuites.app";
   const CREATOR_ORIGIN = "https://creator.streamsuites.app";
-  const AUTH_SESSION_ENDPOINT = `${RUNTIME_BASE_URL}/auth/session`;
   const ONBOARDING_COMPLETE_ENDPOINT = `${RUNTIME_BASE_URL}/account/onboarding/complete`;
 
   const VALID_TIER_IDS = new Set(["core", "gold", "pro"]);
-  const SESSION_IDLE_REASON = "cookie_missing";
   const tierUtils = window.StreamSuitesTier || {};
   const normalizeTier = tierUtils.normalizeTier;
   const renderTierPill = tierUtils.renderTierPill;
@@ -35,49 +33,6 @@
     if (typeof visibility !== "string") return "";
     const normalized = visibility.trim().toLowerCase();
     return normalized === "public" || normalized === "soft_locked" ? normalized : "";
-  }
-
-  function normalizeAuthReason(value) {
-    if (typeof value !== "string") return "";
-    const trimmed = value.trim().toLowerCase();
-    if (!trimmed) return "";
-    if (trimmed.includes(SESSION_IDLE_REASON)) return SESSION_IDLE_REASON;
-    return trimmed;
-  }
-
-  function resolveAuthReason(payload, response) {
-    if (!payload || typeof payload !== "object") {
-      const headerReason =
-        response?.headers &&
-        ["x-auth-reason", "x-streamsuites-auth-reason", "x-auth-status"]
-          .map((header) => response.headers.get(header))
-          .find(Boolean);
-      return normalizeAuthReason(headerReason);
-    }
-
-    const candidate =
-      payload.reason ||
-      payload.error?.reason ||
-      payload.status ||
-      payload.error ||
-      payload.message;
-
-    if (candidate) {
-      return normalizeAuthReason(candidate);
-    }
-
-    const headerReason =
-      response?.headers &&
-      ["x-auth-reason", "x-streamsuites-auth-reason", "x-auth-status"]
-        .map((header) => response.headers.get(header))
-        .find(Boolean);
-    return normalizeAuthReason(headerReason);
-  }
-
-  function isCookieMissingError(err) {
-    if (!err || err.status !== 401) return false;
-    const reason = normalizeAuthReason(err.reason || err.payload?.reason);
-    return reason === SESSION_IDLE_REASON;
   }
 
   function normalizeEffectiveTier(raw) {
@@ -153,6 +108,21 @@
     }
 
     return data;
+  }
+
+  async function loadOnboardingSession() {
+    const auth = window.StreamSuitesAuth;
+    if (typeof auth?.whenReady === "function") {
+      try {
+        await auth.whenReady();
+      } catch (err) {
+        // Fall through to the direct session read attempt below.
+      }
+    }
+    if (typeof auth?.loadSession === "function") {
+      return auth.loadSession();
+    }
+    return null;
   }
 
   function setStatus(message = "", isError = false) {
@@ -244,10 +214,6 @@
     }
   }
 
-  async function fetchAccountState() {
-    return fetchJson(AUTH_SESSION_ENDPOINT, {}, 5000);
-  }
-
   function extractEffectiveTier(accountState, session) {
     const source =
       accountState?.user && typeof accountState.user === "object"
@@ -294,40 +260,24 @@
       });
     }
 
-    let accountState = null;
-    try {
-      accountState = await fetchAccountState();
-      const onboardingStatus =
-        typeof accountState?.onboarding_status === "string"
-          ? accountState.onboarding_status.toLowerCase()
-          : null;
-      const onboardingRequired =
-        accountState?.onboarding_required === true ||
-        accountState?.onboardingRequired === true;
-
-      if (onboardingStatus === "completed" || onboardingRequired === false) {
-        window.location.assign(`${CREATOR_ORIGIN}/index.html`);
-        return;
-      }
-    } catch (err) {
-      if (!isCookieMissingError(err)) {
-        console.error("[Onboarding] Unable to load account state", err);
-      }
-      setStatus("Unable to verify onboarding status. Please try again.", true);
-    }
-
     let session = null;
     try {
-      session = await window.StreamSuitesAuth?.loadSession?.();
+      session = await loadOnboardingSession();
       if (session?.onboardingRequired === false) {
         window.location.assign(`${CREATOR_ORIGIN}/index.html`);
         return;
       }
     } catch (err) {
+      console.error("[Onboarding] Unable to load session state", err);
       session = null;
     }
 
-    const effectiveTier = extractEffectiveTier(accountState, session);
+    if (!session?.authenticated) {
+      setStatus("Unable to verify onboarding status. Please try again.", true);
+      return;
+    }
+
+    const effectiveTier = extractEffectiveTier(null, session);
     const currentTierId = normalizeTierId(
       effectiveTier?.tierId || session?.tier || REQUIRED_TIER_ID
     );

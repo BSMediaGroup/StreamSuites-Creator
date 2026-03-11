@@ -85,6 +85,9 @@
       const statusEl = document.querySelector("[data-auth-status]");
       const errorEl = document.querySelector("[data-auth-error]");
       const errorMessageEl = document.querySelector("[data-auth-error-message]");
+      const pendingTimeouts = new Set();
+      let activeController = null;
+      let finalized = false;
 
       function setStatus(message) {
         if (statusEl) {
@@ -93,6 +96,7 @@
       }
 
       function showError(message) {
+        cleanupPendingWork();
         if (!errorEl) return;
         if (errorMessageEl) {
           errorMessageEl.textContent = message;
@@ -103,7 +107,24 @@
       }
 
       function wait(ms) {
-        return new Promise((resolve) => window.setTimeout(resolve, ms));
+        return new Promise((resolve) => {
+          const timeoutId = window.setTimeout(() => {
+            pendingTimeouts.delete(timeoutId);
+            resolve();
+          }, ms);
+          pendingTimeouts.add(timeoutId);
+        });
+      }
+
+      function cleanupPendingWork() {
+        pendingTimeouts.forEach((timeoutId) => {
+          window.clearTimeout(timeoutId);
+        });
+        pendingTimeouts.clear();
+        if (activeController) {
+          activeController.abort();
+          activeController = null;
+        }
       }
 
       function normalizeReason(value) {
@@ -185,13 +206,22 @@
       }
 
       async function fetchSessionPayload() {
-        const response = await fetch(SESSION_URL, { credentials: "include", cache: "no-store" });
+        if (activeController) {
+          activeController.abort();
+        }
+        activeController = new AbortController();
+        const response = await fetch(SESSION_URL, {
+          credentials: "include",
+          cache: "no-store",
+          signal: activeController.signal
+        });
         let payload = null;
         try {
           payload = await response.json();
         } catch (err) {
           payload = null;
         }
+        activeController = null;
         return { response, payload };
       }
 
@@ -245,6 +275,8 @@
       }
 
       async function finalizeAuth() {
+        if (finalized) return;
+        finalized = true;
         const requestedReturnTo = getRequestedReturnTarget();
         console.info("[Creator][Auth] callback_landing", {
           landingUrl: window.location.href,
@@ -268,6 +300,7 @@
             payload?.session_valid === true);
 
         if (isCookieMissing(response, payload)) {
+          cleanupPendingWork();
           window.location.replace(buildLoginUrl("expired"));
           return;
         }
@@ -283,9 +316,11 @@
           destination
         });
         setStatus("Session confirmed. Redirecting...");
+        cleanupPendingWork();
         window.location.replace(destination);
       }
 
+      window.addEventListener("pagehide", cleanupPendingWork, { once: true });
       document.addEventListener("DOMContentLoaded", finalizeAuth);
     })();
   </script>
