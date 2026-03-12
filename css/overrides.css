@@ -191,11 +191,18 @@
 }
 
 .ss-auth-access-gate__icon {
-  width: 13px;
-  height: 13px;
-  object-fit: contain;
-  opacity: 0.92;
-  filter: brightness(0) saturate(100%) invert(88%) sepia(10%) saturate(460%) hue-rotate(180deg) brightness(101%) contrast(96%);
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask-image: url("/assets/icons/ui/key.svg");
+  mask-image: url("/assets/icons/ui/key.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 .ss-auth-access-gate__form {
