@@ -422,6 +422,9 @@
   position: absolute;
   top: 10px;
   right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 26px;
   height: 26px;
   border: 0;
@@ -429,6 +432,22 @@
   background: rgba(255, 255, 255, 0.06);
   color: rgba(245, 248, 255, 0.76);
   cursor: pointer;
+  font-size: 0;
+}
+
+.ss-auth-toast-dismiss::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background-color: currentColor;
+  -webkit-mask-image: url("/assets/icons/ui/close.svg");
+  mask-image: url("/assets/icons/ui/close.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 .ss-email-completion-banner {

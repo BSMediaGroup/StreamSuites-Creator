@@ -144,9 +144,11 @@
   gap: 10px;
   margin-top: 12px;
   padding: 11px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(162, 183, 255, 0.18);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  background:
+    linear-gradient(145deg, rgba(92, 116, 255, 0.12), rgba(147, 121, 255, 0.08)),
+    rgba(11, 16, 28, 0.72);
 }
 
 .ss-auth-access-gate.is-unlocked {
