@@ -32,6 +32,7 @@ StreamSuites-Creator/
 |-- .gitignore
 |-- _redirects
 |-- 404.html
+|-- BUMP_NOTES.md
 |-- CNAME
 |-- COMMERCIAL-LICENSE-NOTICE.md
 |-- EULA.md
