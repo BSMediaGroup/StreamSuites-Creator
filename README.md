@@ -34,6 +34,8 @@ StreamSuites-Creator/
 |-- 404.html
 |-- BUMP_NOTES.md
 |-- CNAME
+|-- changelog/
+|   `-- v0.4.2-alpha.md
 |-- COMMERCIAL-LICENSE-NOTICE.md
 |-- EULA.md
 |-- LICENSE

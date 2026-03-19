@@ -1,6 +1,13 @@
 # Bump Notes
 
-## CURRENT VER= 0.4.1-alpha / PENDING VER= 0.4.2-alpha
+## CURRENT VER= 0.4.2-alpha / PENDING VER= none
+
+## Release Prep Completion - v0.4.2-alpha
+
+- This repo still does not own an independent semantic version file; its displayed version remains runtime-fed from `https://admin.streamsuites.app/runtime/exports/version.json`.
+- For this release-prep pass, the repo's release state is now aligned to `v0.4.2-alpha` and the release-note source material now lives in `changelog/v0.4.2-alpha.md`.
+- The compare range recorded for release packaging is `v0.4.0-alpha...v0.4.2-alpha`.
+- Earlier sections below remain the cumulative pre-release working record for the auth-gate and creator-surface work that shaped this bump.
 
 ### Technical Notes
 
