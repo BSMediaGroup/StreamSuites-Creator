@@ -308,7 +308,7 @@
       - button "Copy Creator ID" [disabled] [ref=e331]:
         - img [ref=e332]
     - generic [ref=e334]:
-      - button "Dashboard v0.4.1-alpha" [ref=e336]
+      - button "Dashboard v0.4.2-alpha" [ref=e336]
       - generic [ref=e337]: •
       - link "© 2026 Brainstream Media Group" [ref=e338] [cursor=pointer]:
         - /url: https://brainstream.media
