@@ -1,6 +1,6 @@
 # Bump Notes
 
-## CURRENT VER= 0.4.2-alpha / PENDING VER= none
+## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.8-alpha
 
 ## Release Prep Completion - v0.4.2-alpha
 
