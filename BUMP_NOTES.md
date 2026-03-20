@@ -1,6 +1,8 @@
 # Bump Notes
 
-## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.8-alpha
+## RELEASED / PACKAGED: 0.4.2-alpha
+
+Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
 ## Release Prep Completion - v0.4.2-alpha
 
@@ -55,3 +57,23 @@
 ### Pending / Follow-Up
 
 - Keep creator-side copy, icon treatment, and unlock affordances in sync with the shared public/runtime gate UX as the real `0.4.2-alpha` bump is prepared.
+
+## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.8-alpha
+
+Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into the released `0.4.2-alpha` section above.
+
+### Technical Notes
+
+- Pending entries for `0.4.8-alpha` go here.
+
+### Human-Readable Notes
+
+- Pending entries for `0.4.8-alpha` go here.
+
+### Files / Areas Touched
+
+- Pending entries for `0.4.8-alpha` go here.
+
+### Risks / Follow-Ups
+
+- Pending entries for `0.4.8-alpha` go here.
