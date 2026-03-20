@@ -4,6 +4,17 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Cross-Repo README Architecture Alignment - 2026-03-21
+
+- The creator README now carries a cleaner repo-scoped Mermaid flowchart, aligned authority language, cross-links back to the runtime README, and a normalized repo tree with current branch characters.
+- Creator docs now describe the creator surface as a contract consumer for session, profile, integrations, triggers, and readiness instead of letting those boundaries blur with runtime ownership.
+- This was a documentation-only pass. No creator routing, auth, trigger, integration, or profile behavior changed in this note.
+
+### Files / Areas Touched
+
+- `README.md`
+- `BUMP_NOTES.md`
+
 ## Release Prep Completion - v0.4.2-alpha
 
 - This repo still does not own an independent semantic version file; its displayed version remains runtime-fed from `https://admin.streamsuites.app/runtime/exports/version.json`.

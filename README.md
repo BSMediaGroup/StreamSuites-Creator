@@ -8,6 +8,43 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 - Runtime-displayed version/build labels are consumed from `https://admin.streamsuites.app/runtime/exports/version.json`.
 - This repo is a static frontend that hydrates from authoritative runtime and Auth API services and does not own backend state.
 
+## Scope & Authority
+
+- This repo is the creator-facing dashboard shell, not a backend authority.
+- Session, role, tier, public-profile policy, trigger registry, integration posture, and readiness evaluation remain runtime/Auth-owned in `StreamSuites`.
+- The creator UI is allowed to initiate supported account and integration workflows, but it must stay within the backend contracts that already exist.
+- Public profile and FindMeHere outcomes shown here are authoritative reflections of runtime/Auth state, not creator-local truth.
+
+## Repo-Scoped Flowchart
+
+```mermaid
+flowchart TD
+    CreatorUser["Authenticated StreamSuites account"] --> Gate{"Creator-capable session"}
+    Gate -->|yes| Shell["Creator shell and routes<br/>/overview /account /statistics /notifications /integrations/* /modules/* /triggers"]
+    Gate -->|no| Lockout["Creator lockout messaging"]
+
+    Shell --> Account["Account settings and public profile controls"]
+    Shell --> Integrations["Platform integration detail pages"]
+    Shell --> Triggers["Central trigger registry consumer"]
+    Shell --> Stats["Statistics and creator metrics views"]
+    Shell --> Notifications["Notifications and requests"]
+    Shell --> Modules["Jobs and module views"]
+
+    Account --> Profile["Canonical slug, StreamSuites visibility, FindMeHere controls, media, bio, socials"]
+    Integrations --> Rumble["Rumble secret-backed linkage"]
+    Integrations --> Platforms["YouTube / Twitch / Kick / Pilled status pages"]
+    Triggers --> Readiness["Bot and trigger readiness summary"]
+    Integrations --> Readiness
+    Modules --> Readiness
+
+    Shell --> Auth["StreamSuites runtime/Auth API<br/>creator session, profile, integrations, triggers"]
+    Auth --> Runtime["StreamSuites runtime authority"]
+
+    Profile --> Public["StreamSuites-Public"]
+    Profile --> Members["StreamSuites-Members / FindMeHere"]
+    Readiness -. consumer-facing state only .-> Runtime
+```
+
 ## Current Surface Model
 
 - Clean path-based creator routes are the primary navigation model, with Cloudflare Pages deep-link handling in the root `_redirects`.
@@ -33,122 +70,104 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 - Rumble is the only creator-managed credential path in this phase, and it uses a backend-owned secret save/remove flow that returns masked presence state only.
 - The triggers route now consumes the central runtime/Auth trigger registry foundation, seeded with minimal built-ins and only low-risk enabled-state management.
 
-```mermaid
-flowchart TD
-    A[Authenticated StreamSuites account] --> B{Creator-capable posture}
-    B -->|true| C[Runtime/Auth API authority]
-    B -->|false| L[Creator lockout messaging]
-    C --> D[Account settings]
-    C --> E[Per-platform integration detail]
-    C --> F[Central trigger registry v1]
-    D --> G[Canonical slug + public profile controls]
-    D --> H[Integration summary cards]
-    E --> I[Rumble secure secret-backed linkage]
-    E --> J[YouTube / Twitch / Kick / Pilled truthful status pages]
-    I --> C
-    F --> K[!ping and !help built-ins]
-    E --> M[Bot attachment eligibility checks]
-    F --> M
-    M --> N[Creator modules and jobs as downstream consumers]
-    G --> O[Public StreamSuites profile]
-    G --> P[FindMeHere visibility]
-```
+The flowchart above keeps the creator repo grounded in its current contract-consumer role. It expands the earlier foundation diagram without implying local ownership of readiness, trigger execution, or profile authority.
 
-The flowchart above is intentionally foundation-grade for the current milestone. It describes the current creator-side contract consumption model and marks unfinished integration areas as planned rather than complete.
+## Cross-Repo Orientation
+
+- Top-level authority map: [StreamSuites runtime README](https://github.com/BSMediaGroup/StreamSuites)
+- Admin-surface detail: [StreamSuites-Dashboard README](https://github.com/BSMediaGroup/StreamSuites-Dashboard)
+- Public-surface detail: [StreamSuites-Public README](https://github.com/BSMediaGroup/StreamSuites-Public)
+- FindMeHere detail: [StreamSuites-Members README](https://github.com/BSMediaGroup/StreamSuites-Members)
 
 ## Repository Structure (Abridged, Accurate)
 
 ```text
 StreamSuites-Creator/
-|-- .gitignore
-|-- _redirects
-|-- 404.html
-|-- BUMP_NOTES.md
-|-- CNAME
-|-- changelog/
-|   `-- v0.4.2-alpha.md
-|-- COMMERCIAL-LICENSE-NOTICE.md
-|-- EULA.md
-|-- LICENSE
-|-- README.md
-|-- favicon.ico
-|-- index.html
-|-- login/
-|   `-- index.html
-|-- login-success/
-|   `-- index.html
-|-- assets/
-|   |-- css/
-|   |   `-- ss-profile-hovercard.css
-|   |-- js/
-|   |   `-- ss-profile-hovercard.js
-|   `-- [truncated: backgrounds/, fonts/, icons/, illustrations/, logos/, placeholders/]
-|-- css/
-|   |-- base.css
-|   |-- components.css
-|   |-- creator-dashboard.css
-|   |-- layout.css
-|   |-- overrides.css
-|   |-- status-widget.css
-|   |-- theme-dark.css
-|   `-- updates.css
-|-- data/
-|   |-- creators.json
-|   |-- jobs.json
-|   |-- platforms.json
-|   `-- runtime_snapshot.json
-|-- js/
-|   |-- app.js
-|   |-- account-settings.js
-|   |-- auth.js
-|   |-- creator-stats.js
-|   |-- creators.js
-|   |-- discord-bot-integration.js
-|   |-- feature-gate.js
-|   |-- jobs.js
-|   |-- notifications.js
-|   |-- onboarding-page.js
-|   |-- onboarding.js
-|   |-- plans.js
-|   |-- platform-integration-detail.js
-|   |-- platforms.js
-|   |-- render.js
-|   |-- routes.js
-|   |-- settings.js
-|   |-- state.js
-|   |-- status-widget.js
-|   |-- triggers.js
-|   `-- utils/
-|       |-- notifications-store.js
-|       |-- stats-formatting.js
-|       |-- stats-svg-charts.js
-|       |-- version-stamp.js
-|       `-- versioning.js
-`-- views/
-    |-- account.html
-    |-- creators.html
-    |-- design.html
-    |-- jobs.html
-    |-- notifications.html
-    |-- onboarding.html
-    |-- overview.html
-    |-- plans.html
-    |-- scoreboards.html
-    |-- settings.html
-    |-- statistics.html
-    |-- tallies.html
-    |-- triggers.html
-    |-- updates.html
-    |-- modules/
-    |   |-- clips.html
-    |   |-- livechat.html
-    |   |-- overlays.html
-    |   `-- polls.html
-    `-- platforms/
-        |-- discord.html
-        |-- kick.html
-        |-- pilled.html
-        |-- rumble.html
-        |-- twitch.html
-        `-- youtube.html
+├── .gitignore
+├── _redirects
+├── 404.html
+├── BUMP_NOTES.md
+├── CNAME
+├── COMMERCIAL-LICENSE-NOTICE.md
+├── EULA.md
+├── LICENSE
+├── README.md
+├── favicon.ico
+├── index.html
+├── changelog/
+│   └── v0.4.2-alpha.md
+├── login/
+│   └── index.html
+├── login-success/
+│   └── index.html
+├── functions/
+│   ├── _shared/
+│   │   └── auth-api-proxy.js
+│   ├── auth/
+│   │   └── [[path]].js
+│   └── oauth/
+│       └── [[path]].js
+├── assets/
+│   ├── css/
+│   │   └── ss-profile-hovercard.css
+│   ├── js/
+│   │   └── ss-profile-hovercard.js
+│   └── [backgrounds, fonts, icons, illustrations, logos, placeholders]
+├── css/
+│   ├── base.css
+│   ├── components.css
+│   ├── creator-dashboard.css
+│   ├── layout.css
+│   ├── overrides.css
+│   ├── status-widget.css
+│   ├── theme-dark.css
+│   └── updates.css
+├── data/
+│   ├── creators.json
+│   ├── jobs.json
+│   ├── platforms.json
+│   └── runtime_snapshot.json
+├── js/
+│   ├── account-settings.js
+│   ├── app.js
+│   ├── auth.js
+│   ├── creator-stats.js
+│   ├── discord-bot-integration.js
+│   ├── jobs.js
+│   ├── notifications.js
+│   ├── onboarding.js
+│   ├── platform-integration-detail.js
+│   ├── routes.js
+│   ├── settings.js
+│   ├── state.js
+│   ├── triggers.js
+│   └── utils/
+│       ├── notifications-store.js
+│       ├── stats-formatting.js
+│       ├── stats-svg-charts.js
+│       ├── version-stamp.js
+│       └── versioning.js
+└── views/
+    ├── account.html
+    ├── jobs.html
+    ├── notifications.html
+    ├── onboarding.html
+    ├── overview.html
+    ├── plans.html
+    ├── settings.html
+    ├── statistics.html
+    ├── triggers.html
+    ├── updates.html
+    ├── modules/
+    │   ├── clips.html
+    │   ├── livechat.html
+    │   ├── overlays.html
+    │   └── polls.html
+    └── platforms/
+        ├── discord.html
+        ├── kick.html
+        ├── pilled.html
+        ├── rumble.html
+        ├── twitch.html
+        └── youtube.html
 ```
