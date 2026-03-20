@@ -603,41 +603,66 @@
 
             <article class="card">
               <h3>Platform integrations</h3>
-              <p>Connection status for creator platforms.</p>
+              <p>Authoritative connection status for creator platforms and trigger readiness.</p>
               <ul class="account-list">
-                <li class="account-list-item">
+                <li class="account-list-item" data-integration-row="rumble">
                   <div class="account-list-meta">
                     <span class="account-list-title">Rumble</span>
-                    <span class="account-list-note">Managed on the Rumble platform page</span>
+                    <span class="account-list-note" data-integration-note="rumble">Managed on the Rumble platform page</span>
                   </div>
-                  <span class="status-pill success"><span class="status-dot"></span>Connected</span>
+                  <span class="status-pill subtle" data-integration-status="rumble"><span class="status-dot"></span>Loading</span>
+                  <span class="account-provider-value" data-integration-summary="rumble">Loading authoritative status...</span>
+                  <div class="account-provider-actions">
+                    <a class="creator-button ghost" href="/integrations/rumble">Open Rumble</a>
+                  </div>
                 </li>
-                <li class="account-list-item">
+                <li class="account-list-item" data-integration-row="youtube">
                   <div class="account-list-meta">
                     <span class="account-list-title">YouTube</span>
-                    <span class="account-list-note">Managed on the YouTube platform page</span>
+                    <span class="account-list-note" data-integration-note="youtube">Managed on the YouTube platform page</span>
                   </div>
-                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                  <span class="status-pill subtle" data-integration-status="youtube"><span class="status-dot"></span>Loading</span>
+                  <span class="account-provider-value" data-integration-summary="youtube">Loading authoritative status...</span>
+                  <div class="account-provider-actions">
+                    <a class="creator-button ghost" href="/integrations/youtube">Open YouTube</a>
+                  </div>
                 </li>
-                <li class="account-list-item">
+                <li class="account-list-item" data-integration-row="twitch">
                   <div class="account-list-meta">
                     <span class="account-list-title">Twitch</span>
-                    <span class="account-list-note">Managed on the Twitch platform page</span>
+                    <span class="account-list-note" data-integration-note="twitch">Managed on the Twitch platform page</span>
                   </div>
-                  <span class="status-pill subtle" data-account-provider-status="twitch">
-                    <span class="status-dot"></span>Available
-                  </span>
+                  <span class="status-pill subtle" data-integration-status="twitch"><span class="status-dot"></span>Loading</span>
+                  <span class="account-provider-value" data-integration-summary="twitch">Loading authoritative status...</span>
+                  <div class="account-provider-actions">
+                    <a class="creator-button ghost" href="/integrations/twitch">Open Twitch</a>
+                  </div>
                 </li>
-                <li class="account-list-item">
+                <li class="account-list-item" data-integration-row="kick">
                   <div class="account-list-meta">
                     <span class="account-list-title">Kick</span>
-                    <span class="account-list-note">Managed on the Kick platform page</span>
+                    <span class="account-list-note" data-integration-note="kick">Managed on the Kick platform page</span>
                   </div>
-                  <span class="status-pill subtle"><span class="status-dot"></span>Available</span>
+                  <span class="status-pill subtle" data-integration-status="kick"><span class="status-dot"></span>Loading</span>
+                  <span class="account-provider-value" data-integration-summary="kick">Loading authoritative status...</span>
+                  <div class="account-provider-actions">
+                    <a class="creator-button ghost" href="/integrations/kick">Open Kick</a>
+                  </div>
+                </li>
+                <li class="account-list-item" data-integration-row="pilled">
+                  <div class="account-list-meta">
+                    <span class="account-list-title">Pilled</span>
+                    <span class="account-list-note" data-integration-note="pilled">Managed on the Pilled platform page</span>
+                  </div>
+                  <span class="status-pill subtle" data-integration-status="pilled"><span class="status-dot"></span>Loading</span>
+                  <span class="account-provider-value" data-integration-summary="pilled">Loading authoritative status...</span>
+                  <div class="account-provider-actions">
+                    <a class="creator-button ghost" href="/integrations/pilled">Open Pilled</a>
+                  </div>
                 </li>
               </ul>
-              <p class="account-note">
-                Connect and manage per-platform credentials on each platform page.
+              <p class="account-note" data-integration-summary-note="true">
+                Platform summaries load from the authoritative runtime/Auth integration contract.
               </p>
             </article>
 
@@ -688,4 +713,3 @@
   <script src="/js/status-widget.js" defer></script>
 </body>
 </html>
-

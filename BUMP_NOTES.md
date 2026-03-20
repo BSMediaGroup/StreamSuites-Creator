@@ -64,16 +64,38 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 
 ### Technical Notes
 
+- Creator account/settings now consumes the authoritative runtime/Auth integrations summary instead of hard-coded platform status text.
+- Dedicated creator platform routes for `youtube`, `rumble`, `twitch`, `kick`, and `pilled` now read the runtime/Auth integration contract, and `js/platform-integration-detail.js` handles the new per-platform consumer flow.
+- The triggers surface now consumes the central runtime/Auth trigger registry v1 and only exposes enabled-state management that the backend currently supports.
+- Rumble creator linkage is now wired to the backend-owned secret save/remove endpoints and keeps the frontend limited to masked presence state.
 - Pending entries for `0.4.8-alpha` go here.
 
 ### Human-Readable Notes
 
+- This milestone establishes the first creator-facing integrations and trigger foundation pass, not the full final creator redesign.
+- Account settings now shows truthful platform connection summaries, dedicated platform pages explain current capability clearly, and the triggers page reflects real backend state instead of local fiction.
+- Rumble is the only platform with a real creator-managed linkage flow in this phase, and it stays secret-safe after submission.
 - Pending entries for `0.4.8-alpha` go here.
 
 ### Files / Areas Touched
 
+- `views/account.html`
+- `views/platforms/rumble.html`
+- `views/platforms/youtube.html`
+- `views/platforms/twitch.html`
+- `views/platforms/kick.html`
+- `views/platforms/pilled.html`
+- `views/triggers.html`
+- `js/account-settings.js`
+- `js/platform-integration-detail.js`
+- `js/triggers.js`
+- `css/creator-dashboard.css`
+- `README.md`
 - Pending entries for `0.4.8-alpha` go here.
 
 ### Risks / Follow-Ups
 
+- The creator repo remains a consumer only, so richer create/edit/delete trigger flows still depend on later backend contract expansion.
+- The new platform detail pages rely on the runtime/Auth endpoints being deployed alongside the creator surface; stale backend deployments will leave the UI in fallback loading/error copy.
+- Later phases still need fuller provider-specific onboarding and verification UX beyond this foundation pass.
 - Pending entries for `0.4.8-alpha` go here.

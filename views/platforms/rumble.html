@@ -228,7 +228,7 @@
 
       <main id="app-main">
         <div id="view-container" class="creator-main" data-creator-content>
-          <section class="creator-section">
+          <section class="creator-section" data-platform-root="rumble">
 
           <div class="section-header">
 
@@ -242,13 +242,7 @@
 
             <div class="section-actions">
 
-              <span class="status-pill warning">
-
-                <span class="status-dot"></span>
-
-                Not connected
-
-              </span>
+              <span class="status-pill subtle" data-platform-status-pill="true"><span class="status-dot"></span>Loading</span>
 
             </div>
 
@@ -264,9 +258,8 @@
 
               <p>
 
-                This page will surface Rumble stream readiness and export health once the creator
-
-                connection flow is released.
+                This page now reflects the authoritative runtime/Auth integration contract for Rumble
+                and provides the secure secret-backed linkage foundation for later runtime growth.
 
               </p>
 
@@ -285,98 +278,99 @@
           <div class="card-grid">
 
             <article class="card">
-
               <h3>Integration overview</h3>
-
-              <p>When connected, StreamSuites will surface Rumble workspace visibility here.</p>
-
-              <ul>
-
-                <li>Stream health snapshots and ingest visibility.</li>
-
-                <li>Overlay and clip destination mapping.</li>
-
-                <li>Broadcast readiness signals for your channel.</li>
-
-              </ul>
-
+              <p data-platform-summary="true">Loading authoritative platform summary...</p>
+              <ul data-platform-capabilities="true"></ul>
             </article>
 
             <article class="card">
-
               <h3>Connection status</h3>
-
               <div class="stat-grid">
-
                 <div>
-
                   <span class="stat-label">Connection</span>
-
-                  <span class="stat-value">Not connected</span>
-
+                  <span class="stat-value" data-platform-stat="connection">Loading</span>
                 </div>
-
                 <div>
-
                   <span class="stat-label">Channel link</span>
-
-                  <span class="stat-value">Not linked</span>
-
+                  <span class="stat-value" data-platform-stat="channel">Loading</span>
                 </div>
-
                 <div>
-
-                  <span class="stat-label">Last sync</span>
-
-                  <span class="stat-value">Pending</span>
-
+                  <span class="stat-label">Auth mode</span>
+                  <span class="stat-value" data-platform-stat="auth">Loading</span>
                 </div>
-
                 <div>
-
-                  <span class="stat-label">Exports</span>
-
-                  <span class="stat-value">Waiting</span>
-
+                  <span class="stat-label">Last checked</span>
+                  <span class="stat-value" data-platform-stat="checked">Loading</span>
                 </div>
-
               </div>
-
-              <div class="platform-actions">
-
-                <button class="creator-button ghost" type="button" disabled aria-disabled="true">
-
-                  Connect Rumble (coming soon)
-
-                </button>
-
-              </div>
-
+              <p class="account-note" data-platform-note="true">Loading authoritative platform note...</p>
+              <div class="platform-actions" data-platform-actions="true"></div>
             </article>
 
             <article class="card">
-
-              <h3>What happens next</h3>
-
-              <p>
-
-                Connection controls and guidance will appear here once Rumble onboarding is ready.
-
+              <h3>Bot and trigger readiness</h3>
+              <div class="stat-grid">
+                <div>
+                  <span class="stat-label">Trigger registry</span>
+                  <span class="stat-value" data-platform-stat="triggers">Loading</span>
+                </div>
+                <div>
+                  <span class="stat-label">Deploy readiness</span>
+                  <span class="stat-value" data-platform-stat="deploy">Loading</span>
+                </div>
+              </div>
+              <ul data-platform-deploy-reasons="true"></ul>
+              <p class="account-note" data-platform-trigger-note="true">
+                Foundation commands load from the central trigger registry.
               </p>
+            </article>
 
+            <article class="card">
+              <h3>Secret handling</h3>
+              <p>
+                Rumble linkage in this phase uses a backend-owned secret path. After save, the creator
+                surface only receives masked presence state, never the raw credential.
+              </p>
               <ul>
-
-                <li>No connection actions are required today.</li>
-
-                <li>Runtime data will appear after the first successful sync.</li>
-
-                <li>This surface stays read-only until launch.</li>
-
+                <li>Use the platform action button to add or replace the secret.</li>
+                <li>Raw values are never echoed back into the page after submission.</li>
+                <li>Removal clears the stored secret and returns the surface to an unlinked state.</li>
               </ul>
-
             </article>
 
           </div>
+
+          <dialog class="creator-dialog" data-rumble-secret-dialog="true">
+            <form method="dialog" class="creator-dialog-card" data-rumble-secret-form="true">
+              <div class="creator-dialog-header">
+                <div>
+                  <span class="section-kicker">Rumble</span>
+                  <h3>Secure secret linkage</h3>
+                </div>
+                <button class="creator-button ghost" type="button" data-rumble-dialog-close="true">Close</button>
+              </div>
+              <p class="account-note">
+                This saves a backend-owned credential for future runtime use. The creator surface will only receive masked presence state after submission.
+              </p>
+              <label class="account-field">
+                <span class="account-field-label">Stream key</span>
+                <input class="account-field-input" type="password" autocomplete="new-password" data-rumble-input="stream_key" placeholder="Paste Rumble stream/API key" />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Channel URL</span>
+                <input class="account-field-input" type="url" data-rumble-input="channel_url" placeholder="https://rumble.com/c/yourchannel" />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Channel handle</span>
+                <input class="account-field-input" type="text" data-rumble-input="channel_handle" placeholder="@yourchannel" />
+              </label>
+              <p class="account-note" data-rumble-secret-status="true">No secret changes submitted yet.</p>
+              <div class="platform-actions">
+                <button class="creator-button primary" type="submit">Save secure linkage</button>
+                <button class="creator-button ghost" type="button" data-rumble-secret-remove="true">Remove stored secret</button>
+              </div>
+            </form>
+          </dialog>
 
         </section>
         </div>
@@ -399,6 +393,7 @@
   <script src="/js/app.js"></script>
 
   <script src="/js/auth.js"></script>
+  <script src="/js/platform-integration-detail.js"></script>
   <script src="/assets/js/ss-profile-hovercard.js"></script>
   <script src="/js/status-widget.js" defer></script>
 </body>

@@ -228,7 +228,7 @@
 
       <main id="app-main">
         <div id="view-container" class="creator-main" data-creator-content>
-          <section class="creator-section">
+          <section class="creator-section" data-platform-root="kick">
 
           <div class="section-header">
 
@@ -242,13 +242,7 @@
 
             <div class="section-actions">
 
-              <span class="status-pill warning">
-
-                <span class="status-dot"></span>
-
-                Not connected
-
-              </span>
+              <span class="status-pill subtle" data-platform-status-pill="true"><span class="status-dot"></span>Loading</span>
 
             </div>
 
@@ -264,9 +258,8 @@
 
               <p>
 
-                This page will support Kick channel connections once the integration is enabled.
-
-                For now, it stays as a creator-friendly placeholder.
+                This page reflects the authoritative runtime/Auth status for Kick while the creator
+                linkage path remains staged rather than pretending the integration is already live.
 
               </p>
 
@@ -288,17 +281,8 @@
 
               <h3>Integration overview</h3>
 
-              <p>When enabled, StreamSuites will surface Kick workspace visibility here.</p>
-
-              <ul>
-
-                <li>Channel status and export health snapshots.</li>
-
-                <li>Overlay and clip destination mapping.</li>
-
-                <li>Broadcast readiness signals for your channel.</li>
-
-              </ul>
+              <p data-platform-summary="true">Loading authoritative platform summary...</p>
+              <ul data-platform-capabilities="true"></ul>
 
             </article>
 
@@ -312,7 +296,7 @@
 
                   <span class="stat-label">Connection</span>
 
-                  <span class="stat-value">Not connected</span>
+                  <span class="stat-value" data-platform-stat="connection">Loading</span>
 
                 </div>
 
@@ -320,37 +304,30 @@
 
                   <span class="stat-label">Channel link</span>
 
-                  <span class="stat-value">Not linked</span>
+                  <span class="stat-value" data-platform-stat="channel">Loading</span>
 
                 </div>
 
                 <div>
 
-                  <span class="stat-label">Last sync</span>
+                  <span class="stat-label">Auth mode</span>
 
-                  <span class="stat-value">Pending</span>
+                  <span class="stat-value" data-platform-stat="auth">Loading</span>
 
                 </div>
 
                 <div>
 
-                  <span class="stat-label">Exports</span>
+                  <span class="stat-label">Last checked</span>
 
-                  <span class="stat-value">Waiting</span>
+                  <span class="stat-value" data-platform-stat="checked">Loading</span>
 
                 </div>
 
               </div>
 
-              <div class="platform-actions">
-
-                <button class="creator-button ghost" type="button" disabled aria-disabled="true">
-
-                  Connect Kick (coming soon)
-
-                </button>
-
-              </div>
+              <p class="account-note" data-platform-note="true">Loading authoritative platform note...</p>
+              <div class="platform-actions" data-platform-actions="true"></div>
 
             </article>
 
@@ -364,15 +341,7 @@
 
               </p>
 
-              <ul>
-
-                <li>No connection actions are required today.</li>
-
-                <li>Runtime data will appear after the first successful sync.</li>
-
-                <li>This surface stays read-only until launch.</li>
-
-              </ul>
+              <ul data-platform-deploy-reasons="true"></ul>
 
             </article>
 
@@ -399,6 +368,7 @@
   <script src="/js/app.js"></script>
 
   <script src="/js/auth.js"></script>
+  <script src="/js/platform-integration-detail.js"></script>
   <script src="/assets/js/ss-profile-hovercard.js"></script>
   <script src="/js/status-widget.js" defer></script>
 </body>

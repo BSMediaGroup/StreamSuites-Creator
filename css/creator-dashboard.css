@@ -3326,6 +3326,39 @@ body.creator-lockout-active .creator-lockout {
   font-size: 10px;
 }
 
+.trigger-card-aliases {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.creator-dialog {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  background: rgba(7, 11, 18, 0.96);
+  color: var(--creator-text);
+  width: min(560px, calc(100vw - 32px));
+  padding: 0;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+}
+
+.creator-dialog::backdrop {
+  background: rgba(4, 8, 14, 0.7);
+  backdrop-filter: blur(8px);
+}
+
+.creator-dialog-card {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+}
+
+.creator-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .trigger-platform-badge {
   padding: 4px 8px;
   border-radius: 999px;

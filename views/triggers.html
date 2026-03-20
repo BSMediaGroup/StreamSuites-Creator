@@ -242,13 +242,7 @@
 
             <div class="section-actions">
 
-              <span class="status-pill warning">
-
-                <span class="status-dot"></span>
-
-                Preview only
-
-              </span>
+              <span class="status-pill warning"><span class="status-dot"></span>Foundation v1</span>
 
               <span class="status-pill subtle" data-trigger-status>No preview changes</span>
 
@@ -262,24 +256,20 @@
 
             <div>
 
-              <h3>Stage how chat triggers behave per platform.</h3>
+              <h3>Review the authoritative trigger registry.</h3>
 
               <p>
 
-                Toggle triggers per channel to preview your automation layout. Changes stay local to
-
-                this page and reset on reload.
+                This surface consumes the runtime/Auth trigger registry. Foundation-grade built-ins can
+                be enabled or disabled here without inventing unsupported advanced trigger editing flows.
 
               </p>
 
             </div>
 
-            <div
-              class="creator-hero-actions feature-gate"
-              data-feature-gate="scheduled_triggers"
-            >
+            <div class="creator-hero-actions">
               <button class="creator-button ghost" type="button" data-trigger-reset>
-                Reset preview
+                Reload registry
               </button>
             </div>
           </div>
@@ -299,27 +289,17 @@
 
 
 
-          <div
-            class="feature-gate"
-            data-feature-gate="scheduled_triggers"
-            data-feature-gate-reason="This feature isn�t available on your current plan."
-          >
-            <div class="triggers-grid" data-trigger-list></div>
-            <p class="feature-gate-reason" data-feature-gate-reason-text>
-              This feature isn�t available on your current plan.
-            </p>
-          </div>
+          <div class="triggers-grid" data-trigger-list></div>
 
 
           <div class="trigger-footnote">
 
-            <span class="status-pill subtle">No saves yet</span>
+            <span class="status-pill subtle">Authoritative backend</span>
 
             <p>
 
-              This control surface is interactive but non-persistent. Saving and runtime sync will
-
-              arrive in a future phase.
+              Only low-risk enabled-state changes are exposed in this phase. Creating, deleting, or
+              deeply editing trigger definitions remains planned for a later pass.
 
             </p>
 
@@ -345,7 +325,6 @@
 
   <script src="/js/app.js"></script>
   <script src="/js/auth.js"></script>
-  <script src="/js/feature-gate.js"></script>
   <script src="/js/triggers.js"></script>
   <script src="/assets/js/ss-profile-hovercard.js"></script>
   <script src="/js/status-widget.js" defer></script>

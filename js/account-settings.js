@@ -22,6 +22,8 @@
   const AUTH_UNLINK_ENDPOINT = `${API_BASE}/api/account/auth-methods/unlink`;
   const EMAIL_CHANGE_REQUEST_ENDPOINT = `${API_BASE}/api/account/email/change/request`;
   const PUBLIC_PROFILE_ENDPOINT = `${API_BASE}/api/public/profile/me`;
+  const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
+  const INTEGRATION_KEYS = Object.freeze(["youtube", "rumble", "twitch", "kick", "pilled"]);
   const KNOWN_SOCIAL_KEYS = Object.freeze([
     "website",
     "x",
@@ -72,6 +74,7 @@
 
   const state = {
     profile: null,
+    integrations: [],
     loadingProfile: false,
     savingProfile: false,
     controlsWired: false,
@@ -101,6 +104,12 @@
 
   function hasAccountSettingsSurface() {
     return !!document.querySelector("[data-profile-load-pill]");
+  }
+
+  function getIntegrationElements() {
+    return {
+      summaryNote: document.querySelector("[data-integration-summary-note=\"true\"]"),
+    };
   }
 
   async function requestJson(url, options = {}) {
@@ -249,6 +258,96 @@
     const payload = await requestJson(AUTH_METHODS_ENDPOINT, { method: "GET" });
     applyAuthMethods(payload);
     window.StreamSuitesAuth?.markProtectedDataReady?.("account-auth-methods");
+    return payload;
+  }
+
+  function integrationTone(status) {
+    switch (String(status || "").trim().toLowerCase()) {
+      case "linked":
+        return "success";
+      case "pending":
+      case "error":
+        return "warning";
+      default:
+        return "subtle";
+    }
+  }
+
+  function humanizeIntegrationStatus(status) {
+    switch (String(status || "").trim().toLowerCase()) {
+      case "linked":
+        return "Linked";
+      case "pending":
+        return "Pending";
+      case "error":
+        return "Needs attention";
+      case "not_configured":
+        return "Not configured";
+      case "unavailable":
+        return "Unavailable";
+      default:
+        return "Unlinked";
+    }
+  }
+
+  function summarizeIntegration(item) {
+    if (!item || typeof item !== "object") {
+      return {
+        summary: "Authoritative integration state is unavailable.",
+        note: "Platform page",
+      };
+    }
+    const deployment = item.deployment && typeof item.deployment === "object" ? item.deployment : {};
+    const summaryParts = [];
+    if (item.channel_handle) {
+      summaryParts.push(item.channel_handle);
+    } else if (item.display_label) {
+      summaryParts.push(item.display_label);
+    }
+    if (item.secret_present) {
+      summaryParts.push("backend secret stored");
+    } else if (item.provider_linked) {
+      summaryParts.push("account identity linked");
+    }
+    if (typeof deployment.enabled_trigger_count === "number") {
+      summaryParts.push(`${deployment.enabled_trigger_count} enabled trigger${deployment.enabled_trigger_count === 1 ? "" : "s"}`);
+    }
+    return {
+      summary: summaryParts.join(" · ") || "No safe summary details available yet.",
+      note: item.ui_message || "Platform page",
+    };
+  }
+
+  function renderCreatorIntegrations(payload) {
+    const items = Array.isArray(payload?.items) ? payload.items : [];
+    state.integrations = items;
+    INTEGRATION_KEYS.forEach((key) => {
+      const item = items.find((entry) => entry?.platform_key === key) || null;
+      const statusEl = document.querySelector(`[data-integration-status="${key}"]`);
+      const summaryEl = document.querySelector(`[data-integration-summary="${key}"]`);
+      const noteEl = document.querySelector(`[data-integration-note="${key}"]`);
+      if (statusEl instanceof HTMLElement) {
+        setStatusPill(statusEl, humanizeIntegrationStatus(item?.status), integrationTone(item?.status));
+      }
+      const content = summarizeIntegration(item);
+      if (summaryEl instanceof HTMLElement) {
+        summaryEl.textContent = content.summary;
+      }
+      if (noteEl instanceof HTMLElement) {
+        noteEl.textContent = content.note;
+      }
+    });
+    const els = getIntegrationElements();
+    if (els.summaryNote instanceof HTMLElement) {
+      const linkedCount = typeof payload?.linked_count === "number" ? payload.linked_count : items.filter((item) => item?.status === "linked").length;
+      els.summaryNote.textContent = `Authoritative runtime/Auth reports ${linkedCount} linked platform integration${linkedCount === 1 ? "" : "s"} for this creator account.`;
+    }
+  }
+
+  async function loadCreatorIntegrations() {
+    const payload = await requestJson(CREATOR_INTEGRATIONS_ENDPOINT, { method: "GET" });
+    renderCreatorIntegrations(payload);
+    window.StreamSuitesAuth?.markProtectedDataReady?.("account-creator-integrations");
     return payload;
   }
 
@@ -982,10 +1081,11 @@
     wireEmailChange();
     wirePublicProfileControls();
 
-    const tasks = await Promise.allSettled([refreshAuthMethods(), loadPublicProfile()]);
+    const tasks = await Promise.allSettled([refreshAuthMethods(), loadPublicProfile(), loadCreatorIntegrations()]);
 
     const authResult = tasks[0];
     const profileResult = tasks[1];
+    const integrationsResult = tasks[2];
 
     if (window.location.search.includes("linked_provider=")) {
       setMessage("[data-account-provider-status-message=\"true\"]", "");
@@ -1021,10 +1121,18 @@
         }
       );
     }
+
+    if (integrationsResult.status === "rejected") {
+      const els = getIntegrationElements();
+      if (els.summaryNote instanceof HTMLElement) {
+        els.summaryNote.textContent = integrationsResult.reason?.message || "Unable to load authoritative platform integrations.";
+      }
+    }
   }
 
   function destroy() {
     state.profile = null;
+    state.integrations = [];
     state.loadingProfile = false;
     state.savingProfile = false;
     state.controlsWired = false;

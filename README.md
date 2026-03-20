@@ -25,6 +25,37 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 - Non-creator authenticated sessions are soft-locked out rather than treated as creator-authoritative.
 - No admin mutation endpoints are authored here.
 
+## Creator Accounts, Integrations, and Trigger Foundation
+
+- This phase keeps `StreamSuites-Creator` as a static consumer of runtime/Auth truth for creator account posture, platform integrations, and the first centralized trigger registry pass.
+- The account/settings route now summarizes authoritative platform linkage state instead of inventing local platform truth.
+- Dedicated platform routes consume per-platform integration detail from runtime/Auth and use safe messaging for providers that are still planned or unavailable.
+- Rumble is the only creator-managed credential path in this phase, and it uses a backend-owned secret save/remove flow that returns masked presence state only.
+- The triggers route now consumes the central runtime/Auth trigger registry foundation, seeded with minimal built-ins and only low-risk enabled-state management.
+
+```mermaid
+flowchart TD
+    A[Authenticated StreamSuites account] --> B{Creator-capable posture}
+    B -->|true| C[Runtime/Auth API authority]
+    B -->|false| L[Creator lockout messaging]
+    C --> D[Account settings]
+    C --> E[Per-platform integration detail]
+    C --> F[Central trigger registry v1]
+    D --> G[Canonical slug + public profile controls]
+    D --> H[Integration summary cards]
+    E --> I[Rumble secure secret-backed linkage]
+    E --> J[YouTube / Twitch / Kick / Pilled truthful status pages]
+    I --> C
+    F --> K[!ping and !help built-ins]
+    E --> M[Bot attachment eligibility checks]
+    F --> M
+    M --> N[Creator modules and jobs as downstream consumers]
+    G --> O[Public StreamSuites profile]
+    G --> P[FindMeHere visibility]
+```
+
+The flowchart above is intentionally foundation-grade for the current milestone. It describes the current creator-side contract consumption model and marks unfinished integration areas as planned rather than complete.
+
 ## Repository Structure (Abridged, Accurate)
 
 ```text
@@ -79,6 +110,7 @@ StreamSuites-Creator/
 |   |-- onboarding-page.js
 |   |-- onboarding.js
 |   |-- plans.js
+|   |-- platform-integration-detail.js
 |   |-- platforms.js
 |   |-- render.js
 |   |-- routes.js
