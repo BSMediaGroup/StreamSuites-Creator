@@ -601,10 +601,89 @@
               <p class="account-note" data-account-provider-status-message="true">Manage sign-in methods for this account.</p>
             </article>
 
-            <article class="card">
-              <h3>Platform integrations</h3>
-              <p>Authoritative connection status for creator platforms and trigger readiness.</p>
-              <ul class="account-list">
+            <article class="card account-integration-hub">
+              <div class="card-top">
+                <div>
+                  <h3>Creator integration hub</h3>
+                  <p>Authoritative connection status, trigger readiness, and next actions for creator bot rollout.</p>
+                </div>
+                <div class="platform-actions">
+                  <a class="creator-button ghost" href="/triggers">Open triggers</a>
+                  <a class="creator-button ghost" href="/integrations/discord">Open Discord bot</a>
+                </div>
+              </div>
+
+              <div class="integration-hub-grid">
+                <section class="integration-health-card">
+                  <div class="card-top">
+                    <h4>Account posture</h4>
+                    <span class="status-pill subtle" data-hub-posture-pill="true"><span class="status-dot"></span>Loading</span>
+                  </div>
+                  <p class="integration-health-title" data-hub-posture-title="true">Checking creator eligibility...</p>
+                  <p class="account-note" data-hub-posture-summary="true">
+                    Creator eligibility and profile posture load from the authoritative backend account export.
+                  </p>
+                </section>
+
+                <section class="integration-health-card">
+                  <div class="card-top">
+                    <h4>Integrations overview</h4>
+                    <span class="status-pill subtle" data-hub-overview-pill="true"><span class="status-dot"></span>Loading</span>
+                  </div>
+                  <div class="creator-stats-platform-chips integration-summary-chips">
+                    <div class="creator-stats-platform-chip">
+                      <h4>Linked platforms</h4>
+                      <p data-hub-stat="linked">0</p>
+                    </div>
+                    <div class="creator-stats-platform-chip">
+                      <h4>Trigger-capable now</h4>
+                      <p data-hub-stat="deployable">0</p>
+                    </div>
+                    <div class="creator-stats-platform-chip">
+                      <h4>Linked but limited</h4>
+                      <p data-hub-stat="limited">0</p>
+                    </div>
+                    <div class="creator-stats-platform-chip">
+                      <h4>Planned / not configured</h4>
+                      <p data-hub-stat="planned">0</p>
+                    </div>
+                  </div>
+                  <p class="account-note" data-hub-overview-summary="true">
+                    Platform readiness summaries load from runtime/Auth.
+                  </p>
+                </section>
+
+                <section class="integration-health-card">
+                  <div class="card-top">
+                    <h4>Bot deployment readiness</h4>
+                    <span class="status-pill subtle" data-hub-deploy-pill="true"><span class="status-dot"></span>Loading</span>
+                  </div>
+                  <ul class="integration-readiness-list" data-hub-readiness-checklist="true">
+                    <li>Loading readiness checks...</li>
+                  </ul>
+                  <p class="account-note" data-hub-deploy-summary="true">
+                    Deployment checks stay grounded in current runtime/Auth truth.
+                  </p>
+                </section>
+
+                <section class="integration-health-card">
+                  <div class="card-top">
+                    <h4>Next recommended actions</h4>
+                    <span class="status-pill subtle" data-hub-next-pill="true"><span class="status-dot"></span>Loading</span>
+                  </div>
+                  <p class="integration-health-title" data-hub-next-summary="true">Checking next actions...</p>
+                  <ul class="integration-action-list" data-hub-next-actions="true">
+                    <li>Loading actionable guidance...</li>
+                  </ul>
+                </section>
+              </div>
+
+              <div class="integration-platform-list-wrap">
+                <div class="card-top">
+                  <h4>Platform detail pages</h4>
+                  <a href="/integrations/rumble">Start with platform setup -&gt;</a>
+                </div>
+                <ul class="account-list">
                 <li class="account-list-item" data-integration-row="rumble">
                   <div class="account-list-meta">
                     <span class="account-list-title">Rumble</span>
@@ -660,7 +739,8 @@
                     <a class="creator-button ghost" href="/integrations/pilled">Open Pilled</a>
                   </div>
                 </li>
-              </ul>
+                </ul>
+              </div>
               <p class="account-note" data-integration-summary-note="true">
                 Platform summaries load from the authoritative runtime/Auth integration contract.
               </p>

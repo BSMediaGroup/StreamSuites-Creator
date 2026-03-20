@@ -271,7 +271,60 @@
               <button class="creator-button ghost" type="button" data-trigger-reset>
                 Reload registry
               </button>
+              <a class="creator-button ghost" href="/account">Open integration hub</a>
             </div>
+          </div>
+
+          <div class="card-grid trigger-summary-grid">
+            <article class="card trigger-summary-card">
+              <div class="card-top">
+                <h3>Foundation summary</h3>
+                <span class="status-pill subtle" data-trigger-foundation-pill="true"><span class="status-dot"></span>Loading</span>
+              </div>
+              <div class="stat-grid">
+                <div>
+                  <span class="stat-label">Enabled triggers</span>
+                  <span class="stat-value" data-trigger-enabled-count="true">0</span>
+                </div>
+                <div>
+                  <span class="stat-label">Foundational readiness</span>
+                  <span class="stat-value" data-trigger-foundation-ready="true">Checking</span>
+                </div>
+                <div>
+                  <span class="stat-label">Platforms with scope</span>
+                  <span class="stat-value" data-trigger-platform-count="true">0</span>
+                </div>
+                <div>
+                  <span class="stat-label">Deployable relationships</span>
+                  <span class="stat-value" data-trigger-deployable-count="true">0</span>
+                </div>
+              </div>
+              <p class="account-note" data-trigger-foundation-summary="true">
+                The trigger registry foundation is loading from runtime/Auth.
+              </p>
+            </article>
+
+            <article class="card trigger-summary-card">
+              <div class="card-top">
+                <h3>How this phase works</h3>
+                <span class="status-pill warning"><span class="status-dot"></span>Foundation only</span>
+              </div>
+              <ul class="integration-readiness-list">
+                <li>Commands and enabled state come from the authoritative backend registry.</li>
+                <li>This surface does not invent create, delete, alias-edit, or response-edit controls.</li>
+                <li>Current built-ins establish deployment foundations while later phases expand creator tooling.</li>
+              </ul>
+            </article>
+
+            <article class="card trigger-summary-card">
+              <div class="card-top">
+                <h3>Readiness relationship</h3>
+                <a href="/integrations/discord">Open Discord bot -&gt;</a>
+              </div>
+              <ul class="integration-readiness-list" data-trigger-readiness-relationship="true">
+                <li>Loading platform and trigger relationship details...</li>
+              </ul>
+            </article>
           </div>
 
           <div class="triggers-toolbar">
@@ -289,7 +342,12 @@
 
 
 
-          <div class="triggers-grid" data-trigger-list></div>
+          <div class="triggers-grid" data-trigger-list>
+            <article class="trigger-card trigger-empty-card">
+              <h3 class="trigger-card-title">Loading trigger registry...</h3>
+              <p>Authoritative trigger entries will appear here once runtime/Auth responds.</p>
+            </article>
+          </div>
 
 
           <div class="trigger-footnote">

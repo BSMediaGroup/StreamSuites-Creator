@@ -68,6 +68,9 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 - Dedicated creator platform routes for `youtube`, `rumble`, `twitch`, `kick`, and `pilled` now read the runtime/Auth integration contract, and `js/platform-integration-detail.js` handles the new per-platform consumer flow.
 - The triggers surface now consumes the central runtime/Auth trigger registry v1 and only exposes enabled-state management that the backend currently supports.
 - Rumble creator linkage is now wired to the backend-owned secret save/remove endpoints and keeps the frontend limited to masked presence state.
+- The creator account page now expands the integrations area into a readiness-oriented hub with account posture, deployability checks, truthful next actions, and direct paths into triggers, platform detail pages, and the existing Discord bot area.
+- Platform detail pages now share a more consistent readiness information architecture, including connection state, capability summary, safe metadata, requirements/limitations, management actions, and readiness/next-step treatment driven by the existing backend payload.
+- The triggers page now explains the foundation registry model more clearly, surfaces deployment relationships more explicitly, and adds loading/empty/update states without inventing unsupported trigger authoring capability.
 - Pending entries for `0.4.8-alpha` go here.
 
 ### Human-Readable Notes
@@ -75,6 +78,8 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 - This milestone establishes the first creator-facing integrations and trigger foundation pass, not the full final creator redesign.
 - Account settings now shows truthful platform connection summaries, dedicated platform pages explain current capability clearly, and the triggers page reflects real backend state instead of local fiction.
 - Rumble is the only platform with a real creator-managed linkage flow in this phase, and it stays secret-safe after submission.
+- This follow-up pass makes creator integrations feel like one connected workflow: account posture, linked platforms, trigger foundations, bot readiness, and the next required action now read as one system.
+- Twitch copy now stays explicit about OAuth linkage versus deeper chat/runtime readiness, while YouTube, Kick, and Pilled remain polished but truthful planned-state surfaces.
 - Pending entries for `0.4.8-alpha` go here.
 
 ### Files / Areas Touched
@@ -91,6 +96,13 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 - `js/triggers.js`
 - `css/creator-dashboard.css`
 - `README.md`
+- `views/account.html`
+- `views/triggers.html`
+- `views/platforms/rumble.html`
+- `views/platforms/twitch.html`
+- `views/platforms/youtube.html`
+- `views/platforms/kick.html`
+- `views/platforms/pilled.html`
 - Pending entries for `0.4.8-alpha` go here.
 
 ### Risks / Follow-Ups
@@ -98,4 +110,6 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 - The creator repo remains a consumer only, so richer create/edit/delete trigger flows still depend on later backend contract expansion.
 - The new platform detail pages rely on the runtime/Auth endpoints being deployed alongside the creator surface; stale backend deployments will leave the UI in fallback loading/error copy.
 - Later phases still need fuller provider-specific onboarding and verification UX beyond this foundation pass.
+- Rumble secret-state presentation is now clearer and safer-looking, but any true credential verification, audit trail, or rotation workflow still depends on later backend expansion.
+- The new readiness hub and platform summaries are only as truthful as the currently deployed runtime/Auth serializer payloads; stale backend deployments will still degrade the UX into fallback messaging.
 - Pending entries for `0.4.8-alpha` go here.

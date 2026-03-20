@@ -273,22 +273,30 @@
 
           </div>
 
+          <div class="platform-status-strip">
+            <span class="status-pill subtle" data-platform-readiness-pill="true"><span class="status-dot"></span>Loading</span>
+            <span class="status-pill subtle" data-platform-auth-pill="true"><span class="status-dot"></span>Auth loading</span>
+            <span class="status-pill subtle" data-platform-trigger-pill="true"><span class="status-dot"></span>Trigger loading</span>
+          </div>
 
 
           <div class="card-grid">
 
             <article class="card">
-
-              <h3>Integration overview</h3>
+              <div class="card-top">
+                <h3>Platform hero</h3>
+                <a href="/account">Back to hub -&gt;</a>
+              </div>
 
               <p data-platform-summary="true">Loading authoritative platform summary...</p>
-              <ul data-platform-capabilities="true"></ul>
+              <div class="platform-badge-row" data-platform-capability-pills="true"></div>
+              <ul data-platform-enables="true"></ul>
 
             </article>
 
             <article class="card">
 
-              <h3>Connection status</h3>
+              <h3>Connection state</h3>
 
               <div class="stat-grid">
 
@@ -326,14 +334,49 @@
 
               </div>
 
+              <p class="integration-health-title" data-platform-connection-summary="true">Loading connection summary...</p>
               <p class="account-note" data-platform-note="true">Loading authoritative platform note...</p>
-              <div class="platform-actions" data-platform-actions="true"></div>
 
             </article>
 
             <article class="card">
+              <h3>Capability summary</h3>
+              <ul data-platform-capabilities="true"></ul>
+            </article>
 
-              <h3>What happens next</h3>
+            <article class="card">
+              <h3>Current safe metadata</h3>
+              <ul data-platform-metadata="true"></ul>
+            </article>
+
+            <article class="card">
+              <h3>Requirements and limitations</h3>
+              <ul data-platform-requirements="true"></ul>
+            </article>
+
+            <article class="card">
+              <h3>Management actions</h3>
+              <p class="account-note" data-platform-action-summary="true">
+                Pilled remains planned, so this page keeps management guidance intentionally placeholder-grade but polished.
+              </p>
+              <div class="platform-actions" data-platform-actions="true"></div>
+              <p class="account-note" data-platform-action-status="true">No management action has run yet.</p>
+            </article>
+
+            <article class="card">
+
+              <h3>Readiness and next steps</h3>
+
+              <div class="stat-grid">
+                <div>
+                  <span class="stat-label">Trigger registry</span>
+                  <span class="stat-value" data-platform-stat="triggers">Loading</span>
+                </div>
+                <div>
+                  <span class="stat-label">Deploy readiness</span>
+                  <span class="stat-value" data-platform-stat="deploy">Loading</span>
+                </div>
+              </div>
 
               <p>
 
@@ -341,7 +384,11 @@
 
               </p>
 
+              <ul data-platform-missing="true"></ul>
               <ul data-platform-deploy-reasons="true"></ul>
+              <p class="account-note" data-platform-trigger-note="true">
+                Foundation commands load from the central trigger registry.
+              </p>
 
             </article>
 

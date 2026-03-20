@@ -109,6 +109,21 @@
   function getIntegrationElements() {
     return {
       summaryNote: document.querySelector("[data-integration-summary-note=\"true\"]"),
+      posturePill: document.querySelector("[data-hub-posture-pill=\"true\"]"),
+      postureTitle: document.querySelector("[data-hub-posture-title=\"true\"]"),
+      postureSummary: document.querySelector("[data-hub-posture-summary=\"true\"]"),
+      overviewPill: document.querySelector("[data-hub-overview-pill=\"true\"]"),
+      overviewSummary: document.querySelector("[data-hub-overview-summary=\"true\"]"),
+      deployPill: document.querySelector("[data-hub-deploy-pill=\"true\"]"),
+      deploySummary: document.querySelector("[data-hub-deploy-summary=\"true\"]"),
+      nextPill: document.querySelector("[data-hub-next-pill=\"true\"]"),
+      nextSummary: document.querySelector("[data-hub-next-summary=\"true\"]"),
+      nextActions: document.querySelector("[data-hub-next-actions=\"true\"]"),
+      readinessChecklist: document.querySelector("[data-hub-readiness-checklist=\"true\"]"),
+      statLinked: document.querySelector("[data-hub-stat=\"linked\"]"),
+      statDeployable: document.querySelector("[data-hub-stat=\"deployable\"]"),
+      statLimited: document.querySelector("[data-hub-stat=\"limited\"]"),
+      statPlanned: document.querySelector("[data-hub-stat=\"planned\"]"),
     };
   }
 
@@ -318,6 +333,202 @@
     };
   }
 
+  function countLinkedIntegrations(items) {
+    return items.filter((item) => String(item?.status || "").trim().toLowerCase() === "linked").length;
+  }
+
+  function listToneItem(text, tone = "subtle") {
+    return { text, tone };
+  }
+
+  function humanizeTone(tone) {
+    switch (String(tone || "").trim().toLowerCase()) {
+      case "success":
+        return "Ready";
+      case "warning":
+        return "Attention";
+      default:
+        return "Info";
+    }
+  }
+
+  function renderHubList(element, items) {
+    if (!(element instanceof HTMLElement)) return;
+    element.innerHTML = (items || [])
+      .map(
+        (item) => `
+          <li class="integration-readiness-item">
+            <span class="status-pill ${escapeHtml(item.tone || "subtle")}">${escapeHtml(humanizeTone(item.tone))}</span>
+            <span>${escapeHtml(item.text || "")}</span>
+          </li>
+        `,
+      )
+      .join("");
+  }
+
+  function renderHubActions(element, items) {
+    if (!(element instanceof HTMLElement)) return;
+    element.innerHTML = (items || [])
+      .map(
+        (item) => `
+          <li>
+            <a href="${escapeHtml(item.href || "/account")}">${escapeHtml(item.label || "Open page")}</a>
+            <span>${escapeHtml(item.text || "")}</span>
+          </li>
+        `,
+      )
+      .join("");
+  }
+
+  function integrationHasPartialState(item) {
+    return !!(item?.provider_linked || item?.secret_present || item?.channel_handle || item?.public_url);
+  }
+
+  function renderIntegrationHub(payload) {
+    const els = getIntegrationElements();
+    const items = Array.isArray(state.integrations) ? state.integrations : [];
+    const linkedCount = typeof payload?.linked_count === "number" ? payload.linked_count : countLinkedIntegrations(items);
+    const deployable = items.filter((item) => item?.deployment?.can_deploy);
+    const limited = items.filter((item) => String(item?.status || "").trim().toLowerCase() === "linked" && !item?.deployment?.can_deploy);
+    const partial = items.filter((item) => integrationHasPartialState(item) && String(item?.status || "").trim().toLowerCase() !== "linked");
+    const planned = items.filter((item) => !integrationHasPartialState(item) && String(item?.status || "").trim().toLowerCase() !== "linked");
+    const creatorCapable = state.profile?.creator_capable === true;
+    const enabledTriggerFoundation = items.some((item) => (item?.deployment?.enabled_trigger_count || 0) > 0);
+    const triggerCapablePlatforms = items.filter((item) => item?.deployment?.trigger_execution_eligible);
+
+    if (els.summaryNote instanceof HTMLElement) {
+      els.summaryNote.textContent = `Runtime/Auth reports ${linkedCount} linked platform integration${linkedCount === 1 ? "" : "s"}, ${deployable.length} deployable platform${deployable.length === 1 ? "" : "s"}, and ${partial.length} partial linkage state${partial.length === 1 ? "" : "s"} on this creator account.`;
+    }
+
+    if (els.statLinked) els.statLinked.textContent = String(linkedCount);
+    if (els.statDeployable) els.statDeployable.textContent = String(deployable.length);
+    if (els.statLimited) els.statLimited.textContent = String(limited.length + partial.length);
+    if (els.statPlanned) els.statPlanned.textContent = String(planned.length);
+
+    setStatusPill(
+      els.posturePill,
+      creatorCapable ? "Creator-capable" : "Posture blocked",
+      creatorCapable ? "success" : "warning",
+    );
+    if (els.postureTitle) {
+      els.postureTitle.textContent = creatorCapable ? "Creator account is eligible for creator integrations." : "Creator account posture currently blocks full readiness.";
+    }
+    if (els.postureSummary) {
+      els.postureSummary.textContent = creatorCapable
+        ? `Public profile posture is creator-capable and can participate in creator integration readiness checks. User code: ${state.profile?.user_code || "not exported"}.`
+        : "Runtime/Auth currently marks this account as not creator-capable, so deploy readiness remains limited even if a platform is linked.";
+    }
+
+    setStatusPill(
+      els.overviewPill,
+      deployable.length ? "Workflow connected" : linkedCount ? "Linked but limited" : "Needs first platform link",
+      deployable.length ? "success" : linkedCount ? "warning" : "subtle",
+    );
+    if (els.overviewSummary) {
+      const readyPlatforms = deployable.map((item) => item.platform_key).join(", ");
+      els.overviewSummary.textContent = deployable.length
+        ? `${deployable.length} platform${deployable.length === 1 ? "" : "s"} currently pass the exported foundation checks: ${readyPlatforms}.`
+        : linkedCount
+          ? "Some platforms are linked, but missing capability or trigger foundations still block deployment."
+          : "No supported platform is linked yet. Start from a dedicated platform page to establish the first truthful connection.";
+    }
+
+    const readinessItems = [
+      listToneItem(
+        creatorCapable ? "Account posture is creator-capable." : "Account posture is not currently creator-capable.",
+        creatorCapable ? "success" : "warning",
+      ),
+      listToneItem(
+        linkedCount ? `${linkedCount} supported platform integration${linkedCount === 1 ? "" : "s"} is linked.` : "No supported platform integration is linked yet.",
+        linkedCount ? "success" : "warning",
+      ),
+      listToneItem(
+        triggerCapablePlatforms.length
+          ? `${triggerCapablePlatforms.length} linked platform${triggerCapablePlatforms.length === 1 ? "" : "s"} exports trigger-capable readiness.`
+          : "No linked platform currently exports trigger-capable readiness.",
+        triggerCapablePlatforms.length ? "success" : "warning",
+      ),
+      listToneItem(
+        enabledTriggerFoundation ? "Foundational triggers exist and at least one scoped trigger is enabled." : "No enabled foundational trigger currently backs platform readiness.",
+        enabledTriggerFoundation ? "success" : "warning",
+      ),
+      listToneItem(
+        deployable.length ? "Bot deployment is truthfully possible for at least one platform." : "No platform is currently deployable from the exported readiness model.",
+        deployable.length ? "success" : "subtle",
+      ),
+    ];
+    renderHubList(els.readinessChecklist, readinessItems);
+
+    setStatusPill(
+      els.deployPill,
+      deployable.length ? "Deployable now" : linkedCount ? "Blocked by readiness gaps" : "No platform link yet",
+      deployable.length ? "success" : linkedCount ? "warning" : "subtle",
+    );
+    if (els.deploySummary) {
+      els.deploySummary.textContent = deployable.length
+        ? "Open the Discord bot area or the relevant platform page to continue deployment-oriented setup."
+        : limited.length || partial.length
+          ? "Review limited or partial platform pages and foundational triggers to clear the current blockers."
+          : "Start by linking a platform or storing required secure credentials where the current backend supports it.";
+    }
+
+    const nextActions = [];
+    if (!creatorCapable) {
+      nextActions.push({
+        href: "/account",
+        label: "Review account posture",
+        text: "Creator eligibility is currently blocking full readiness.",
+      });
+    }
+    if (!linkedCount) {
+      nextActions.push({
+        href: "/integrations/rumble",
+        label: "Link a platform",
+        text: "Rumble currently exposes the clearest creator-managed secure linkage path.",
+      });
+    }
+    if (partial.length) {
+      nextActions.push({
+        href: `/integrations/${partial[0].platform_key}`,
+        label: `Finish ${partial[0].platform_key} setup`,
+        text: "A partial linkage state exists but is not yet operational.",
+      });
+    }
+    if (!enabledTriggerFoundation) {
+      nextActions.push({
+        href: "/triggers",
+        label: "Enable foundational triggers",
+        text: "At least one scoped foundational trigger should be enabled before deployment.",
+      });
+    }
+    if (deployable.length) {
+      nextActions.push({
+        href: "/integrations/discord",
+        label: "Continue bot deployment",
+        text: "A platform already passes the exported readiness model, so the next step is bot-side setup.",
+      });
+    }
+    if (!nextActions.length) {
+      nextActions.push({
+        href: "/account",
+        label: "Review integration hub",
+        text: "No urgent blocker is exported right now. Monitor platform detail pages for changes.",
+      });
+    }
+
+    setStatusPill(
+      els.nextPill,
+      deployable.length ? "Deployment path available" : nextActions.length ? "Action recommended" : "Monitoring",
+      deployable.length ? "success" : "warning",
+    );
+    if (els.nextSummary) {
+      els.nextSummary.textContent = deployable.length
+        ? "At least one path is ready enough to move into bot deployment and ongoing monitoring."
+        : "The current next step is to clear the highest-signal blocker surfaced by runtime/Auth.";
+    }
+    renderHubActions(els.nextActions, nextActions);
+  }
+
   function renderCreatorIntegrations(payload) {
     const items = Array.isArray(payload?.items) ? payload.items : [];
     state.integrations = items;
@@ -338,10 +549,7 @@
       }
     });
     const els = getIntegrationElements();
-    if (els.summaryNote instanceof HTMLElement) {
-      const linkedCount = typeof payload?.linked_count === "number" ? payload.linked_count : items.filter((item) => item?.status === "linked").length;
-      els.summaryNote.textContent = `Authoritative runtime/Auth reports ${linkedCount} linked platform integration${linkedCount === 1 ? "" : "s"} for this creator account.`;
-    }
+    renderIntegrationHub(payload);
   }
 
   async function loadCreatorIntegrations() {
@@ -877,6 +1085,7 @@
     renderVisibilityStatus(normalized);
     renderSharePreviews(normalized);
     renderPreviewSurface();
+    renderIntegrationHub();
     setStatusPill(els.loadPill, "Profile loaded", "success");
     setMessage("[data-profile-save-status=\"true\"]", "Authoritative profile settings are ready to edit.", "neutral");
   }

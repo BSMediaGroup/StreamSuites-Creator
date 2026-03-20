@@ -273,18 +273,27 @@
 
           </div>
 
+          <div class="platform-status-strip">
+            <span class="status-pill subtle" data-platform-readiness-pill="true"><span class="status-dot"></span>Loading</span>
+            <span class="status-pill subtle" data-platform-auth-pill="true"><span class="status-dot"></span>Auth loading</span>
+            <span class="status-pill subtle" data-platform-trigger-pill="true"><span class="status-dot"></span>Trigger loading</span>
+          </div>
 
 
           <div class="card-grid">
 
             <article class="card">
-              <h3>Integration overview</h3>
+              <div class="card-top">
+                <h3>Platform hero</h3>
+                <a href="/account">Back to hub -&gt;</a>
+              </div>
               <p data-platform-summary="true">Loading authoritative platform summary...</p>
-              <ul data-platform-capabilities="true"></ul>
+              <div class="platform-badge-row" data-platform-capability-pills="true"></div>
+              <ul data-platform-enables="true"></ul>
             </article>
 
             <article class="card">
-              <h3>Connection status</h3>
+              <h3>Connection state</h3>
               <div class="stat-grid">
                 <div>
                   <span class="stat-label">Connection</span>
@@ -303,12 +312,36 @@
                   <span class="stat-value" data-platform-stat="checked">Loading</span>
                 </div>
               </div>
+              <p class="integration-health-title" data-platform-connection-summary="true">Loading connection summary...</p>
               <p class="account-note" data-platform-note="true">Loading authoritative platform note...</p>
-              <div class="platform-actions" data-platform-actions="true"></div>
             </article>
 
             <article class="card">
-              <h3>Bot and trigger readiness</h3>
+              <h3>Capability summary</h3>
+              <ul data-platform-capabilities="true"></ul>
+            </article>
+
+            <article class="card">
+              <h3>Current safe metadata</h3>
+              <ul data-platform-metadata="true"></ul>
+            </article>
+
+            <article class="card">
+              <h3>Requirements and limitations</h3>
+              <ul data-platform-requirements="true"></ul>
+            </article>
+
+            <article class="card">
+              <h3>Management actions</h3>
+              <p class="account-note" data-platform-action-summary="true">
+                Creator-safe platform actions appear here when the current backend contract supports them.
+              </p>
+              <div class="platform-actions" data-platform-actions="true"></div>
+              <p class="account-note" data-platform-action-status="true">No management action has run yet.</p>
+            </article>
+
+            <article class="card">
+              <h3>Readiness and next steps</h3>
               <div class="stat-grid">
                 <div>
                   <span class="stat-label">Trigger registry</span>
@@ -319,6 +352,7 @@
                   <span class="stat-value" data-platform-stat="deploy">Loading</span>
                 </div>
               </div>
+              <ul data-platform-missing="true"></ul>
               <ul data-platform-deploy-reasons="true"></ul>
               <p class="account-note" data-platform-trigger-note="true">
                 Foundation commands load from the central trigger registry.
@@ -326,7 +360,9 @@
             </article>
 
             <article class="card">
-              <h3>Secret handling</h3>
+              <h3>Secure secret handling</h3>
+              <div class="platform-badge-row" data-rumble-secret-badges="true"></div>
+              <p class="integration-health-title" data-rumble-secret-summary="true">Checking stored secret posture...</p>
               <p>
                 Rumble linkage in this phase uses a backend-owned secret path. After save, the creator
                 surface only receives masked presence state, never the raw credential.
@@ -349,9 +385,12 @@
                 </div>
                 <button class="creator-button ghost" type="button" data-rumble-dialog-close="true">Close</button>
               </div>
-              <p class="account-note">
+              <div class="platform-security-panel">
+                <span class="status-pill warning"><span class="status-dot"></span>Secret-safe flow</span>
+                <p class="account-note">
                 This saves a backend-owned credential for future runtime use. The creator surface will only receive masked presence state after submission.
-              </p>
+                </p>
+              </div>
               <label class="account-field">
                 <span class="account-field-label">Stream key</span>
                 <input class="account-field-input" type="password" autocomplete="new-password" data-rumble-input="stream_key" placeholder="Paste Rumble stream/API key" />
