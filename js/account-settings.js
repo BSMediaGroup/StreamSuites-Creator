@@ -23,6 +23,8 @@
   const EMAIL_CHANGE_REQUEST_ENDPOINT = `${API_BASE}/api/account/email/change/request`;
   const PUBLIC_PROFILE_ENDPOINT = `${API_BASE}/api/public/profile/me`;
   const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
+  const AVATAR_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
+  const COVER_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
   const INTEGRATION_KEYS = Object.freeze(["youtube", "rumble", "twitch", "kick", "pilled"]);
   const KNOWN_SOCIAL_KEYS = Object.freeze([
     "website",
@@ -75,6 +77,10 @@
   const state = {
     profile: null,
     integrations: [],
+    uploads: {
+      avatar: null,
+      cover: null,
+    },
     loadingProfile: false,
     savingProfile: false,
     controlsWired: false,
@@ -199,7 +205,14 @@
       avatarImage: document.querySelector("[data-account-profile-avatar]"),
       avatarUrlInput: document.querySelector("[data-profile-avatar-url]"),
       avatarFeedback: document.querySelector("[data-profile-avatar-feedback]"),
+      avatarFileInput: document.querySelector("[data-profile-avatar-file]"),
+      avatarClearButton: document.querySelector("[data-profile-avatar-clear]"),
+      avatarUploadStatus: document.querySelector("[data-profile-avatar-upload-status]"),
       coverImageInput: document.querySelector("[data-profile-cover-image]"),
+      coverFileInput: document.querySelector("[data-profile-cover-file]"),
+      coverClearButton: document.querySelector("[data-profile-cover-clear]"),
+      coverUploadStatus: document.querySelector("[data-profile-cover-upload-status]"),
+      coverPreview: document.querySelector("[data-profile-cover-preview]"),
       backgroundImageInput: document.querySelector("[data-profile-background-image]"),
       bioInput: document.querySelector("[data-profile-bio]"),
       linkInputs: Array.from(document.querySelectorAll("[data-profile-link]")),
@@ -753,6 +766,18 @@
         field.disabled = busy || !state.profile;
       }
     });
+    if (els.avatarFileInput instanceof HTMLInputElement) {
+      els.avatarFileInput.disabled = busy || !state.profile;
+    }
+    if (els.coverFileInput instanceof HTMLInputElement) {
+      els.coverFileInput.disabled = busy || !state.profile;
+    }
+    if (els.avatarClearButton instanceof HTMLButtonElement) {
+      els.avatarClearButton.disabled = busy || !state.profile;
+    }
+    if (els.coverClearButton instanceof HTMLButtonElement) {
+      els.coverClearButton.disabled = busy || !state.profile;
+    }
   }
 
   function setStatusPill(element, text, tone) {
@@ -768,6 +793,102 @@
 
   function getActiveSession() {
     return window.App?.session && typeof window.App.session === "object" ? window.App.session : {};
+  }
+
+  function getStagedUpload(kind) {
+    return state.uploads && Object.prototype.hasOwnProperty.call(state.uploads, kind)
+      ? state.uploads[kind]
+      : null;
+  }
+
+  function clearStagedUpload(kind, options = {}) {
+    if (!state.uploads || !Object.prototype.hasOwnProperty.call(state.uploads, kind)) return;
+    state.uploads[kind] = null;
+    const els = getProfileElements();
+    if (kind === "avatar" && !options.preserveInput && els.avatarFileInput instanceof HTMLInputElement) {
+      els.avatarFileInput.value = "";
+    }
+    if (kind === "cover" && !options.preserveInput && els.coverFileInput instanceof HTMLInputElement) {
+      els.coverFileInput.value = "";
+    }
+  }
+
+  function resolveAvatarDraftValue() {
+    const draftUpload = getStagedUpload("avatar");
+    if (draftUpload?.dataUrl) return draftUpload.dataUrl;
+    return coerceText(getProfileElements().avatarUrlInput?.value) || coerceText(state.profile?.avatar_url);
+  }
+
+  function resolveCoverDraftValue() {
+    const draftUpload = getStagedUpload("cover");
+    if (draftUpload?.dataUrl) return draftUpload.dataUrl;
+    return coerceText(getProfileElements().coverImageInput?.value) || coerceText(state.profile?.cover_image_url);
+  }
+
+  function renderMediaUploadStatus() {
+    const els = getProfileElements();
+    const avatarUpload = getStagedUpload("avatar");
+    if (els.avatarUploadStatus instanceof HTMLElement) {
+      if (avatarUpload?.filename) {
+        els.avatarUploadStatus.textContent = `Staged upload: ${avatarUpload.filename} (${Math.round((avatarUpload.size || 0) / 1024)} KB). Save profile changes to persist it.`;
+        els.avatarUploadStatus.dataset.tone = "success";
+      } else {
+        els.avatarUploadStatus.textContent = "Upload from device is the default avatar update path. Manual URL entry stays available below.";
+        els.avatarUploadStatus.dataset.tone = "neutral";
+      }
+    }
+    const coverUpload = getStagedUpload("cover");
+    if (els.coverUploadStatus instanceof HTMLElement) {
+      if (coverUpload?.filename) {
+        els.coverUploadStatus.textContent = `Staged upload: ${coverUpload.filename} (${Math.round((coverUpload.size || 0) / 1024)} KB). Save media to persist it.`;
+        els.coverUploadStatus.dataset.tone = "success";
+      } else {
+        els.coverUploadStatus.textContent = "Upload from device is the default cover update path. Manual URL entry stays available below.";
+        els.coverUploadStatus.dataset.tone = "neutral";
+      }
+    }
+    if (els.coverPreview instanceof HTMLElement) {
+      const coverValue = resolveCoverDraftValue();
+      els.coverPreview.style.backgroundImage = coverValue ? `url("${coverValue}")` : "";
+      els.coverPreview.classList.toggle("has-image", Boolean(coverValue));
+    }
+  }
+
+  function readImageFile(file, maxBytes) {
+    return new Promise((resolve, reject) => {
+      if (!(file instanceof File)) {
+        reject(new Error("No file selected."));
+        return;
+      }
+      if (!String(file.type || "").startsWith("image/")) {
+        reject(new Error("Select a PNG, JPEG, WEBP, or GIF image."));
+        return;
+      }
+      if (file.size > maxBytes) {
+        reject(new Error(`Selected image exceeds the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(new Error("Unable to read the selected image."));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function stageUpload(kind, file, maxBytes) {
+    const dataUrl = await readImageFile(file, maxBytes);
+    state.uploads[kind] = {
+      dataUrl,
+      filename: file.name,
+      size: file.size,
+      type: file.type,
+    };
+    renderMediaUploadStatus();
+    if (kind === "avatar") {
+      updateAvatarPreview();
+      renderAvatarFeedback();
+    }
+    renderPreviewSurface();
   }
 
   function resolvePreviewBadges(profile) {
@@ -853,11 +974,11 @@
 
     return {
       display_name: coerceText(els.displayNameInput?.value),
-      avatar_url: coerceText(els.avatarUrlInput?.value),
+      avatar_url: getStagedUpload("avatar")?.dataUrl || coerceText(els.avatarUrlInput?.value),
       public_slug_input: coerceText(els.slugInput?.value),
       streamsuites_profile_enabled: !!els.streamsuitesToggle?.checked,
       findmehere_enabled: !!els.findmeToggle?.checked,
-      cover_image_url: coerceText(els.coverImageInput?.value),
+      cover_image_url: getStagedUpload("cover")?.dataUrl || coerceText(els.coverImageInput?.value),
       background_image_url: coerceText(els.backgroundImageInput?.value),
       bio: coerceText(els.bioInput?.value),
       social_links: socialLinks,
@@ -866,6 +987,7 @@
 
   function getSupportedDraftSnapshot(draft) {
     return {
+      avatar_url: coerceText(draft.avatar_url),
       streamsuites_profile_enabled: !!draft.streamsuites_profile_enabled,
       findmehere_enabled: !!draft.findmehere_enabled,
       cover_image_url: coerceText(draft.cover_image_url),
@@ -878,19 +1000,18 @@
   function getIdentityDraftSnapshot(draft) {
     return {
       display_name: coerceText(draft.display_name),
-      avatar_url: coerceText(draft.avatar_url),
     };
   }
 
   function getIdentitySavedSnapshot(profile) {
     return {
       display_name: coerceText(profile?.display_name),
-      avatar_url: coerceText(profile?.avatar_url),
     };
   }
 
   function getSupportedSavedSnapshot(profile) {
     return {
+      avatar_url: coerceText(profile?.avatar_url),
       streamsuites_profile_enabled: !!profile?.streamsuites_profile_enabled,
       findmehere_enabled: !!profile?.findmehere_enabled,
       cover_image_url: coerceText(profile?.cover_image_url),
@@ -969,20 +1090,31 @@
         : "Display name loads from the authoritative account identity.";
       els.displayNameFeedback.dataset.tone = dirty ? "warning" : "neutral";
     }
+  }
 
+  function renderAvatarFeedback() {
+    const els = getProfileElements();
+    const draft = getEditableDraft();
+    const savedAvatar = coerceText(state.profile?.avatar_url);
+    const dirty = coerceText(draft.avatar_url) !== savedAvatar;
     if (els.avatarFeedback) {
-      els.avatarFeedback.textContent = dirty
-        ? "Avatar URL edits are staged here, but the current creator API does not expose a self-serve avatar write route yet."
-        : "Avatar URL loads from the authoritative account identity. Future upload-based media can replace this URL field cleanly.";
-      els.avatarFeedback.dataset.tone = dirty ? "warning" : "neutral";
+      if (getStagedUpload("avatar")?.filename) {
+        els.avatarFeedback.textContent = "A device upload is staged and will replace the saved account avatar when you save profile changes.";
+        els.avatarFeedback.dataset.tone = "success";
+      } else if (dirty) {
+        els.avatarFeedback.textContent = "Manual avatar URL changes are supported, but upload-from-device is the preferred path.";
+        els.avatarFeedback.dataset.tone = "warning";
+      } else {
+        els.avatarFeedback.textContent = "Avatar changes now save through the authoritative backend. Upload-from-device is preferred; manual URL stays secondary.";
+        els.avatarFeedback.dataset.tone = "neutral";
+      }
     }
   }
 
   function updateAvatarPreview() {
     const els = getProfileElements();
     if (!(els.avatarImage instanceof HTMLImageElement)) return;
-    const inputValue = coerceText(els.avatarUrlInput?.value);
-    els.avatarImage.src = inputValue || coerceText(state.profile?.avatar_url) || "/assets/icons/ui/profile.svg";
+    els.avatarImage.src = resolveAvatarDraftValue() || "/assets/icons/ui/profile.svg";
   }
 
   function renderVisibilityStatus(profile) {
@@ -1040,6 +1172,8 @@
   function applyProfile(profile) {
     const normalized = normalizeProfilePayload(profile);
     state.profile = cloneProfile(normalized);
+    clearStagedUpload("avatar");
+    clearStagedUpload("cover");
 
     const els = getProfileElements();
     if (els.displayNameInput instanceof HTMLInputElement) {
@@ -1082,6 +1216,8 @@
     renderSlugAliases(normalized);
     renderSlugFeedback();
     renderIdentityFeedback();
+    renderAvatarFeedback();
+    renderMediaUploadStatus();
     renderVisibilityStatus(normalized);
     renderSharePreviews(normalized);
     renderPreviewSurface();
@@ -1143,7 +1279,7 @@
       if (slugChanged && identityDirty) {
         setMessage(
           "[data-profile-save-status=\"true\"]",
-          `Supported profile fields are unchanged. Slug, display name, and avatar edits are not persisted because the current creator self-serve backend only exposes public profile settings writes here.`,
+          `Supported profile fields are unchanged. Slug and display name edits are not persisted because the current creator self-serve backend only exposes public profile settings writes here.`,
           "warning"
         );
       } else if (slugChanged) {
@@ -1155,17 +1291,19 @@
       } else if (identityDirty) {
         setMessage(
           "[data-profile-save-status=\"true\"]",
-          "Display name and avatar edits are not persisted because the current creator API does not expose identity write routes here.",
+          "Display name edits are not persisted because the current creator API does not expose a self-serve identity write route here.",
           "warning"
         );
       } else {
         setMessage("[data-profile-save-status=\"true\"]", "No supported profile changes to save.", "neutral");
       }
       renderIdentityFeedback();
+      renderAvatarFeedback();
       return;
     }
 
     const payload = {
+      avatar_url: draft.avatar_url,
       streamsuites_profile_enabled: draft.streamsuites_profile_enabled,
       findmehere_enabled: draft.findmehere_enabled,
       cover_image_url: draft.cover_image_url,
@@ -1190,7 +1328,7 @@
           limitations.push(`canonical slug remains "${state.profile.public_slug || "unset"}"`);
         }
         if (identityDirty) {
-          limitations.push("display name and avatar remain on their saved authoritative account identity values");
+          limitations.push("display name remains on its saved authoritative account identity value");
         }
         setMessage(
           "[data-profile-save-status=\"true\"]",
@@ -1226,6 +1364,8 @@
       setProfileBusy(false);
       renderSlugFeedback();
       renderIdentityFeedback();
+      renderAvatarFeedback();
+      renderMediaUploadStatus();
     }
   }
 
@@ -1252,7 +1392,59 @@
     if (els.avatarUrlInput instanceof HTMLInputElement) {
       els.avatarUrlInput.addEventListener("input", () => {
         updateAvatarPreview();
-        renderIdentityFeedback();
+        renderAvatarFeedback();
+        renderPreviewSurface();
+        renderMediaUploadStatus();
+      });
+    }
+    if (els.avatarFileInput instanceof HTMLInputElement) {
+      els.avatarFileInput.addEventListener("change", async () => {
+        const file = els.avatarFileInput.files?.[0];
+        if (!file) return;
+        try {
+          await stageUpload("avatar", file, AVATAR_UPLOAD_MAX_BYTES);
+        } catch (err) {
+          clearStagedUpload("avatar");
+          renderMediaUploadStatus();
+          renderAvatarFeedback();
+          showToast(err?.message || "Unable to stage the avatar upload.", "danger", {
+            key: "creator-avatar-upload",
+            title: "Upload failed",
+            autoHideMs: 6800
+          });
+        }
+      });
+    }
+    if (els.coverFileInput instanceof HTMLInputElement) {
+      els.coverFileInput.addEventListener("change", async () => {
+        const file = els.coverFileInput.files?.[0];
+        if (!file) return;
+        try {
+          await stageUpload("cover", file, COVER_UPLOAD_MAX_BYTES);
+        } catch (err) {
+          clearStagedUpload("cover");
+          renderMediaUploadStatus();
+          showToast(err?.message || "Unable to stage the cover upload.", "danger", {
+            key: "creator-cover-upload",
+            title: "Upload failed",
+            autoHideMs: 6800
+          });
+        }
+      });
+    }
+    if (els.avatarClearButton instanceof HTMLButtonElement) {
+      els.avatarClearButton.addEventListener("click", () => {
+        clearStagedUpload("avatar");
+        renderMediaUploadStatus();
+        updateAvatarPreview();
+        renderAvatarFeedback();
+        renderPreviewSurface();
+      });
+    }
+    if (els.coverClearButton instanceof HTMLButtonElement) {
+      els.coverClearButton.addEventListener("click", () => {
+        clearStagedUpload("cover");
+        renderMediaUploadStatus();
         renderPreviewSurface();
       });
     }
@@ -1342,6 +1534,7 @@
   function destroy() {
     state.profile = null;
     state.integrations = [];
+    state.uploads = { avatar: null, cover: null };
     state.loadingProfile = false;
     state.savingProfile = false;
     state.controlsWired = false;

@@ -31,6 +31,8 @@
       "/js/creator-stats.js"
     ],
     account: ["/js/account-settings.js"],
+    integrationsHub: ["/js/integrations-hub.js"],
+    platformIntegration: ["/js/platform-integration-detail.js"],
     statistics: [
       "/js/utils/stats-formatting.js",
       "/js/utils/stats-svg-charts.js",
@@ -487,6 +489,10 @@
       controllerName: "StatisticsView"
     });
     registerView("account", { scripts: ViewScripts.account, controllerName: "AccountSettingsView" });
+    registerView("integrations", {
+      scripts: ViewScripts.integrationsHub,
+      controllerName: "IntegrationsHubView"
+    });
     registerView("plans", { scripts: ViewScripts.plans, controllerName: "PlansView" });
     registerView("triggers", { scripts: ViewScripts.triggers, controllerName: "TriggersView" });
     registerView("settings", { scripts: ViewScripts.settings, controllerName: "SettingsView" });
@@ -497,16 +503,36 @@
     registerView("scoreboards");
     registerView("tallies");
     registerView("design");
-    registerView("integrations/rumble", { templatePath: "platforms/rumble" });
-    registerView("integrations/youtube", { templatePath: "platforms/youtube" });
-    registerView("integrations/twitch", { templatePath: "platforms/twitch" });
-    registerView("integrations/kick", { templatePath: "platforms/kick" });
+    registerView("integrations/rumble", {
+      templatePath: "platforms/rumble",
+      scripts: ViewScripts.platformIntegration,
+      controllerName: "PlatformIntegrationDetailView"
+    });
+    registerView("integrations/youtube", {
+      templatePath: "platforms/youtube",
+      scripts: ViewScripts.platformIntegration,
+      controllerName: "PlatformIntegrationDetailView"
+    });
+    registerView("integrations/twitch", {
+      templatePath: "platforms/twitch",
+      scripts: ViewScripts.platformIntegration,
+      controllerName: "PlatformIntegrationDetailView"
+    });
+    registerView("integrations/kick", {
+      templatePath: "platforms/kick",
+      scripts: ViewScripts.platformIntegration,
+      controllerName: "PlatformIntegrationDetailView"
+    });
     registerView("integrations/discord", {
       templatePath: "platforms/discord",
       scripts: ViewScripts.discordPlatform,
       controllerName: "DiscordPlatformView"
     });
-    registerView("integrations/pilled", { templatePath: "platforms/pilled" });
+    registerView("integrations/pilled", {
+      templatePath: "platforms/pilled",
+      scripts: ViewScripts.platformIntegration,
+      controllerName: "PlatformIntegrationDetailView"
+    });
     registerView("modules/clips");
     registerView("modules/polls");
     registerView("modules/overlays");

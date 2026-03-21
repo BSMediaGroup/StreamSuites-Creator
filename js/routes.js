@@ -11,6 +11,7 @@
     { route: "statistics", templatePath: "statistics" },
     { route: "notifications", templatePath: "notifications" },
     { route: "account", templatePath: "account" },
+    { route: "integrations", templatePath: "integrations" },
     { route: "plans", templatePath: "plans" },
     { route: "triggers", templatePath: "triggers" },
     { route: "settings", templatePath: "settings" },

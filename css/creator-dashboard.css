@@ -1798,6 +1798,67 @@ h3 {
   color: var(--creator-muted);
 }
 
+.profile-upload-surface {
+  margin-top: 12px;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(154, 209, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(15, 22, 34, 0.92), rgba(9, 13, 22, 0.78)),
+    radial-gradient(circle at top right, rgba(122, 140, 255, 0.14), transparent 45%);
+}
+
+.profile-upload-card {
+  display: grid;
+  gap: 6px;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+.profile-upload-title {
+  font-family: var(--creator-heading);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.profile-upload-help {
+  font-size: var(--creator-body-size-sm);
+  color: var(--creator-muted);
+  line-height: 1.5;
+}
+
+.profile-upload-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.profile-upload-input {
+  flex: 1 1 260px;
+}
+
+.profile-upload-secondary-input {
+  margin-top: 10px;
+}
+
+.profile-cover-preview {
+  min-height: 124px;
+  border-radius: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  background:
+    linear-gradient(135deg, rgba(94, 114, 255, 0.16), rgba(18, 28, 43, 0.42)),
+    rgba(8, 12, 20, 0.72);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .account-profile-card {
   grid-column: 1 / -1;
 }
@@ -2195,6 +2256,214 @@ h3 {
   border-radius: 14px;
   background: rgba(8, 12, 20, 0.76);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.creator-integrations-hub-page {
+  display: grid;
+  gap: 22px;
+}
+
+.creator-integrations-hero {
+  align-items: flex-start;
+}
+
+.creator-integrations-kpi-grid,
+.creator-integrations-hub-grid,
+.creator-integrations-platform-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.creator-integrations-kpi-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.creator-integrations-hub-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.creator-integrations-platform-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.creator-integrations-kpi-card,
+.creator-platform-readiness-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(9, 13, 22, 0.72);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.creator-integrations-kpi-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px;
+}
+
+.creator-integrations-kpi-card .label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(214, 226, 255, 0.58);
+}
+
+.creator-integrations-kpi-card strong {
+  font-size: 24px;
+  font-family: var(--creator-heading);
+}
+
+.creator-integrations-kpi-card.is-good {
+  border-color: rgba(91, 207, 115, 0.3);
+}
+
+.creator-integrations-kpi-card.is-warn {
+  border-color: rgba(255, 199, 114, 0.28);
+}
+
+.creator-integrations-kpi-card.is-neutral {
+  border-color: rgba(154, 209, 255, 0.16);
+}
+
+.creator-integrations-summary-card,
+.creator-integrations-platforms-card {
+  min-height: 100%;
+}
+
+.creator-platform-readiness-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.creator-platform-readiness-card.tone-success {
+  border-color: rgba(91, 207, 115, 0.32);
+}
+
+.creator-platform-readiness-card.tone-warning {
+  border-color: rgba(255, 199, 114, 0.32);
+}
+
+.creator-platform-readiness-card.tone-subtle {
+  border-color: rgba(154, 209, 255, 0.16);
+}
+
+.creator-platform-readiness-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.creator-platform-readiness-head h4 {
+  margin: 4px 0 0;
+  font-size: 18px;
+}
+
+.creator-platform-readiness-copy {
+  margin: 0;
+  color: var(--creator-muted);
+  line-height: 1.55;
+}
+
+.creator-platform-readiness-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.creator-platform-readiness-metrics > div {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(6, 10, 18, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.creator-platform-readiness-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.creator-platform-readiness-list li {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(6, 10, 18, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--creator-muted);
+  line-height: 1.45;
+}
+
+.platform-management-block {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(6, 10, 18, 0.74);
+}
+
+.platform-management-block-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.platform-inline-note {
+  font-size: 11px;
+  color: rgba(214, 226, 255, 0.58);
+}
+
+.platform-management-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.platform-management-checklist li {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--creator-muted);
+}
+
+.platform-workspace-form {
+  display: grid;
+  gap: 14px;
+}
+
+.platform-workspace-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.platform-workspace-field-wide {
+  grid-column: 1 / -1;
+}
+
+.platform-workspace-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: var(--creator-body-size-sm);
+  color: var(--creator-text);
+}
+
+.platform-workspace-footer {
+  display: grid;
+  gap: 12px;
 }
 
 .discord-bot-card {
@@ -4308,6 +4577,11 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
 }
 
 @media (max-width: 980px) {
+  .creator-platform-readiness-metrics,
+  .platform-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
   :root {
     --app-sidebar-width: min(76vw, 252px);
     --app-sidebar-collapsed-width: 64px;
@@ -4398,6 +4672,12 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
 }
 
 @media (max-width: 720px) {
+  .creator-integrations-kpi-grid,
+  .creator-integrations-hub-grid,
+  .creator-integrations-platform-grid {
+    grid-template-columns: 1fr;
+  }
+
   #app-header.creator-header {
     flex-direction: row;
     align-items: center;

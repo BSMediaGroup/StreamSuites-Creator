@@ -75,6 +75,10 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 
 ### Technical Notes
 
+- Creator route loading for per-platform integrations was repaired by moving the platform detail logic back into a controller-style `js/platform-integration-detail.js` flow that can initialize correctly on SPA route swaps instead of depending on stripped inline `<script>` tags and `DOMContentLoaded`.
+- A dedicated full-page creator integrations hub now exists at `/integrations`, with runtime/Auth-backed readiness KPIs, next-action guidance, trigger-foundation summary, and per-platform readiness cards.
+- Platform pages for `rumble`, `youtube`, `twitch`, `kick`, and `pilled` now expose real management surfaces: Rumble keeps the secure secret modal path, while the other platforms use additive runtime-backed workspace save/remove flows for channel metadata, setup posture, and readiness notes.
+- Creator account/profile media controls now prefer upload-from-device for avatar and cover updates, while preserving the manual URL inputs as explicit secondary paths against the same runtime/Auth profile contract.
 - Creator account/settings now consumes the authoritative runtime/Auth integrations summary instead of hard-coded platform status text.
 - Dedicated creator platform routes for `youtube`, `rumble`, `twitch`, `kick`, and `pilled` now read the runtime/Auth integration contract, and `js/platform-integration-detail.js` handles the new per-platform consumer flow.
 - The triggers surface now consumes the central runtime/Auth trigger registry v1 and only exposes enabled-state management that the backend currently supports.
@@ -86,6 +90,8 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 
 ### Human-Readable Notes
 
+- Creator integrations now behave like a real workflow instead of a cramped settings sidecar: there is a proper hub page, platform pages no longer hang in loading shells, and each platform has an actionable management surface that stays honest about current backend maturity.
+- Profile image and cover image editing now feel like normal upload-first creator flows, with device upload staged previews leading the UX and manual image URLs retained as backup/manual inputs.
 - This milestone establishes the first creator-facing integrations and trigger foundation pass, not the full final creator redesign.
 - Account settings now shows truthful platform connection summaries, dedicated platform pages explain current capability clearly, and the triggers page reflects real backend state instead of local fiction.
 - Rumble is the only platform with a real creator-managed linkage flow in this phase, and it stays secret-safe after submission.
@@ -96,6 +102,7 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 ### Files / Areas Touched
 
 - `views/account.html`
+- `views/integrations.html`
 - `views/platforms/rumble.html`
 - `views/platforms/youtube.html`
 - `views/platforms/twitch.html`
@@ -103,21 +110,17 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 - `views/platforms/pilled.html`
 - `views/triggers.html`
 - `js/account-settings.js`
+- `js/integrations-hub.js`
 - `js/platform-integration-detail.js`
 - `js/triggers.js`
 - `css/creator-dashboard.css`
 - `README.md`
-- `views/account.html`
-- `views/triggers.html`
-- `views/platforms/rumble.html`
-- `views/platforms/twitch.html`
-- `views/platforms/youtube.html`
-- `views/platforms/kick.html`
-- `views/platforms/pilled.html`
 - Pending entries for `0.4.8-alpha` go here.
 
 ### Risks / Follow-Ups
 
+- Upload-first profile media currently uses additive validated data-URL handling on the runtime/Auth side; later phases may still want a dedicated media pipeline or storage abstraction.
+- YouTube, Twitch, Kick, and Pilled now have truthful management/readiness workspaces, but only Rumble has a true backend-managed credential path in this phase.
 - The creator repo remains a consumer only, so richer create/edit/delete trigger flows still depend on later backend contract expansion.
 - The new platform detail pages rely on the runtime/Auth endpoints being deployed alongside the creator surface; stale backend deployments will leave the UI in fallback loading/error copy.
 - Later phases still need fuller provider-specific onboarding and verification UX beyond this foundation pass.

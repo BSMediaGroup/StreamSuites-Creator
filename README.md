@@ -50,6 +50,9 @@ flowchart TD
 - Clean path-based creator routes are the primary navigation model, with Cloudflare Pages deep-link handling in the root `_redirects`.
 - Legacy hash-fragment and older `/platforms/*` compatibility remains in the client router, but canonical creator links now use path routes such as `/overview`, `/account`, `/statistics`, `/notifications`, `/integrations/...`, and `/modules/...`.
 - The account/settings experience is the authoritative creator-facing profile control surface for supported fields exposed by the public profile API.
+- The account/settings route now keeps integrations as a compact snapshot and link-out surface rather than the primary control center.
+- A dedicated `/integrations` hub now acts as the full-page creator readiness surface, while per-platform routes carry the actionable setup and management workflows.
+- Creator media editing now prefers upload-from-device for avatar and cover updates while preserving manual URL inputs as secondary paths.
 - Creator account settings currently surface canonical slug editing and visibility, StreamSuites public profile visibility, FindMeHere listing controls, truthful dual share previews, reserved media fields including background image URL, bio/about, and grounded public social links.
 - The updated account/settings layout includes the recent typography and polish work where the current UI already reflects it.
 - Notifications, statistics, onboarding, and Discord bot install panels remain consumers of backend-owned data and permissions.
@@ -133,6 +136,7 @@ StreamSuites-Creator/
 │   ├── auth.js
 │   ├── creator-stats.js
 │   ├── discord-bot-integration.js
+│   ├── integrations-hub.js
 │   ├── jobs.js
 │   ├── notifications.js
 │   ├── onboarding.js
@@ -149,6 +153,7 @@ StreamSuites-Creator/
 │       └── versioning.js
 └── views/
     ├── account.html
+    ├── integrations.html
     ├── jobs.html
     ├── notifications.html
     ├── onboarding.html

@@ -270,17 +270,39 @@
                             data-account-profile-avatar="true"
                           />
                         </span>
-                        <span class="account-avatar-note">Authoritative avatar preview.</span>
+                        <span class="account-avatar-note">Saved avatar preview from the authoritative account identity.</span>
+                      </div>
+                      <div class="profile-upload-surface">
+                        <label class="profile-upload-card" for="profile-avatar-upload">
+                          <span class="profile-upload-title">Upload from device</span>
+                          <span class="profile-upload-help">
+                            Primary path for replacing the saved profile image. Supported: PNG, JPEG, WEBP, GIF.
+                          </span>
+                        </label>
+                        <div class="profile-upload-actions">
+                          <input
+                            id="profile-avatar-upload"
+                            class="account-field-input profile-upload-input"
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp,image/gif"
+                            data-profile-avatar-file="true"
+                          />
+                          <button class="creator-button ghost" type="button" data-profile-avatar-clear="true">
+                            Clear staged upload
+                          </button>
+                        </div>
+                        <span class="account-field-note" data-profile-avatar-upload-status="true">
+                          Upload from device is the default avatar update path. Manual URL entry stays available below.
+                        </span>
                       </div>
                       <input
-                        class="account-field-input"
+                        class="account-field-input profile-upload-secondary-input"
                         type="url"
                         placeholder="https://cdn.example.com/avatar.webp"
-                        data-profile-identity-input="avatar_url"
                         data-profile-avatar-url="true"
                       />
                       <span class="account-field-note" data-profile-avatar-feedback="true">
-                        Avatar editing uses the grounded backend method when available.
+                        Manual avatar URL is optional and secondary to upload-from-device.
                       </span>
                     </div>
                   </div>
@@ -410,18 +432,42 @@
 
             <article class="card">
               <h3>Media &amp; customization</h3>
-              <p>Stored profile media fields that shape current and future public surfaces.</p>
+              <p>Upload-first profile media controls backed by the authoritative public profile model.</p>
               <div class="account-field-grid">
                 <div class="account-field">
-                  <span class="account-field-label">Cover / banner image URL</span>
+                  <span class="account-field-label">Cover / banner image</span>
+                  <div class="profile-upload-surface">
+                    <label class="profile-upload-card" for="profile-cover-upload">
+                      <span class="profile-upload-title">Upload from device</span>
+                      <span class="profile-upload-help">
+                        Primary path for replacing the saved cover image that appears on public-facing profile surfaces.
+                      </span>
+                    </label>
+                    <div class="profile-upload-actions">
+                      <input
+                        id="profile-cover-upload"
+                        class="account-field-input profile-upload-input"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        data-profile-cover-file="true"
+                      />
+                      <button class="creator-button ghost" type="button" data-profile-cover-clear="true">
+                        Clear staged upload
+                      </button>
+                    </div>
+                    <div class="profile-cover-preview" data-profile-cover-preview="true"></div>
+                    <span class="account-field-note" data-profile-cover-upload-status="true">
+                      Upload from device is the default cover update path. Manual URL entry stays available below.
+                    </span>
+                  </div>
                   <input
-                    class="account-field-input"
+                    class="account-field-input profile-upload-secondary-input"
                     type="url"
                     placeholder="https://cdn.example.com/cover.webp"
                     data-profile-field="true"
                     data-profile-cover-image="true"
                   />
-                  <span class="account-field-note">Used by the current authoritative public profile payload.</span>
+                  <span class="account-field-note">Manual cover image URL stays available as a secondary path.</span>
                 </div>
                 <div class="account-field">
                   <span class="account-field-label">Background image URL</span>
@@ -604,10 +650,11 @@
             <article class="card account-integration-hub">
               <div class="card-top">
                 <div>
-                  <h3>Creator integration hub</h3>
-                  <p>Authoritative connection status, trigger readiness, and next actions for creator bot rollout.</p>
+                  <h3>Creator integration snapshot</h3>
+                  <p>Compact account-page summary only. Use the full integrations hub for platform management and rollout planning.</p>
                 </div>
                 <div class="platform-actions">
+                  <a class="creator-button primary" href="/integrations">Open full hub</a>
                   <a class="creator-button ghost" href="/triggers">Open triggers</a>
                   <a class="creator-button ghost" href="/integrations/discord">Open Discord bot</a>
                 </div>
@@ -680,8 +727,8 @@
 
               <div class="integration-platform-list-wrap">
                 <div class="card-top">
-                  <h4>Platform detail pages</h4>
-                  <a href="/integrations/rumble">Start with platform setup -&gt;</a>
+                  <h4>Platform quick links</h4>
+                  <a href="/integrations">Open the full hub -&gt;</a>
                 </div>
                 <ul class="account-list">
                 <li class="account-list-item" data-integration-row="rumble">
