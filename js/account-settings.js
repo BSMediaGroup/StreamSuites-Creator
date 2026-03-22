@@ -22,6 +22,8 @@
   const AUTH_UNLINK_ENDPOINT = `${API_BASE}/api/account/auth-methods/unlink`;
   const EMAIL_CHANGE_REQUEST_ENDPOINT = `${API_BASE}/api/account/email/change/request`;
   const PUBLIC_PROFILE_ENDPOINT = `${API_BASE}/api/public/profile/me`;
+  const AVATAR_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/avatar`;
+  const COVER_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/cover`;
   const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
   const AVATAR_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
   const COVER_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
@@ -157,6 +159,31 @@
           source: "account-settings"
         });
       }
+      const error = new Error(message);
+      error.payload = payload;
+      error.status = response.status;
+      throw error;
+    }
+    return payload || {};
+  }
+
+  async function requestForm(url, formData, options = {}) {
+    const response = await fetch(url, {
+      method: options.method || "POST",
+      credentials: "include",
+      body: formData,
+      headers: {
+        ...(options.headers || {}),
+      },
+    });
+    let payload = null;
+    try {
+      payload = await response.json();
+    } catch (err) {
+      payload = null;
+    }
+    if (!response.ok) {
+      const message = payload?.error || payload?.message || `Request failed (${response.status})`;
       const error = new Error(message);
       error.payload = payload;
       error.status = response.status;
@@ -718,6 +745,7 @@
       user_code: coerceText(profile?.user_code),
       display_name: coerceText(profile?.display_name),
       avatar_url: coerceText(profile?.avatar_url),
+      avatar_media: profile?.avatar_media && typeof profile.avatar_media === "object" ? { ...profile.avatar_media } : null,
       creator_capable: profile?.creator_capable === true,
       public_surface_account_type: coerceText(profile?.public_surface_account_type),
       streamsuites_profile_enabled: profile?.streamsuites_profile_enabled !== false,
@@ -732,6 +760,7 @@
       findmehere_share_url: coerceText(profile?.findmehere_share_url),
       findmehere_status_reason: coerceText(profile?.findmehere_status_reason),
       cover_image_url: coerceText(profile?.cover_image_url || profile?.banner_image_url),
+      cover_media: profile?.cover_media && typeof profile.cover_media === "object" ? { ...profile.cover_media } : null,
       background_image_url: coerceText(profile?.background_image_url),
       bio: coerceText(profile?.bio),
       social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
@@ -803,6 +832,10 @@
 
   function clearStagedUpload(kind, options = {}) {
     if (!state.uploads || !Object.prototype.hasOwnProperty.call(state.uploads, kind)) return;
+    const existing = state.uploads[kind];
+    if (existing?.previewUrl) {
+      URL.revokeObjectURL(existing.previewUrl);
+    }
     state.uploads[kind] = null;
     const els = getProfileElements();
     if (kind === "avatar" && !options.preserveInput && els.avatarFileInput instanceof HTMLInputElement) {
@@ -815,14 +848,22 @@
 
   function resolveAvatarDraftValue() {
     const draftUpload = getStagedUpload("avatar");
-    if (draftUpload?.dataUrl) return draftUpload.dataUrl;
-    return coerceText(getProfileElements().avatarUrlInput?.value) || coerceText(state.profile?.avatar_url);
+    if (draftUpload?.previewUrl) return draftUpload.previewUrl;
+    const input = getProfileElements().avatarUrlInput;
+    if (input instanceof HTMLInputElement) {
+      return coerceText(input.value);
+    }
+    return coerceText(state.profile?.avatar_url);
   }
 
   function resolveCoverDraftValue() {
     const draftUpload = getStagedUpload("cover");
-    if (draftUpload?.dataUrl) return draftUpload.dataUrl;
-    return coerceText(getProfileElements().coverImageInput?.value) || coerceText(state.profile?.cover_image_url);
+    if (draftUpload?.previewUrl) return draftUpload.previewUrl;
+    const input = getProfileElements().coverImageInput;
+    if (input instanceof HTMLInputElement) {
+      return coerceText(input.value);
+    }
+    return coerceText(state.profile?.cover_image_url);
   }
 
   function renderMediaUploadStatus() {
@@ -830,8 +871,14 @@
     const avatarUpload = getStagedUpload("avatar");
     if (els.avatarUploadStatus instanceof HTMLElement) {
       if (avatarUpload?.filename) {
-        els.avatarUploadStatus.textContent = `Staged upload: ${avatarUpload.filename} (${Math.round((avatarUpload.size || 0) / 1024)} KB). Save profile changes to persist it.`;
+        els.avatarUploadStatus.textContent = `Staged upload: ${avatarUpload.filename} (${Math.round((avatarUpload.size || 0) / 1024)} KB). Save profile changes to upload it through the runtime.`;
         els.avatarUploadStatus.dataset.tone = "success";
+      } else if (els.avatarUrlInput instanceof HTMLInputElement && !coerceText(els.avatarUrlInput.value) && coerceText(state.profile?.avatar_url)) {
+        els.avatarUploadStatus.textContent = "Avatar removal is staged. Save profile changes to clear the authoritative media reference.";
+        els.avatarUploadStatus.dataset.tone = "warning";
+      } else if (state.profile?.avatar_media?.asset_key) {
+        els.avatarUploadStatus.textContent = `Saved uploaded avatar: ${coerceText(state.profile.avatar_media.asset_key)}`;
+        els.avatarUploadStatus.dataset.tone = "neutral";
       } else {
         els.avatarUploadStatus.textContent = "Upload from device is the default avatar update path. Manual URL entry stays available below.";
         els.avatarUploadStatus.dataset.tone = "neutral";
@@ -840,8 +887,14 @@
     const coverUpload = getStagedUpload("cover");
     if (els.coverUploadStatus instanceof HTMLElement) {
       if (coverUpload?.filename) {
-        els.coverUploadStatus.textContent = `Staged upload: ${coverUpload.filename} (${Math.round((coverUpload.size || 0) / 1024)} KB). Save media to persist it.`;
+        els.coverUploadStatus.textContent = `Staged upload: ${coverUpload.filename} (${Math.round((coverUpload.size || 0) / 1024)} KB). Save profile changes to upload it through the runtime.`;
         els.coverUploadStatus.dataset.tone = "success";
+      } else if (els.coverImageInput instanceof HTMLInputElement && !coerceText(els.coverImageInput.value) && coerceText(state.profile?.cover_image_url)) {
+        els.coverUploadStatus.textContent = "Cover removal is staged. Save profile changes to clear the authoritative media reference.";
+        els.coverUploadStatus.dataset.tone = "warning";
+      } else if (state.profile?.cover_media?.asset_key) {
+        els.coverUploadStatus.textContent = `Saved uploaded cover: ${coerceText(state.profile.cover_media.asset_key)}`;
+        els.coverUploadStatus.dataset.tone = "neutral";
       } else {
         els.coverUploadStatus.textContent = "Upload from device is the default cover update path. Manual URL entry stays available below.";
         els.coverUploadStatus.dataset.tone = "neutral";
@@ -854,31 +907,19 @@
     }
   }
 
-  function readImageFile(file, maxBytes) {
-    return new Promise((resolve, reject) => {
-      if (!(file instanceof File)) {
-        reject(new Error("No file selected."));
-        return;
-      }
-      if (!String(file.type || "").startsWith("image/")) {
-        reject(new Error("Select a PNG, JPEG, WEBP, or GIF image."));
-        return;
-      }
-      if (file.size > maxBytes) {
-        reject(new Error(`Selected image exceeds the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`));
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result || ""));
-      reader.onerror = () => reject(new Error("Unable to read the selected image."));
-      reader.readAsDataURL(file);
-    });
-  }
-
   async function stageUpload(kind, file, maxBytes) {
-    const dataUrl = await readImageFile(file, maxBytes);
+    if (!(file instanceof File)) {
+      throw new Error("No file selected.");
+    }
+    if (!String(file.type || "").startsWith("image/")) {
+      throw new Error("Select a PNG, JPEG, WEBP, or GIF image.");
+    }
+    if (file.size > maxBytes) {
+      throw new Error(`Selected image exceeds the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`);
+    }
     state.uploads[kind] = {
-      dataUrl,
+      file,
+      previewUrl: URL.createObjectURL(file),
       filename: file.name,
       size: file.size,
       type: file.type,
@@ -974,15 +1015,19 @@
 
     return {
       display_name: coerceText(els.displayNameInput?.value),
-      avatar_url: getStagedUpload("avatar")?.dataUrl || coerceText(els.avatarUrlInput?.value),
+      avatar_url: coerceText(els.avatarUrlInput?.value),
       public_slug_input: coerceText(els.slugInput?.value),
       streamsuites_profile_enabled: !!els.streamsuitesToggle?.checked,
       findmehere_enabled: !!els.findmeToggle?.checked,
-      cover_image_url: getStagedUpload("cover")?.dataUrl || coerceText(els.coverImageInput?.value),
+      cover_image_url: coerceText(els.coverImageInput?.value),
       background_image_url: coerceText(els.backgroundImageInput?.value),
       bio: coerceText(els.bioInput?.value),
       social_links: socialLinks,
     };
+  }
+
+  function hasPendingMediaUploads() {
+    return Boolean(getStagedUpload("avatar")?.file || getStagedUpload("cover")?.file);
   }
 
   function getSupportedDraftSnapshot(draft) {
@@ -1265,6 +1310,17 @@
     }
   }
 
+  async function uploadStagedMedia(kind) {
+    const staged = getStagedUpload(kind);
+    if (!staged?.file) {
+      return null;
+    }
+    const formData = new FormData();
+    formData.set("file", staged.file, staged.filename || staged.file.name || `${kind}.upload`);
+    const endpoint = kind === "avatar" ? AVATAR_UPLOAD_ENDPOINT : COVER_UPLOAD_ENDPOINT;
+    return requestForm(endpoint, formData);
+  }
+
   async function savePublicProfile() {
     if (!state.profile || state.savingProfile) return;
 
@@ -1273,9 +1329,10 @@
     const savedSlug = coerceText(state.profile.public_slug);
     const slugChanged = slugValidation.valid && slugValidation.normalized !== savedSlug;
     const supportedDirty = isSupportedProfileDirty();
+    const hasStagedMedia = hasPendingMediaUploads();
     const identityDirty = isIdentityProfileDirty();
 
-    if (!supportedDirty) {
+    if (!supportedDirty && !hasStagedMedia) {
       if (slugChanged && identityDirty) {
         setMessage(
           "[data-profile-save-status=\"true\"]",
@@ -1302,25 +1359,37 @@
       return;
     }
 
-    const payload = {
-      avatar_url: draft.avatar_url,
-      streamsuites_profile_enabled: draft.streamsuites_profile_enabled,
-      findmehere_enabled: draft.findmehere_enabled,
-      cover_image_url: draft.cover_image_url,
-      background_image_url: draft.background_image_url,
-      bio: draft.bio,
-      social_links: draft.social_links,
-    };
-
     state.savingProfile = true;
     setProfileBusy(true);
     setStatusPill(getProfileElements().loadPill, "Saving profile", "warning");
     setMessage("[data-profile-save-status=\"true\"]", "Saving authoritative profile settings...", "neutral");
     try {
-      const response = await requestJson(PUBLIC_PROFILE_ENDPOINT, {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+      let workingProfile = state.profile;
+      if (getStagedUpload("avatar")?.file) {
+        const uploadResponse = await uploadStagedMedia("avatar");
+        workingProfile = normalizeProfilePayload(uploadResponse?.profile || uploadResponse);
+      }
+      if (getStagedUpload("cover")?.file) {
+        const uploadResponse = await uploadStagedMedia("cover");
+        workingProfile = normalizeProfilePayload(uploadResponse?.profile || uploadResponse);
+      }
+
+      const payload = {
+        avatar_url: coerceText(workingProfile?.avatar_url || draft.avatar_url),
+        streamsuites_profile_enabled: draft.streamsuites_profile_enabled,
+        findmehere_enabled: draft.findmehere_enabled,
+        cover_image_url: coerceText(workingProfile?.cover_image_url || draft.cover_image_url),
+        background_image_url: draft.background_image_url,
+        bio: draft.bio,
+        social_links: draft.social_links,
+      };
+      const response =
+        supportedDirty || !workingProfile || !hasStagedMedia
+          ? await requestJson(PUBLIC_PROFILE_ENDPOINT, {
+              method: "POST",
+              body: JSON.stringify(payload),
+            })
+          : { profile: workingProfile };
       applyProfile(response?.profile || response);
       if (slugChanged || identityDirty) {
         const limitations = [];
@@ -1434,7 +1503,11 @@
     }
     if (els.avatarClearButton instanceof HTMLButtonElement) {
       els.avatarClearButton.addEventListener("click", () => {
-        clearStagedUpload("avatar");
+        if (getStagedUpload("avatar")?.file) {
+          clearStagedUpload("avatar");
+        } else if (els.avatarUrlInput instanceof HTMLInputElement) {
+          els.avatarUrlInput.value = "";
+        }
         renderMediaUploadStatus();
         updateAvatarPreview();
         renderAvatarFeedback();
@@ -1443,7 +1516,11 @@
     }
     if (els.coverClearButton instanceof HTMLButtonElement) {
       els.coverClearButton.addEventListener("click", () => {
-        clearStagedUpload("cover");
+        if (getStagedUpload("cover")?.file) {
+          clearStagedUpload("cover");
+        } else if (els.coverImageInput instanceof HTMLInputElement) {
+          els.coverImageInput.value = "";
+        }
         renderMediaUploadStatus();
         renderPreviewSurface();
       });

@@ -4,6 +4,17 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Authoritative Profile Media Upload Flow - 2026-03-23
+
+- Creator profile media controls now stage real browser `File` objects and hand them to runtime-owned multipart upload endpoints during save instead of turning uploads into persisted base64 data URLs inside profile/account records.
+- Upload-from-device remains the primary avatar/cover path, manual URL fields remain available as the secondary/manual path, and the account page now reflects saved uploaded asset references from the runtime-owned metadata model rather than pretending the creator surface stores media itself.
+- Removal/replace flows now behave as metadata-backed profile edits: clearing avatar or cover stages an authoritative reference removal for the next save, while uploaded media resolves back from the runtime using the stable CDN-style `/u/{user_code}/.../vN.webp` contract.
+
+### Files / Areas Touched
+
+- `js/account-settings.js`
+- `BUMP_NOTES.md`
+
 ## Cross-Repo README Architecture Alignment - 2026-03-21
 
 - The creator README now carries a cleaner repo-scoped Mermaid flowchart, aligned authority language, cross-links back to the runtime README, and a normalized repo tree with current branch characters.
