@@ -567,7 +567,7 @@
             <button class="creator-button primary" type="submit">Save workspace</button>
             ${
               hasWorkspaceData(integration)
-                ? '<button class="creator-button ghost" type="button" data-platform-remove-workspace="true">Clear saved workspace</button>'
+                ? '<button class="creator-button danger" type="button" data-platform-remove-workspace="true">Clear saved workspace</button>'
                 : ""
             }
           </div>
@@ -604,11 +604,11 @@
             }
           </p>
           <div class="platform-actions">
-            <button class="creator-button ${providerLinked ? "ghost" : "primary"}" type="button" data-platform-connect-provider="${escapeHtml(authProvider)}">
+            <button class="creator-button ${providerLinked ? "secondary" : "primary"}" type="button" data-platform-connect-provider="${escapeHtml(authProvider)}">
               ${escapeHtml(providerLinked ? `Reconnect ${authProvider}` : `Connect ${authProvider}`)}
             </button>
-            <a class="creator-button ghost" href="/account">Manage auth methods</a>
-            <a class="creator-button ghost" href="/triggers">Review trigger footing</a>
+            <a class="creator-button secondary" href="/account">Manage auth methods</a>
+            <a class="creator-button secondary" href="/triggers">Review trigger footing</a>
           </div>
           <div class="platform-inline-note">
             Candidate auth providers: ${escapeHtml(providerCandidates.length ? providerCandidates.join(", ") : "none")}
@@ -629,8 +629,8 @@
             }
           </p>
           <div class="platform-actions">
-            <a class="creator-button ghost" href="/integrations">Back to integrations hub</a>
-            <a class="creator-button ghost" href="/triggers">Review trigger footing</a>
+            <a class="creator-button secondary" href="/integrations">Back to integrations hub</a>
+            <a class="creator-button secondary" href="/triggers">Review trigger footing</a>
           </div>
         </div>
       `;
@@ -700,10 +700,10 @@
           <button class="creator-button primary" type="button" data-rumble-secret-open="true">
             ${escapeHtml(integration?.secret_present ? "Replace secure credential" : "Add secure credential")}
           </button>
-          <a class="creator-button ghost" href="/triggers">Review trigger footing</a>
+          <a class="creator-button secondary" href="/triggers">Review trigger footing</a>
           ${
             integration?.secret_present
-              ? '<button class="creator-button ghost" type="button" data-rumble-secret-remove-inline="true">Remove stored secret</button>'
+              ? '<button class="creator-button danger" type="button" data-rumble-secret-remove-inline="true">Remove stored secret</button>'
               : ""
           }
         </div>
@@ -853,7 +853,7 @@
           <p class="account-note">${escapeHtml(safeMessage)}</p>
           <div class="platform-actions">
             <button class="creator-button primary" type="button" data-platform-refresh-detail="true">Retry load</button>
-            <a class="creator-button ghost" href="/integrations">Back to integrations hub</a>
+            <a class="creator-button secondary" href="/integrations">Back to integrations hub</a>
           </div>
         </div>
       `;

@@ -73,6 +73,36 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into the released `0.4.2-alpha` section above.
 
+### Creator Dashboard Shared Button System Refresh - 2026-03-22
+
+- `css/creator-dashboard.css` now owns a cleaner shared Creator dashboard button family for `creator-button`, `creator-account-item`, `creator-account-button`, and `lockout-button`, replacing the earlier duplicated high-gloss gradient blocks with a tighter primary/secondary/danger token set.
+- Neutral dashboard actions across the creator shell, overview/statistics/integrations/triggers surfaces, account settings, platform pages, and JS-rendered platform cards were remapped onto explicit secondary styling, while destructive dashboard actions such as reset, disconnect, clear/remove workspace, secret removal, and account-menu logout were promoted to explicit danger styling.
+- This pass stayed Creator-dashboard scoped: auth/login modal styling in `login/index.html`, `css/overrides.css`, and shared auth selectors was intentionally left untouched, and compatibility aliases remain in the dashboard CSS so older `ghost` or `subtle` references do not become hard regressions during partial/template transitions.
+
+### Files / Areas Touched
+
+- `css/creator-dashboard.css`
+- `index.html`
+- `views/account.html`
+- `views/integrations.html`
+- `views/onboarding.html`
+- `views/overview.html`
+- `views/plans.html`
+- `views/settings.html`
+- `views/statistics.html`
+- `views/triggers.html`
+- `views/platforms/discord.html`
+- `views/platforms/kick.html`
+- `views/platforms/pilled.html`
+- `views/platforms/rumble.html`
+- `views/platforms/twitch.html`
+- `views/platforms/youtube.html`
+- `js/auth.js`
+- `js/creator-stats.js`
+- `js/discord-bot-integration.js`
+- `js/integrations-hub.js`
+- `js/platform-integration-detail.js`
+
 ### Technical Notes
 
 - Creator navigation icon resolution in `js/app.js` now includes an explicit `integrations` segment mapping, so the Integrations Hub no longer falls back to the generic icon path while existing route icon mappings remain intact.

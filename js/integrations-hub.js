@@ -210,7 +210,7 @@
           <p class="account-note">${escapeHtml(workspaceNote || "No saved workspace note yet.")}</p>
           <div class="platform-actions">
             <a class="creator-button primary" href="${escapeHtml(meta.primaryHref)}">${escapeHtml(meta.primaryLabel)}</a>
-            <a class="creator-button ghost" href="${escapeHtml(meta.secondaryHref)}">${escapeHtml(meta.secondaryLabel)}</a>
+            <a class="creator-button secondary" href="${escapeHtml(meta.secondaryHref)}">${escapeHtml(meta.secondaryLabel)}</a>
           </div>
         </article>
       `;
@@ -347,7 +347,7 @@
           <p class="creator-platform-readiness-copy">${escapeHtml(message || "Unable to load authoritative creator integrations.")}</p>
           <div class="platform-actions">
             <a class="creator-button primary" href="/account">Open account settings</a>
-            <a class="creator-button ghost" href="/overview">Return to overview</a>
+            <a class="creator-button secondary" href="/overview">Return to overview</a>
           </div>
         </article>
       `;

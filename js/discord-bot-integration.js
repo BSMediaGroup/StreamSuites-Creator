@@ -423,7 +423,7 @@
             ${errorDetails}
             <div class="platform-actions">
               <button
-                class="creator-button ghost"
+                class="creator-button secondary"
                 type="button"
                 data-action="verify"
                 data-guild-id="${escapeHtml(guildId)}"
@@ -432,7 +432,7 @@
                 ${verifying ? "Verifying..." : "Verify"}
               </button>
               <button
-                class="creator-button ghost"
+                class="creator-button secondary"
                 type="button"
                 data-action="install"
                 data-guild-id="${escapeHtml(guildId)}"
@@ -441,7 +441,7 @@
                 ${installLoading ? "Opening..." : "Open Install Page"}
               </button>
               <button
-                class="creator-button ghost"
+                class="creator-button danger"
                 type="button"
                 data-action="disable"
                 data-guild-id="${escapeHtml(guildId)}"

@@ -1421,7 +1421,7 @@
 
     control = document.createElement("button");
     control.type = "button";
-    control.className = "creator-account-item subtle";
+    control.className = "creator-account-item secondary";
     control.dataset.creatorDebugExit = "true";
     control.textContent = "Exit Debug Mode";
     control.hidden = true;

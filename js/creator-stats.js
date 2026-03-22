@@ -1351,7 +1351,7 @@
       <p class="muted">Started ${escapeHtml(formatDateTime(stream.startedAtUtc))}</p>
       <p class="muted">Duration ${escapeHtml(formatDuration(stream.durationSeconds))}</p>
       <ul class="creator-stats-recent-links">${links || "<li class=\"muted\">No platform URL available.</li>"}</ul>
-      <a class="creator-button ghost creator-stats-history-link" href="/updates" data-route="updates">
+      <a class="creator-button secondary creator-stats-history-link" href="/updates" data-route="updates">
         Open Stream History placeholder
       </a>
     `;
