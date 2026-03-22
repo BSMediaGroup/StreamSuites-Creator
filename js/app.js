@@ -83,7 +83,7 @@
     settings: "/assets/icons/ui/cog.svg",
     clips: "/assets/icons/ui/videostack.svg",
     polls: "/assets/icons/ui/vote.svg",
-    overlays: "/assets/icons/overlay1.svg",
+    overlays: "/assets/icons/ui/overlay1.svg",
     livechat: "/assets/icons/ui/bot.svg",
     rumble: "/assets/icons/rumble-0.svg",
     youtube: "/assets/icons/youtube-0.svg",
