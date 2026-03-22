@@ -75,6 +75,11 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 
 ### Technical Notes
 
+- Creator navigation icon resolution in `js/app.js` now includes an explicit `integrations` segment mapping, so the Integrations Hub no longer falls back to the generic icon path while existing route icon mappings remain intact.
+- Shared creator layout rules in `css/creator-dashboard.css` now cap the platform detail pages and integrations hub to controlled one- and two-column desktop layouts, only allowing a third column at genuinely ultra-wide widths with wide-card spanning so the earlier cramped four-column presentation is removed rather than merely hidden.
+- Shared card list typography in `css/creator-dashboard.css` now restores readable bullet indentation, marker placement, and wrapped-line spacing for unclassed lists rendered inside creator cards, which fixes the platform/readiness bullet rendering issue without disturbing the intentionally chip-like classed list components.
+- The integrations hub renderer in `js/integrations-hub.js` and the related Creator view partials now add platform icon treatment to the per-platform readiness cards and shift the hub overview cards toward a roomier hierarchy with stronger spacing and fewer columns per row.
+
 - Creator route loading for per-platform integrations was repaired by moving the platform detail logic back into a controller-style `js/platform-integration-detail.js` flow that can initialize correctly on SPA route swaps instead of depending on stripped inline `<script>` tags and `DOMContentLoaded`.
 - A dedicated full-page creator integrations hub now exists at `/integrations`, with runtime/Auth-backed readiness KPIs, next-action guidance, trigger-foundation summary, and per-platform readiness cards.
 - Platform pages for `rumble`, `youtube`, `twitch`, `kick`, and `pilled` now expose real management surfaces: Rumble keeps the secure secret modal path, while the other platforms use additive runtime-backed workspace save/remove flows for channel metadata, setup posture, and readiness notes.
@@ -90,6 +95,9 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 
 ### Human-Readable Notes
 
+- Creator integrations now read much more cleanly at normal desktop widths: the hub and each platform page breathe properly, skinny multi-column card walls are gone, and bullet lists inside cards render like normal readable lists again.
+- The Integrations Hub now carries the correct sidebar icon and per-platform cards show their platform iconography directly instead of relying on generic card treatment.
+
 - Creator integrations now behave like a real workflow instead of a cramped settings sidecar: there is a proper hub page, platform pages no longer hang in loading shells, and each platform has an actionable management surface that stays honest about current backend maturity.
 - Profile image and cover image editing now feel like normal upload-first creator flows, with device upload staged previews leading the UX and manual image URLs retained as backup/manual inputs.
 - This milestone establishes the first creator-facing integrations and trigger foundation pass, not the full final creator redesign.
@@ -101,6 +109,15 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 
 ### Files / Areas Touched
 
+- `views/integrations.html`
+- `views/platforms/rumble.html`
+- `views/platforms/youtube.html`
+- `views/platforms/twitch.html`
+- `views/platforms/kick.html`
+- `views/platforms/pilled.html`
+- `js/app.js`
+- `js/integrations-hub.js`
+- `css/creator-dashboard.css`
 - `views/account.html`
 - `views/integrations.html`
 - `views/platforms/rumble.html`

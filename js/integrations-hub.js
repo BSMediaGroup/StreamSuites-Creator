@@ -25,6 +25,7 @@
   const PLATFORM_META = {
     rumble: {
       title: "Rumble",
+      icon: "/assets/icons/rumble.svg",
       description: "Secure secret-backed linkage with masked saved-state handling.",
       primaryHref: "/integrations/rumble",
       primaryLabel: "Manage secret",
@@ -33,6 +34,7 @@
     },
     youtube: {
       title: "YouTube",
+      icon: "/assets/icons/youtube.svg",
       description: "Google-linked readiness and downstream setup planning without fake live claims.",
       primaryHref: "/integrations/youtube",
       primaryLabel: "Open setup",
@@ -41,6 +43,7 @@
     },
     twitch: {
       title: "Twitch",
+      icon: "/assets/icons/twitch.svg",
       description: "OAuth-linked identity posture separated cleanly from runtime chat capability.",
       primaryHref: "/integrations/twitch",
       primaryLabel: "Open setup",
@@ -49,6 +52,7 @@
     },
     kick: {
       title: "Kick",
+      icon: "/assets/icons/kick.svg",
       description: "Planned workspace with saved readiness details and truthful rollout messaging.",
       primaryHref: "/integrations/kick",
       primaryLabel: "Open planning view",
@@ -57,6 +61,7 @@
     },
     pilled: {
       title: "Pilled",
+      icon: "/assets/icons/pilled.svg",
       description: "Planned ingest-facing workspace with readiness notes and no fake connection state.",
       primaryHref: "/integrations/pilled",
       primaryLabel: "Open planning view",
@@ -173,9 +178,14 @@
       return `
         <article class="creator-platform-readiness-card tone-${escapeHtml(readinessTone(item))}">
           <div class="creator-platform-readiness-head">
-            <div>
+            <div class="creator-platform-readiness-title">
+              <span class="creator-platform-card-icon-wrap" aria-hidden="true">
+                <img class="creator-platform-card-icon" src="${escapeHtml(meta.icon || "")}" alt="" />
+              </span>
+              <div>
               <span class="section-kicker">${escapeHtml(meta.title)}</span>
               <h4>${escapeHtml(readinessLabel(item))}</h4>
+              </div>
             </div>
             <span class="status-pill ${escapeHtml(readinessTone(item))}">${escapeHtml(humanizeStatus(item.status))}</span>
           </div>
