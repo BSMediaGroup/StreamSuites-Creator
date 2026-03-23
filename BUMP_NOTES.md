@@ -4,6 +4,19 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## FindMeHere Appearance Editor - 2026-03-24
+
+- The creator account page now exposes a real FindMeHere appearance editor on top of the authoritative runtime public-profile contract, covering header branding, accent/button colors, button tone, font/layout presets, image visibility toggles, and advanced scoped custom CSS without inventing a parallel client-only settings store.
+- The existing account-page save/load flow now round-trips the grouped `findmehere_theme` payload through `/api/public/profile/me`, keeps upload-first avatar and cover handling intact, and adds lightweight reuse controls so the FindMeHere header logo can point at the current saved avatar or cover path.
+- The inline preview now reflects the current FindMeHere appearance draft in a lightweight way, including brand/logo fallback, preset-driven layout/font hints, color accents, and image-visibility toggles, while preserving the existing account/profile settings surface instead of branching into a second page.
+
+### Files / Areas Touched
+
+- `views/account.html`
+- `js/account-settings.js`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Authoritative Profile Media Upload Flow - 2026-03-23
 
 - Creator profile media controls now stage real browser `File` objects and hand them to runtime-owned multipart upload endpoints during save instead of turning uploads into persisted base64 data URLs inside profile/account records.

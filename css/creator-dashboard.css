@@ -1726,6 +1726,28 @@ h3 {
   resize: vertical;
 }
 
+.account-inline-button-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.account-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: var(--creator-text);
+  font-size: var(--creator-body-size-sm);
+}
+
+.account-checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
 .account-avatar-row {
   margin-top: 6px;
   display: flex;
@@ -2072,6 +2094,27 @@ h3 {
   background: rgba(8, 12, 20, 0.72);
 }
 
+.account-public-preview[data-findme-layout-preset="condensed"] .account-public-preview-body {
+  gap: 10px;
+}
+
+.account-public-preview[data-findme-layout-preset="expanded"] .account-public-preview-body {
+  gap: 18px;
+}
+
+.account-public-preview[data-findme-font-preset="editorial"] .account-public-preview-head strong {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.account-public-preview[data-findme-font-preset="condensed"] .account-public-preview-head strong {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.account-public-preview[data-findme-font-preset="mono"] .account-public-preview-head strong {
+  font-family: "Courier New", monospace;
+}
+
 .account-public-preview-cover {
   min-height: 120px;
   border-radius: 14px;
@@ -2124,6 +2167,13 @@ h3 {
   display: block;
   font-size: 18px;
   color: var(--creator-text);
+}
+
+.account-preview-brand-image {
+  display: block;
+  max-width: min(180px, 100%);
+  max-height: 36px;
+  object-fit: contain;
 }
 
 .account-public-preview-head span {

@@ -37,6 +37,26 @@
     "instagram",
     "tiktok",
   ]);
+  const HEX_COLOR_RE = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+  const FINDMEHERE_THEME_DEFAULTS = Object.freeze({
+    header_branding: Object.freeze({
+      logo_image_url: "",
+      brand_text: "",
+    }),
+    page_accent_color: "",
+    button_color: "",
+    button_tone: "brand",
+    font_preset: "default",
+    layout_preset: "standard",
+    image_visibility: Object.freeze({
+      show_cover: true,
+      show_avatar: true,
+      show_background: true,
+    }),
+    advanced: Object.freeze({
+      profile_custom_css: "",
+    }),
+  });
   const RESERVED_PUBLIC_SLUGS = new Set([
     "u",
     "live",
@@ -196,6 +216,46 @@
     return typeof value === "string" ? value.trim() : "";
   }
 
+  function normalizeThemeColor(value) {
+    const normalized = coerceText(value);
+    return HEX_COLOR_RE.test(normalized) ? normalized.toLowerCase() : "";
+  }
+
+  function normalizeThemePreset(value, allowed, fallback) {
+    const normalized = coerceText(value).toLowerCase();
+    return allowed.includes(normalized) ? normalized : fallback;
+  }
+
+  function cloneThemeDefaults() {
+    return JSON.parse(JSON.stringify(FINDMEHERE_THEME_DEFAULTS));
+  }
+
+  function normalizeFindmeTheme(theme) {
+    const source = theme && typeof theme === "object" ? theme : {};
+    const headerBranding = source.header_branding && typeof source.header_branding === "object" ? source.header_branding : {};
+    const imageVisibility = source.image_visibility && typeof source.image_visibility === "object" ? source.image_visibility : {};
+    const advanced = source.advanced && typeof source.advanced === "object" ? source.advanced : {};
+    return {
+      header_branding: {
+        logo_image_url: coerceText(headerBranding.logo_image_url || source.header_logo_image_url || source.headerLogoImageUrl),
+        brand_text: coerceText(headerBranding.brand_text || source.header_brand_text || source.headerBrandText),
+      },
+      page_accent_color: normalizeThemeColor(source.page_accent_color || source.pageAccentColor || source.accent_color || source.accentColor),
+      button_color: normalizeThemeColor(source.button_color || source.buttonColor),
+      button_tone: normalizeThemePreset(source.button_tone || source.buttonTone, ["brand", "soft", "ghost"], FINDMEHERE_THEME_DEFAULTS.button_tone),
+      font_preset: normalizeThemePreset(source.font_preset || source.fontPreset || source.font_style || source.fontStyle, ["default", "editorial", "condensed", "mono"], FINDMEHERE_THEME_DEFAULTS.font_preset),
+      layout_preset: normalizeThemePreset(source.layout_preset || source.layoutPreset, ["standard", "condensed", "expanded"], FINDMEHERE_THEME_DEFAULTS.layout_preset),
+      image_visibility: {
+        show_cover: imageVisibility.show_cover !== false && source.show_cover_image !== false && source.showCoverImage !== false,
+        show_avatar: imageVisibility.show_avatar !== false && source.show_avatar_image !== false && source.showAvatarImage !== false,
+        show_background: imageVisibility.show_background !== false && source.show_background_image !== false && source.showBackgroundImage !== false,
+      },
+      advanced: {
+        profile_custom_css: String(advanced.profile_custom_css || source.profile_custom_css || source.profileCustomCss || ""),
+      },
+    };
+  }
+
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -241,6 +301,19 @@
       coverUploadStatus: document.querySelector("[data-profile-cover-upload-status]"),
       coverPreview: document.querySelector("[data-profile-cover-preview]"),
       backgroundImageInput: document.querySelector("[data-profile-background-image]"),
+      findmeThemeLogoInput: document.querySelector("[data-findme-theme-logo]"),
+      findmeThemeLogoSourceButtons: Array.from(document.querySelectorAll("[data-findme-theme-logo-source]")),
+      findmeThemeLogoClearButton: document.querySelector("[data-findme-theme-logo-clear]"),
+      findmeThemeBrandTextInput: document.querySelector("[data-findme-theme-brand-text]"),
+      findmeThemeAccentColorInput: document.querySelector("[data-findme-theme-accent-color]"),
+      findmeThemeButtonColorInput: document.querySelector("[data-findme-theme-button-color]"),
+      findmeThemeButtonToneInput: document.querySelector("[data-findme-theme-button-tone]"),
+      findmeThemeFontPresetInput: document.querySelector("[data-findme-theme-font-preset]"),
+      findmeThemeLayoutPresetInput: document.querySelector("[data-findme-theme-layout-preset]"),
+      findmeThemeShowCoverInput: document.querySelector("[data-findme-theme-show-cover]"),
+      findmeThemeShowAvatarInput: document.querySelector("[data-findme-theme-show-avatar]"),
+      findmeThemeShowBackgroundInput: document.querySelector("[data-findme-theme-show-background]"),
+      findmeThemeCustomCssInput: document.querySelector("[data-findme-theme-custom-css]"),
       bioInput: document.querySelector("[data-profile-bio]"),
       linkInputs: Array.from(document.querySelectorAll("[data-profile-link]")),
       identityInputs: Array.from(document.querySelectorAll("[data-profile-identity-input]")),
@@ -762,6 +835,7 @@
       cover_image_url: coerceText(profile?.cover_image_url || profile?.banner_image_url),
       cover_media: profile?.cover_media && typeof profile.cover_media === "object" ? { ...profile.cover_media } : null,
       background_image_url: coerceText(profile?.background_image_url),
+      findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme || profile?.findMeHereTheme || profile?.profile_theme || profile?.profileTheme),
       bio: coerceText(profile?.bio),
       social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
     };
@@ -770,7 +844,7 @@
   function setProfileBusy(busy) {
     const els = getProfileElements();
     els.profileFields.forEach((field) => {
-      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
         const locked = field.dataset.lockDisabled === "true";
         field.disabled = busy || locked;
       }
@@ -953,24 +1027,46 @@
     if (!els.previewSurface) return;
     const draft = getEditableDraft();
     const session = getActiveSession();
+    const theme = normalizeFindmeTheme(draft.findmehere_theme || state.profile?.findmehere_theme);
     const displayName = draft.display_name || coerceText(state.profile?.display_name) || coerceText(session.name) || "Public User";
     const avatarUrl = draft.avatar_url || coerceText(state.profile?.avatar_url) || coerceText(session.avatar);
     const coverImageUrl = draft.cover_image_url || coerceText(state.profile?.cover_image_url);
+    const backgroundImageUrl = draft.background_image_url || coerceText(state.profile?.background_image_url);
     const subtitle = `${(coerceText(state.profile?.public_surface_account_type) || coerceText(session.role) || "creator").replace(/_/g, " ").toUpperCase()}${coerceText(session.tier) ? ` · ${coerceText(session.tier).toUpperCase()}` : ""}`;
     if (els.previewCover) {
-      els.previewCover.style.backgroundImage = coverImageUrl ? `url("${coverImageUrl}")` : "";
+      const previewLayers = [];
+      if (theme.image_visibility.show_background && backgroundImageUrl) {
+        previewLayers.push(`url("${backgroundImageUrl}")`);
+      }
+      if (theme.image_visibility.show_cover && coverImageUrl) {
+        previewLayers.push(`url("${coverImageUrl}")`);
+      }
+      els.previewCover.style.backgroundImage = previewLayers.join(", ");
+      els.previewCover.style.borderColor = theme.page_accent_color || "";
     }
     if (els.previewAvatar) {
-      els.previewAvatar.classList.toggle("has-image", Boolean(avatarUrl));
-      els.previewAvatar.innerHTML = avatarUrl
+      const showAvatar = theme.image_visibility.show_avatar;
+      els.previewAvatar.classList.toggle("has-image", Boolean(avatarUrl) && showAvatar);
+      els.previewAvatar.hidden = !showAvatar;
+      els.previewAvatar.innerHTML = showAvatar && avatarUrl
         ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar" loading="lazy" decoding="async" />`
         : escapeHtml(displayName.charAt(0).toUpperCase() || "P");
+      els.previewAvatar.style.borderColor = theme.page_accent_color || "";
+      els.previewAvatar.style.boxShadow = theme.page_accent_color ? `0 0 0 1px ${theme.page_accent_color}` : "";
     }
     if (els.previewName) {
-      els.previewName.textContent = displayName;
+      const brandLogo = coerceText(theme.header_branding.logo_image_url);
+      const brandText = coerceText(theme.header_branding.brand_text);
+      if (brandLogo) {
+        els.previewName.innerHTML = `<img class="account-preview-brand-image" src="${escapeHtml(brandLogo)}" alt="Header brand" loading="lazy" decoding="async" />`;
+      } else {
+        els.previewName.textContent = brandText || displayName;
+      }
+      els.previewName.style.color = theme.page_accent_color || "";
     }
     if (els.previewSubtitle) {
-      els.previewSubtitle.textContent = subtitle;
+      els.previewSubtitle.textContent = theme.layout_preset === "expanded" ? `${subtitle} · EXPANDED` : theme.layout_preset === "condensed" ? `${subtitle} · CONDENSED` : subtitle;
+      els.previewSubtitle.style.color = theme.button_color || "";
     }
     if (els.previewBadges) {
       els.previewBadges.innerHTML = resolvePreviewBadges(state.profile)
@@ -988,7 +1084,12 @@
             `<a class="ss-link" href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">${escapeHtml(key)}</a>`
         );
       els.previewLinks.innerHTML = links.join(" · ") || '<span class="account-note">No public links saved.</span>';
+      els.previewLinks.style.color = theme.button_color || theme.page_accent_color || "";
     }
+    els.previewSurface.dataset.findmeLayoutPreset = theme.layout_preset;
+    els.previewSurface.dataset.findmeFontPreset = theme.font_preset;
+    els.previewSurface.style.setProperty("--findme-preview-accent", theme.page_accent_color || "");
+    els.previewSurface.style.setProperty("--findme-preview-button", theme.button_color || theme.page_accent_color || "");
   }
 
   function getEditableDraft() {
@@ -1013,6 +1114,26 @@
       }
     });
 
+    const theme = {
+      header_branding: {
+        logo_image_url: coerceText(els.findmeThemeLogoInput?.value),
+        brand_text: coerceText(els.findmeThemeBrandTextInput?.value),
+      },
+      page_accent_color: normalizeThemeColor(els.findmeThemeAccentColorInput?.value),
+      button_color: normalizeThemeColor(els.findmeThemeButtonColorInput?.value),
+      button_tone: normalizeThemePreset(els.findmeThemeButtonToneInput?.value, ["brand", "soft", "ghost"], FINDMEHERE_THEME_DEFAULTS.button_tone),
+      font_preset: normalizeThemePreset(els.findmeThemeFontPresetInput?.value, ["default", "editorial", "condensed", "mono"], FINDMEHERE_THEME_DEFAULTS.font_preset),
+      layout_preset: normalizeThemePreset(els.findmeThemeLayoutPresetInput?.value, ["standard", "condensed", "expanded"], FINDMEHERE_THEME_DEFAULTS.layout_preset),
+      image_visibility: {
+        show_cover: !!els.findmeThemeShowCoverInput?.checked,
+        show_avatar: !!els.findmeThemeShowAvatarInput?.checked,
+        show_background: !!els.findmeThemeShowBackgroundInput?.checked,
+      },
+      advanced: {
+        profile_custom_css: String(els.findmeThemeCustomCssInput?.value || ""),
+      },
+    };
+
     return {
       display_name: coerceText(els.displayNameInput?.value),
       avatar_url: coerceText(els.avatarUrlInput?.value),
@@ -1021,6 +1142,7 @@
       findmehere_enabled: !!els.findmeToggle?.checked,
       cover_image_url: coerceText(els.coverImageInput?.value),
       background_image_url: coerceText(els.backgroundImageInput?.value),
+      findmehere_theme: normalizeFindmeTheme(theme),
       bio: coerceText(els.bioInput?.value),
       social_links: socialLinks,
     };
@@ -1037,6 +1159,7 @@
       findmehere_enabled: !!draft.findmehere_enabled,
       cover_image_url: coerceText(draft.cover_image_url),
       background_image_url: coerceText(draft.background_image_url),
+      findmehere_theme: normalizeFindmeTheme(draft.findmehere_theme),
       bio: coerceText(draft.bio),
       social_links: { ...(draft.social_links || {}) },
     };
@@ -1061,6 +1184,7 @@
       findmehere_enabled: !!profile?.findmehere_enabled,
       cover_image_url: coerceText(profile?.cover_image_url),
       background_image_url: coerceText(profile?.background_image_url),
+      findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme),
       bio: coerceText(profile?.bio),
       social_links: { ...(profile?.social_links || {}) },
     };
@@ -1250,6 +1374,39 @@
     if (els.backgroundImageInput instanceof HTMLInputElement) {
       els.backgroundImageInput.value = normalized.background_image_url;
     }
+    if (els.findmeThemeLogoInput instanceof HTMLInputElement) {
+      els.findmeThemeLogoInput.value = coerceText(normalized.findmehere_theme?.header_branding?.logo_image_url);
+    }
+    if (els.findmeThemeBrandTextInput instanceof HTMLInputElement) {
+      els.findmeThemeBrandTextInput.value = coerceText(normalized.findmehere_theme?.header_branding?.brand_text);
+    }
+    if (els.findmeThemeAccentColorInput instanceof HTMLInputElement) {
+      els.findmeThemeAccentColorInput.value = coerceText(normalized.findmehere_theme?.page_accent_color);
+    }
+    if (els.findmeThemeButtonColorInput instanceof HTMLInputElement) {
+      els.findmeThemeButtonColorInput.value = coerceText(normalized.findmehere_theme?.button_color);
+    }
+    if (els.findmeThemeButtonToneInput instanceof HTMLSelectElement) {
+      els.findmeThemeButtonToneInput.value = normalizeThemePreset(normalized.findmehere_theme?.button_tone, ["brand", "soft", "ghost"], FINDMEHERE_THEME_DEFAULTS.button_tone);
+    }
+    if (els.findmeThemeFontPresetInput instanceof HTMLSelectElement) {
+      els.findmeThemeFontPresetInput.value = normalizeThemePreset(normalized.findmehere_theme?.font_preset, ["default", "editorial", "condensed", "mono"], FINDMEHERE_THEME_DEFAULTS.font_preset);
+    }
+    if (els.findmeThemeLayoutPresetInput instanceof HTMLSelectElement) {
+      els.findmeThemeLayoutPresetInput.value = normalizeThemePreset(normalized.findmehere_theme?.layout_preset, ["standard", "condensed", "expanded"], FINDMEHERE_THEME_DEFAULTS.layout_preset);
+    }
+    if (els.findmeThemeShowCoverInput instanceof HTMLInputElement) {
+      els.findmeThemeShowCoverInput.checked = normalized.findmehere_theme?.image_visibility?.show_cover !== false;
+    }
+    if (els.findmeThemeShowAvatarInput instanceof HTMLInputElement) {
+      els.findmeThemeShowAvatarInput.checked = normalized.findmehere_theme?.image_visibility?.show_avatar !== false;
+    }
+    if (els.findmeThemeShowBackgroundInput instanceof HTMLInputElement) {
+      els.findmeThemeShowBackgroundInput.checked = normalized.findmehere_theme?.image_visibility?.show_background !== false;
+    }
+    if (els.findmeThemeCustomCssInput instanceof HTMLTextAreaElement) {
+      els.findmeThemeCustomCssInput.value = String(normalized.findmehere_theme?.advanced?.profile_custom_css || "");
+    }
     if (els.bioInput instanceof HTMLTextAreaElement) {
       els.bioInput.value = normalized.bio;
     }
@@ -1380,6 +1537,7 @@
         findmehere_enabled: draft.findmehere_enabled,
         cover_image_url: coerceText(workingProfile?.cover_image_url || draft.cover_image_url),
         background_image_url: draft.background_image_url,
+        findmehere_theme: draft.findmehere_theme,
         bio: draft.bio,
         social_links: draft.social_links,
       };
@@ -1522,6 +1680,30 @@
           els.coverImageInput.value = "";
         }
         renderMediaUploadStatus();
+        renderPreviewSurface();
+      });
+    }
+    if (els.findmeThemeLogoInput instanceof HTMLInputElement) {
+      els.findmeThemeLogoInput.addEventListener("input", renderPreviewSurface);
+    }
+    els.findmeThemeLogoSourceButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener("click", () => {
+        if (!(els.findmeThemeLogoInput instanceof HTMLInputElement)) return;
+        const source = button.getAttribute("data-findme-theme-logo-source") || "";
+        if (source === "avatar") {
+          els.findmeThemeLogoInput.value = resolveAvatarDraftValue();
+        } else if (source === "cover") {
+          els.findmeThemeLogoInput.value = resolveCoverDraftValue();
+        }
+        renderPreviewSurface();
+      });
+    });
+    if (els.findmeThemeLogoClearButton instanceof HTMLButtonElement) {
+      els.findmeThemeLogoClearButton.addEventListener("click", () => {
+        if (els.findmeThemeLogoInput instanceof HTMLInputElement) {
+          els.findmeThemeLogoInput.value = "";
+        }
         renderPreviewSurface();
       });
     }

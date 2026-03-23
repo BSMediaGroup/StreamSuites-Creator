@@ -432,7 +432,7 @@
 
             <article class="card">
               <h3>Media &amp; customization</h3>
-              <p>Upload-first profile media controls backed by the authoritative public profile model.</p>
+              <p>Upload-first profile media and FindMeHere appearance controls backed by the authoritative public profile model.</p>
               <div class="account-field-grid">
                 <div class="account-field">
                   <span class="account-field-label">Cover / banner image</span>
@@ -480,6 +480,118 @@
                   />
                   <span class="account-field-note">
                     Reserved future-facing media field. Editable and stored now even where it is not yet surfaced elsewhere.
+                  </span>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">FindMeHere header brand logo</span>
+                  <input
+                    class="account-field-input"
+                    type="url"
+                    placeholder="https://cdn.example.com/brand-logo.webp"
+                    data-profile-field="true"
+                    data-findme-theme-logo="true"
+                  />
+                  <div class="account-inline-button-row">
+                    <button class="creator-button secondary" type="button" data-findme-theme-logo-source="avatar">Use current avatar</button>
+                    <button class="creator-button secondary" type="button" data-findme-theme-logo-source="cover">Use current cover</button>
+                    <button class="creator-button danger" type="button" data-findme-theme-logo-clear="true">Clear logo</button>
+                  </div>
+                  <span class="account-field-note">
+                    Optional FindMeHere-only header branding image. Reuse your saved avatar or cover path, or enter an existing image URL.
+                  </span>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">FindMeHere header brand text</span>
+                  <input
+                    class="account-field-input"
+                    type="text"
+                    maxlength="80"
+                    placeholder="Brand text fallback"
+                    data-profile-field="true"
+                    data-findme-theme-brand-text="true"
+                  />
+                  <span class="account-field-note">
+                    Optional fallback text shown on your public FindMeHere page if no header logo is used.
+                  </span>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Page accent color</span>
+                  <input
+                    class="account-field-input"
+                    type="text"
+                    inputmode="text"
+                    maxlength="7"
+                    placeholder="#6ad6ff"
+                    data-profile-field="true"
+                    data-findme-theme-accent-color="true"
+                  />
+                  <span class="account-field-note">Hex color only. Applies to FindMeHere-only accents.</span>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Button color</span>
+                  <input
+                    class="account-field-input"
+                    type="text"
+                    inputmode="text"
+                    maxlength="7"
+                    placeholder="#3f8bff"
+                    data-profile-field="true"
+                    data-findme-theme-button-color="true"
+                  />
+                  <span class="account-field-note">Optional FindMeHere button color override in hex format.</span>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Button tone</span>
+                  <select class="account-field-input" data-profile-field="true" data-findme-theme-button-tone="true">
+                    <option value="brand">Brand</option>
+                    <option value="soft">Soft</option>
+                    <option value="ghost">Ghost</option>
+                  </select>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Font preset</span>
+                  <select class="account-field-input" data-profile-field="true" data-findme-theme-font-preset="true">
+                    <option value="default">Default</option>
+                    <option value="editorial">Editorial</option>
+                    <option value="condensed">Condensed</option>
+                    <option value="mono">Mono</option>
+                  </select>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Layout preset</span>
+                  <select class="account-field-input" data-profile-field="true" data-findme-theme-layout-preset="true">
+                    <option value="standard">Standard</option>
+                    <option value="condensed">Condensed</option>
+                    <option value="expanded">Expanded</option>
+                  </select>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Image visibility</span>
+                  <label class="account-checkbox-row">
+                    <input type="checkbox" data-profile-field="true" data-findme-theme-show-cover="true" />
+                    <span>Show cover image on FindMeHere</span>
+                  </label>
+                  <label class="account-checkbox-row">
+                    <input type="checkbox" data-profile-field="true" data-findme-theme-show-avatar="true" />
+                    <span>Show avatar on FindMeHere</span>
+                  </label>
+                  <label class="account-checkbox-row">
+                    <input type="checkbox" data-profile-field="true" data-findme-theme-show-background="true" />
+                    <span>Show background image on FindMeHere</span>
+                  </label>
+                </div>
+                <div class="account-field account-field-span-full">
+                  <span class="account-field-label">Advanced custom CSS</span>
+                  <textarea
+                    class="account-field-input account-field-textarea"
+                    rows="7"
+                    maxlength="4000"
+                    placeholder="/* Advanced FindMeHere-only CSS */"
+                    data-profile-field="true"
+                    data-findme-theme-custom-css="true"
+                  ></textarea>
+                  <span class="account-field-note">
+                    Advanced only. CSS is stored as raw text, scoped to your public FindMeHere page, and unsupported or unsafe rules may be ignored.
                   </span>
                 </div>
               </div>
