@@ -57,6 +57,8 @@
       profile_custom_css: "",
     }),
   });
+  const DEFAULT_ACCENT_COLOR = "#6ad6ff";
+  const DEFAULT_BUTTON_COLOR = "#3f8bff";
   const RESERVED_PUBLIC_SLUGS = new Set([
     "u",
     "live",
@@ -106,6 +108,7 @@
     loadingProfile: false,
     savingProfile: false,
     controlsWired: false,
+    previewMode: "streamsuites",
   };
 
   function showToast(message, tone = "info", options = {}) {
@@ -221,6 +224,15 @@
     return HEX_COLOR_RE.test(normalized) ? normalized.toLowerCase() : "";
   }
 
+  function expandHexColor(value, fallback = DEFAULT_ACCENT_COLOR) {
+    const normalized = normalizeThemeColor(value);
+    if (!normalized) return fallback;
+    if (normalized.length === 4) {
+      return `#${normalized[1]}${normalized[1]}${normalized[2]}${normalized[2]}${normalized[3]}${normalized[3]}`;
+    }
+    return normalized;
+  }
+
   function normalizeThemePreset(value, allowed, fallback) {
     const normalized = coerceText(value).toLowerCase();
     return allowed.includes(normalized) ? normalized : fallback;
@@ -301,12 +313,17 @@
       coverUploadStatus: document.querySelector("[data-profile-cover-upload-status]"),
       coverPreview: document.querySelector("[data-profile-cover-preview]"),
       backgroundImageInput: document.querySelector("[data-profile-background-image]"),
+      backgroundClearButton: document.querySelector("[data-profile-background-clear]"),
+      backgroundPreview: document.querySelector("[data-profile-background-preview]"),
       findmeThemeLogoInput: document.querySelector("[data-findme-theme-logo]"),
+      findmeThemeLogoPreview: document.querySelector("[data-findme-theme-logo-preview]"),
       findmeThemeLogoSourceButtons: Array.from(document.querySelectorAll("[data-findme-theme-logo-source]")),
       findmeThemeLogoClearButton: document.querySelector("[data-findme-theme-logo-clear]"),
       findmeThemeBrandTextInput: document.querySelector("[data-findme-theme-brand-text]"),
       findmeThemeAccentColorInput: document.querySelector("[data-findme-theme-accent-color]"),
+      findmeThemeAccentColorPickerInput: document.querySelector("[data-findme-theme-accent-color-picker]"),
       findmeThemeButtonColorInput: document.querySelector("[data-findme-theme-button-color]"),
+      findmeThemeButtonColorPickerInput: document.querySelector("[data-findme-theme-button-color-picker]"),
       findmeThemeButtonToneInput: document.querySelector("[data-findme-theme-button-tone]"),
       findmeThemeFontPresetInput: document.querySelector("[data-findme-theme-font-preset]"),
       findmeThemeLayoutPresetInput: document.querySelector("[data-findme-theme-layout-preset]"),
@@ -321,6 +338,9 @@
       resetButtons: Array.from(document.querySelectorAll("[data-profile-reset]")),
       copyButtons: Array.from(document.querySelectorAll("[data-profile-copy-url]")),
       profileFields: Array.from(document.querySelectorAll("[data-profile-field]")),
+      previewHub: document.querySelector("[data-profile-preview-hub]"),
+      previewModeButtons: Array.from(document.querySelectorAll("[data-profile-preview-mode]")),
+      previewPanels: Array.from(document.querySelectorAll("[data-preview-panel]")),
       previewSurface: document.querySelector("[data-profile-preview-surface]"),
       previewCover: document.querySelector("[data-profile-preview-cover]"),
       previewAvatar: document.querySelector("[data-profile-preview-avatar]"),
@@ -329,6 +349,22 @@
       previewBadges: document.querySelector("[data-profile-preview-badges]"),
       previewBio: document.querySelector("[data-profile-preview-bio]"),
       previewLinks: document.querySelector("[data-profile-preview-links]"),
+      tooltipPreviewSurface: document.querySelector("[data-tooltip-preview-surface]"),
+      tooltipPreviewCover: document.querySelector("[data-tooltip-preview-cover]"),
+      tooltipPreviewAvatar: document.querySelector("[data-tooltip-preview-avatar]"),
+      tooltipPreviewName: document.querySelector("[data-tooltip-preview-name]"),
+      tooltipPreviewSubtitle: document.querySelector("[data-tooltip-preview-subtitle]"),
+      tooltipPreviewBio: document.querySelector("[data-tooltip-preview-bio]"),
+      tooltipPreviewLinks: document.querySelector("[data-tooltip-preview-links]"),
+      findmePreviewSurface: document.querySelector("[data-findme-preview-surface]"),
+      findmePreviewBackdrop: document.querySelector("[data-findme-preview-backdrop]"),
+      findmePreviewLogo: document.querySelector("[data-findme-preview-logo]"),
+      findmePreviewBrandText: document.querySelector("[data-findme-preview-brand-text]"),
+      findmePreviewSubtitle: document.querySelector("[data-findme-preview-subtitle]"),
+      findmePreviewAvatar: document.querySelector("[data-findme-preview-avatar]"),
+      findmePreviewName: document.querySelector("[data-findme-preview-name]"),
+      findmePreviewBio: document.querySelector("[data-findme-preview-bio]"),
+      findmePreviewButtons: document.querySelector("[data-findme-preview-buttons]"),
     };
   }
 
@@ -881,6 +917,23 @@
     if (els.coverClearButton instanceof HTMLButtonElement) {
       els.coverClearButton.disabled = busy || !state.profile;
     }
+    if (els.backgroundClearButton instanceof HTMLButtonElement) {
+      els.backgroundClearButton.disabled = busy || !state.profile;
+    }
+    if (els.findmeThemeLogoClearButton instanceof HTMLButtonElement) {
+      els.findmeThemeLogoClearButton.disabled = busy || !state.profile;
+    }
+    els.findmeThemeLogoSourceButtons.forEach((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = busy || !state.profile;
+      }
+    });
+    if (els.findmeThemeAccentColorPickerInput instanceof HTMLInputElement) {
+      els.findmeThemeAccentColorPickerInput.disabled = busy || !state.profile;
+    }
+    if (els.findmeThemeButtonColorPickerInput instanceof HTMLInputElement) {
+      els.findmeThemeButtonColorPickerInput.disabled = busy || !state.profile;
+    }
   }
 
   function setStatusPill(element, text, tone) {
@@ -940,6 +993,48 @@
     return coerceText(state.profile?.cover_image_url);
   }
 
+  function resolveBackgroundDraftValue() {
+    const input = getProfileElements().backgroundImageInput;
+    if (input instanceof HTMLInputElement) {
+      return coerceText(input.value);
+    }
+    return coerceText(state.profile?.background_image_url);
+  }
+
+  function resolveFindmeLogoDraftValue() {
+    const input = getProfileElements().findmeThemeLogoInput;
+    if (input instanceof HTMLInputElement) {
+      return coerceText(input.value);
+    }
+    return coerceText(state.profile?.findmehere_theme?.header_branding?.logo_image_url);
+  }
+
+  function syncColorInputs(textInput, pickerInput, fallback) {
+    if (!(textInput instanceof HTMLInputElement) || !(pickerInput instanceof HTMLInputElement)) return;
+    const normalized = normalizeThemeColor(textInput.value);
+    textInput.setCustomValidity(coerceText(textInput.value) && !normalized ? "Enter a valid hex color like #6ad6ff." : "");
+    pickerInput.value = expandHexColor(normalized || pickerInput.value, fallback);
+  }
+
+  function applyPreviewMode() {
+    const els = getProfileElements();
+    if (els.previewHub instanceof HTMLElement) {
+      els.previewHub.dataset.previewMode = state.previewMode;
+    }
+    els.previewPanels.forEach((panel) => {
+      if (!(panel instanceof HTMLElement)) return;
+      const active = panel.getAttribute("data-preview-panel") === state.previewMode;
+      panel.classList.toggle("is-active", active);
+      panel.hidden = !active;
+    });
+    els.previewModeButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      const active = button.getAttribute("data-profile-preview-mode") === state.previewMode;
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+      button.classList.toggle("is-active", active);
+    });
+  }
+
   function renderMediaUploadStatus() {
     const els = getProfileElements();
     const avatarUpload = getStagedUpload("avatar");
@@ -979,6 +1074,18 @@
       els.coverPreview.style.backgroundImage = coverValue ? `url("${coverValue}")` : "";
       els.coverPreview.classList.toggle("has-image", Boolean(coverValue));
     }
+    if (els.backgroundPreview instanceof HTMLElement) {
+      const backgroundValue = resolveBackgroundDraftValue();
+      els.backgroundPreview.style.backgroundImage = backgroundValue ? `url("${backgroundValue}")` : "";
+      els.backgroundPreview.classList.toggle("has-image", Boolean(backgroundValue));
+    }
+    if (els.findmeThemeLogoPreview instanceof HTMLElement) {
+      const logoValue = resolveFindmeLogoDraftValue();
+      els.findmeThemeLogoPreview.style.backgroundImage = logoValue ? `url("${logoValue}")` : "";
+      els.findmeThemeLogoPreview.classList.toggle("has-image", Boolean(logoValue));
+    }
+    syncColorInputs(els.findmeThemeAccentColorInput, els.findmeThemeAccentColorPickerInput, DEFAULT_ACCENT_COLOR);
+    syncColorInputs(els.findmeThemeButtonColorInput, els.findmeThemeButtonColorPickerInput, DEFAULT_BUTTON_COLOR);
   }
 
   async function stageUpload(kind, file, maxBytes) {
@@ -1024,7 +1131,7 @@
 
   function renderPreviewSurface() {
     const els = getProfileElements();
-    if (!els.previewSurface) return;
+    if (!els.previewSurface && !els.tooltipPreviewSurface && !els.findmePreviewSurface) return;
     const draft = getEditableDraft();
     const session = getActiveSession();
     const theme = normalizeFindmeTheme(draft.findmehere_theme || state.profile?.findmehere_theme);
@@ -1033,16 +1140,27 @@
     const coverImageUrl = draft.cover_image_url || coerceText(state.profile?.cover_image_url);
     const backgroundImageUrl = draft.background_image_url || coerceText(state.profile?.background_image_url);
     const subtitle = `${(coerceText(state.profile?.public_surface_account_type) || coerceText(session.role) || "creator").replace(/_/g, " ").toUpperCase()}${coerceText(session.tier) ? ` · ${coerceText(session.tier).toUpperCase()}` : ""}`;
+    const brandLogo = coerceText(theme.header_branding.logo_image_url);
+    const brandText = coerceText(theme.header_branding.brand_text) || displayName;
+    const buttonColor = theme.button_color || theme.page_accent_color || DEFAULT_BUTTON_COLOR;
+    const accentColor = theme.page_accent_color || DEFAULT_ACCENT_COLOR;
+    const previewLayers = [];
+    if (theme.image_visibility.show_background && backgroundImageUrl) {
+      previewLayers.push(`url("${backgroundImageUrl}")`);
+    }
+    if (theme.image_visibility.show_cover && coverImageUrl) {
+      previewLayers.push(`url("${coverImageUrl}")`);
+    }
+    const links = Object.entries(draft.social_links || {})
+      .filter(([, value]) => coerceText(value))
+      .map(
+        ([key, value]) =>
+          `<a class="ss-link" href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">${escapeHtml(key)}</a>`
+      );
+
     if (els.previewCover) {
-      const previewLayers = [];
-      if (theme.image_visibility.show_background && backgroundImageUrl) {
-        previewLayers.push(`url("${backgroundImageUrl}")`);
-      }
-      if (theme.image_visibility.show_cover && coverImageUrl) {
-        previewLayers.push(`url("${coverImageUrl}")`);
-      }
       els.previewCover.style.backgroundImage = previewLayers.join(", ");
-      els.previewCover.style.borderColor = theme.page_accent_color || "";
+      els.previewCover.style.borderColor = accentColor;
     }
     if (els.previewAvatar) {
       const showAvatar = theme.image_visibility.show_avatar;
@@ -1051,22 +1169,20 @@
       els.previewAvatar.innerHTML = showAvatar && avatarUrl
         ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar" loading="lazy" decoding="async" />`
         : escapeHtml(displayName.charAt(0).toUpperCase() || "P");
-      els.previewAvatar.style.borderColor = theme.page_accent_color || "";
-      els.previewAvatar.style.boxShadow = theme.page_accent_color ? `0 0 0 1px ${theme.page_accent_color}` : "";
+      els.previewAvatar.style.borderColor = accentColor;
+      els.previewAvatar.style.boxShadow = `0 0 0 1px ${accentColor}`;
     }
     if (els.previewName) {
-      const brandLogo = coerceText(theme.header_branding.logo_image_url);
-      const brandText = coerceText(theme.header_branding.brand_text);
       if (brandLogo) {
         els.previewName.innerHTML = `<img class="account-preview-brand-image" src="${escapeHtml(brandLogo)}" alt="Header brand" loading="lazy" decoding="async" />`;
       } else {
         els.previewName.textContent = brandText || displayName;
       }
-      els.previewName.style.color = theme.page_accent_color || "";
+      els.previewName.style.color = accentColor;
     }
     if (els.previewSubtitle) {
       els.previewSubtitle.textContent = theme.layout_preset === "expanded" ? `${subtitle} · EXPANDED` : theme.layout_preset === "condensed" ? `${subtitle} · CONDENSED` : subtitle;
-      els.previewSubtitle.style.color = theme.button_color || "";
+      els.previewSubtitle.style.color = buttonColor;
     }
     if (els.previewBadges) {
       els.previewBadges.innerHTML = resolvePreviewBadges(state.profile)
@@ -1077,19 +1193,99 @@
       els.previewBio.textContent = draft.bio || coerceText(state.profile?.bio) || "No public bio saved.";
     }
     if (els.previewLinks) {
-      const links = Object.entries(draft.social_links || {})
-        .filter(([, value]) => coerceText(value))
-        .map(
-          ([key, value]) =>
-            `<a class="ss-link" href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">${escapeHtml(key)}</a>`
-        );
       els.previewLinks.innerHTML = links.join(" · ") || '<span class="account-note">No public links saved.</span>';
-      els.previewLinks.style.color = theme.button_color || theme.page_accent_color || "";
+      els.previewLinks.style.color = buttonColor;
     }
     els.previewSurface.dataset.findmeLayoutPreset = theme.layout_preset;
     els.previewSurface.dataset.findmeFontPreset = theme.font_preset;
-    els.previewSurface.style.setProperty("--findme-preview-accent", theme.page_accent_color || "");
-    els.previewSurface.style.setProperty("--findme-preview-button", theme.button_color || theme.page_accent_color || "");
+    els.previewSurface.style.setProperty("--findme-preview-accent", accentColor);
+    els.previewSurface.style.setProperty("--findme-preview-button", buttonColor);
+
+    if (els.tooltipPreviewSurface instanceof HTMLElement) {
+      els.tooltipPreviewSurface.dataset.findmeFontPreset = theme.font_preset;
+      els.tooltipPreviewSurface.style.setProperty("--findme-preview-accent", accentColor);
+      els.tooltipPreviewSurface.style.backgroundColor = "";
+    }
+    if (els.tooltipPreviewCover instanceof HTMLElement) {
+      els.tooltipPreviewCover.style.backgroundImage = previewLayers.join(", ");
+    }
+    if (els.tooltipPreviewAvatar instanceof HTMLElement) {
+      const showAvatar = theme.image_visibility.show_avatar;
+      els.tooltipPreviewAvatar.hidden = !showAvatar;
+      els.tooltipPreviewAvatar.classList.toggle("has-image", Boolean(avatarUrl) && showAvatar);
+      els.tooltipPreviewAvatar.innerHTML = showAvatar && avatarUrl
+        ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar" loading="lazy" decoding="async" />`
+        : escapeHtml(displayName.charAt(0).toUpperCase() || "P");
+      els.tooltipPreviewAvatar.style.borderColor = accentColor;
+    }
+    if (els.tooltipPreviewName instanceof HTMLElement) {
+      els.tooltipPreviewName.textContent = displayName;
+      els.tooltipPreviewName.style.color = accentColor;
+    }
+    if (els.tooltipPreviewSubtitle instanceof HTMLElement) {
+      els.tooltipPreviewSubtitle.textContent = `Tooltip preview · ${subtitle}`;
+      els.tooltipPreviewSubtitle.style.color = buttonColor;
+    }
+    if (els.tooltipPreviewBio instanceof HTMLElement) {
+      els.tooltipPreviewBio.textContent = draft.bio || coerceText(state.profile?.bio) || "No public bio saved.";
+    }
+    if (els.tooltipPreviewLinks instanceof HTMLElement) {
+      els.tooltipPreviewLinks.innerHTML = links.join(" · ") || '<span class="account-note">No public links saved.</span>';
+    }
+
+    if (els.findmePreviewSurface instanceof HTMLElement) {
+      els.findmePreviewSurface.dataset.findmeLayoutPreset = theme.layout_preset;
+      els.findmePreviewSurface.dataset.findmeFontPreset = theme.font_preset;
+      els.findmePreviewSurface.style.setProperty("--findme-preview-accent", accentColor);
+      els.findmePreviewSurface.style.setProperty("--findme-preview-button", buttonColor);
+    }
+    if (els.findmePreviewBackdrop instanceof HTMLElement) {
+      els.findmePreviewBackdrop.style.backgroundImage = previewLayers.join(", ");
+      els.findmePreviewBackdrop.hidden = !previewLayers.length;
+    }
+    if (els.findmePreviewLogo instanceof HTMLElement) {
+      if (brandLogo) {
+        els.findmePreviewLogo.innerHTML = `<img src="${escapeHtml(brandLogo)}" alt="FindMeHere header logo" loading="lazy" decoding="async" />`;
+      } else {
+        els.findmePreviewLogo.textContent = (brandText || "FMH").slice(0, 3).toUpperCase();
+      }
+      els.findmePreviewLogo.style.borderColor = accentColor;
+      els.findmePreviewLogo.style.color = accentColor;
+    }
+    if (els.findmePreviewBrandText instanceof HTMLElement) {
+      els.findmePreviewBrandText.textContent = brandText;
+    }
+    if (els.findmePreviewSubtitle instanceof HTMLElement) {
+      els.findmePreviewSubtitle.textContent = `${theme.layout_preset.toUpperCase()} layout · ${theme.font_preset.toUpperCase()} font`;
+    }
+    if (els.findmePreviewAvatar instanceof HTMLElement) {
+      const showAvatar = theme.image_visibility.show_avatar;
+      els.findmePreviewAvatar.hidden = !showAvatar;
+      els.findmePreviewAvatar.classList.toggle("has-image", Boolean(avatarUrl) && showAvatar);
+      els.findmePreviewAvatar.innerHTML = showAvatar && avatarUrl
+        ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar" loading="lazy" decoding="async" />`
+        : escapeHtml(displayName.charAt(0).toUpperCase() || "P");
+      els.findmePreviewAvatar.style.borderColor = accentColor;
+    }
+    if (els.findmePreviewName instanceof HTMLElement) {
+      els.findmePreviewName.textContent = displayName;
+    }
+    if (els.findmePreviewBio instanceof HTMLElement) {
+      els.findmePreviewBio.textContent = draft.bio || coerceText(state.profile?.bio) || "No public bio saved.";
+    }
+    if (els.findmePreviewButtons instanceof HTMLElement) {
+      const tone = theme.button_tone || "brand";
+      Array.from(els.findmePreviewButtons.querySelectorAll("button")).forEach((button) => {
+        if (!(button instanceof HTMLButtonElement)) return;
+        button.dataset.buttonTone = tone;
+        button.style.borderColor = buttonColor;
+        button.style.background = tone === "ghost" ? "transparent" : buttonColor;
+        button.style.color = tone === "ghost" ? buttonColor : "#07111f";
+        button.style.opacity = tone === "soft" ? "0.82" : "1";
+      });
+    }
+
+    applyPreviewMode();
   }
 
   function getEditableDraft() {
@@ -1383,8 +1579,14 @@
     if (els.findmeThemeAccentColorInput instanceof HTMLInputElement) {
       els.findmeThemeAccentColorInput.value = coerceText(normalized.findmehere_theme?.page_accent_color);
     }
+    if (els.findmeThemeAccentColorPickerInput instanceof HTMLInputElement) {
+      els.findmeThemeAccentColorPickerInput.value = expandHexColor(normalized.findmehere_theme?.page_accent_color, DEFAULT_ACCENT_COLOR);
+    }
     if (els.findmeThemeButtonColorInput instanceof HTMLInputElement) {
       els.findmeThemeButtonColorInput.value = coerceText(normalized.findmehere_theme?.button_color);
+    }
+    if (els.findmeThemeButtonColorPickerInput instanceof HTMLInputElement) {
+      els.findmeThemeButtonColorPickerInput.value = expandHexColor(normalized.findmehere_theme?.button_color, DEFAULT_BUTTON_COLOR);
     }
     if (els.findmeThemeButtonToneInput instanceof HTMLSelectElement) {
       els.findmeThemeButtonToneInput.value = normalizeThemePreset(normalized.findmehere_theme?.button_tone, ["brand", "soft", "ghost"], FINDMEHERE_THEME_DEFAULTS.button_tone);
@@ -1659,6 +1861,18 @@
         }
       });
     }
+    if (els.coverImageInput instanceof HTMLInputElement) {
+      els.coverImageInput.addEventListener("input", () => {
+        renderMediaUploadStatus();
+        renderPreviewSurface();
+      });
+    }
+    if (els.backgroundImageInput instanceof HTMLInputElement) {
+      els.backgroundImageInput.addEventListener("input", () => {
+        renderMediaUploadStatus();
+        renderPreviewSurface();
+      });
+    }
     if (els.avatarClearButton instanceof HTMLButtonElement) {
       els.avatarClearButton.addEventListener("click", () => {
         if (getStagedUpload("avatar")?.file) {
@@ -1683,8 +1897,20 @@
         renderPreviewSurface();
       });
     }
+    if (els.backgroundClearButton instanceof HTMLButtonElement) {
+      els.backgroundClearButton.addEventListener("click", () => {
+        if (els.backgroundImageInput instanceof HTMLInputElement) {
+          els.backgroundImageInput.value = "";
+        }
+        renderMediaUploadStatus();
+        renderPreviewSurface();
+      });
+    }
     if (els.findmeThemeLogoInput instanceof HTMLInputElement) {
-      els.findmeThemeLogoInput.addEventListener("input", renderPreviewSurface);
+      els.findmeThemeLogoInput.addEventListener("input", () => {
+        renderMediaUploadStatus();
+        renderPreviewSurface();
+      });
     }
     els.findmeThemeLogoSourceButtons.forEach((button) => {
       if (!(button instanceof HTMLButtonElement)) return;
@@ -1695,7 +1921,10 @@
           els.findmeThemeLogoInput.value = resolveAvatarDraftValue();
         } else if (source === "cover") {
           els.findmeThemeLogoInput.value = resolveCoverDraftValue();
+        } else if (source === "background") {
+          els.findmeThemeLogoInput.value = resolveBackgroundDraftValue();
         }
+        renderMediaUploadStatus();
         renderPreviewSurface();
       });
     });
@@ -1704,6 +1933,29 @@
         if (els.findmeThemeLogoInput instanceof HTMLInputElement) {
           els.findmeThemeLogoInput.value = "";
         }
+        renderMediaUploadStatus();
+        renderPreviewSurface();
+      });
+    }
+    if (els.findmeThemeAccentColorInput instanceof HTMLInputElement && els.findmeThemeAccentColorPickerInput instanceof HTMLInputElement) {
+      els.findmeThemeAccentColorInput.addEventListener("input", () => {
+        syncColorInputs(els.findmeThemeAccentColorInput, els.findmeThemeAccentColorPickerInput, DEFAULT_ACCENT_COLOR);
+        renderPreviewSurface();
+      });
+      els.findmeThemeAccentColorPickerInput.addEventListener("input", () => {
+        els.findmeThemeAccentColorInput.value = els.findmeThemeAccentColorPickerInput.value;
+        syncColorInputs(els.findmeThemeAccentColorInput, els.findmeThemeAccentColorPickerInput, DEFAULT_ACCENT_COLOR);
+        renderPreviewSurface();
+      });
+    }
+    if (els.findmeThemeButtonColorInput instanceof HTMLInputElement && els.findmeThemeButtonColorPickerInput instanceof HTMLInputElement) {
+      els.findmeThemeButtonColorInput.addEventListener("input", () => {
+        syncColorInputs(els.findmeThemeButtonColorInput, els.findmeThemeButtonColorPickerInput, DEFAULT_BUTTON_COLOR);
+        renderPreviewSurface();
+      });
+      els.findmeThemeButtonColorPickerInput.addEventListener("input", () => {
+        els.findmeThemeButtonColorInput.value = els.findmeThemeButtonColorPickerInput.value;
+        syncColorInputs(els.findmeThemeButtonColorInput, els.findmeThemeButtonColorPickerInput, DEFAULT_BUTTON_COLOR);
         renderPreviewSurface();
       });
     }
@@ -1731,6 +1983,13 @@
       button.dataset.accountSettingsWired = "true";
       button.addEventListener("click", () => {
         copyShareUrl(button.getAttribute("data-profile-copy-url") || "streamsuites");
+      });
+    });
+    els.previewModeButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener("click", () => {
+        state.previewMode = button.getAttribute("data-profile-preview-mode") || "streamsuites";
+        applyPreviewMode();
       });
     });
   }
@@ -1797,6 +2056,7 @@
     state.loadingProfile = false;
     state.savingProfile = false;
     state.controlsWired = false;
+    state.previewMode = "streamsuites";
   }
 
   window.AccountSettingsView = {

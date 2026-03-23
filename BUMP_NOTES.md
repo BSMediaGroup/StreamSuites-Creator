@@ -4,6 +4,19 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## FindMeHere Editor Media/Layout Repair - 2026-03-24
+
+- The creator account editor now keeps the existing avatar flow intact while restoring a distinct cover image slot and clearly separating all four image roles: avatar image, cover image, background image, and custom FindMeHere logo image.
+- The account page layout now groups identity/visibility, public content/share links, media/appearance, advanced FindMeHere CSS, and a dedicated full-width preview section so the form no longer sits beside a cramped inline preview column.
+- Accent and button colors now support synchronized hex text entry plus native visual color pickers, and the preview area now switches between StreamSuites, tooltip, and FindMeHere modes with representative FindMeHere header and button states.
+
+### Files / Areas Touched
+
+- `views/account.html`
+- `js/account-settings.js`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## FindMeHere Appearance Editor - 2026-03-24
 
 - The creator account page now exposes a real FindMeHere appearance editor on top of the authoritative runtime public-profile contract, covering header branding, accent/button colors, button tone, font/layout presets, image visibility toggles, and advanced scoped custom CSS without inventing a parallel client-only settings store.

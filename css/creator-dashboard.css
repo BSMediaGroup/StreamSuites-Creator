@@ -1641,6 +1641,14 @@ h3 {
   padding: 24px;
 }
 
+.account-profile-card,
+.account-profile-content-card,
+.account-profile-media-card,
+.account-findme-advanced-card,
+.account-preview-hub-card {
+  grid-column: 1 / -1;
+}
+
 .account-settings .account-field-grid {
   gap: 16px;
 }
@@ -1724,6 +1732,45 @@ h3 {
 .account-field-textarea {
   min-height: 132px;
   resize: vertical;
+}
+
+.account-editor-dual {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.account-editor-panel {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.account-media-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  align-items: start;
+}
+
+.account-media-slot {
+  display: grid;
+  gap: 6px;
+}
+
+.account-color-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 56px;
+  gap: 10px;
+  align-items: center;
+}
+
+.account-color-picker {
+  width: 56px;
+  height: 44px;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .account-inline-button-row {
@@ -2209,6 +2256,204 @@ h3 {
   color: var(--creator-muted);
   font-size: var(--creator-body-size-sm);
   line-height: 1.6;
+}
+
+.account-preview-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.account-preview-toolbar .creator-button.is-active,
+.account-preview-toolbar .creator-button[aria-pressed="true"] {
+  border-color: rgba(122, 214, 255, 0.5);
+  background: rgba(106, 214, 255, 0.16);
+  color: #eef8ff;
+}
+
+.account-preview-hub {
+  display: grid;
+}
+
+.account-preview-panel {
+  display: none;
+}
+
+.account-preview-panel.is-active {
+  display: block;
+}
+
+.account-tooltip-preview,
+.account-findme-preview {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 12, 20, 0.82);
+}
+
+.account-tooltip-preview {
+  max-width: 520px;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+}
+
+.account-tooltip-preview-cover {
+  min-height: 108px;
+  background: linear-gradient(140deg, rgba(105, 214, 255, 0.24), rgba(8, 12, 20, 0.92));
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.account-tooltip-preview-body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: 18px;
+  margin-top: -34px;
+  align-items: start;
+}
+
+.account-tooltip-preview-avatar,
+.account-findme-preview-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 25% 25%, rgba(105, 214, 255, 0.38), rgba(15, 26, 42, 0.92));
+  color: #eef8ff;
+  font-family: var(--creator-display-font, "RechargeBd", sans-serif);
+  border: 1px solid rgba(105, 214, 255, 0.38);
+}
+
+.account-tooltip-preview-avatar img,
+.account-findme-preview-avatar img,
+.account-findme-preview-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.account-tooltip-preview-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.account-tooltip-preview-copy strong,
+.account-findme-preview-copy h4 {
+  font-size: 20px;
+  color: var(--creator-text);
+}
+
+.account-tooltip-preview-copy span,
+.account-findme-preview-copy p,
+.account-tooltip-preview-links,
+.account-findme-preview-header span {
+  color: var(--creator-muted);
+  font-size: var(--creator-body-size-sm);
+}
+
+.account-tooltip-preview-copy p,
+.account-findme-preview-copy p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.account-findme-preview {
+  min-height: 360px;
+  padding: 24px;
+}
+
+.account-findme-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  background:
+    radial-gradient(circle at top left, rgba(106, 214, 255, 0.2), transparent 42%),
+    linear-gradient(180deg, rgba(9, 13, 22, 0.18), rgba(9, 13, 22, 0.76));
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.account-findme-preview-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 24px;
+}
+
+.account-findme-preview-header,
+.account-findme-preview-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.account-findme-preview-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.account-findme-preview-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 16, 28, 0.92);
+  display: grid;
+  place-items: center;
+  font-family: var(--creator-heading);
+  letter-spacing: 0.12em;
+}
+
+.account-findme-preview-brand strong {
+  display: block;
+  font-size: 18px;
+  color: var(--creator-text);
+}
+
+.account-findme-preview-chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.account-findme-preview-chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.account-findme-preview-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.account-findme-preview-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.account-findme-preview-buttons button {
+  min-height: 48px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  font-family: var(--creator-heading);
+  letter-spacing: 0.04em;
+  cursor: default;
 }
 
 .creator-mono,
@@ -3587,6 +3832,10 @@ body.creator-lockout-active .creator-lockout {
     grid-template-columns: 1fr;
   }
 
+  .account-editor-dual {
+    grid-template-columns: 1fr;
+  }
+
   .profile-toggle-card {
     grid-template-columns: 1fr;
   }
@@ -3611,6 +3860,15 @@ body.creator-lockout-active .creator-lockout {
     width: 100%;
     margin-left: 0;
     justify-content: flex-start;
+  }
+
+  .account-color-row {
+    grid-template-columns: 1fr;
+  }
+
+  .account-tooltip-preview-body {
+    grid-template-columns: 1fr;
+    margin-top: 0;
   }
 }
 
