@@ -1631,9 +1631,13 @@ h3 {
 }
 
 .account-settings .account-grid {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 26px;
   align-items: start;
+}
+
+.account-settings .account-grid > .card {
+  grid-column: 1 / -1;
 }
 
 .account-settings .account-grid > .card:not(.account-profile-card) {
@@ -1654,9 +1658,18 @@ h3 {
 }
 
 .account-settings .account-grid > .card:not(.account-profile-card) .account-field-grid {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px 18px;
   align-items: start;
+}
+
+.account-section-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.account-stack-fields {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .account-settings .account-list {
@@ -1736,7 +1749,7 @@ h3 {
 
 .account-editor-dual {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   align-items: start;
 }
@@ -1748,7 +1761,7 @@ h3 {
 }
 
 .account-media-grid {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 
@@ -1800,6 +1813,7 @@ h3 {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .account-avatar-frame {
@@ -1941,6 +1955,25 @@ h3 {
   margin-top: 10px;
 }
 
+.account-media-slot-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(9, 13, 22, 0.68);
+}
+
+.account-media-slot-head {
+  display: grid;
+  gap: 14px;
+}
+
+.account-findme-branding-card .account-field-grid,
+.account-findme-advanced-card .account-field-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .profile-cover-preview {
   min-height: 124px;
   border-radius: 16px;
@@ -1963,7 +1996,7 @@ h3 {
 
 .profile-settings-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
 }
 
@@ -2283,39 +2316,263 @@ h3 {
   display: block;
 }
 
-.account-tooltip-preview,
-.account-findme-preview {
-  position: relative;
+.account-preview-canvas {
+  width: 100%;
+  overflow: auto;
+  padding: 8px 0;
+}
+
+.account-preview-frame {
+  width: 100%;
+  min-width: min(100%, 760px);
+}
+
+.account-preview-empty {
+  color: rgba(190, 207, 231, 0.72);
+  font-size: 0.72rem;
+}
+
+.account-preview-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.account-preview-badge-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.share-copy-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0 8px;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.account-preview-canvas .profile-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(177, 194, 224, 0.18);
+  background:
+    linear-gradient(180deg, rgba(18, 27, 41, 0.96), rgba(11, 17, 28, 0.94)),
+    rgba(11, 17, 28, 0.92);
+  border-radius: 18px;
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.3);
+}
+
+.account-preview-canvas .profile-cover {
+  border: 1px solid rgba(190, 206, 232, 0.26);
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 3.4 / 1;
+  background: rgba(10, 16, 26, 0.78);
+}
+
+.account-preview-canvas .profile-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.account-preview-canvas .creator-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-preview-canvas .creator-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(218, 230, 246, 0.28);
+  background: linear-gradient(140deg, #9ec6ff, #70e0ff);
+  color: #0c1320;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--creator-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.account-preview-canvas .creator-avatar.is-expanded {
+  width: 42px;
+  height: 42px;
+  font-size: 0.95rem;
+}
+
+.account-preview-canvas .creator-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.account-preview-canvas .creator-meta-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.account-preview-canvas .creator-meta-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.account-preview-canvas .creator-name {
+  color: #f4f8ff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.account-preview-canvas .creator-meta-bottom {
+  color: rgba(190, 207, 231, 0.72);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.account-preview-canvas .profile-inline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.account-preview-canvas .profile-inline-header h3 {
+  margin: 0;
+  font-size: 0.76rem;
+  color: #f4f8ff;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.account-preview-canvas .profile-social-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.account-preview-canvas .social-icon-btn {
+  min-height: 30px;
+  border-radius: 9px;
+  border: 1px solid rgba(179, 196, 221, 0.28);
+  background: rgba(20, 29, 44, 0.8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  font-size: 0.68rem;
+  text-transform: capitalize;
+  color: #dfeafe;
+  text-decoration: none;
+}
+
+.account-preview-canvas .profile-bio-text {
+  margin: 0;
+  color: rgba(201, 214, 235, 0.92);
+  line-height: 1.55;
+  font-size: 0.74rem;
+}
+
+.account-preview-canvas .profile-share-section {
+  display: grid;
+  gap: 10px;
+}
+
+.account-preview-canvas .profile-share-option {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid rgba(177, 194, 224, 0.18);
+  border-radius: 12px;
+  background: rgba(14, 21, 33, 0.72);
+}
+
+.account-preview-canvas .profile-share-option-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(190, 207, 231, 0.72);
+}
+
+.account-preview-canvas .share-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(177, 194, 224, 0.24);
+  background:
+    linear-gradient(145deg, rgba(16, 24, 37, 0.88), rgba(10, 17, 28, 0.92)),
+    rgba(16, 24, 37, 0.78);
+  border-radius: 12px;
+  padding: 7px 8px 7px 10px;
+}
+
+.account-preview-canvas .share-link-text {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--creator-mono-font);
+  font-size: 0.64rem;
+  line-height: 1.35;
+  color: rgba(194, 208, 231, 0.82);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-preview-canvas .share-copy-btn {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 9px;
+  border: 1px solid rgba(174, 194, 225, 0.32);
+  background: linear-gradient(160deg, rgba(26, 37, 57, 0.96), rgba(16, 25, 40, 0.96));
+  color: rgba(214, 228, 248, 0.9);
+}
+
+.account-preview-canvas .ss-profile-hovercard {
+  width: min(100%, 520px);
   overflow: hidden;
   border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(8, 12, 20, 0.82);
+  border: 1px solid rgba(140, 121, 255, 0.35);
+  background: rgba(10, 12, 18, 0.9);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
 }
 
-.account-tooltip-preview {
-  max-width: 520px;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
-}
-
-.account-tooltip-preview-cover {
-  min-height: 108px;
+.account-preview-canvas .ss-profile-hovercard-cover {
+  min-height: 120px;
   background: linear-gradient(140deg, rgba(105, 214, 255, 0.24), rgba(8, 12, 20, 0.92));
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
 }
 
-.account-tooltip-preview-body {
+.account-preview-canvas .ss-profile-hovercard-cover-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+.account-preview-canvas .ss-profile-hovercard-body {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 16px;
+  gap: 12px;
   padding: 18px;
-  margin-top: -34px;
-  align-items: start;
 }
 
-.account-tooltip-preview-avatar,
-.account-findme-preview-avatar {
+.account-preview-canvas .ss-profile-hovercard-avatar {
   width: 68px;
   height: 68px;
   border-radius: 999px;
@@ -2324,136 +2581,312 @@ h3 {
   place-items: center;
   background: radial-gradient(circle at 25% 25%, rgba(105, 214, 255, 0.38), rgba(15, 26, 42, 0.92));
   color: #eef8ff;
-  font-family: var(--creator-display-font, "RechargeBd", sans-serif);
+  font-family: var(--creator-heading);
   border: 1px solid rgba(105, 214, 255, 0.38);
 }
 
-.account-tooltip-preview-avatar img,
-.account-findme-preview-avatar img,
-.account-findme-preview-logo img {
+.account-preview-canvas .ss-profile-hovercard-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.account-tooltip-preview-copy {
+.account-preview-canvas .ss-profile-hovercard-head,
+.account-preview-canvas .ss-profile-hovercard-name-row,
+.account-preview-canvas .ss-profile-hovercard-social-row,
+.account-preview-canvas .ss-profile-hovercard-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.account-preview-canvas .ss-profile-hovercard-head {
   display: grid;
   gap: 6px;
 }
 
-.account-tooltip-preview-copy strong,
-.account-findme-preview-copy h4 {
-  font-size: 20px;
-  color: var(--creator-text);
-}
-
-.account-tooltip-preview-copy span,
-.account-findme-preview-copy p,
-.account-tooltip-preview-links,
-.account-findme-preview-header span {
-  color: var(--creator-muted);
-  font-size: var(--creator-body-size-sm);
-}
-
-.account-tooltip-preview-copy p,
-.account-findme-preview-copy p {
+.account-preview-canvas .ss-profile-hovercard-name {
   margin: 0;
-  line-height: 1.6;
+  font-size: 1.05rem;
+  color: #f5f8ff;
 }
 
-.account-findme-preview {
-  min-height: 360px;
-  padding: 24px;
+.account-preview-canvas .ss-profile-hovercard-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.account-findme-preview-backdrop {
+.account-preview-canvas .ss-profile-hovercard-subtitle,
+.account-preview-canvas .ss-profile-hovercard-bio {
+  margin: 0;
+  color: rgba(186, 198, 225, 0.78);
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
+.account-preview-canvas .ss-profile-hovercard-social,
+.account-preview-canvas .ss-profile-hovercard-action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 209, 255, 0.22);
+  color: rgba(154, 209, 255, 0.92);
+  text-decoration: none;
+  font-size: 0.68rem;
+}
+
+.account-preview-canvas .account-findme-preview-shell {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(12, 17, 28, 0.96), rgba(8, 12, 20, 0.98)),
+    rgba(8, 12, 20, 0.96);
+  overflow: hidden;
+}
+
+.account-preview-canvas .account-findme-preview-shell::before {
+  content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.28;
   background:
-    radial-gradient(circle at top left, rgba(106, 214, 255, 0.2), transparent 42%),
-    linear-gradient(180deg, rgba(9, 13, 22, 0.18), rgba(9, 13, 22, 0.76));
+    linear-gradient(180deg, rgba(6, 10, 16, 0.1), rgba(6, 10, 16, 0.74)),
+    var(--account-findme-background, none);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  opacity: 0.28;
+  pointer-events: none;
 }
 
-.account-findme-preview-shell {
+.account-preview-canvas .account-findme-preview-shell > * {
   position: relative;
   z-index: 1;
-  display: grid;
-  gap: 24px;
 }
 
-.account-findme-preview-header,
-.account-findme-preview-hero {
+.account-preview-canvas .fmh-topbar {
   display: flex;
-  justify-content: space-between;
-  gap: 18px;
   align-items: center;
+  justify-content: space-between;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
-.account-findme-preview-brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.account-findme-preview-logo {
-  width: 72px;
-  height: 72px;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(10, 16, 28, 0.92);
-  display: grid;
-  place-items: center;
-  font-family: var(--creator-heading);
-  letter-spacing: 0.12em;
-}
-
-.account-findme-preview-brand strong {
-  display: block;
-  font-size: 18px;
-  color: var(--creator-text);
-}
-
-.account-findme-preview-chips {
+.account-preview-canvas .fmh-topbar-actions,
+.account-preview-canvas .fmh-profile-summary,
+.account-preview-canvas .fmh-profile-title-row,
+.account-preview-canvas .fmh-profile-meta,
+.account-preview-canvas .fmh-profile-actions,
+.account-preview-canvas .fmh-share-row {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
-.account-findme-preview-chip {
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
-  font-size: 11px;
+.account-preview-canvas .fmh-brand,
+.account-preview-canvas .fmh-brand-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #f4f8ff;
+  text-decoration: none;
+}
+
+.account-preview-canvas .fmh-brand-wordmark {
+  font-family: var(--creator-heading);
+  font-size: 1rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.account-findme-preview-copy {
-  display: grid;
-  gap: 8px;
+.account-preview-canvas .fmh-brand-icon,
+.account-preview-canvas .fmh-account-avatar {
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.account-findme-preview-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
+.account-preview-canvas .fmh-brand-profile-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.account-findme-preview-buttons button {
-  min-height: 48px;
-  border-radius: 14px;
-  border: 1px solid transparent;
+.account-preview-canvas .fmh-brand-profile-image {
+  max-width: 140px;
+  max-height: 34px;
+  object-fit: contain;
+  display: block;
+}
+
+.account-preview-canvas .fmh-brand-profile-text,
+.account-preview-canvas .fmh-account-label {
+  color: rgba(226, 235, 248, 0.88);
+  font-size: 0.76rem;
+}
+
+.account-preview-canvas .fmh-link-button,
+.account-preview-canvas .fmh-button,
+.account-preview-canvas .fmh-copy-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #edf5ff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+}
+
+.account-preview-canvas .fmh-button,
+.account-preview-canvas .fmh-button-primary {
+  background: var(--account-preview-button);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #07111f;
+}
+
+.account-preview-canvas .fmh-profile-route,
+.account-preview-canvas .fmh-profile-grid,
+.account-preview-canvas .fmh-link-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.account-preview-canvas .fmh-profile-hero,
+.account-preview-canvas .fmh-profile-section {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 15, 24, 0.76);
+}
+
+.account-preview-canvas .fmh-profile-cover {
+  min-height: 180px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(8, 12, 20, 0.82);
+}
+
+.account-preview-canvas .fmh-profile-cover img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.account-preview-canvas .fmh-profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 25% 25%, rgba(105, 214, 255, 0.38), rgba(15, 26, 42, 0.92));
+  color: #eef8ff;
   font-family: var(--creator-heading);
-  letter-spacing: 0.04em;
-  cursor: default;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.account-preview-canvas .fmh-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.account-preview-canvas .fmh-profile-title,
+.account-preview-canvas .fmh-destination-box,
+.account-preview-canvas .fmh-share-box,
+.account-preview-canvas .fmh-social-list {
+  display: grid;
+  gap: 10px;
+}
+
+.account-preview-canvas .fmh-profile-kicker,
+.account-preview-canvas .fmh-link-item-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(190, 207, 231, 0.72);
+}
+
+.account-preview-canvas .fmh-profile-title h1,
+.account-preview-canvas .fmh-profile-section h2,
+.account-preview-canvas .fmh-empty h2 {
+  margin: 0;
+  color: #f4f8ff;
+}
+
+.account-preview-canvas .fmh-profile-title p,
+.account-preview-canvas .fmh-profile-about,
+.account-preview-canvas .fmh-share-box p,
+.account-preview-canvas .fmh-destination-box p,
+.account-preview-canvas .fmh-empty p,
+.account-preview-canvas .fmh-link-item-url {
+  margin: 0;
+  color: rgba(214, 225, 241, 0.82);
+  line-height: 1.55;
+  font-size: 0.76rem;
+}
+
+.account-preview-canvas .fmh-profile-meta span,
+.account-preview-canvas .fmh-live-badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(226, 235, 248, 0.88);
+}
+
+.account-preview-canvas .fmh-social-list {
+  gap: 10px;
+}
+
+.account-preview-canvas .fmh-link-item {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+}
+
+.account-preview-canvas .fmh-share-row {
+  justify-content: space-between;
+}
+
+.account-preview-canvas .fmh-share-url {
+  font-family: var(--creator-mono-font);
+  color: rgba(226, 235, 248, 0.88);
+  font-size: 0.7rem;
+  overflow-wrap: anywhere;
 }
 
 .creator-mono,
@@ -3866,10 +4299,6 @@ body.creator-lockout-active .creator-lockout {
     grid-template-columns: 1fr;
   }
 
-  .account-tooltip-preview-body {
-    grid-template-columns: 1fr;
-    margin-top: 0;
-  }
 }
 
 /* Creator chat triggers */
@@ -5076,7 +5505,7 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
 
 @media (max-width: 1180px) {
   .account-settings .account-grid {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+    grid-template-columns: 1fr;
   }
 }
 

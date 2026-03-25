@@ -27,6 +27,8 @@
   const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
   const AVATAR_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
   const COVER_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
+  const BACKGROUND_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
+  const LOGO_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
   const INTEGRATION_KEYS = Object.freeze(["youtube", "rumble", "twitch", "kick", "pilled"]);
   const KNOWN_SOCIAL_KEYS = Object.freeze([
     "website",
@@ -104,6 +106,8 @@
     uploads: {
       avatar: null,
       cover: null,
+      background: null,
+      logo: null,
     },
     loadingProfile: false,
     savingProfile: false,
@@ -313,10 +317,14 @@
       coverUploadStatus: document.querySelector("[data-profile-cover-upload-status]"),
       coverPreview: document.querySelector("[data-profile-cover-preview]"),
       backgroundImageInput: document.querySelector("[data-profile-background-image]"),
+      backgroundFileInput: document.querySelector("[data-profile-background-file]"),
       backgroundClearButton: document.querySelector("[data-profile-background-clear]"),
+      backgroundUploadStatus: document.querySelector("[data-profile-background-upload-status]"),
       backgroundPreview: document.querySelector("[data-profile-background-preview]"),
       findmeThemeLogoInput: document.querySelector("[data-findme-theme-logo]"),
+      findmeThemeLogoFileInput: document.querySelector("[data-findme-theme-logo-file]"),
       findmeThemeLogoPreview: document.querySelector("[data-findme-theme-logo-preview]"),
+      findmeThemeLogoUploadStatus: document.querySelector("[data-findme-theme-logo-upload-status]"),
       findmeThemeLogoSourceButtons: Array.from(document.querySelectorAll("[data-findme-theme-logo-source]")),
       findmeThemeLogoClearButton: document.querySelector("[data-findme-theme-logo-clear]"),
       findmeThemeBrandTextInput: document.querySelector("[data-findme-theme-brand-text]"),
@@ -341,30 +349,9 @@
       previewHub: document.querySelector("[data-profile-preview-hub]"),
       previewModeButtons: Array.from(document.querySelectorAll("[data-profile-preview-mode]")),
       previewPanels: Array.from(document.querySelectorAll("[data-preview-panel]")),
-      previewSurface: document.querySelector("[data-profile-preview-surface]"),
-      previewCover: document.querySelector("[data-profile-preview-cover]"),
-      previewAvatar: document.querySelector("[data-profile-preview-avatar]"),
-      previewName: document.querySelector("[data-profile-preview-name]"),
-      previewSubtitle: document.querySelector("[data-profile-preview-subtitle]"),
-      previewBadges: document.querySelector("[data-profile-preview-badges]"),
-      previewBio: document.querySelector("[data-profile-preview-bio]"),
-      previewLinks: document.querySelector("[data-profile-preview-links]"),
-      tooltipPreviewSurface: document.querySelector("[data-tooltip-preview-surface]"),
-      tooltipPreviewCover: document.querySelector("[data-tooltip-preview-cover]"),
-      tooltipPreviewAvatar: document.querySelector("[data-tooltip-preview-avatar]"),
-      tooltipPreviewName: document.querySelector("[data-tooltip-preview-name]"),
-      tooltipPreviewSubtitle: document.querySelector("[data-tooltip-preview-subtitle]"),
-      tooltipPreviewBio: document.querySelector("[data-tooltip-preview-bio]"),
-      tooltipPreviewLinks: document.querySelector("[data-tooltip-preview-links]"),
-      findmePreviewSurface: document.querySelector("[data-findme-preview-surface]"),
-      findmePreviewBackdrop: document.querySelector("[data-findme-preview-backdrop]"),
-      findmePreviewLogo: document.querySelector("[data-findme-preview-logo]"),
-      findmePreviewBrandText: document.querySelector("[data-findme-preview-brand-text]"),
-      findmePreviewSubtitle: document.querySelector("[data-findme-preview-subtitle]"),
-      findmePreviewAvatar: document.querySelector("[data-findme-preview-avatar]"),
-      findmePreviewName: document.querySelector("[data-findme-preview-name]"),
-      findmePreviewBio: document.querySelector("[data-findme-preview-bio]"),
-      findmePreviewButtons: document.querySelector("[data-findme-preview-buttons]"),
+      streamsuitesPreviewTarget: document.querySelector("[data-profile-preview-target=\"streamsuites\"]"),
+      tooltipPreviewTarget: document.querySelector("[data-profile-preview-target=\"tooltip\"]"),
+      findmePreviewTarget: document.querySelector("[data-profile-preview-target=\"findmehere\"]"),
     };
   }
 
@@ -911,6 +898,12 @@
     if (els.coverFileInput instanceof HTMLInputElement) {
       els.coverFileInput.disabled = busy || !state.profile;
     }
+    if (els.backgroundFileInput instanceof HTMLInputElement) {
+      els.backgroundFileInput.disabled = busy || !state.profile;
+    }
+    if (els.findmeThemeLogoFileInput instanceof HTMLInputElement) {
+      els.findmeThemeLogoFileInput.disabled = busy || !state.profile;
+    }
     if (els.avatarClearButton instanceof HTMLButtonElement) {
       els.avatarClearButton.disabled = busy || !state.profile;
     }
@@ -971,6 +964,12 @@
     if (kind === "cover" && !options.preserveInput && els.coverFileInput instanceof HTMLInputElement) {
       els.coverFileInput.value = "";
     }
+    if (kind === "background" && !options.preserveInput && els.backgroundFileInput instanceof HTMLInputElement) {
+      els.backgroundFileInput.value = "";
+    }
+    if (kind === "logo" && !options.preserveInput && els.findmeThemeLogoFileInput instanceof HTMLInputElement) {
+      els.findmeThemeLogoFileInput.value = "";
+    }
   }
 
   function resolveAvatarDraftValue() {
@@ -994,6 +993,8 @@
   }
 
   function resolveBackgroundDraftValue() {
+    const draftUpload = getStagedUpload("background");
+    if (draftUpload?.previewUrl) return draftUpload.previewUrl;
     const input = getProfileElements().backgroundImageInput;
     if (input instanceof HTMLInputElement) {
       return coerceText(input.value);
@@ -1002,6 +1003,8 @@
   }
 
   function resolveFindmeLogoDraftValue() {
+    const draftUpload = getStagedUpload("logo");
+    if (draftUpload?.previewUrl) return draftUpload.previewUrl;
     const input = getProfileElements().findmeThemeLogoInput;
     if (input instanceof HTMLInputElement) {
       return coerceText(input.value);
@@ -1074,10 +1077,42 @@
       els.coverPreview.style.backgroundImage = coverValue ? `url("${coverValue}")` : "";
       els.coverPreview.classList.toggle("has-image", Boolean(coverValue));
     }
+    const backgroundUpload = getStagedUpload("background");
+    if (els.backgroundUploadStatus instanceof HTMLElement) {
+      if (backgroundUpload?.filename) {
+        els.backgroundUploadStatus.textContent = `Staged upload: ${backgroundUpload.filename} (${Math.round((backgroundUpload.size || 0) / 1024)} KB). Save profile changes to persist it into the dedicated background slot.`;
+        els.backgroundUploadStatus.dataset.tone = "success";
+      } else if (els.backgroundImageInput instanceof HTMLInputElement && !coerceText(els.backgroundImageInput.value) && coerceText(state.profile?.background_image_url)) {
+        els.backgroundUploadStatus.textContent = "Background removal is staged. Save profile changes to clear the saved FindMeHere background slot.";
+        els.backgroundUploadStatus.dataset.tone = "warning";
+      } else if (coerceText(state.profile?.background_image_url)) {
+        els.backgroundUploadStatus.textContent = `Saved background reference: ${coerceText(state.profile?.background_image_url)}`;
+        els.backgroundUploadStatus.dataset.tone = "neutral";
+      } else {
+        els.backgroundUploadStatus.textContent = "Upload from device is available for the dedicated background slot. Manual entry stays secondary.";
+        els.backgroundUploadStatus.dataset.tone = "neutral";
+      }
+    }
     if (els.backgroundPreview instanceof HTMLElement) {
       const backgroundValue = resolveBackgroundDraftValue();
       els.backgroundPreview.style.backgroundImage = backgroundValue ? `url("${backgroundValue}")` : "";
       els.backgroundPreview.classList.toggle("has-image", Boolean(backgroundValue));
+    }
+    const logoUpload = getStagedUpload("logo");
+    if (els.findmeThemeLogoUploadStatus instanceof HTMLElement) {
+      if (logoUpload?.filename) {
+        els.findmeThemeLogoUploadStatus.textContent = `Staged upload: ${logoUpload.filename} (${Math.round((logoUpload.size || 0) / 1024)} KB). Save profile changes to persist it into the custom header logo slot.`;
+        els.findmeThemeLogoUploadStatus.dataset.tone = "success";
+      } else if (els.findmeThemeLogoInput instanceof HTMLInputElement && !coerceText(els.findmeThemeLogoInput.value) && coerceText(state.profile?.findmehere_theme?.header_branding?.logo_image_url)) {
+        els.findmeThemeLogoUploadStatus.textContent = "Custom logo removal is staged. Save profile changes to clear the FindMeHere header logo slot.";
+        els.findmeThemeLogoUploadStatus.dataset.tone = "warning";
+      } else if (coerceText(state.profile?.findmehere_theme?.header_branding?.logo_image_url)) {
+        els.findmeThemeLogoUploadStatus.textContent = `Saved custom logo reference: ${coerceText(state.profile?.findmehere_theme?.header_branding?.logo_image_url)}`;
+        els.findmeThemeLogoUploadStatus.dataset.tone = "neutral";
+      } else {
+        els.findmeThemeLogoUploadStatus.textContent = "Upload from device is available for the custom logo slot. Reuse buttons and manual entry stay secondary.";
+        els.findmeThemeLogoUploadStatus.dataset.tone = "neutral";
+      }
     }
     if (els.findmeThemeLogoPreview instanceof HTMLElement) {
       const logoValue = resolveFindmeLogoDraftValue();
@@ -1113,6 +1148,273 @@
     renderPreviewSurface();
   }
 
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      if (!(file instanceof File)) {
+        reject(new Error("No file selected."));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+      reader.onerror = () => reject(new Error("Unable to read the selected file."));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function buildPreviewModel() {
+    const draft = getEditableDraft();
+    const session = getActiveSession();
+    const theme = normalizeFindmeTheme(draft.findmehere_theme || state.profile?.findmehere_theme);
+    const slugValidation = validatePublicSlug(draft.public_slug_input);
+    const savedSlug = coerceText(state.profile?.public_slug);
+    const slug = slugValidation.valid
+      ? slugValidation.normalized
+      : savedSlug || coerceText(state.profile?.user_code).toLowerCase() || "public-user";
+    const displayName = draft.display_name || coerceText(state.profile?.display_name) || coerceText(session.name) || "Public User";
+    const avatarUrl = resolveAvatarDraftValue() || coerceText(state.profile?.avatar_url) || coerceText(session.avatar);
+    const coverImageUrl = resolveCoverDraftValue() || coerceText(state.profile?.cover_image_url);
+    const backgroundImageUrl = resolveBackgroundDraftValue() || coerceText(state.profile?.background_image_url);
+    const roleLabel = (coerceText(state.profile?.public_surface_account_type) || coerceText(session.role) || "creator").replace(/_/g, " ").toUpperCase();
+    const tierLabel = coerceText(session.tier || session?.effectiveTier?.tierId).toUpperCase();
+    const subtitle = tierLabel ? `${roleLabel} · ${tierLabel}` : roleLabel;
+    const brandLogo = resolveFindmeLogoDraftValue() || coerceText(theme.header_branding.logo_image_url);
+    const brandText = coerceText(theme.header_branding.brand_text) || displayName;
+    const accentColor = theme.page_accent_color || DEFAULT_ACCENT_COLOR;
+    const buttonColor = theme.button_color || theme.page_accent_color || DEFAULT_BUTTON_COLOR;
+    const bio = draft.bio || coerceText(state.profile?.bio) || "No public bio saved yet.";
+    const socialEntries = Object.entries(draft.social_links || {})
+      .filter(([, value]) => coerceText(value))
+      .slice(0, 6)
+      .map(([key, value]) => ({
+        key,
+        label: key.replace(/[_-]+/g, " "),
+        value: coerceText(value),
+      }));
+    return {
+      accentColor,
+      avatarUrl,
+      backgroundImageUrl,
+      bio,
+      brandLogo,
+      brandText,
+      buttonColor,
+      coverImageUrl,
+      displayName,
+      findmeShareUrl: slug ? `https://findmehere.live/${encodeURIComponent(slug)}` : "",
+      roleLabel,
+      session,
+      slug,
+      socialEntries,
+      streamsuitesShareUrl: slug ? `https://streamsuites.app/u/${encodeURIComponent(slug)}` : "",
+      subtitle,
+      theme,
+      tierLabel,
+    };
+  }
+
+  function buildPreviewInitial(value, fallback = "P") {
+    return escapeHtml((coerceText(value).charAt(0) || fallback).toUpperCase());
+  }
+
+  function buildPreviewAvatarMarkup(url, name, className) {
+    return url
+      ? `<div class="${className} has-image"><img src="${escapeHtml(url)}" alt="${escapeHtml(name)} avatar" loading="lazy" decoding="async" /></div>`
+      : `<div class="${className}">${buildPreviewInitial(name)}</div>`;
+  }
+
+  function buildPreviewBadgeMarkup() {
+    return resolvePreviewBadges(state.profile)
+      .map((src) => `<img class="account-preview-badge-icon" src="${escapeHtml(src)}" alt="" loading="lazy" decoding="async" />`)
+      .join("");
+  }
+
+  function buildPreviewSocialMarkup(entries, className) {
+    if (!entries.length) {
+      return `<span class="account-preview-empty">No public links saved.</span>`;
+    }
+    return entries
+      .map(
+        ({ label, value }) =>
+          `<a class="${className}" href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`
+      )
+      .join("");
+  }
+
+  function buildStreamSuitesPreviewMarkup(model) {
+    const socialMarkup = buildPreviewSocialMarkup(model.socialEntries, "social-icon-btn");
+    return `
+      <article class="account-preview-frame account-streamsuites-preview" style="--account-preview-accent:${escapeHtml(model.accentColor)};">
+        <article class="profile-card profile-card-expanded">
+          <div class="profile-cover">
+            <img src="${escapeHtml(model.coverImageUrl || "/assets/placeholders/defaultprofilecover.webp")}" alt="${escapeHtml(model.displayName)} cover" loading="lazy" decoding="async" />
+          </div>
+          <div class="creator-meta is-expanded">
+            ${buildPreviewAvatarMarkup(model.avatarUrl, model.displayName, "creator-avatar is-expanded")}
+            <div class="creator-meta-text">
+              <div class="creator-meta-top">
+                <span class="creator-name">${escapeHtml(model.displayName)}</span>
+                <span class="account-preview-badges">${buildPreviewBadgeMarkup()}</span>
+              </div>
+              <div class="creator-meta-bottom">${escapeHtml(model.subtitle)}</div>
+            </div>
+          </div>
+          <div class="profile-inline-header">
+            <h3>Social Links</h3>
+          </div>
+          <div class="profile-social-row">${socialMarkup}</div>
+          <div class="profile-inline-header">
+            <h3>Bio</h3>
+          </div>
+          <p class="profile-bio-text">${escapeHtml(model.bio)}</p>
+          <div class="profile-inline-header">
+            <h3>Share Links</h3>
+          </div>
+          <div class="profile-share-section">
+            <div class="profile-share-option">
+              <span class="profile-share-option-title">Canonical public URL</span>
+              <div class="share-box">
+                <span class="share-link-text">${escapeHtml(model.streamsuitesShareUrl || "No saved canonical URL yet")}</span>
+                <span class="share-copy-btn" aria-hidden="true"><span class="share-copy-pill">Copy</span></span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </article>
+    `;
+  }
+
+  function buildTooltipPreviewMarkup(model) {
+    const hasCover = Boolean(model.coverImageUrl);
+    return `
+      <div class="account-preview-frame account-tooltip-preview-shell" style="--account-preview-accent:${escapeHtml(model.accentColor)};">
+        <article class="ss-profile-hovercard is-visible${hasCover ? " has-cover-image" : ""}">
+          <div class="ss-profile-hovercard-cover">
+            <img class="ss-profile-hovercard-cover-image" src="${escapeHtml(model.coverImageUrl || "/assets/placeholders/defaultprofilecover.webp")}" alt="" loading="lazy" decoding="async" ${hasCover ? "" : "hidden"} />
+          </div>
+          <div class="ss-profile-hovercard-body">
+            ${buildPreviewAvatarMarkup(model.avatarUrl, model.displayName, "ss-profile-hovercard-avatar")}
+            <div class="ss-profile-hovercard-head">
+              <div class="ss-profile-hovercard-name-row">
+                <h3 class="ss-profile-hovercard-name">${escapeHtml(model.displayName)}</h3>
+                <span class="ss-profile-hovercard-badges">${buildPreviewBadgeMarkup()}</span>
+              </div>
+              <p class="ss-profile-hovercard-subtitle">${escapeHtml(model.subtitle)}</p>
+            </div>
+            <p class="ss-profile-hovercard-bio">${escapeHtml(model.bio)}</p>
+            <div class="ss-profile-hovercard-social-row">${buildPreviewSocialMarkup(model.socialEntries, "ss-profile-hovercard-social")}</div>
+            <div class="ss-profile-hovercard-actions">
+              <a class="ss-profile-hovercard-action" href="${escapeHtml(model.streamsuitesShareUrl)}" target="_blank" rel="noopener noreferrer">View Profile</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    `;
+  }
+
+  function buildFindmeBrandMarkup(model) {
+    if (!model.brandLogo && !coerceText(model.theme.header_branding.brand_text)) {
+      return `
+        <a class="fmh-brand" href="/">
+          <span class="fmh-brand-wordmark">FindMeHere</span>
+          <span class="fmh-brand-icon">FMH</span>
+        </a>
+      `;
+    }
+    return `
+      <a class="fmh-brand fmh-brand-profile" href="/${escapeHtml(model.slug)}">
+        <span class="fmh-brand-icon">FMH</span>
+        <span class="fmh-brand-profile-lockup">
+          ${model.brandLogo ? `<img class="fmh-brand-profile-image" src="${escapeHtml(model.brandLogo)}" alt="${escapeHtml(model.brandText)} brand" loading="lazy" decoding="async" />` : ""}
+          ${coerceText(model.theme.header_branding.brand_text) ? `<span class="fmh-brand-profile-text">${escapeHtml(model.brandText)}</span>` : ""}
+        </span>
+      </a>
+    `;
+  }
+
+  function buildFindmePreviewMarkup(model) {
+    const showCover = model.theme.image_visibility.show_cover !== false;
+    const showAvatar = model.theme.image_visibility.show_avatar !== false;
+    const showBackground = model.theme.image_visibility.show_background !== false && model.backgroundImageUrl;
+    const socialMarkup = model.socialEntries.length
+      ? model.socialEntries
+          .map(
+            ({ label, value }) => `
+              <a class="fmh-link-item" href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">
+                <span class="fmh-link-item-label">${escapeHtml(label)}</span>
+                <span class="fmh-link-item-url">${escapeHtml(value)}</span>
+              </a>
+            `
+          )
+          .join("")
+      : `<div class="fmh-empty"><h2>Links coming soon</h2><p>This FindMeHere page is active, but no public platform links are available yet.</p></div>`;
+    return `
+      <div class="account-preview-frame account-findme-preview-shell" style="--account-preview-accent:${escapeHtml(model.accentColor)};--account-preview-button:${escapeHtml(model.buttonColor)};${showBackground ? `--account-findme-background:url('${escapeHtml(model.backgroundImageUrl)}');` : ""}">
+        <header class="fmh-topbar"${model.brandLogo || coerceText(model.theme.header_branding.brand_text) ? ' data-branding="profile"' : ""}>
+          ${buildFindmeBrandMarkup(model)}
+          <div class="fmh-topbar-actions">
+            <a class="fmh-link-button fmh-icon-button" href="https://streamsuites.app" target="_blank" rel="noopener noreferrer">SS</a>
+            <a class="fmh-link-button fmh-account-button" href="/settings/"><span class="fmh-account-avatar">${showAvatar ? buildPreviewInitial(model.displayName) : "U"}</span><span class="fmh-account-label">Login</span></a>
+            <button class="fmh-link-button fmh-theme-toggle" type="button">Theme</button>
+            <a class="fmh-button fmh-button-primary" href="/live">Live now</a>
+          </div>
+        </header>
+        <section class="fmh-profile-route">
+          <article class="fmh-profile-hero${showCover ? "" : " fmh-profile-hero-no-cover"}">
+            ${showCover ? `<div class="fmh-profile-cover"><img src="${escapeHtml(model.coverImageUrl || "/assets/placeholders/defaultprofilecover.webp")}" alt="${escapeHtml(model.displayName)} cover" loading="lazy" decoding="async" /></div>` : ""}
+            <div class="fmh-profile-body">
+              <div class="fmh-profile-summary">
+                ${showAvatar ? buildPreviewAvatarMarkup(model.avatarUrl, model.displayName, "fmh-profile-avatar") : ""}
+                <div class="fmh-profile-title">
+                  <span class="fmh-profile-kicker">Share page</span>
+                  <div class="fmh-profile-title-row">
+                    <h1>${escapeHtml(model.displayName)}</h1>
+                    <span class="fmh-live-badge fmh-live-badge-compact">LIVE</span>
+                  </div>
+                  <p>@${escapeHtml(model.slug)}</p>
+                  <div class="fmh-profile-meta">
+                    <span>${escapeHtml(model.roleLabel)}</span>
+                    ${model.tierLabel ? `<span>${escapeHtml(model.tierLabel)}</span>` : ""}
+                    <span>${escapeHtml(model.theme.layout_preset)}</span>
+                  </div>
+                </div>
+              </div>
+              <p class="fmh-profile-about">${escapeHtml(model.bio)}</p>
+              <div class="fmh-profile-actions">
+                <a class="fmh-link-button" href="/">Back to directory</a>
+                <a class="fmh-button" href="${escapeHtml(model.streamsuitesShareUrl)}" target="_blank" rel="noopener noreferrer">View full StreamSuites profile</a>
+              </div>
+            </div>
+          </article>
+          <div class="fmh-profile-grid">
+            <section class="fmh-profile-section">
+              <h2>Primary links</h2>
+              <div class="fmh-social-list">${socialMarkup}</div>
+            </section>
+            <div class="fmh-link-stack">
+              <section class="fmh-profile-section">
+                <h2>Share this FindMeHere URL</h2>
+                <div class="fmh-share-box">
+                  <p>Use this FindMeHere link when sharing this profile.</p>
+                  <div class="fmh-share-row">
+                    <div class="fmh-share-url">${escapeHtml(model.findmeShareUrl || "No eligible FindMeHere URL yet")}</div>
+                    <button class="fmh-copy-button" type="button">Copy</button>
+                  </div>
+                </div>
+              </section>
+              <section class="fmh-profile-section">
+                <h2>Full profile</h2>
+                <div class="fmh-destination-box">
+                  <p>Need the broader StreamSuites profile with additional public details and ecosystem context?</p>
+                  <a class="fmh-link-button" href="${escapeHtml(model.streamsuitesShareUrl)}" target="_blank" rel="noopener noreferrer">View full StreamSuites profile</a>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
   function resolvePreviewBadges(profile) {
     const session = getActiveSession();
     const badges = [];
@@ -1131,160 +1433,17 @@
 
   function renderPreviewSurface() {
     const els = getProfileElements();
-    if (!els.previewSurface && !els.tooltipPreviewSurface && !els.findmePreviewSurface) return;
-    const draft = getEditableDraft();
-    const session = getActiveSession();
-    const theme = normalizeFindmeTheme(draft.findmehere_theme || state.profile?.findmehere_theme);
-    const displayName = draft.display_name || coerceText(state.profile?.display_name) || coerceText(session.name) || "Public User";
-    const avatarUrl = draft.avatar_url || coerceText(state.profile?.avatar_url) || coerceText(session.avatar);
-    const coverImageUrl = draft.cover_image_url || coerceText(state.profile?.cover_image_url);
-    const backgroundImageUrl = draft.background_image_url || coerceText(state.profile?.background_image_url);
-    const subtitle = `${(coerceText(state.profile?.public_surface_account_type) || coerceText(session.role) || "creator").replace(/_/g, " ").toUpperCase()}${coerceText(session.tier) ? ` · ${coerceText(session.tier).toUpperCase()}` : ""}`;
-    const brandLogo = coerceText(theme.header_branding.logo_image_url);
-    const brandText = coerceText(theme.header_branding.brand_text) || displayName;
-    const buttonColor = theme.button_color || theme.page_accent_color || DEFAULT_BUTTON_COLOR;
-    const accentColor = theme.page_accent_color || DEFAULT_ACCENT_COLOR;
-    const previewLayers = [];
-    if (theme.image_visibility.show_background && backgroundImageUrl) {
-      previewLayers.push(`url("${backgroundImageUrl}")`);
+    if (!els.streamsuitesPreviewTarget && !els.tooltipPreviewTarget && !els.findmePreviewTarget) return;
+    const model = buildPreviewModel();
+    if (els.streamsuitesPreviewTarget instanceof HTMLElement) {
+      els.streamsuitesPreviewTarget.innerHTML = buildStreamSuitesPreviewMarkup(model);
     }
-    if (theme.image_visibility.show_cover && coverImageUrl) {
-      previewLayers.push(`url("${coverImageUrl}")`);
+    if (els.tooltipPreviewTarget instanceof HTMLElement) {
+      els.tooltipPreviewTarget.innerHTML = buildTooltipPreviewMarkup(model);
     }
-    const links = Object.entries(draft.social_links || {})
-      .filter(([, value]) => coerceText(value))
-      .map(
-        ([key, value]) =>
-          `<a class="ss-link" href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">${escapeHtml(key)}</a>`
-      );
-
-    if (els.previewCover) {
-      els.previewCover.style.backgroundImage = previewLayers.join(", ");
-      els.previewCover.style.borderColor = accentColor;
+    if (els.findmePreviewTarget instanceof HTMLElement) {
+      els.findmePreviewTarget.innerHTML = buildFindmePreviewMarkup(model);
     }
-    if (els.previewAvatar) {
-      const showAvatar = theme.image_visibility.show_avatar;
-      els.previewAvatar.classList.toggle("has-image", Boolean(avatarUrl) && showAvatar);
-      els.previewAvatar.hidden = !showAvatar;
-      els.previewAvatar.innerHTML = showAvatar && avatarUrl
-        ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar" loading="lazy" decoding="async" />`
-        : escapeHtml(displayName.charAt(0).toUpperCase() || "P");
-      els.previewAvatar.style.borderColor = accentColor;
-      els.previewAvatar.style.boxShadow = `0 0 0 1px ${accentColor}`;
-    }
-    if (els.previewName) {
-      if (brandLogo) {
-        els.previewName.innerHTML = `<img class="account-preview-brand-image" src="${escapeHtml(brandLogo)}" alt="Header brand" loading="lazy" decoding="async" />`;
-      } else {
-        els.previewName.textContent = brandText || displayName;
-      }
-      els.previewName.style.color = accentColor;
-    }
-    if (els.previewSubtitle) {
-      els.previewSubtitle.textContent = theme.layout_preset === "expanded" ? `${subtitle} · EXPANDED` : theme.layout_preset === "condensed" ? `${subtitle} · CONDENSED` : subtitle;
-      els.previewSubtitle.style.color = buttonColor;
-    }
-    if (els.previewBadges) {
-      els.previewBadges.innerHTML = resolvePreviewBadges(state.profile)
-        .map((src) => `<img src="${src}" alt="" />`)
-        .join("");
-    }
-    if (els.previewBio) {
-      els.previewBio.textContent = draft.bio || coerceText(state.profile?.bio) || "No public bio saved.";
-    }
-    if (els.previewLinks) {
-      els.previewLinks.innerHTML = links.join(" · ") || '<span class="account-note">No public links saved.</span>';
-      els.previewLinks.style.color = buttonColor;
-    }
-    els.previewSurface.dataset.findmeLayoutPreset = theme.layout_preset;
-    els.previewSurface.dataset.findmeFontPreset = theme.font_preset;
-    els.previewSurface.style.setProperty("--findme-preview-accent", accentColor);
-    els.previewSurface.style.setProperty("--findme-preview-button", buttonColor);
-
-    if (els.tooltipPreviewSurface instanceof HTMLElement) {
-      els.tooltipPreviewSurface.dataset.findmeFontPreset = theme.font_preset;
-      els.tooltipPreviewSurface.style.setProperty("--findme-preview-accent", accentColor);
-      els.tooltipPreviewSurface.style.backgroundColor = "";
-    }
-    if (els.tooltipPreviewCover instanceof HTMLElement) {
-      els.tooltipPreviewCover.style.backgroundImage = previewLayers.join(", ");
-    }
-    if (els.tooltipPreviewAvatar instanceof HTMLElement) {
-      const showAvatar = theme.image_visibility.show_avatar;
-      els.tooltipPreviewAvatar.hidden = !showAvatar;
-      els.tooltipPreviewAvatar.classList.toggle("has-image", Boolean(avatarUrl) && showAvatar);
-      els.tooltipPreviewAvatar.innerHTML = showAvatar && avatarUrl
-        ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar" loading="lazy" decoding="async" />`
-        : escapeHtml(displayName.charAt(0).toUpperCase() || "P");
-      els.tooltipPreviewAvatar.style.borderColor = accentColor;
-    }
-    if (els.tooltipPreviewName instanceof HTMLElement) {
-      els.tooltipPreviewName.textContent = displayName;
-      els.tooltipPreviewName.style.color = accentColor;
-    }
-    if (els.tooltipPreviewSubtitle instanceof HTMLElement) {
-      els.tooltipPreviewSubtitle.textContent = `Tooltip preview · ${subtitle}`;
-      els.tooltipPreviewSubtitle.style.color = buttonColor;
-    }
-    if (els.tooltipPreviewBio instanceof HTMLElement) {
-      els.tooltipPreviewBio.textContent = draft.bio || coerceText(state.profile?.bio) || "No public bio saved.";
-    }
-    if (els.tooltipPreviewLinks instanceof HTMLElement) {
-      els.tooltipPreviewLinks.innerHTML = links.join(" · ") || '<span class="account-note">No public links saved.</span>';
-    }
-
-    if (els.findmePreviewSurface instanceof HTMLElement) {
-      els.findmePreviewSurface.dataset.findmeLayoutPreset = theme.layout_preset;
-      els.findmePreviewSurface.dataset.findmeFontPreset = theme.font_preset;
-      els.findmePreviewSurface.style.setProperty("--findme-preview-accent", accentColor);
-      els.findmePreviewSurface.style.setProperty("--findme-preview-button", buttonColor);
-    }
-    if (els.findmePreviewBackdrop instanceof HTMLElement) {
-      els.findmePreviewBackdrop.style.backgroundImage = previewLayers.join(", ");
-      els.findmePreviewBackdrop.hidden = !previewLayers.length;
-    }
-    if (els.findmePreviewLogo instanceof HTMLElement) {
-      if (brandLogo) {
-        els.findmePreviewLogo.innerHTML = `<img src="${escapeHtml(brandLogo)}" alt="FindMeHere header logo" loading="lazy" decoding="async" />`;
-      } else {
-        els.findmePreviewLogo.textContent = (brandText || "FMH").slice(0, 3).toUpperCase();
-      }
-      els.findmePreviewLogo.style.borderColor = accentColor;
-      els.findmePreviewLogo.style.color = accentColor;
-    }
-    if (els.findmePreviewBrandText instanceof HTMLElement) {
-      els.findmePreviewBrandText.textContent = brandText;
-    }
-    if (els.findmePreviewSubtitle instanceof HTMLElement) {
-      els.findmePreviewSubtitle.textContent = `${theme.layout_preset.toUpperCase()} layout · ${theme.font_preset.toUpperCase()} font`;
-    }
-    if (els.findmePreviewAvatar instanceof HTMLElement) {
-      const showAvatar = theme.image_visibility.show_avatar;
-      els.findmePreviewAvatar.hidden = !showAvatar;
-      els.findmePreviewAvatar.classList.toggle("has-image", Boolean(avatarUrl) && showAvatar);
-      els.findmePreviewAvatar.innerHTML = showAvatar && avatarUrl
-        ? `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)} avatar" loading="lazy" decoding="async" />`
-        : escapeHtml(displayName.charAt(0).toUpperCase() || "P");
-      els.findmePreviewAvatar.style.borderColor = accentColor;
-    }
-    if (els.findmePreviewName instanceof HTMLElement) {
-      els.findmePreviewName.textContent = displayName;
-    }
-    if (els.findmePreviewBio instanceof HTMLElement) {
-      els.findmePreviewBio.textContent = draft.bio || coerceText(state.profile?.bio) || "No public bio saved.";
-    }
-    if (els.findmePreviewButtons instanceof HTMLElement) {
-      const tone = theme.button_tone || "brand";
-      Array.from(els.findmePreviewButtons.querySelectorAll("button")).forEach((button) => {
-        if (!(button instanceof HTMLButtonElement)) return;
-        button.dataset.buttonTone = tone;
-        button.style.borderColor = buttonColor;
-        button.style.background = tone === "ghost" ? "transparent" : buttonColor;
-        button.style.color = tone === "ghost" ? buttonColor : "#07111f";
-        button.style.opacity = tone === "soft" ? "0.82" : "1";
-      });
-    }
-
     applyPreviewMode();
   }
 
@@ -1345,7 +1504,12 @@
   }
 
   function hasPendingMediaUploads() {
-    return Boolean(getStagedUpload("avatar")?.file || getStagedUpload("cover")?.file);
+    return Boolean(
+      getStagedUpload("avatar")?.file ||
+      getStagedUpload("cover")?.file ||
+      getStagedUpload("background")?.file ||
+      getStagedUpload("logo")?.file
+    );
   }
 
   function getSupportedDraftSnapshot(draft) {
@@ -1539,6 +1703,8 @@
     state.profile = cloneProfile(normalized);
     clearStagedUpload("avatar");
     clearStagedUpload("cover");
+    clearStagedUpload("background");
+    clearStagedUpload("logo");
 
     const els = getProfileElements();
     if (els.displayNameInput instanceof HTMLInputElement) {
@@ -1724,6 +1890,7 @@
     setMessage("[data-profile-save-status=\"true\"]", "Saving authoritative profile settings...", "neutral");
     try {
       let workingProfile = state.profile;
+      const draftTheme = normalizeFindmeTheme(draft.findmehere_theme);
       if (getStagedUpload("avatar")?.file) {
         const uploadResponse = await uploadStagedMedia("avatar");
         workingProfile = normalizeProfilePayload(uploadResponse?.profile || uploadResponse);
@@ -1732,24 +1899,30 @@
         const uploadResponse = await uploadStagedMedia("cover");
         workingProfile = normalizeProfilePayload(uploadResponse?.profile || uploadResponse);
       }
+      const backgroundDataUrl = getStagedUpload("background")?.file
+        ? await readFileAsDataUrl(getStagedUpload("background").file)
+        : null;
+      const logoDataUrl = getStagedUpload("logo")?.file
+        ? await readFileAsDataUrl(getStagedUpload("logo").file)
+        : null;
+      if (logoDataUrl) {
+        draftTheme.header_branding.logo_image_url = logoDataUrl;
+      }
 
       const payload = {
         avatar_url: coerceText(workingProfile?.avatar_url || draft.avatar_url),
         streamsuites_profile_enabled: draft.streamsuites_profile_enabled,
         findmehere_enabled: draft.findmehere_enabled,
         cover_image_url: coerceText(workingProfile?.cover_image_url || draft.cover_image_url),
-        background_image_url: draft.background_image_url,
-        findmehere_theme: draft.findmehere_theme,
+        background_image_url: backgroundDataUrl || draft.background_image_url,
+        findmehere_theme: draftTheme,
         bio: draft.bio,
         social_links: draft.social_links,
       };
-      const response =
-        supportedDirty || !workingProfile || !hasStagedMedia
-          ? await requestJson(PUBLIC_PROFILE_ENDPOINT, {
-              method: "POST",
-              body: JSON.stringify(payload),
-            })
-          : { profile: workingProfile };
+      const response = await requestJson(PUBLIC_PROFILE_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
       applyProfile(response?.profile || response);
       if (slugChanged || identityDirty) {
         const limitations = [];
@@ -1820,6 +1993,9 @@
     }
     if (els.avatarUrlInput instanceof HTMLInputElement) {
       els.avatarUrlInput.addEventListener("input", () => {
+        if (getStagedUpload("avatar")?.file) {
+          clearStagedUpload("avatar");
+        }
         updateAvatarPreview();
         renderAvatarFeedback();
         renderPreviewSurface();
@@ -1863,14 +2039,55 @@
     }
     if (els.coverImageInput instanceof HTMLInputElement) {
       els.coverImageInput.addEventListener("input", () => {
+        if (getStagedUpload("cover")?.file) {
+          clearStagedUpload("cover");
+        }
         renderMediaUploadStatus();
         renderPreviewSurface();
       });
     }
+    if (els.backgroundFileInput instanceof HTMLInputElement) {
+      els.backgroundFileInput.addEventListener("change", async () => {
+        const file = els.backgroundFileInput.files?.[0];
+        if (!file) return;
+        try {
+          await stageUpload("background", file, BACKGROUND_UPLOAD_MAX_BYTES);
+        } catch (err) {
+          clearStagedUpload("background");
+          renderMediaUploadStatus();
+          showToast(err?.message || "Unable to stage the background upload.", "danger", {
+            key: "creator-background-upload",
+            title: "Upload failed",
+            autoHideMs: 6800
+          });
+        }
+      });
+    }
     if (els.backgroundImageInput instanceof HTMLInputElement) {
       els.backgroundImageInput.addEventListener("input", () => {
+        if (getStagedUpload("background")?.file) {
+          clearStagedUpload("background");
+        }
         renderMediaUploadStatus();
         renderPreviewSurface();
+      });
+    }
+    if (els.findmeThemeLogoFileInput instanceof HTMLInputElement) {
+      els.findmeThemeLogoFileInput.addEventListener("change", async () => {
+        const file = els.findmeThemeLogoFileInput.files?.[0];
+        if (!file) return;
+        try {
+          await stageUpload("logo", file, LOGO_UPLOAD_MAX_BYTES);
+        } catch (err) {
+          clearStagedUpload("logo");
+          renderMediaUploadStatus();
+          renderPreviewSurface();
+          showToast(err?.message || "Unable to stage the custom logo upload.", "danger", {
+            key: "creator-findme-logo-upload",
+            title: "Upload failed",
+            autoHideMs: 6800
+          });
+        }
       });
     }
     if (els.avatarClearButton instanceof HTMLButtonElement) {
@@ -1899,7 +2116,9 @@
     }
     if (els.backgroundClearButton instanceof HTMLButtonElement) {
       els.backgroundClearButton.addEventListener("click", () => {
-        if (els.backgroundImageInput instanceof HTMLInputElement) {
+        if (getStagedUpload("background")?.file) {
+          clearStagedUpload("background");
+        } else if (els.backgroundImageInput instanceof HTMLInputElement) {
           els.backgroundImageInput.value = "";
         }
         renderMediaUploadStatus();
@@ -1908,6 +2127,9 @@
     }
     if (els.findmeThemeLogoInput instanceof HTMLInputElement) {
       els.findmeThemeLogoInput.addEventListener("input", () => {
+        if (getStagedUpload("logo")?.file) {
+          clearStagedUpload("logo");
+        }
         renderMediaUploadStatus();
         renderPreviewSurface();
       });
@@ -1916,6 +2138,9 @@
       if (!(button instanceof HTMLButtonElement)) return;
       button.addEventListener("click", () => {
         if (!(els.findmeThemeLogoInput instanceof HTMLInputElement)) return;
+        if (getStagedUpload("logo")?.file) {
+          clearStagedUpload("logo");
+        }
         const source = button.getAttribute("data-findme-theme-logo-source") || "";
         if (source === "avatar") {
           els.findmeThemeLogoInput.value = resolveAvatarDraftValue();
@@ -1930,7 +2155,9 @@
     });
     if (els.findmeThemeLogoClearButton instanceof HTMLButtonElement) {
       els.findmeThemeLogoClearButton.addEventListener("click", () => {
-        if (els.findmeThemeLogoInput instanceof HTMLInputElement) {
+        if (getStagedUpload("logo")?.file) {
+          clearStagedUpload("logo");
+        } else if (els.findmeThemeLogoInput instanceof HTMLInputElement) {
           els.findmeThemeLogoInput.value = "";
         }
         renderMediaUploadStatus();
@@ -2052,7 +2279,7 @@
   function destroy() {
     state.profile = null;
     state.integrations = [];
-    state.uploads = { avatar: null, cover: null };
+    state.uploads = { avatar: null, cover: null, background: null, logo: null };
     state.loadingProfile = false;
     state.savingProfile = false;
     state.controlsWired = false;

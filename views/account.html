@@ -201,8 +201,8 @@
             <article class="card account-profile-card">
               <div class="card-top">
                 <div>
-                  <h3>Profile identity &amp; visibility</h3>
-                  <p>Canonical identity, audience-facing visibility, and creator eligibility status.</p>
+                  <h3>Core profile content</h3>
+                  <p>Canonical identity, audience-facing visibility, and the authoritative public profile basics.</p>
                 </div>
                 <span class="status-pill subtle" data-profile-load-pill="true">
                   <span class="status-dot"></span>Loading profile
@@ -211,154 +211,105 @@
               <p class="account-note profile-save-status" data-profile-save-status="true">
                 Loading profile settings...
               </p>
-              <div class="profile-settings-grid">
-                <div class="profile-settings-panel">
-                  <div class="account-field-grid">
-                    <div class="account-field">
-                      <span class="account-field-label">Display name</span>
-                      <input
-                        class="account-field-input"
-                        type="text"
-                        placeholder="Your display name"
-                        data-account-profile-name="true"
-                        data-profile-identity-input="display_name"
-                      />
-                      <span class="account-field-note" data-profile-display-name-feedback="true">
-                        Display name loads from the authoritative account identity.
-                      </span>
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Canonical public slug</span>
-                      <input
-                        class="account-field-input"
-                        type="text"
-                        placeholder="your-canonical-slug"
-                        autocomplete="off"
-                        spellcheck="false"
-                        data-profile-field="true"
-                        data-profile-slug-input="true"
-                      />
-                      <span class="account-field-note" data-profile-slug-feedback="true">
-                        Canonical slug validation loads from the authoritative profile model.
-                      </span>
-                    </div>
-                    <div class="account-field" data-profile-slug-aliases-wrap="true" hidden>
-                      <span class="account-field-label">Previous slug aliases</span>
-                      <div class="alias-chip-row" data-profile-slug-aliases="true"></div>
-                      <span class="account-field-note">
-                        Previous aliases stay attached to the authoritative profile identity.
-                      </span>
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Creator ID</span>
-                      <span class="account-field-value account-system-text" data-account-profile-user-code="true">
-                        Not available
-                      </span>
-                      <span class="account-field-note">Email or username syncs from your login method.</span>
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Email</span>
-                      <span class="account-field-value" data-account-profile-email="true"></span>
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Avatar</span>
-                      <div class="account-avatar-row">
-                        <span class="account-avatar-frame">
-                          <img
-                            src="/assets/icons/ui/profile.svg"
-                            alt="Avatar placeholder"
-                            data-account-profile-avatar="true"
-                          />
-                        </span>
-                        <span class="account-avatar-note">Saved avatar preview from the authoritative account identity.</span>
-                      </div>
-                      <div class="profile-upload-surface">
-                        <label class="profile-upload-card" for="profile-avatar-upload">
-                          <span class="profile-upload-title">Upload from device</span>
-                          <span class="profile-upload-help">
-                            Primary path for replacing the saved profile image. Supported: PNG, JPEG, WEBP, GIF.
-                          </span>
-                        </label>
-                        <div class="profile-upload-actions">
-                          <input
-                            id="profile-avatar-upload"
-                            class="account-field-input profile-upload-input"
-                            type="file"
-                            accept="image/png,image/jpeg,image/webp,image/gif"
-                            data-profile-avatar-file="true"
-                          />
-                          <button class="creator-button danger" type="button" data-profile-avatar-clear="true">
-                            Clear staged upload
-                          </button>
-                        </div>
-                        <span class="account-field-note" data-profile-avatar-upload-status="true">
-                          Upload from device is the default avatar update path. Manual URL entry stays available below.
-                        </span>
-                      </div>
-                      <input
-                        class="account-field-input profile-upload-secondary-input"
-                        type="url"
-                        placeholder="https://cdn.example.com/avatar.webp"
-                        data-profile-avatar-url="true"
-                      />
-                      <span class="account-field-note" data-profile-avatar-feedback="true">
-                        Manual avatar URL is optional and secondary to upload-from-device.
-                      </span>
-                    </div>
+              <div class="account-section-stack">
+                <div class="account-field-grid account-stack-fields">
+                  <div class="account-field">
+                    <span class="account-field-label">Display name</span>
+                    <input
+                      class="account-field-input"
+                      type="text"
+                      placeholder="Your display name"
+                      data-account-profile-name="true"
+                      data-profile-identity-input="display_name"
+                    />
+                    <span class="account-field-note" data-profile-display-name-feedback="true">
+                      Display name loads from the authoritative account identity.
+                    </span>
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Canonical public slug</span>
+                    <input
+                      class="account-field-input"
+                      type="text"
+                      placeholder="your-canonical-slug"
+                      autocomplete="off"
+                      spellcheck="false"
+                      data-profile-field="true"
+                      data-profile-slug-input="true"
+                    />
+                    <span class="account-field-note" data-profile-slug-feedback="true">
+                      Canonical slug validation loads from the authoritative profile model.
+                    </span>
+                  </div>
+                  <div class="account-field" data-profile-slug-aliases-wrap="true" hidden>
+                    <span class="account-field-label">Previous slug aliases</span>
+                    <div class="alias-chip-row" data-profile-slug-aliases="true"></div>
+                    <span class="account-field-note">
+                      Previous aliases stay attached to the authoritative profile identity.
+                    </span>
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Creator ID</span>
+                    <span class="account-field-value account-system-text" data-account-profile-user-code="true">
+                      Not available
+                    </span>
+                    <span class="account-field-note">Email or username syncs from your login method.</span>
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Email</span>
+                    <span class="account-field-value" data-account-profile-email="true"></span>
                   </div>
                 </div>
-                <div class="profile-settings-panel">
-                  <div class="profile-toggle-stack">
-                    <label class="profile-toggle-card">
-                      <span class="profile-toggle-copy">
-                        <span class="profile-toggle-title">StreamSuites public profile</span>
-                        <span class="profile-toggle-help">
-                          Controls whether your canonical StreamSuites profile is visible on the main public site.
-                        </span>
-                        <span class="account-field-note" data-profile-streamsuites-reason="true"></span>
+                <div class="profile-toggle-stack">
+                  <label class="profile-toggle-card">
+                    <span class="profile-toggle-copy">
+                      <span class="profile-toggle-title">StreamSuites public profile</span>
+                      <span class="profile-toggle-help">
+                        Controls whether your canonical StreamSuites profile is visible on the main public site.
                       </span>
-                      <span class="profile-toggle-control">
-                        <span class="status-pill subtle" data-profile-streamsuites-status="true">
-                          <span class="status-dot"></span>Checking
-                        </span>
-                        <input type="checkbox" data-profile-field="true" data-profile-streamsuites-toggle="true" />
+                      <span class="account-field-note" data-profile-streamsuites-reason="true"></span>
+                    </span>
+                    <span class="profile-toggle-control">
+                      <span class="status-pill subtle" data-profile-streamsuites-status="true">
+                        <span class="status-dot"></span>Checking
                       </span>
-                    </label>
-                    <label class="profile-toggle-card">
-                      <span class="profile-toggle-copy">
-                        <span class="profile-toggle-title">FindMeHere listing</span>
-                        <span class="profile-toggle-help">
-                          Separate public-facing creator listing powered by the same profile identity and canonical slug.
-                        </span>
-                        <span class="account-field-note" data-profile-findme-reason="true"></span>
+                      <input type="checkbox" data-profile-field="true" data-profile-streamsuites-toggle="true" />
+                    </span>
+                  </label>
+                  <label class="profile-toggle-card">
+                    <span class="profile-toggle-copy">
+                      <span class="profile-toggle-title">FindMeHere listing</span>
+                      <span class="profile-toggle-help">
+                        Separate public-facing creator listing powered by the same profile identity and canonical slug.
                       </span>
-                      <span class="profile-toggle-control">
-                        <span class="status-pill subtle" data-profile-findme-status="true">
-                          <span class="status-dot"></span>Checking
-                        </span>
-                        <input type="checkbox" data-profile-field="true" data-profile-findme-toggle="true" />
+                      <span class="account-field-note" data-profile-findme-reason="true"></span>
+                    </span>
+                    <span class="profile-toggle-control">
+                      <span class="status-pill subtle" data-profile-findme-status="true">
+                        <span class="status-dot"></span>Checking
                       </span>
-                    </label>
+                      <input type="checkbox" data-profile-field="true" data-profile-findme-toggle="true" />
+                    </span>
+                  </label>
+                </div>
+                <div class="profile-surface-meta">
+                  <div class="profile-status-line">
+                    <span class="profile-status-label">Creator capability</span>
+                    <span class="profile-status-value" data-profile-creator-capability="true">Checking...</span>
                   </div>
-                  <div class="profile-surface-meta">
-                    <div class="profile-status-line">
-                      <span class="profile-status-label">Creator capability</span>
-                      <span class="profile-status-value" data-profile-creator-capability="true">Checking...</span>
-                    </div>
-                    <div class="profile-status-line">
-                      <span class="profile-status-label">Authoritative surface type</span>
-                      <span class="profile-status-value" data-profile-surface-account-type="true">Checking...</span>
-                    </div>
-                    <div class="profile-status-line">
-                      <span class="profile-status-label">Saved visibility</span>
-                      <span class="profile-status-value" data-profile-visibility-summary="true">Checking...</span>
-                    </div>
+                  <div class="profile-status-line">
+                    <span class="profile-status-label">Authoritative surface type</span>
+                    <span class="profile-status-value" data-profile-surface-account-type="true">Checking...</span>
                   </div>
-                  <div class="profile-action-row">
-                    <button class="creator-button primary" type="button" data-profile-save="true">Save profile changes</button>
-                    <button class="creator-button danger" type="button" data-profile-reset="true">Reset</button>
+                  <div class="profile-status-line">
+                    <span class="profile-status-label">Saved visibility</span>
+                    <span class="profile-status-value" data-profile-visibility-summary="true">Checking...</span>
                   </div>
                 </div>
+              </div>
+              <div class="profile-action-row">
+                <button class="creator-button primary" type="button" data-profile-save="true">Save profile changes</button>
+                <button class="creator-button danger" type="button" data-profile-reset="true">Reset</button>
               </div>
             </article>
 
@@ -372,82 +323,78 @@
                   <span class="status-dot"></span>Authoritative URLs
                 </span>
               </div>
-              <div class="account-editor-dual">
-                <div class="account-editor-panel">
-                  <div class="account-field-grid">
-                    <div class="account-field account-field-span-full">
-                      <span class="account-field-label">Bio / about</span>
-                      <textarea
-                        class="account-field-input account-field-textarea"
-                        rows="5"
-                        maxlength="1200"
-                        placeholder="Tell viewers who you are, what you stream, and where to follow you."
-                        data-profile-field="true"
-                        data-profile-bio="true"
-                      ></textarea>
-                      <span class="account-field-note">Saved to the authoritative public profile payload.</span>
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Website</span>
-                      <input class="account-field-input" type="url" placeholder="https://example.com" data-profile-field="true" data-profile-link="website" />
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">X</span>
-                      <input class="account-field-input" type="url" placeholder="https://x.com/yourhandle" data-profile-field="true" data-profile-link="x" />
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">YouTube</span>
-                      <input class="account-field-input" type="url" placeholder="https://youtube.com/@yourhandle" data-profile-field="true" data-profile-link="youtube" />
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Twitch</span>
-                      <input class="account-field-input" type="url" placeholder="https://twitch.tv/yourhandle" data-profile-field="true" data-profile-link="twitch" />
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Discord</span>
-                      <input class="account-field-input" type="url" placeholder="https://discord.gg/yourserver" data-profile-field="true" data-profile-link="discord" />
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Instagram</span>
-                      <input class="account-field-input" type="url" placeholder="https://instagram.com/yourhandle" data-profile-field="true" data-profile-link="instagram" />
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">TikTok</span>
-                      <input class="account-field-input" type="url" placeholder="https://tiktok.com/@yourhandle" data-profile-field="true" data-profile-link="tiktok" />
-                    </div>
+              <div class="account-section-stack">
+                <div class="account-field-grid account-stack-fields">
+                  <div class="account-field">
+                    <span class="account-field-label">Bio / about</span>
+                    <textarea
+                      class="account-field-input account-field-textarea"
+                      rows="5"
+                      maxlength="1200"
+                      placeholder="Tell viewers who you are, what you stream, and where to follow you."
+                      data-profile-field="true"
+                      data-profile-bio="true"
+                    ></textarea>
+                    <span class="account-field-note">Saved to the authoritative public profile payload.</span>
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Website</span>
+                    <input class="account-field-input" type="url" placeholder="https://example.com" data-profile-field="true" data-profile-link="website" />
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">X</span>
+                    <input class="account-field-input" type="url" placeholder="https://x.com/yourhandle" data-profile-field="true" data-profile-link="x" />
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">YouTube</span>
+                    <input class="account-field-input" type="url" placeholder="https://youtube.com/@yourhandle" data-profile-field="true" data-profile-link="youtube" />
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Twitch</span>
+                    <input class="account-field-input" type="url" placeholder="https://twitch.tv/yourhandle" data-profile-field="true" data-profile-link="twitch" />
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Discord</span>
+                    <input class="account-field-input" type="url" placeholder="https://discord.gg/yourserver" data-profile-field="true" data-profile-link="discord" />
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Instagram</span>
+                    <input class="account-field-input" type="url" placeholder="https://instagram.com/yourhandle" data-profile-field="true" data-profile-link="instagram" />
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">TikTok</span>
+                    <input class="account-field-input" type="url" placeholder="https://tiktok.com/@yourhandle" data-profile-field="true" data-profile-link="tiktok" />
                   </div>
                 </div>
-                <div class="account-editor-panel">
-                  <div class="share-preview-list">
-                    <div class="share-preview-card">
-                      <div class="share-preview-header">
-                        <div>
-                          <span class="share-preview-title">StreamSuites profile</span>
-                          <span class="share-preview-note" data-profile-streamsuites-preview-note="true"></span>
-                        </div>
-                        <button class="creator-button secondary share-preview-copy" type="button" data-profile-copy-url="streamsuites">
-                          Copy
-                        </button>
+                <div class="share-preview-list">
+                  <div class="share-preview-card">
+                    <div class="share-preview-header">
+                      <div>
+                        <span class="share-preview-title">StreamSuites profile</span>
+                        <span class="share-preview-note" data-profile-streamsuites-preview-note="true"></span>
                       </div>
-                      <code class="share-preview-url creator-mono" data-profile-streamsuites-url="true">Loading...</code>
+                      <button class="creator-button secondary share-preview-copy" type="button" data-profile-copy-url="streamsuites">
+                        Copy
+                      </button>
                     </div>
-                    <div class="share-preview-card">
-                      <div class="share-preview-header">
-                        <div>
-                          <span class="share-preview-title">FindMeHere profile</span>
-                          <span class="share-preview-note" data-profile-findme-preview-note="true"></span>
-                        </div>
-                        <button class="creator-button secondary share-preview-copy" type="button" data-profile-copy-url="findmehere">
-                          Copy
-                        </button>
-                      </div>
-                      <code class="share-preview-url creator-mono" data-profile-findme-url="true">Loading...</code>
-                    </div>
+                    <code class="share-preview-url creator-mono" data-profile-streamsuites-url="true">Loading...</code>
                   </div>
-                  <p class="account-note">
-                    Share previews always reflect the current saved canonical slug and backend visibility state.
-                  </p>
+                  <div class="share-preview-card">
+                    <div class="share-preview-header">
+                      <div>
+                        <span class="share-preview-title">FindMeHere profile</span>
+                        <span class="share-preview-note" data-profile-findme-preview-note="true"></span>
+                      </div>
+                      <button class="creator-button secondary share-preview-copy" type="button" data-profile-copy-url="findmehere">
+                        Copy
+                      </button>
+                    </div>
+                    <code class="share-preview-url creator-mono" data-profile-findme-url="true">Loading...</code>
+                  </div>
                 </div>
+                <p class="account-note">
+                  Share previews always reflect the current saved canonical slug and backend visibility state.
+                </p>
               </div>
               <div class="profile-action-row">
                 <button class="creator-button primary" type="button" data-profile-save="true">Save public content</button>
@@ -458,16 +405,73 @@
             <article class="card account-profile-media-card">
               <div class="card-top">
                 <div>
-                  <h3>Media, branding &amp; appearance</h3>
-                  <p>Distinct avatar, cover, background, and custom logo controls plus FindMeHere appearance settings.</p>
+                  <h3>Media assets</h3>
+                  <p>Separate upload/save flows for avatar, cover, background, and custom logo. Manual URL or saved media paths stay secondary.</p>
                 </div>
                 <span class="status-pill subtle">
-                  <span class="status-dot"></span>Profile editing
+                  <span class="status-dot"></span>Distinct slots
                 </span>
               </div>
-              <div class="account-field-grid account-media-grid">
-                <div class="account-field account-media-slot">
-                  <span class="account-field-label">Cover image</span>
+              <div class="account-section-stack">
+                <section class="account-media-slot-card">
+                  <div class="account-media-slot-head">
+                    <div>
+                      <span class="account-field-label">Avatar image</span>
+                      <p class="account-note">Account identity avatar used across StreamSuites and FindMeHere surfaces.</p>
+                    </div>
+                    <div class="account-avatar-row">
+                      <span class="account-avatar-frame">
+                        <img
+                          src="/assets/icons/ui/profile.svg"
+                          alt="Avatar placeholder"
+                          data-account-profile-avatar="true"
+                        />
+                      </span>
+                      <span class="account-avatar-note">Saved avatar preview from the authoritative account identity.</span>
+                    </div>
+                  </div>
+                  <div class="profile-upload-surface">
+                    <label class="profile-upload-card" for="profile-avatar-upload">
+                      <span class="profile-upload-title">Upload from device</span>
+                      <span class="profile-upload-help">
+                        Primary path for replacing the saved profile image. Supported: PNG, JPEG, WEBP, GIF.
+                      </span>
+                    </label>
+                    <div class="profile-upload-actions">
+                      <input
+                        id="profile-avatar-upload"
+                        class="account-field-input profile-upload-input"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        data-profile-avatar-file="true"
+                      />
+                      <button class="creator-button danger" type="button" data-profile-avatar-clear="true">
+                        Clear avatar slot
+                      </button>
+                    </div>
+                    <span class="account-field-note" data-profile-avatar-upload-status="true">
+                      Upload from device is the default avatar update path. Manual URL entry stays available below.
+                    </span>
+                  </div>
+                  <input
+                    class="account-field-input profile-upload-secondary-input"
+                    type="url"
+                    placeholder="https://cdn.example.com/avatar.webp"
+                    data-profile-avatar-url="true"
+                  />
+                  <span class="account-field-note" data-profile-avatar-feedback="true">
+                    Manual avatar URL is optional and secondary to upload-from-device.
+                  </span>
+                </section>
+
+                <section class="account-media-slot-card">
+                  <div class="account-media-slot-head">
+                    <div>
+                      <span class="account-field-label">Cover image</span>
+                      <p class="account-note">Authoritative hero image for StreamSuites and FindMeHere profile surfaces.</p>
+                    </div>
+                    <div class="profile-cover-preview" data-profile-cover-preview="true"></div>
+                  </div>
                   <div class="profile-upload-surface">
                     <label class="profile-upload-card" for="profile-cover-upload">
                       <span class="profile-upload-title">Upload from device</span>
@@ -484,10 +488,9 @@
                         data-profile-cover-file="true"
                       />
                       <button class="creator-button danger" type="button" data-profile-cover-clear="true">
-                        Clear staged upload
+                        Clear cover slot
                       </button>
                     </div>
-                    <div class="profile-cover-preview" data-profile-cover-preview="true"></div>
                     <span class="account-field-note" data-profile-cover-upload-status="true">
                       Upload from device is the default cover update path. Manual URL entry stays available below.
                     </span>
@@ -500,22 +503,38 @@
                     data-profile-cover-image="true"
                   />
                   <span class="account-field-note">Manual cover image URL stays available as a secondary path.</span>
-                </div>
-                <div class="account-field account-media-slot">
-                  <span class="account-field-label">Background image</span>
-                  <div class="profile-upload-surface">
-                    <div class="profile-upload-card">
-                      <span class="profile-upload-title">Saved media path or URL</span>
-                      <span class="profile-upload-help">
-                        Separate background image slot for FindMeHere styling and preview layering.
-                      </span>
+                </section>
+
+                <section class="account-media-slot-card">
+                  <div class="account-media-slot-head">
+                    <div>
+                      <span class="account-field-label">Background image</span>
+                      <p class="account-note">Separate background layer used by FindMeHere page theming and preview treatment.</p>
                     </div>
                     <div class="profile-cover-preview" data-profile-background-preview="true"></div>
+                  </div>
+                  <div class="profile-upload-surface">
+                    <label class="profile-upload-card" for="profile-background-upload">
+                      <span class="profile-upload-title">Upload from device</span>
+                      <span class="profile-upload-help">
+                        Upload a dedicated background asset for FindMeHere. This does not replace the cover slot.
+                      </span>
+                    </label>
                     <div class="profile-upload-actions">
+                      <input
+                        id="profile-background-upload"
+                        class="account-field-input profile-upload-input"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        data-profile-background-file="true"
+                      />
                       <button class="creator-button danger" type="button" data-profile-background-clear="true">
-                        Clear background
+                        Clear background slot
                       </button>
                     </div>
+                    <span class="account-field-note" data-profile-background-upload-status="true">
+                      Upload from device is now available for the saved background slot. Manual entry stays available below.
+                    </span>
                   </div>
                   <input
                     class="account-field-input profile-upload-secondary-input"
@@ -525,23 +544,39 @@
                     data-profile-background-image="true"
                   />
                   <span class="account-field-note">Separate stored background field. This does not replace the cover image slot.</span>
-                </div>
-                <div class="account-field account-media-slot">
-                  <span class="account-field-label">Custom logo image</span>
-                  <div class="profile-upload-surface">
-                    <div class="profile-upload-card">
-                      <span class="profile-upload-title">FindMeHere header branding</span>
-                      <span class="profile-upload-help">
-                        Optional custom logo image for the FindMeHere header only. This is separate from avatar, cover, and background.
-                      </span>
+                </section>
+
+                <section class="account-media-slot-card">
+                  <div class="account-media-slot-head">
+                    <div>
+                      <span class="account-field-label">Custom logo image</span>
+                      <p class="account-note">Optional FindMeHere header branding image. This is distinct from avatar, cover, and background.</p>
                     </div>
                     <div class="profile-cover-preview" data-findme-theme-logo-preview="true"></div>
+                  </div>
+                  <div class="profile-upload-surface">
+                    <label class="profile-upload-card" for="findme-theme-logo-upload">
+                      <span class="profile-upload-title">Upload from device</span>
+                      <span class="profile-upload-help">
+                        Primary path for a dedicated FindMeHere header logo. Reuse buttons remain available as a secondary shortcut.
+                      </span>
+                    </label>
                     <div class="profile-upload-actions">
+                      <input
+                        id="findme-theme-logo-upload"
+                        class="account-field-input profile-upload-input"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        data-findme-theme-logo-file="true"
+                      />
                       <button class="creator-button secondary" type="button" data-findme-theme-logo-source="avatar">Use current avatar</button>
                       <button class="creator-button secondary" type="button" data-findme-theme-logo-source="cover">Use current cover</button>
                       <button class="creator-button secondary" type="button" data-findme-theme-logo-source="background">Use background</button>
-                      <button class="creator-button danger" type="button" data-findme-theme-logo-clear="true">Clear logo</button>
+                      <button class="creator-button danger" type="button" data-findme-theme-logo-clear="true">Clear logo slot</button>
                     </div>
+                    <span class="account-field-note" data-findme-theme-logo-upload-status="true">
+                      Upload from device is now available for the custom logo slot. Manual entry stays available below.
+                    </span>
                   </div>
                   <input
                     class="account-field-input profile-upload-secondary-input"
@@ -551,106 +586,126 @@
                     data-findme-theme-logo="true"
                   />
                   <span class="account-field-note">Optional FindMeHere-only header branding image. Reuse a saved media path or enter an existing logo URL.</span>
+                </section>
+              </div>
+              <div class="profile-action-row">
+                <button class="creator-button primary" type="button" data-profile-save="true">Save media assets</button>
+                <button class="creator-button danger" type="button" data-profile-reset="true">Reset</button>
+              </div>
+            </article>
+
+            <article class="card account-findme-branding-card">
+              <div class="card-top">
+                <div>
+                  <h3>FindMeHere branding &amp; theme</h3>
+                  <p>Header branding, colors, button treatment, font/layout presets, and image visibility toggles.</p>
                 </div>
-                <div class="account-field">
-                  <span class="account-field-label">FindMeHere header brand text</span>
-                  <input
-                    class="account-field-input"
-                    type="text"
-                    maxlength="80"
-                    placeholder="Brand text fallback"
-                    data-profile-field="true"
-                    data-findme-theme-brand-text="true"
-                  />
-                  <span class="account-field-note">Optional fallback text shown on your public FindMeHere page if no custom logo is used.</span>
-                </div>
-                <div class="account-field">
-                  <span class="account-field-label">Page accent color</span>
-                  <div class="account-color-row">
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>Theme
+                </span>
+              </div>
+              <div class="account-section-stack">
+                <div class="account-field-grid account-stack-fields">
+                  <div class="account-field">
+                    <span class="account-field-label">FindMeHere header brand text</span>
                     <input
-                      class="account-field-input account-color-text"
+                      class="account-field-input"
                       type="text"
-                      inputmode="text"
-                      maxlength="7"
-                      placeholder="#6ad6ff"
+                      maxlength="80"
+                      placeholder="Brand text fallback"
                       data-profile-field="true"
-                      data-findme-theme-accent-color="true"
+                      data-findme-theme-brand-text="true"
                     />
-                    <input
-                      class="account-color-picker"
-                      type="color"
-                      value="#6ad6ff"
-                      aria-label="Pick page accent color"
-                      data-findme-theme-accent-color-picker="true"
-                    />
+                    <span class="account-field-note">Optional fallback text shown on your public FindMeHere page if no custom logo is used.</span>
                   </div>
-                  <span class="account-field-note">Type a hex value or pick visually. Invalid hex values are ignored on save.</span>
-                </div>
-                <div class="account-field">
-                  <span class="account-field-label">Button color</span>
-                  <div class="account-color-row">
-                    <input
-                      class="account-field-input account-color-text"
-                      type="text"
-                      inputmode="text"
-                      maxlength="7"
-                      placeholder="#3f8bff"
-                      data-profile-field="true"
-                      data-findme-theme-button-color="true"
-                    />
-                    <input
-                      class="account-color-picker"
-                      type="color"
-                      value="#3f8bff"
-                      aria-label="Pick button color"
-                      data-findme-theme-button-color-picker="true"
-                    />
+                  <div class="account-field">
+                    <span class="account-field-label">Page accent color</span>
+                    <div class="account-color-row">
+                      <input
+                        class="account-field-input account-color-text"
+                        type="text"
+                        inputmode="text"
+                        maxlength="7"
+                        placeholder="#6ad6ff"
+                        data-profile-field="true"
+                        data-findme-theme-accent-color="true"
+                      />
+                      <input
+                        class="account-color-picker"
+                        type="color"
+                        value="#6ad6ff"
+                        aria-label="Pick page accent color"
+                        data-findme-theme-accent-color-picker="true"
+                      />
+                    </div>
+                    <span class="account-field-note">Type a hex value or pick visually. Invalid hex values are ignored on save.</span>
                   </div>
-                  <span class="account-field-note">Type a hex value or pick visually. Invalid hex values are ignored on save.</span>
-                </div>
-                <div class="account-field">
-                  <span class="account-field-label">Button tone</span>
-                  <select class="account-field-input" data-profile-field="true" data-findme-theme-button-tone="true">
-                    <option value="brand">Brand</option>
-                    <option value="soft">Soft</option>
-                    <option value="ghost">Ghost</option>
-                  </select>
-                </div>
-                <div class="account-field">
-                  <span class="account-field-label">Font preset</span>
-                  <select class="account-field-input" data-profile-field="true" data-findme-theme-font-preset="true">
-                    <option value="default">Default</option>
-                    <option value="editorial">Editorial</option>
-                    <option value="condensed">Condensed</option>
-                    <option value="mono">Mono</option>
-                  </select>
-                </div>
-                <div class="account-field">
-                  <span class="account-field-label">Layout preset</span>
-                  <select class="account-field-input" data-profile-field="true" data-findme-theme-layout-preset="true">
-                    <option value="standard">Standard</option>
-                    <option value="condensed">Condensed</option>
-                    <option value="expanded">Expanded</option>
-                  </select>
-                </div>
-                <div class="account-field">
-                  <span class="account-field-label">Image visibility</span>
-                  <label class="account-checkbox-row">
-                    <input type="checkbox" data-profile-field="true" data-findme-theme-show-cover="true" />
-                    <span>Show cover image on FindMeHere</span>
-                  </label>
-                  <label class="account-checkbox-row">
-                    <input type="checkbox" data-profile-field="true" data-findme-theme-show-avatar="true" />
-                    <span>Show avatar on FindMeHere</span>
-                  </label>
-                  <label class="account-checkbox-row">
-                    <input type="checkbox" data-profile-field="true" data-findme-theme-show-background="true" />
-                    <span>Show background image on FindMeHere</span>
-                  </label>
+                  <div class="account-field">
+                    <span class="account-field-label">Button color</span>
+                    <div class="account-color-row">
+                      <input
+                        class="account-field-input account-color-text"
+                        type="text"
+                        inputmode="text"
+                        maxlength="7"
+                        placeholder="#3f8bff"
+                        data-profile-field="true"
+                        data-findme-theme-button-color="true"
+                      />
+                      <input
+                        class="account-color-picker"
+                        type="color"
+                        value="#3f8bff"
+                        aria-label="Pick button color"
+                        data-findme-theme-button-color-picker="true"
+                      />
+                    </div>
+                    <span class="account-field-note">Type a hex value or pick visually. Invalid hex values are ignored on save.</span>
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Button tone</span>
+                    <select class="account-field-input" data-profile-field="true" data-findme-theme-button-tone="true">
+                      <option value="brand">Brand</option>
+                      <option value="soft">Soft</option>
+                      <option value="ghost">Ghost</option>
+                    </select>
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Font preset</span>
+                    <select class="account-field-input" data-profile-field="true" data-findme-theme-font-preset="true">
+                      <option value="default">Default</option>
+                      <option value="editorial">Editorial</option>
+                      <option value="condensed">Condensed</option>
+                      <option value="mono">Mono</option>
+                    </select>
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Layout preset</span>
+                    <select class="account-field-input" data-profile-field="true" data-findme-theme-layout-preset="true">
+                      <option value="standard">Standard</option>
+                      <option value="condensed">Condensed</option>
+                      <option value="expanded">Expanded</option>
+                    </select>
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Image visibility</span>
+                    <label class="account-checkbox-row">
+                      <input type="checkbox" data-profile-field="true" data-findme-theme-show-cover="true" />
+                      <span>Show cover image on FindMeHere</span>
+                    </label>
+                    <label class="account-checkbox-row">
+                      <input type="checkbox" data-profile-field="true" data-findme-theme-show-avatar="true" />
+                      <span>Show avatar on FindMeHere</span>
+                    </label>
+                    <label class="account-checkbox-row">
+                      <input type="checkbox" data-profile-field="true" data-findme-theme-show-background="true" />
+                      <span>Show background image on FindMeHere</span>
+                    </label>
+                  </div>
                 </div>
               </div>
               <div class="profile-action-row">
-                <button class="creator-button primary" type="button" data-profile-save="true">Save media &amp; appearance</button>
+                <button class="creator-button primary" type="button" data-profile-save="true">Save FindMeHere theme</button>
                 <button class="creator-button danger" type="button" data-profile-reset="true">Reset</button>
               </div>
             </article>
@@ -665,8 +720,8 @@
                   <span class="status-dot"></span>Advanced
                 </span>
               </div>
-              <div class="account-field-grid">
-                <div class="account-field account-field-span-full">
+              <div class="account-section-stack">
+                <div class="account-field">
                   <span class="account-field-label">Advanced custom CSS</span>
                   <textarea
                     class="account-field-input account-field-textarea"
@@ -691,7 +746,7 @@
               <div class="card-top">
                 <div>
                   <h3>Profile preview</h3>
-                  <p>Dedicated full-width preview with fast switching between StreamSuites, tooltip, and FindMeHere modes.</p>
+                  <p>Dedicated full-width preview with switching between the real StreamSuites profile, tooltip hovercard, and FindMeHere page structures.</p>
                 </div>
                 <span class="status-pill subtle">
                   <span class="status-dot"></span>Preview
@@ -704,67 +759,13 @@
               </div>
               <div class="account-preview-hub" data-profile-preview-hub="true" data-preview-mode="streamsuites">
                 <section class="account-preview-panel is-active" data-preview-panel="streamsuites">
-                  <div class="account-public-preview account-public-preview-streamsuites" data-profile-preview-surface="true">
-                    <div class="account-public-preview-cover" data-profile-preview-cover="true"></div>
-                    <div class="account-public-preview-body">
-                      <div class="account-public-preview-avatar" data-profile-preview-avatar="true">P</div>
-                      <div class="account-public-preview-head">
-                        <div>
-                          <strong data-profile-preview-name="true">Public User</strong>
-                          <span data-profile-preview-subtitle="true">CREATOR</span>
-                        </div>
-                        <div class="account-public-preview-badges" data-profile-preview-badges="true"></div>
-                      </div>
-                      <p class="account-public-preview-bio" data-profile-preview-bio="true">No public bio saved.</p>
-                      <div class="account-public-preview-links" data-profile-preview-links="true"></div>
-                    </div>
-                  </div>
+                  <div class="account-preview-canvas account-preview-canvas-streamsuites" data-profile-preview-target="streamsuites"></div>
                 </section>
                 <section class="account-preview-panel" data-preview-panel="tooltip">
-                  <div class="account-tooltip-preview" data-tooltip-preview-surface="true">
-                    <div class="account-tooltip-preview-cover" data-tooltip-preview-cover="true"></div>
-                    <div class="account-tooltip-preview-body">
-                      <div class="account-tooltip-preview-avatar" data-tooltip-preview-avatar="true">P</div>
-                      <div class="account-tooltip-preview-copy">
-                        <strong data-tooltip-preview-name="true">Public User</strong>
-                        <span data-tooltip-preview-subtitle="true">CREATOR</span>
-                        <p data-tooltip-preview-bio="true">No public bio saved.</p>
-                        <div class="account-tooltip-preview-links" data-tooltip-preview-links="true"></div>
-                      </div>
-                    </div>
-                  </div>
+                  <div class="account-preview-canvas account-preview-canvas-tooltip" data-profile-preview-target="tooltip"></div>
                 </section>
                 <section class="account-preview-panel" data-preview-panel="findmehere">
-                  <div class="account-findme-preview" data-findme-preview-surface="true">
-                    <div class="account-findme-preview-backdrop" data-findme-preview-backdrop="true"></div>
-                    <div class="account-findme-preview-shell">
-                      <header class="account-findme-preview-header">
-                        <div class="account-findme-preview-brand">
-                          <div class="account-findme-preview-logo" data-findme-preview-logo="true">FMH</div>
-                          <div>
-                            <strong data-findme-preview-brand-text="true">Public User</strong>
-                            <span data-findme-preview-subtitle="true">FindMeHere</span>
-                          </div>
-                        </div>
-                        <div class="account-findme-preview-chips">
-                          <span class="account-findme-preview-chip">Header</span>
-                          <span class="account-findme-preview-chip">Buttons</span>
-                        </div>
-                      </header>
-                      <div class="account-findme-preview-hero">
-                        <div class="account-findme-preview-avatar" data-findme-preview-avatar="true">P</div>
-                        <div class="account-findme-preview-copy">
-                          <h4 data-findme-preview-name="true">Public User</h4>
-                          <p data-findme-preview-bio="true">No public bio saved.</p>
-                        </div>
-                      </div>
-                      <div class="account-findme-preview-buttons" data-findme-preview-buttons="true">
-                        <button type="button">Primary link</button>
-                        <button type="button">Support</button>
-                        <button type="button">Latest clip</button>
-                      </div>
-                    </div>
-                  </div>
+                  <div class="account-preview-canvas account-preview-canvas-findmehere" data-profile-preview-target="findmehere"></div>
                 </section>
               </div>
             </article>

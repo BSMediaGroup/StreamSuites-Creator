@@ -4,6 +4,19 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## FindMeHere Editor Hard Repair - 2026-03-26
+
+- The creator account customization surface is now a full-width stacked editor instead of the old multi-column composition, with separate stacked sections for core profile content, public content/share links, media assets, FindMeHere branding/theme, advanced styling, and a dedicated full-width preview hub.
+- Avatar, cover, background, and custom FindMeHere logo now each have their own slot-specific upload control, staged preview, clear action, secondary manual URL field, and save mapping, and the creator save flow now resolves staged media into one authoritative profile POST so the staged cover upload can no longer compete with the stale manual cover field.
+- The old invented preview cards were replaced with new creator-side renderers that mirror the live StreamSuites profile card, the `ss-profile-hovercard` tooltip structure, and the FindMeHere `fmh-topbar` plus `fmh-profile-route` layout, including FindMeHere default-versus-custom header branding behavior and representative header/action buttons.
+
+### Files / Areas Touched
+
+- `views/account.html`
+- `js/account-settings.js`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## FindMeHere Editor Media/Layout Repair - 2026-03-24
 
 - The creator account editor now keeps the existing avatar flow intact while restoring a distinct cover image slot and clearly separating all four image roles: avatar image, cover image, background image, and custom FindMeHere logo image.
