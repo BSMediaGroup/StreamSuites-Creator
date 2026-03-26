@@ -4,6 +4,18 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Authoritative Badge Rendering Alignment - 2026-03-26
+
+- Creator auth/session normalization now consumes the runtime-owned badge arrays instead of deriving local badge business rules from role and tier alone, which lets the creator shell render additive founder, moderator, and developer badges without owning the entitlement logic.
+- The top-bar account summary, account settings panel, profile-hover payload attributes, and creator-side public/profile previews now resolve local badge icons from the authoritative badge keys returned by the backend.
+- FindMeHere preview rendering in the creator account page now uses the backend-provided FindMeHere badge subset instead of reusing the broader creator badge set.
+
+### Files / Areas Touched
+
+- `js/auth.js`
+- `js/account-settings.js`
+- `BUMP_NOTES.md`
+
 ## Account Billing Summary Upgrade - 2026-03-26
 
 - The creator account page billing block is no longer a placeholder preview card; it now renders an authoritative plan and payment summary area with current tier, plan status, supporter state, lifetime paid, last payment amount/date, donation total, renewal placeholder state, and backend-exposed tier entitlements.

@@ -1687,10 +1687,20 @@
       session,
       slug,
       socialEntries,
+      streamsuitesBadges:
+        window.StreamSuitesAuth?.normalizeBadges?.(
+          state.profile?.badges || session?.badges,
+          session?.tier || session?.effectiveTier?.tierId || "core"
+        ) || [],
       streamsuitesShareUrl: slug ? `https://streamsuites.app/u/${encodeURIComponent(slug)}` : "",
       subtitle,
       theme,
       tierLabel,
+      findmehereBadges:
+        window.StreamSuitesAuth?.normalizeBadges?.(
+          state.profile?.findmehere_badges || state.profile?.findmehereBadges || session?.findmehereBadges || session?.badges,
+          session?.tier || session?.effectiveTier?.tierId || "core"
+        ) || [],
     };
   }
 
@@ -1704,8 +1714,10 @@
       : `<div class="${className}">${buildPreviewInitial(name)}</div>`;
   }
 
-  function buildPreviewBadgeMarkup() {
-    return resolvePreviewBadges(state.profile)
+  function buildPreviewBadgeMarkup(badges) {
+    return (Array.isArray(badges) ? badges : [])
+      .map((badge) => window.StreamSuitesAuth?.badgeIconSource?.(badge?.key || badge?.value))
+      .filter(Boolean)
       .map((src) => `<img class="account-preview-badge-icon" src="${escapeHtml(src)}" alt="" loading="lazy" decoding="async" />`)
       .join("");
   }
@@ -1752,7 +1764,7 @@
             <div class="creator-meta-text">
               <div class="creator-meta-top">
                 <span class="creator-name">${escapeHtml(model.displayName)}</span>
-                <span class="account-preview-badges">${buildPreviewBadgeMarkup()}</span>
+                <span class="account-preview-badges">${buildPreviewBadgeMarkup(model.streamsuitesBadges)}</span>
               </div>
               <div class="creator-meta-bottom">${escapeHtml(model.subtitle)}</div>
             </div>
@@ -1795,7 +1807,7 @@
             <div class="ss-profile-hovercard-head">
               <div class="ss-profile-hovercard-name-row">
                 <h3 class="ss-profile-hovercard-name">${escapeHtml(model.displayName)}</h3>
-                <span class="ss-profile-hovercard-badges">${buildPreviewBadgeMarkup()}</span>
+                <span class="ss-profile-hovercard-badges">${buildPreviewBadgeMarkup(model.streamsuitesBadges)}</span>
               </div>
               <p class="ss-profile-hovercard-subtitle">${escapeHtml(model.subtitle)}</p>
             </div>
@@ -1872,6 +1884,7 @@
                   <span class="fmh-profile-kicker">Share page</span>
                   <div class="fmh-profile-title-row">
                     <h1>${escapeHtml(model.displayName)}</h1>
+                    <span class="account-preview-badges">${buildPreviewBadgeMarkup(model.findmehereBadges)}</span>
                     <span class="fmh-live-badge fmh-live-badge-compact">LIVE</span>
                   </div>
                   <p>@${escapeHtml(model.slug)}</p>
@@ -1917,22 +1930,6 @@
         </section>
       </div>
     `;
-  }
-
-  function resolvePreviewBadges(profile) {
-    const session = getActiveSession();
-    const badges = [];
-    const role = coerceText(session.role).toLowerCase();
-    const tier = coerceText(session.tier || session?.effectiveTier?.tierId).toLowerCase() || "core";
-    if (["gold", "pro"].includes(tier)) {
-      badges.push(`/assets/icons/tierbadge-${tier}.svg`);
-    } else if (role === "creator") {
-      badges.push("/assets/icons/tierbadge-core.svg");
-    }
-    if (role === "admin") {
-      badges.push("/assets/icons/tierbadge-admin.svg");
-    }
-    return badges;
   }
 
   function renderPreviewSurface() {

@@ -38,6 +38,15 @@
     ["GOLD", "/assets/icons/tier-gold.svg"],
     ["PRO", "/assets/icons/tier-pro.svg"]
   ]);
+  const BADGE_ICON_SOURCES = new Map([
+    ["admin", "/assets/icons/tierbadge-admin.svg"],
+    ["core", "/assets/icons/tierbadge-core.svg"],
+    ["gold", "/assets/icons/tierbadge-gold.svg"],
+    ["pro", "/assets/icons/tierbadge-pro.svg"],
+    ["founder", "/assets/icons/founder-gold.svg"],
+    ["moderator", "/assets/icons/modgavel-blue.svg"],
+    ["developer", "/assets/icons/dev-green.svg"]
+  ]);
   const TIER_ID_OPTIONS = new Set(["core", "gold", "pro"]);
   const PUBLIC_PATHS = new Set([
     "/login",
@@ -574,6 +583,59 @@
     return TIER_ID_OPTIONS.has(trimmed) ? trimmed : "";
   }
 
+  function normalizeBadgeKey(value) {
+    if (typeof value !== "string") return "";
+    const normalized = value.trim().toLowerCase();
+    return BADGE_ICON_SOURCES.has(normalized) ? normalized : "";
+  }
+
+  function normalizeAuthoritativeBadges(value, tierFallback = "core") {
+    if (Array.isArray(value) && value.length) {
+      return value
+        .map((badge) => {
+          if (!badge || typeof badge !== "object") return null;
+          const key = normalizeBadgeKey(
+            String(badge.key || badge.icon_key || badge.iconKey || badge.value || "").trim()
+          );
+          if (!key) return null;
+          return {
+            key,
+            kind: String(badge.kind || (key === "admin" ? "role" : "entitlement")).trim().toLowerCase(),
+            label: String(badge.label || badge.title || key).trim() || key,
+            title: String(badge.title || badge.label || key).trim() || key
+          };
+        })
+        .filter(Boolean);
+    }
+    const tierKey = normalizeTierId(tierFallback) || "core";
+    return [{ key: tierKey, kind: "tier", label: tierKey.toUpperCase(), title: `${tierKey.toUpperCase()} Creator` }];
+  }
+
+  function badgeIconSource(key) {
+    return BADGE_ICON_SOURCES.get(normalizeBadgeKey(key)) || "";
+  }
+
+  function renderBadgeStrip(element, badges, tierLabel = "CORE") {
+    if (!element) return;
+    const normalizedBadges = normalizeAuthoritativeBadges(badges, tierLabel);
+    element.classList.add("ss-role-badges");
+    const row = document.createElement("span");
+    row.className = "tier-pill-content";
+    normalizedBadges.forEach((badge) => {
+      const iconSrc = badgeIconSource(badge.key);
+      if (!iconSrc) return;
+      const icon = document.createElement("img");
+      icon.className = ["core", "gold", "pro"].includes(badge.key) ? "tier-pill-icon ss-tier-badge" : "tier-pill-icon ss-role-badge";
+      icon.src = iconSrc;
+      icon.alt = badge.label || badge.key;
+      icon.title = badge.title || badge.label || badge.key;
+      icon.decoding = "async";
+      icon.setAttribute("data-ss-role-badge", badge.key);
+      row.appendChild(icon);
+    });
+    element.replaceChildren(row);
+  }
+
   function renderTierPill(element, tierLabel) {
     if (!element) return;
     const normalized = normalizeTier(tierLabel);
@@ -773,6 +835,11 @@
       primaryProvider: primaryProviderCandidate,
       linkedProviders,
       tier,
+      badges: normalizeAuthoritativeBadges(sessionSource.badges, tier),
+      findmehereBadges: normalizeAuthoritativeBadges(
+        sessionSource.findmehere_badges || sessionSource.findmehereBadges,
+        tier
+      ),
       effectiveTier,
       features,
       paymentSummary,
@@ -1220,6 +1287,8 @@
       (left.primaryProvider || "") === (right.primaryProvider || "") &&
       JSON.stringify(left.linkedProviders || []) === JSON.stringify(right.linkedProviders || []) &&
       (left.tier || "") === (right.tier || "") &&
+      JSON.stringify(left.badges || []) === JSON.stringify(right.badges || []) &&
+      JSON.stringify(left.findmehereBadges || []) === JSON.stringify(right.findmehereBadges || []) &&
       (left.effectiveTier?.tierId || "") === (right.effectiveTier?.tierId || "") &&
       (left.effectiveTier?.tierLabel || "") === (right.effectiveTier?.tierLabel || "") &&
       (left.effectiveTier?.visibility || "") === (right.effectiveTier?.visibility || "") &&
@@ -1602,6 +1671,7 @@
     setProfileHoverAttr(node, "data-ss-avatar-url", avatarUrl);
     setProfileHoverAttr(node, "data-ss-role", role ? role.toUpperCase() : "CREATOR");
     setProfileHoverAttr(node, "data-ss-profile-href", profileHref);
+    setProfileHoverAttr(node, "data-ss-badges", JSON.stringify(session?.badges || []));
   }
 
   function ensureTopbarProfileHoverOptOut() {
@@ -1668,7 +1738,7 @@
         nameEl.textContent = displayName;
       }
       const tierLabel = getTierLabel(session);
-      renderTierPill(tierEl, tierLabel);
+      renderBadgeStrip(tierEl, session?.badges, tierLabel);
       tierEl.hidden = false;
       logoutEl.hidden = false;
       if (avatarEl) {
@@ -1716,7 +1786,7 @@
         detailCreatorId.textContent = authenticated ? getCreatorIdValue(session) : "Not available";
       }
       if (detailTier) {
-        renderTierPill(detailTier, authenticated ? getTierLabel(session) : "CORE");
+        renderBadgeStrip(detailTier, authenticated ? session?.badges : [], authenticated ? getTierLabel(session) : "CORE");
       }
     });
   }
@@ -1748,7 +1818,7 @@
       userCodeValue.textContent = authenticated ? getCreatorIdValue(session) : "Not available";
     }
     if (tierValue) {
-      renderTierPill(tierValue, authenticated ? getTierLabel(session) : "CORE");
+      renderBadgeStrip(tierValue, authenticated ? session?.badges : [], authenticated ? getTierLabel(session) : "CORE");
     }
     if (avatarImage instanceof HTMLImageElement) {
       avatarImage.src = authenticated && session?.avatar ? session.avatar : "/assets/icons/ui/profile.svg";
@@ -3615,6 +3685,8 @@
       isCreatorSession: (session) => isCreatorSession(session),
       isAdminSession: (session) => isAdminSession(session)
     },
+    normalizeBadges: (value, tierFallback) => normalizeAuthoritativeBadges(value, tierFallback),
+    badgeIconSource: (key) => badgeIconSource(key),
     persistLocalSession,
     storageKeys: {
       session: LOCAL_SESSION_KEY,
