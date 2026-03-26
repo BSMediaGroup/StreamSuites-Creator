@@ -209,6 +209,26 @@
     }
   }
 
+  function showRestrictedRoute(route) {
+    const container = document.getElementById("view-container");
+    if (!container) return;
+    container.innerHTML = `
+      <section class="creator-section">
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">Restricted</span>
+            <h2>View not available in this workspace</h2>
+            <p class="section-subtext">
+              <code>${escapeHtml(getCanonicalPath(route))}</code> is not available for the current creator context.
+            </p>
+          </div>
+        </div>
+      </section>
+    `;
+    setActiveNavState("");
+    window.App?.creatorShell?.setTopbarTitle?.("Restricted");
+  }
+
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -359,6 +379,15 @@
         showNotFound(normalized);
         return;
       }
+      if (typeof window.StreamSuitesAuth?.creatorAccess?.isRouteAllowed === "function") {
+        const session = window.App?.session || null;
+        if (!window.StreamSuitesAuth.creatorAccess.isRouteAllowed(normalized, session)) {
+          app.currentView = "";
+          routerState.currentRoute = "";
+          showRestrictedRoute(normalized);
+          return;
+        }
+      }
 
       const html = await fetchViewHtml(view.templatePath);
       if (requestId !== routerState.requestId) return;
@@ -405,6 +434,14 @@
   function navigateToRoute(route, options = {}) {
     const normalized = normalizeRoute(route);
     if (!normalized || BLOCKED_ROUTES.has(normalized)) return;
+    if (typeof window.StreamSuitesAuth?.creatorAccess?.isRouteAllowed === "function") {
+      const session = window.App?.session || null;
+      if (!window.StreamSuitesAuth.creatorAccess.isRouteAllowed(normalized, session)) {
+        syncBrowserUrl(DEFAULT_ROUTE, { replace: true, force: true });
+        void loadRoute(DEFAULT_ROUTE);
+        return;
+      }
+    }
 
     const current = getCurrentLocationRoute();
     if (current === normalized) {

@@ -502,6 +502,8 @@
 
   function isCreatorSession(session) {
     if (!session?.authenticated) return false;
+    if (session?.creatorWorkspaceAccess?.allowed === true) return true;
+    if (session?.creator_workspace_access?.allowed === true) return true;
     if (session?.creatorCapable === true || session?.creator_capable === true) return true;
     return normalizeRole(session?.role) === CREATOR_ROLE;
   }
@@ -617,7 +619,14 @@
     }
 
     const hasAdminBadge = normalized.some((badge) => badge?.key === "admin");
-    return normalized.filter((badge) => !(hasAdminBadge && ["core", "gold", "pro"].includes(badge?.key)));
+    const hasDeveloperBadge = normalized.some((badge) => badge?.key === "developer");
+    return normalized.filter(
+      (badge) =>
+        !(
+          (hasAdminBadge && ["core", "gold", "pro"].includes(badge?.key)) ||
+          (hasDeveloperBadge && badge?.key === "pro")
+        )
+    );
   }
 
   function badgeIconSource(key) {
@@ -754,6 +763,112 @@
     };
   }
 
+  function normalizeAdminAccess(raw) {
+    const source = raw && typeof raw === "object" ? raw : {};
+    return {
+      allowed: source.allowed === true,
+      level: coerceText(source.level).toLowerCase(),
+      restricted: source.restricted === true,
+      allowedViews: Array.isArray(source.allowed_views || source.allowedViews)
+        ? (source.allowed_views || source.allowedViews)
+            .map((item) => coerceText(item).toLowerCase())
+            .filter(Boolean)
+        : [],
+      restrictedViews: Array.isArray(source.restricted_views || source.restrictedViews)
+        ? (source.restricted_views || source.restrictedViews)
+            .map((item) => coerceText(item).toLowerCase())
+            .filter(Boolean)
+        : [],
+      features: source.features && typeof source.features === "object" ? { ...source.features } : {}
+    };
+  }
+
+  function normalizeModeratorAccess(raw) {
+    const source = raw && typeof raw === "object" ? raw : {};
+    const contexts = Array.isArray(source.contexts)
+      ? source.contexts
+          .map((entry) => {
+            if (!entry || typeof entry !== "object") return null;
+            return {
+              creatorAccountId: coerceText(entry.creator_account_id || entry.creatorAccountId),
+              creatorUserCode: coerceText(entry.creator_user_code || entry.creatorUserCode),
+              creatorDisplayName: coerceText(entry.creator_display_name || entry.creatorDisplayName),
+              creatorAvatarUrl: coerceText(entry.creator_avatar_url || entry.creatorAvatarUrl),
+              permissionPreset: coerceText(entry.permission_preset || entry.permissionPreset).toLowerCase(),
+              capabilities:
+                entry.capabilities && typeof entry.capabilities === "object"
+                  ? { ...entry.capabilities }
+                  : {},
+              allowedRoutes: Array.isArray(entry.allowed_routes || entry.allowedRoutes)
+                ? (entry.allowed_routes || entry.allowedRoutes)
+                    .map((item) => coerceText(item).toLowerCase())
+                    .filter(Boolean)
+                : [],
+              assignedAt: coerceText(entry.assigned_at || entry.assignedAt),
+              updatedAt: coerceText(entry.updated_at || entry.updatedAt)
+            };
+          })
+          .filter(Boolean)
+      : [];
+    return {
+      active: source.active === true,
+      assignmentCount: Number(source.assignment_count ?? source.assignmentCount) || contexts.length,
+      defaultCreatorAccountId: coerceText(
+        source.default_creator_account_id || source.defaultCreatorAccountId
+      ),
+      allowedRoutes: Array.isArray(source.allowed_routes || source.allowedRoutes)
+        ? (source.allowed_routes || source.allowedRoutes)
+            .map((item) => coerceText(item).toLowerCase())
+            .filter(Boolean)
+        : [],
+      contexts
+    };
+  }
+
+  function normalizeCreatorWorkspaceAccess(raw) {
+    const source = raw && typeof raw === "object" ? raw : {};
+    const contexts = Array.isArray(source.contexts)
+      ? source.contexts
+          .map((entry) => {
+            if (!entry || typeof entry !== "object") return null;
+            return {
+              creatorAccountId: coerceText(entry.creator_account_id || entry.creatorAccountId),
+              creatorUserCode: coerceText(entry.creator_user_code || entry.creatorUserCode),
+              creatorDisplayName: coerceText(entry.creator_display_name || entry.creatorDisplayName),
+              creatorAvatarUrl: coerceText(entry.creator_avatar_url || entry.creatorAvatarUrl),
+              contextType: coerceText(entry.context_type || entry.contextType).toLowerCase(),
+              owner: entry.owner === true,
+              permissionPreset: coerceText(entry.permission_preset || entry.permissionPreset).toLowerCase(),
+              capabilities:
+                entry.capabilities && typeof entry.capabilities === "object"
+                  ? { ...entry.capabilities }
+                  : {},
+              allowedRoutes: Array.isArray(entry.allowed_routes || entry.allowedRoutes)
+                ? (entry.allowed_routes || entry.allowedRoutes)
+                    .map((item) => coerceText(item).toLowerCase())
+                    .filter(Boolean)
+                : []
+            };
+          })
+          .filter(Boolean)
+      : [];
+    return {
+      allowed: source.allowed === true,
+      creatorCapable: source.creator_capable === true || source.creatorCapable === true,
+      moderatorCapable: source.moderator_capable === true || source.moderatorCapable === true,
+      defaultCreatorAccountId: coerceText(
+        source.default_creator_account_id || source.defaultCreatorAccountId
+      ),
+      defaultContextType: coerceText(source.default_context_type || source.defaultContextType).toLowerCase(),
+      allowedRoutes: Array.isArray(source.allowed_routes || source.allowedRoutes)
+        ? (source.allowed_routes || source.allowedRoutes)
+            .map((item) => coerceText(item).toLowerCase())
+            .filter(Boolean)
+        : [],
+      contexts
+    };
+  }
+
   function normalizeSessionPayload(payload) {
     if (!payload || typeof payload !== "object") {
       return { authenticated: false };
@@ -845,7 +960,17 @@
     const paymentSummary = normalizePaymentSummary(
       sessionSource.payment_summary || sessionSource.paymentSummary
     );
+    const adminAccess = normalizeAdminAccess(
+      sessionSource.admin_access || sessionSource.adminAccess
+    );
+    const moderatorAccess = normalizeModeratorAccess(
+      sessionSource.moderator_access || sessionSource.moderatorAccess
+    );
+    const creatorWorkspaceAccess = normalizeCreatorWorkspaceAccess(
+      sessionSource.creator_workspace_access || sessionSource.creatorWorkspaceAccess
+    );
     const creatorCapable =
+      creatorWorkspaceAccess.allowed === true ||
       sessionSource.creator_capable === true ||
       sessionSource.creatorCapable === true;
     const tier = normalizeTier(effectiveTier?.tierId || sessionSource.tier);
@@ -862,6 +987,9 @@
       linkedProviders,
       tier,
       creatorCapable,
+      adminAccess,
+      moderatorAccess,
+      creatorWorkspaceAccess,
       badges: normalizeAuthoritativeBadges(sessionSource.badges, tier, role),
       findmehereBadges: normalizeAuthoritativeBadges(
         sessionSource.findmehere_badges || sessionSource.findmehereBadges,
@@ -1320,10 +1448,32 @@
       (left.effectiveTier?.tierId || "") === (right.effectiveTier?.tierId || "") &&
       (left.effectiveTier?.tierLabel || "") === (right.effectiveTier?.tierLabel || "") &&
       (left.effectiveTier?.visibility || "") === (right.effectiveTier?.visibility || "") &&
+      JSON.stringify(left.adminAccess || null) === JSON.stringify(right.adminAccess || null) &&
+      JSON.stringify(left.moderatorAccess || null) === JSON.stringify(right.moderatorAccess || null) &&
+      JSON.stringify(left.creatorWorkspaceAccess || null) ===
+        JSON.stringify(right.creatorWorkspaceAccess || null) &&
       JSON.stringify(left.features || {}) === JSON.stringify(right.features || {}) &&
       JSON.stringify(left.paymentSummary || null) === JSON.stringify(right.paymentSummary || null) &&
       !!left.onboardingRequired === !!right.onboardingRequired
     );
+  }
+
+  function getAllowedCreatorRoutes(session = sessionState.value) {
+    const routes = session?.creatorWorkspaceAccess?.allowedRoutes;
+    if (Array.isArray(routes) && routes.length) {
+      return routes.map((item) => coerceText(item).toLowerCase()).filter(Boolean);
+    }
+    return [];
+  }
+
+  function isCreatorRouteAllowed(route, session = sessionState.value) {
+    const normalizedRoute = coerceText(route).toLowerCase();
+    if (!normalizedRoute) return false;
+    const workspaceAccess = session?.creatorWorkspaceAccess;
+    if (!workspaceAccess || workspaceAccess.allowed !== true) return false;
+    const allowedRoutes = getAllowedCreatorRoutes(session);
+    if (!allowedRoutes.length) return true;
+    return allowedRoutes.includes(normalizedRoute);
   }
 
   function getTierLabel(session) {
@@ -1380,10 +1530,18 @@
       linkedProviders: Array.isArray(session?.linkedProviders) ? session.linkedProviders : [],
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
+      adminAccess: session?.adminAccess || null,
+      moderatorAccess: session?.moderatorAccess || null,
+      creatorWorkspaceAccess: session?.creatorWorkspaceAccess || null,
       features: session?.features || {},
       paymentSummary: session?.paymentSummary || null,
       onboardingRequired: session?.onboardingRequired === true
     };
+    window.dispatchEvent(
+      new CustomEvent("streamsuites:creator-session-changed", {
+        detail: { session: window.App.session }
+      })
+    );
     syncAuthBootstrapState();
   }
 
@@ -1400,6 +1558,9 @@
       linkedProviders: Array.isArray(session?.linkedProviders) ? session.linkedProviders : [],
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
+      adminAccess: session?.adminAccess || null,
+      moderatorAccess: session?.moderatorAccess || null,
+      creatorWorkspaceAccess: session?.creatorWorkspaceAccess || null,
       features: session?.features || {},
       paymentSummary: session?.paymentSummary || null,
       onboardingRequired: session?.onboardingRequired === true
@@ -3712,6 +3873,10 @@
     sessionRoleChecks: {
       isCreatorSession: (session) => isCreatorSession(session),
       isAdminSession: (session) => isAdminSession(session)
+    },
+    creatorAccess: {
+      getAllowedRoutes: (session) => getAllowedCreatorRoutes(session),
+      isRouteAllowed: (route, session) => isCreatorRouteAllowed(route, session)
     },
     normalizeBadges: (value, tierFallback, roleFallback) =>
       normalizeAuthoritativeBadges(value, tierFallback, roleFallback),

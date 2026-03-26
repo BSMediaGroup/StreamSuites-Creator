@@ -276,6 +276,28 @@
     });
   }
 
+  function applyCreatorAccessNavState(session = window.App?.session || null) {
+    if (!shell.nav) return;
+    const routeGuard = window.StreamSuitesAuth?.creatorAccess;
+    shell.nav.querySelectorAll("#app-nav-list a").forEach((anchor) => {
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      const route = normalizeRouteValue(anchor.dataset.route || resolveRouteFromHref(anchor.getAttribute("href") || ""));
+      if (!route) return;
+      const allowed =
+        typeof routeGuard?.isRouteAllowed === "function"
+          ? routeGuard.isRouteAllowed(route, session)
+          : true;
+      anchor.hidden = !allowed;
+      anchor.classList.toggle("is-disabled", !allowed);
+      anchor.setAttribute("aria-disabled", allowed ? "false" : "true");
+      if (!allowed) {
+        anchor.tabIndex = -1;
+      } else {
+        anchor.removeAttribute("tabindex");
+      }
+    });
+  }
+
   function updateNavTitles() {
     if (!shell.nav) return;
     const collapsed = isSidebarCollapsed();
@@ -845,6 +867,7 @@
 
     if (!shell.nav || !shell.headerLeft) return;
     decorateSidebarLinks();
+    applyCreatorAccessNavState(window.App?.session || null);
     syncRouteAnchors(shell.app);
     ensureSidebarToggle();
     ensureTopbarTitle();
@@ -852,19 +875,24 @@
     bindSidebarBehavior();
     updateNavTitles();
 
-    window.App.creatorShell = {
+  window.App.creatorShell = {
       buildRouteHref,
       resolveRouteFromHref,
       resolveRouteFromUrl,
-      syncRouteAnchors,
-      setTopbarTitle(title) {
+    syncRouteAnchors,
+    applyCreatorAccessNavState,
+    setTopbarTitle(title) {
         if (!shell.headerLeft) return;
         const titleNode = shell.headerLeft.querySelector(".creator-topbar-page-title");
         if (!titleNode) return;
         const text = typeof title === "string" ? title.trim() : "";
         titleNode.textContent = text || resolvePageTitle();
       }
-    };
+  };
+
+  window.addEventListener("streamsuites:creator-session-changed", (event) => {
+    applyCreatorAccessNavState(event?.detail?.session || window.App?.session || null);
+  });
   }
 
   if (document.readyState === "loading") {
