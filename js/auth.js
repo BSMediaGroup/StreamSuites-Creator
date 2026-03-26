@@ -501,7 +501,9 @@
   }
 
   function isCreatorSession(session) {
-    return !!session?.authenticated && normalizeRole(session?.role) === CREATOR_ROLE;
+    if (!session?.authenticated) return false;
+    if (session?.creatorCapable === true || session?.creator_capable === true) return true;
+    return normalizeRole(session?.role) === CREATOR_ROLE;
   }
 
   function coerceText(value) {
@@ -589,9 +591,10 @@
     return BADGE_ICON_SOURCES.has(normalized) ? normalized : "";
   }
 
-  function normalizeAuthoritativeBadges(value, tierFallback = "core") {
+  function normalizeAuthoritativeBadges(value, tierFallback = "core", roleFallback = "") {
+    let normalized = [];
     if (Array.isArray(value) && value.length) {
-      return value
+      normalized = value
         .map((badge) => {
           if (!badge || typeof badge !== "object") return null;
           const key = normalizeBadgeKey(
@@ -606,9 +609,15 @@
           };
         })
         .filter(Boolean);
+    } else if (isAdminRole(roleFallback)) {
+      normalized = [{ key: "admin", kind: "role", label: "Admin", title: "Administrator" }];
+    } else {
+      const tierKey = normalizeTierId(tierFallback) || "core";
+      normalized = [{ key: tierKey, kind: "tier", label: tierKey.toUpperCase(), title: `${tierKey.toUpperCase()} Creator` }];
     }
-    const tierKey = normalizeTierId(tierFallback) || "core";
-    return [{ key: tierKey, kind: "tier", label: tierKey.toUpperCase(), title: `${tierKey.toUpperCase()} Creator` }];
+
+    const hasAdminBadge = normalized.some((badge) => badge?.key === "admin");
+    return normalized.filter((badge) => !(hasAdminBadge && ["core", "gold", "pro"].includes(badge?.key)));
   }
 
   function badgeIconSource(key) {
@@ -836,6 +845,9 @@
     const paymentSummary = normalizePaymentSummary(
       sessionSource.payment_summary || sessionSource.paymentSummary
     );
+    const creatorCapable =
+      sessionSource.creator_capable === true ||
+      sessionSource.creatorCapable === true;
     const tier = normalizeTier(effectiveTier?.tierId || sessionSource.tier);
 
     return {
@@ -849,10 +861,12 @@
       primaryProvider: primaryProviderCandidate,
       linkedProviders,
       tier,
-      badges: normalizeAuthoritativeBadges(sessionSource.badges, tier),
+      creatorCapable,
+      badges: normalizeAuthoritativeBadges(sessionSource.badges, tier, role),
       findmehereBadges: normalizeAuthoritativeBadges(
         sessionSource.findmehere_badges || sessionSource.findmehereBadges,
-        tier
+        tier,
+        role
       ),
       effectiveTier,
       features,
@@ -3699,7 +3713,8 @@
       isCreatorSession: (session) => isCreatorSession(session),
       isAdminSession: (session) => isAdminSession(session)
     },
-    normalizeBadges: (value, tierFallback) => normalizeAuthoritativeBadges(value, tierFallback),
+    normalizeBadges: (value, tierFallback, roleFallback) =>
+      normalizeAuthoritativeBadges(value, tierFallback, roleFallback),
     badgeIconSource: (key) => badgeIconSource(key),
     persistLocalSession,
     storageKeys: {

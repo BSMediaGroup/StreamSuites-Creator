@@ -169,6 +169,7 @@
       return checks.isCreatorSession(session);
     }
     if (!session || session.authenticated !== true) return false;
+    if (session.creatorCapable === true || session.creator_capable === true) return true;
     return normalizeRole(session.role) === CREATOR_ROLE;
   }
 
@@ -1150,6 +1151,7 @@
       return checks.isCreatorSession(session);
     }
     if (!session || session.authenticated !== true) return false;
+    if (session.creatorCapable === true || session.creator_capable === true) return true;
     return normalizeRole(session.role) === CREATOR_ROLE;
   }
 

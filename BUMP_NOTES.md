@@ -4,6 +4,19 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Admin Creator-Capable Auth Alignment - 2026-03-27
+
+- Creator auth/session normalization now consumes the runtime-owned `creator_capable`, effective-tier, and badge payloads so admin accounts can enter the creator dashboard as admin-primary users without needing the older debug-only role-mismatch bypass.
+- Badge rendering in the creator shell and account previews now strips redundant creator-tier icons whenever the admin badge is present, matching the backend-owned Admin-over-Pro display rule instead of letting stale fallback shapes waste space.
+- This remains a consumer-alignment pass: the creator surface did not invent an admin-is-pro model locally, it now follows the clearer runtime contract for creator capability, effective tier, and final badge display.
+
+### Files / Areas Touched
+
+- `js/auth.js`
+- `js/account-settings.js`
+- `js/state.js`
+- `BUMP_NOTES.md`
+
 ## Creator Billing Intervention Summary Alignment - 2026-03-26
 
 - Creator-side auth normalization now consumes the expanded authoritative `payment_summary` contract for admin-granted tiers, gifted duration metadata, discount presence, and balance-relief totals instead of stopping at the earlier subscription/supporter-only billing fields.

@@ -1754,7 +1754,8 @@
       streamsuitesBadges:
         window.StreamSuitesAuth?.normalizeBadges?.(
           state.profile?.badges || session?.badges,
-          session?.tier || session?.effectiveTier?.tierId || "core"
+          session?.tier || session?.effectiveTier?.tierId || "core",
+          session?.role || ""
         ) || [],
       streamsuitesShareUrl: slug ? `https://streamsuites.app/u/${encodeURIComponent(slug)}` : "",
       subtitle,
@@ -1763,7 +1764,8 @@
       findmehereBadges:
         window.StreamSuitesAuth?.normalizeBadges?.(
           state.profile?.findmehere_badges || state.profile?.findmehereBadges || session?.findmehereBadges || session?.badges,
-          session?.tier || session?.effectiveTier?.tierId || "core"
+          session?.tier || session?.effectiveTier?.tierId || "core",
+          session?.role || ""
         ) || [],
     };
   }
