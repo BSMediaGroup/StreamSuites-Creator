@@ -726,6 +726,20 @@
       lastPaymentAt: coerceText(raw.last_payment_at || raw.lastPaymentAt),
       lastPaymentSource: coerceText(raw.last_payment_source || raw.lastPaymentSource).toLowerCase(),
       donationCount: normalizeInteger(raw.donation_count ?? raw.donationCount),
+      effectiveTierSource: coerceText(raw.effective_tier_source || raw.effectiveTierSource).toLowerCase(),
+      isAdminGrantedTier: raw.is_admin_granted_tier === true || raw.isAdminGrantedTier === true,
+      adminGrantIsLifetime: raw.admin_grant_is_lifetime === true || raw.adminGrantIsLifetime === true,
+      adminGrantStartedAt: coerceText(raw.admin_grant_started_at || raw.adminGrantStartedAt),
+      adminGrantExpiresAt: coerceText(raw.admin_grant_expires_at || raw.adminGrantExpiresAt),
+      adminGrantDurationUnit: coerceText(raw.admin_grant_duration_unit || raw.adminGrantDurationUnit).toLowerCase(),
+      adminGrantDurationValue: normalizeInteger(raw.admin_grant_duration_value ?? raw.adminGrantDurationValue),
+      hasDiscount: raw.has_discount === true || raw.hasDiscount === true,
+      activeDiscounts: Array.isArray(raw.active_discounts || raw.activeDiscounts)
+        ? (raw.active_discounts || raw.activeDiscounts)
+        : [],
+      creditTotalCents: normalizeInteger(raw.credit_total_cents ?? raw.creditTotalCents),
+      writeoffTotalCents: normalizeInteger(raw.writeoff_total_cents ?? raw.writeoffTotalCents),
+      balanceReliefTotalCents: normalizeInteger(raw.balance_relief_total_cents ?? raw.balanceReliefTotalCents),
       planFeatures: normalizeFeatures(raw.plan_features || raw.planFeatures),
       sourceOfTruth: coerceText(raw.source_of_truth || raw.sourceOfTruth),
     };

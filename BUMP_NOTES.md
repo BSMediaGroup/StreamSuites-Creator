@@ -4,6 +4,18 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Billing Intervention Summary Alignment - 2026-03-26
+
+- Creator-side auth normalization now consumes the expanded authoritative `payment_summary` contract for admin-granted tiers, gifted duration metadata, discount presence, and balance-relief totals instead of stopping at the earlier subscription/supporter-only billing fields.
+- The account billing section now tells the creator when their effective tier is admin-granted, distinguishes lifetime versus time-boxed gifted access, and surfaces safe discount or credit/write-off summaries without exposing internal admin-only reason codes or audit notes.
+- This remains a consumer-only alignment pass: the creator surface renders backend-owned billing truth more clearly, but it does not invent self-service billing controls or a second override model.
+
+### Files / Areas Touched
+
+- `js/auth.js`
+- `js/account-settings.js`
+- `BUMP_NOTES.md`
+
 ## Authoritative Badge Rendering Alignment - 2026-03-26
 
 - Creator auth/session normalization now consumes the runtime-owned badge arrays instead of deriving local badge business rules from role and tier alone, which lets the creator shell render additive founder, moderator, and developer badges without owning the entitlement logic.

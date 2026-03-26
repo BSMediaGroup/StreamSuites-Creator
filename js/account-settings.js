@@ -263,6 +263,20 @@
       lastPaymentAt: coerceText(raw.last_payment_at || raw.lastPaymentAt),
       lastPaymentSource: coerceText(raw.last_payment_source || raw.lastPaymentSource).toLowerCase(),
       donationCount: normalizeInteger(raw.donation_count ?? raw.donationCount),
+      effectiveTierSource: coerceText(raw.effective_tier_source || raw.effectiveTierSource).toLowerCase(),
+      isAdminGrantedTier: raw.is_admin_granted_tier === true || raw.isAdminGrantedTier === true,
+      adminGrantIsLifetime: raw.admin_grant_is_lifetime === true || raw.adminGrantIsLifetime === true,
+      adminGrantStartedAt: coerceText(raw.admin_grant_started_at || raw.adminGrantStartedAt),
+      adminGrantExpiresAt: coerceText(raw.admin_grant_expires_at || raw.adminGrantExpiresAt),
+      adminGrantDurationUnit: coerceText(raw.admin_grant_duration_unit || raw.adminGrantDurationUnit).toLowerCase(),
+      adminGrantDurationValue: normalizeInteger(raw.admin_grant_duration_value ?? raw.adminGrantDurationValue),
+      hasDiscount: raw.has_discount === true || raw.hasDiscount === true,
+      activeDiscounts: Array.isArray(raw.active_discounts || raw.activeDiscounts)
+        ? (raw.active_discounts || raw.activeDiscounts)
+        : [],
+      creditTotalCents: normalizeInteger(raw.credit_total_cents ?? raw.creditTotalCents),
+      writeoffTotalCents: normalizeInteger(raw.writeoff_total_cents ?? raw.writeoffTotalCents),
+      balanceReliefTotalCents: normalizeInteger(raw.balance_relief_total_cents ?? raw.balanceReliefTotalCents),
       planFeatures: raw.plan_features && typeof raw.plan_features === "object"
         ? { ...raw.plan_features }
         : raw.planFeatures && typeof raw.planFeatures === "object"
@@ -1116,6 +1130,15 @@
     return humanizeStatusToken(status, "No recurring renewal tracked");
   }
 
+  function formatDiscountValue(discount) {
+    if (!discount || typeof discount !== "object") return "Discount";
+    const type = coerceText(discount.discount_type || discount.discountType || discount.type).toLowerCase();
+    const value = Number(discount.discount_value ?? discount.discountValue ?? discount.value);
+    if (!Number.isFinite(value) || value <= 0) return "Discount";
+    if (type === "percent") return `${value}% off`;
+    return formatCurrencyCents(value, discount.currency, "Discount");
+  }
+
   function paymentSummaryForView() {
     const profileSummary = normalizePaymentSummary(state.profile?.paymentSummary || state.profile?.payment_summary);
     const sessionSummary = normalizePaymentSummary(getActiveSession()?.paymentSummary || getActiveSession()?.payment_summary);
@@ -1186,18 +1209,42 @@
     const lastPaymentDate = formatBillingDate(summary?.lastPaymentAt, "No payment recorded");
     const nextDue = formatBillingDate(summary?.nextDueAt, "Not scheduled");
     const donationTotal = formatCurrencyCents(summary?.donationTotalPaidCents, summary?.currency, "No donation history");
+    const balanceRelief = formatCurrencyCents(summary?.balanceReliefTotalCents, summary?.currency, "No adjustments");
     const featureEntries = billingFeatureEntries(summary, session);
+    const activeDiscountSummary = Array.isArray(summary?.activeDiscounts) && summary.activeDiscounts.length
+      ? summary.activeDiscounts
+          .slice(0, 3)
+          .map((item) => {
+            const code = coerceText(item.code).toUpperCase();
+            const label = formatDiscountValue(item);
+            return code ? `${code} (${label})` : label;
+          })
+          .join(" · ")
+      : "No active discounts";
+    const grantSummary = summary?.isAdminGrantedTier
+      ? summary?.adminGrantIsLifetime
+        ? "Admin-granted lifetime access"
+        : summary?.adminGrantExpiresAt
+        ? `Admin-granted access until ${formatBillingDate(summary.adminGrantExpiresAt, "scheduled expiry")}`
+        : "Admin-granted timed access"
+      : "Account tier contract";
 
     if (planNameEl instanceof HTMLElement) {
       planNameEl.textContent = tierLabel;
     }
     if (planSummaryEl instanceof HTMLElement) {
       planSummaryEl.textContent =
-        summary?.hasAnyPayment
+        summary?.isAdminGrantedTier
+          ? `${tierLabel} is currently admin-granted. ${grantSummary}. ${activeDiscountSummary}.`
+          : summary?.hasAnyPayment
           ? `${planStatus} account. ${supporterState}. ${recurringState}.`
           : `${planStatus} account. No recorded payments yet. ${recurringState}.`;
     }
-    setStatusPill(statusPill, summary?.hasAnyPayment ? planStatus : "No payments yet", summary?.hasAnyPayment ? "success" : "warning");
+    setStatusPill(
+      statusPill,
+      summary?.isAdminGrantedTier ? "Gifted plan" : summary?.hasAnyPayment ? planStatus : "No payments yet",
+      summary?.isAdminGrantedTier || summary?.hasAnyPayment ? "success" : "warning"
+    );
     setStatusPill(
       supporterPill,
       summary?.isSupporter ? supporterState : "No supporter history",
@@ -1208,7 +1255,7 @@
     if (heroStatsEl instanceof HTMLElement) {
       heroStatsEl.innerHTML = [
         { label: "Plan status", value: planStatus },
-        { label: "Recurring", value: recurringState },
+        { label: "Entitlement", value: grantSummary },
         { label: "Next due", value: nextDue },
       ].map((item) => `
         <div class="account-billing-inline-stat">
@@ -1240,6 +1287,16 @@
           value: supporterState,
           note: summary?.sourceOfTruth || "runtime_auth"
         },
+        {
+          label: "Discounts",
+          value: activeDiscountSummary,
+          note: summary?.hasDiscount ? "Authoritative offers attached to this account" : "No active discount offers"
+        },
+        {
+          label: "Credits / write-offs",
+          value: balanceRelief,
+          note: summary?.balanceReliefTotalCents ? "Runtime-side balance relief entries" : "No balance relief entries"
+        },
       ].map((item) => `
         <article class="account-billing-kpi-card">
           <span class="label">${escapeHtml(item.label)}</span>
@@ -1259,6 +1316,9 @@
         { label: "Last payment amount", value: lastPaymentAmount },
         { label: "Last payment date", value: lastPaymentDate },
         { label: "Next renewal", value: nextDue },
+        { label: "Entitlement source", value: grantSummary },
+        { label: "Active discounts", value: activeDiscountSummary },
+        { label: "Credits / write-offs", value: balanceRelief },
       ].map((item) => `
         <div class="account-billing-meta-item">
           <span class="label">${escapeHtml(item.label)}</span>
@@ -1273,12 +1333,16 @@
         : "<li>Your current tier does not expose additional entitlement detail yet.</li>";
     }
     if (featureNoteEl instanceof HTMLElement) {
-      featureNoteEl.textContent = summary?.hasActiveSubscription
+      featureNoteEl.textContent = summary?.isAdminGrantedTier
+        ? "This plan is currently granted through the authoritative StreamSuites admin billing system."
+        : summary?.hasActiveSubscription
         ? "Renewal-linked access is shown only when the backend tracks it."
         : "The current creator surface stays grounded in the active tier contract and only shows backend-exposed billing detail.";
     }
     if (footnoteEl instanceof HTMLElement) {
-      footnoteEl.textContent = summary?.recurringStatus === "not_tracked"
+      footnoteEl.textContent = summary?.isAdminGrantedTier
+        ? "Internal admin audit reasons stay private. This view only shows the safe account-level billing result."
+        : summary?.recurringStatus === "not_tracked"
         ? "Recurring renewal schedules and billing-management actions are still hidden until the backend exposes a real recurring billing contract."
         : "Recurring renewal information is shown only from the backend-owned summary contract.";
     }
