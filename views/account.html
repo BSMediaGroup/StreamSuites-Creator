@@ -203,6 +203,7 @@
             <button class="creator-button secondary" type="button" data-account-jump="account-section-media">Media assets</button>
             <button class="creator-button secondary" type="button" data-account-jump="account-section-theme">FindMeHere theme</button>
             <button class="creator-button secondary" type="button" data-account-jump="account-section-custom-links">Custom links</button>
+            <button class="creator-button secondary" type="button" data-account-jump="account-section-billing">Billing &amp; plan</button>
             <button class="creator-button secondary" type="button" data-account-jump="account-section-advanced">Advanced styling</button>
             <button class="creator-button secondary" type="button" data-account-jump="account-section-preview">Previews</button>
           </nav>
@@ -1079,28 +1080,56 @@
               </p>
             </article>
 
-            <article class="card">
-              <h3>Billing &amp; Plan</h3>
-              <p>Your current plan and billing preview.</p>
-              <div class="stat-grid">
+            <article class="card account-billing-card" id="account-section-billing">
+              <div class="card-top">
                 <div>
-                  <span class="stat-label">Current plan</span>
-                  <span class="stat-value" data-account-profile-tier="true"></span>
+                  <h3>Billing &amp; Plan</h3>
+                  <p>Current tier, payment history, and supporter state from the authoritative StreamSuites account contract.</p>
                 </div>
-                <div>
-                  <span class="stat-label">Billing status</span>
-                  <span class="stat-value">Preview only</span>
-                </div>
-                <div>
-                  <span class="stat-label">Next invoice</span>
-                  <span class="stat-value">Not scheduled</span>
-                </div>
-                <div>
-                  <span class="stat-label">Plan upgrades</span>
-                  <span class="stat-value">Coming soon</span>
+                <div class="platform-actions">
+                  <a class="creator-button primary" href="/plans">Open Plans &amp; Tiers</a>
                 </div>
               </div>
-              <a href="/plans">Go to Plans &amp; Tiers -&gt;</a>
+              <div class="account-billing-hero">
+                <div class="account-billing-hero-copy">
+                  <div class="account-billing-pill-row">
+                    <span class="tier-pill" data-account-profile-tier="true"></span>
+                    <span class="status-pill subtle" data-billing-status-pill="true"><span class="status-dot"></span>Loading</span>
+                  </div>
+                  <h4 data-billing-plan-name="true">Loading current plan...</h4>
+                  <p class="account-note" data-billing-plan-summary="true">
+                    Billing details load from the authoritative runtime/Auth payment summary.
+                  </p>
+                  <div class="account-billing-hero-stats" data-billing-hero-stats="true"></div>
+                </div>
+                <div class="account-billing-kpi-grid" data-billing-kpis="true"></div>
+              </div>
+              <div class="account-billing-layout">
+                <section class="account-billing-panel">
+                  <div class="card-top">
+                    <h4>Payment summary</h4>
+                    <span class="status-pill subtle" data-billing-supporter-pill="true"><span class="status-dot"></span>Loading</span>
+                  </div>
+                  <div class="account-billing-meta-grid" data-billing-payment-grid="true"></div>
+                </section>
+                <section class="account-billing-panel">
+                  <div class="card-top">
+                    <h4>Current entitlements</h4>
+                    <span class="status-pill subtle" data-billing-features-pill="true"><span class="status-dot"></span>Loading</span>
+                  </div>
+                  <ul class="account-billing-feature-list" data-billing-feature-list="true">
+                    <li>Loading current tier features...</li>
+                  </ul>
+                  <p class="account-note" data-billing-feature-note="true">
+                    Tier entitlements come from the active StreamSuites tier contract.
+                  </p>
+                </section>
+              </div>
+              <div class="account-billing-footer">
+                <p class="account-note" data-billing-footnote="true">
+                  Renewal scheduling and self-serve billing actions only appear when the backend exposes them.
+                </p>
+              </div>
             </article>
           </div>
         </section>

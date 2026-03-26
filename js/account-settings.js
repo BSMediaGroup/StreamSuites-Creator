@@ -235,6 +235,43 @@
     return typeof value === "string" ? value.trim() : "";
   }
 
+  function normalizeInteger(value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return null;
+    return Math.trunc(parsed);
+  }
+
+  function normalizePaymentSummary(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    return {
+      planName: coerceText(raw.plan_name || raw.planName),
+      planTier: coerceText(raw.plan_tier || raw.planTier).toLowerCase(),
+      planStatus: coerceText(raw.plan_status || raw.planStatus).toLowerCase(),
+      recurringStatus: coerceText(raw.recurring_status || raw.recurringStatus).toLowerCase(),
+      billingInterval: coerceText(raw.billing_interval || raw.billingInterval).toLowerCase(),
+      nextDueAt: coerceText(raw.next_due_at || raw.nextDueAt),
+      currency: coerceText(raw.currency).toLowerCase(),
+      isSupporter: raw.is_supporter === true || raw.isSupporter === true,
+      supporterSource: coerceText(raw.supporter_source || raw.supporterSource).toLowerCase(),
+      hasAnyPayment: raw.has_any_payment === true || raw.hasAnyPayment === true,
+      hasOneoffDonation: raw.has_oneoff_donation === true || raw.hasOneoffDonation === true,
+      hasActiveSubscription: raw.has_active_subscription === true || raw.hasActiveSubscription === true,
+      lifetimeTotalPaidCents: normalizeInteger(raw.lifetime_total_paid_cents ?? raw.lifetimeTotalPaidCents),
+      subscriptionTotalPaidCents: normalizeInteger(raw.subscription_total_paid_cents ?? raw.subscriptionTotalPaidCents),
+      donationTotalPaidCents: normalizeInteger(raw.donation_total_paid_cents ?? raw.donationTotalPaidCents),
+      lastPaymentAmountCents: normalizeInteger(raw.last_payment_amount_cents ?? raw.lastPaymentAmountCents),
+      lastPaymentAt: coerceText(raw.last_payment_at || raw.lastPaymentAt),
+      lastPaymentSource: coerceText(raw.last_payment_source || raw.lastPaymentSource).toLowerCase(),
+      donationCount: normalizeInteger(raw.donation_count ?? raw.donationCount),
+      planFeatures: raw.plan_features && typeof raw.plan_features === "object"
+        ? { ...raw.plan_features }
+        : raw.planFeatures && typeof raw.planFeatures === "object"
+        ? { ...raw.planFeatures }
+        : {},
+      sourceOfTruth: coerceText(raw.source_of_truth || raw.sourceOfTruth),
+    };
+  }
+
   function normalizeThemeColor(value) {
     const normalized = coerceText(value);
     return HEX_COLOR_RE.test(normalized) ? normalized.toLowerCase() : "";
@@ -943,6 +980,7 @@
       bio: coerceText(profile?.bio),
       social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
       custom_links: normalizeCustomLinks(profile?.custom_links || profile?.customLinks),
+      paymentSummary: normalizePaymentSummary(profile?.payment_summary || profile?.paymentSummary),
     };
   }
 
@@ -1025,6 +1063,225 @@
 
   function getActiveSession() {
     return window.App?.session && typeof window.App.session === "object" ? window.App.session : {};
+  }
+
+  function formatBillingDate(value, fallback = "Not scheduled") {
+    const normalized = coerceText(value);
+    if (!normalized) return fallback;
+    const date = new Date(normalized);
+    if (Number.isNaN(date.getTime())) return normalized;
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
+  function formatCurrencyCents(cents, currency, fallback = "—") {
+    const parsed = Number(cents);
+    if (!Number.isFinite(parsed)) return fallback;
+    const amount = parsed / 100;
+    const currencyCode = (coerceText(currency) || "USD").toUpperCase();
+    try {
+      return new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: currencyCode,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(amount);
+    } catch (_err) {
+      return `${currencyCode} ${amount.toFixed(2)}`.trim();
+    }
+  }
+
+  function humanizeStatusToken(value, fallback = "Unavailable") {
+    const normalized = coerceText(value).replace(/_/g, " ").trim();
+    if (!normalized) return fallback;
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  }
+
+  function describeSupporterState(summary) {
+    const source = coerceText(summary?.supporterSource).toLowerCase();
+    if (source === "subscription_and_donation") return "Subscription + donation";
+    if (source === "subscription") return "Subscription supporter";
+    if (source === "donation") return "One-off supporter";
+    return "No supporter history";
+  }
+
+  function describeRecurringState(summary) {
+    const status = coerceText(summary?.recurringStatus).toLowerCase();
+    if (!status || status === "not_tracked") return "No recurring renewal tracked";
+    if (status === "active") return "Active recurring billing";
+    if (status === "trialing") return "Trialing recurring billing";
+    return humanizeStatusToken(status, "No recurring renewal tracked");
+  }
+
+  function paymentSummaryForView() {
+    const profileSummary = normalizePaymentSummary(state.profile?.paymentSummary || state.profile?.payment_summary);
+    const sessionSummary = normalizePaymentSummary(getActiveSession()?.paymentSummary || getActiveSession()?.payment_summary);
+    return profileSummary || sessionSummary || normalizePaymentSummary({});
+  }
+
+  function billingFeatureEntries(summary, session) {
+    const features =
+      session?.features && typeof session.features === "object" && Object.keys(session.features).length
+        ? session.features
+        : summary?.planFeatures && typeof summary.planFeatures === "object"
+        ? summary.planFeatures
+        : {};
+    const entries = [];
+    const triggers = features.triggers && typeof features.triggers === "object" ? features.triggers : {};
+    const clips = features.clips && typeof features.clips === "object" ? features.clips : {};
+    const polls = features.polls && typeof features.polls === "object" ? features.polls : {};
+    const automation = features.automation && typeof features.automation === "object" ? features.automation : {};
+    const branding = features.branding && typeof features.branding === "object" ? features.branding : {};
+    const backups = features.backups && typeof features.backups === "object" ? features.backups : {};
+
+    if (Number.isFinite(Number(triggers.max_triggers))) {
+      entries.push(`Up to ${Number(triggers.max_triggers)} trigger commands`);
+    }
+    if (Number.isFinite(Number(clips.max_duration_seconds))) {
+      entries.push(`${Number(clips.max_duration_seconds)}s max clip duration`);
+    }
+    if (Number.isFinite(Number(clips.max_concurrent_jobs))) {
+      entries.push(`${Number(clips.max_concurrent_jobs)} concurrent clip job${Number(clips.max_concurrent_jobs) === 1 ? "" : "s"}`);
+    }
+    if (Number.isFinite(Number(polls.max_active_polls))) {
+      entries.push(`${Number(polls.max_active_polls)} active poll${Number(polls.max_active_polls) === 1 ? "" : "s"}`);
+    }
+    entries.push(automation.enabled ? "Automation features enabled" : "Automation features not enabled");
+    entries.push(branding.custom_bot_identity ? "Custom bot identity available" : "Shared bot identity");
+    if (backups.automated_backups) {
+      const intervalHours = Number(backups.backup_interval_hours || 0);
+      entries.push(intervalHours > 0 ? `Automated backups every ${intervalHours}h` : "Automated backups enabled");
+    } else if (backups.manual_export) {
+      entries.push("Manual export available");
+    }
+    return entries.filter(Boolean).slice(0, 7);
+  }
+
+  function renderBillingSection() {
+    const card = document.querySelector(".account-billing-card");
+    if (!(card instanceof HTMLElement)) return;
+    const planNameEl = card.querySelector("[data-billing-plan-name=\"true\"]");
+    const planSummaryEl = card.querySelector("[data-billing-plan-summary=\"true\"]");
+    const statusPill = card.querySelector("[data-billing-status-pill=\"true\"]");
+    const heroStatsEl = card.querySelector("[data-billing-hero-stats=\"true\"]");
+    const kpisEl = card.querySelector("[data-billing-kpis=\"true\"]");
+    const paymentGridEl = card.querySelector("[data-billing-payment-grid=\"true\"]");
+    const supporterPill = card.querySelector("[data-billing-supporter-pill=\"true\"]");
+    const featuresPill = card.querySelector("[data-billing-features-pill=\"true\"]");
+    const featureListEl = card.querySelector("[data-billing-feature-list=\"true\"]");
+    const featureNoteEl = card.querySelector("[data-billing-feature-note=\"true\"]");
+    const footnoteEl = card.querySelector("[data-billing-footnote=\"true\"]");
+    const session = getActiveSession();
+    const summary = paymentSummaryForView();
+    const effectiveTier = session?.effectiveTier || {};
+    const tierLabel = summary?.planName || coerceText(effectiveTier.tierLabel) || coerceText(session?.tier) || "Core Tier";
+    const planStatus = humanizeStatusToken(summary?.planStatus, "Active");
+    const recurringState = describeRecurringState(summary);
+    const supporterState = describeSupporterState(summary);
+    const lifetimePaid = formatCurrencyCents(summary?.lifetimeTotalPaidCents, summary?.currency, "No payments yet");
+    const lastPaymentAmount = formatCurrencyCents(summary?.lastPaymentAmountCents, summary?.currency, "Not captured");
+    const lastPaymentDate = formatBillingDate(summary?.lastPaymentAt, "No payment recorded");
+    const nextDue = formatBillingDate(summary?.nextDueAt, "Not scheduled");
+    const donationTotal = formatCurrencyCents(summary?.donationTotalPaidCents, summary?.currency, "No donation history");
+    const featureEntries = billingFeatureEntries(summary, session);
+
+    if (planNameEl instanceof HTMLElement) {
+      planNameEl.textContent = tierLabel;
+    }
+    if (planSummaryEl instanceof HTMLElement) {
+      planSummaryEl.textContent =
+        summary?.hasAnyPayment
+          ? `${planStatus} account. ${supporterState}. ${recurringState}.`
+          : `${planStatus} account. No recorded payments yet. ${recurringState}.`;
+    }
+    setStatusPill(statusPill, summary?.hasAnyPayment ? planStatus : "No payments yet", summary?.hasAnyPayment ? "success" : "warning");
+    setStatusPill(
+      supporterPill,
+      summary?.isSupporter ? supporterState : "No supporter history",
+      summary?.isSupporter ? "success" : "warning"
+    );
+    setStatusPill(featuresPill, humanizeStatusToken(summary?.planTier || effectiveTier?.tierId || session?.tier || "core"), "subtle");
+
+    if (heroStatsEl instanceof HTMLElement) {
+      heroStatsEl.innerHTML = [
+        { label: "Plan status", value: planStatus },
+        { label: "Recurring", value: recurringState },
+        { label: "Next due", value: nextDue },
+      ].map((item) => `
+        <div class="account-billing-inline-stat">
+          <span>${escapeHtml(item.label)}</span>
+          <strong>${escapeHtml(item.value)}</strong>
+        </div>
+      `).join("");
+    }
+
+    if (kpisEl instanceof HTMLElement) {
+      kpisEl.innerHTML = [
+        {
+          label: "Lifetime paid",
+          value: lifetimePaid,
+          note: summary?.hasAnyPayment ? "All recorded payments" : "No payment history"
+        },
+        {
+          label: "Last payment",
+          value: lastPaymentAmount,
+          note: lastPaymentDate
+        },
+        {
+          label: "Donation total",
+          value: donationTotal,
+          note: summary?.hasOneoffDonation ? `${summary?.donationCount || 0} donation${summary?.donationCount === 1 ? "" : "s"}` : "No donation history"
+        },
+        {
+          label: "Supporter state",
+          value: supporterState,
+          note: summary?.sourceOfTruth || "runtime_auth"
+        },
+      ].map((item) => `
+        <article class="account-billing-kpi-card">
+          <span class="label">${escapeHtml(item.label)}</span>
+          <strong>${escapeHtml(item.value)}</strong>
+          <span>${escapeHtml(item.note)}</span>
+        </article>
+      `).join("");
+    }
+
+    if (paymentGridEl instanceof HTMLElement) {
+      paymentGridEl.innerHTML = [
+        { label: "Current plan", value: tierLabel },
+        { label: "Plan status", value: planStatus },
+        { label: "Supporter state", value: supporterState },
+        { label: "Lifetime total", value: lifetimePaid },
+        { label: "Donation total", value: donationTotal },
+        { label: "Last payment amount", value: lastPaymentAmount },
+        { label: "Last payment date", value: lastPaymentDate },
+        { label: "Next renewal", value: nextDue },
+      ].map((item) => `
+        <div class="account-billing-meta-item">
+          <span class="label">${escapeHtml(item.label)}</span>
+          <span class="value">${escapeHtml(item.value)}</span>
+        </div>
+      `).join("");
+    }
+
+    if (featureListEl instanceof HTMLElement) {
+      featureListEl.innerHTML = featureEntries.length
+        ? featureEntries.map((item) => `<li>${escapeHtml(item)}</li>`).join("")
+        : "<li>Your current tier does not expose additional entitlement detail yet.</li>";
+    }
+    if (featureNoteEl instanceof HTMLElement) {
+      featureNoteEl.textContent = summary?.hasActiveSubscription
+        ? "Renewal-linked access is shown only when the backend tracks it."
+        : "The current creator surface stays grounded in the active tier contract and only shows backend-exposed billing detail.";
+    }
+    if (footnoteEl instanceof HTMLElement) {
+      footnoteEl.textContent = summary?.recurringStatus === "not_tracked"
+        ? "Recurring renewal schedules and billing-management actions are still hidden until the backend exposes a real recurring billing contract."
+        : "Recurring renewal information is shown only from the backend-owned summary contract.";
+    }
   }
 
   function getStagedUpload(kind) {
@@ -2043,6 +2300,7 @@
     renderSharePreviews(normalized);
     renderPreviewSurface();
     renderIntegrationHub();
+    renderBillingSection();
     setStatusPill(els.loadPill, "Profile loaded", "success");
     setMessage("[data-profile-save-status=\"true\"]", "Authoritative profile settings are ready to edit.", "neutral");
   }
@@ -2641,6 +2899,8 @@
         els.summaryNote.textContent = integrationsResult.reason?.message || "Unable to load authoritative platform integrations.";
       }
     }
+
+    renderBillingSection();
   }
 
   function destroy() {

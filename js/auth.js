@@ -636,6 +636,39 @@
     return { ...raw };
   }
 
+  function normalizeInteger(value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return null;
+    return Math.trunc(parsed);
+  }
+
+  function normalizePaymentSummary(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    return {
+      planName: coerceText(raw.plan_name || raw.planName),
+      planTier: normalizeTierId(raw.plan_tier || raw.planTier) || coerceText(raw.plan_tier || raw.planTier),
+      planStatus: coerceText(raw.plan_status || raw.planStatus).toLowerCase(),
+      recurringStatus: coerceText(raw.recurring_status || raw.recurringStatus).toLowerCase(),
+      billingInterval: coerceText(raw.billing_interval || raw.billingInterval).toLowerCase(),
+      nextDueAt: coerceText(raw.next_due_at || raw.nextDueAt),
+      currency: coerceText(raw.currency).toLowerCase(),
+      isSupporter: raw.is_supporter === true || raw.isSupporter === true,
+      supporterSource: coerceText(raw.supporter_source || raw.supporterSource).toLowerCase(),
+      hasAnyPayment: raw.has_any_payment === true || raw.hasAnyPayment === true,
+      hasOneoffDonation: raw.has_oneoff_donation === true || raw.hasOneoffDonation === true,
+      hasActiveSubscription: raw.has_active_subscription === true || raw.hasActiveSubscription === true,
+      lifetimeTotalPaidCents: normalizeInteger(raw.lifetime_total_paid_cents ?? raw.lifetimeTotalPaidCents),
+      subscriptionTotalPaidCents: normalizeInteger(raw.subscription_total_paid_cents ?? raw.subscriptionTotalPaidCents),
+      donationTotalPaidCents: normalizeInteger(raw.donation_total_paid_cents ?? raw.donationTotalPaidCents),
+      lastPaymentAmountCents: normalizeInteger(raw.last_payment_amount_cents ?? raw.lastPaymentAmountCents),
+      lastPaymentAt: coerceText(raw.last_payment_at || raw.lastPaymentAt),
+      lastPaymentSource: coerceText(raw.last_payment_source || raw.lastPaymentSource).toLowerCase(),
+      donationCount: normalizeInteger(raw.donation_count ?? raw.donationCount),
+      planFeatures: normalizeFeatures(raw.plan_features || raw.planFeatures),
+      sourceOfTruth: coerceText(raw.source_of_truth || raw.sourceOfTruth),
+    };
+  }
+
   function normalizeSessionPayload(payload) {
     if (!payload || typeof payload !== "object") {
       return { authenticated: false };
@@ -724,6 +757,9 @@
       sessionSource.effective_tier || sessionSource.effectiveTier
     );
     const features = normalizeFeatures(sessionSource.features);
+    const paymentSummary = normalizePaymentSummary(
+      sessionSource.payment_summary || sessionSource.paymentSummary
+    );
     const tier = normalizeTier(effectiveTier?.tierId || sessionSource.tier);
 
     return {
@@ -739,6 +775,7 @@
       tier,
       effectiveTier,
       features,
+      paymentSummary,
       onboardingRequired
     };
   }
@@ -1187,6 +1224,7 @@
       (left.effectiveTier?.tierLabel || "") === (right.effectiveTier?.tierLabel || "") &&
       (left.effectiveTier?.visibility || "") === (right.effectiveTier?.visibility || "") &&
       JSON.stringify(left.features || {}) === JSON.stringify(right.features || {}) &&
+      JSON.stringify(left.paymentSummary || null) === JSON.stringify(right.paymentSummary || null) &&
       !!left.onboardingRequired === !!right.onboardingRequired
     );
   }
@@ -1246,6 +1284,7 @@
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
       features: session?.features || {},
+      paymentSummary: session?.paymentSummary || null,
       onboardingRequired: session?.onboardingRequired === true
     };
     syncAuthBootstrapState();
@@ -1265,6 +1304,7 @@
       tier: session?.tier || "",
       effectiveTier: session?.effectiveTier || null,
       features: session?.features || {},
+      paymentSummary: session?.paymentSummary || null,
       onboardingRequired: session?.onboardingRequired === true
     };
     try {

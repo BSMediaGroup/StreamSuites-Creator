@@ -4,6 +4,20 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Account Billing Summary Upgrade - 2026-03-26
+
+- The creator account page billing block is no longer a placeholder preview card; it now renders an authoritative plan and payment summary area with current tier, plan status, supporter state, lifetime paid, last payment amount/date, donation total, renewal placeholder state, and backend-exposed tier entitlements.
+- Creator auth/session and profile hydration now normalize the shared runtime `payment_summary` contract so the account page can consume the same server-owned billing/supporter payload as the admin surface without inventing a second client-side billing model.
+- The upgraded billing area stays deliberately conservative about actions: it reorganizes the existing plans entrypoint and truthful summary data, but it does not invent billing-management controls or renewal details that the backend does not yet expose.
+
+### Files / Areas Touched
+
+- `views/account.html`
+- `js/account-settings.js`
+- `js/auth.js`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Creator Customization Polish + Custom Links - 2026-03-26
 
 - The creator account customization page now has a compact in-page section jump bar, tighter stacked-section spacing, and responsive paired field rows inside each section so long full-width editing flows stay easier to scan without reverting to the old side-by-side page layout.
