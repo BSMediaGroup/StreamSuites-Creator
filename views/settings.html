@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <!-- ===================================================================== -->
-<!-- StreamSuites Dashboard - Creator Settings (Placeholder)               -->
+<!-- StreamSuites Dashboard - Creator Preferences                          -->
 <!-- ===================================================================== -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StreamSuites™ - Creator Settings</title>
+  <title>StreamSuites™ - Creator Preferences</title>
   <meta
     name="description"
-    content="Creator-facing settings placeholder for StreamSuites."
+    content="Creator-facing community preferences and moderator management for StreamSuites."
   />
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
@@ -42,7 +42,7 @@
           <a href="/account">Account settings</a>
           <a href="/plans">Plans &amp; Tiers</a>
           <a href="/triggers">Chat Triggers</a>
-          <a href="/settings" class="is-active">Settings / Preferences</a>
+          <a href="/settings" class="is-active">Preferences</a>
         </nav>
         <div class="creator-nav-group">
           <span class="creator-nav-label">Platforms</span>
@@ -80,7 +80,7 @@
             <span class="sidebar-collapse-toggle-icon" aria-hidden="true"></span>
             <span class="sr-only">Toggle sidebar</span>
           </button>
-          <span class="ss-topbar-title creator-topbar-page-title">Creator Settings</span>
+          <span class="ss-topbar-title creator-topbar-page-title">Preferences</span>
         </div>
                 <div class="ss-topbar-right creator-header-right">
           <div class="creator-account streamsuites-auth ss-no-profile-hover" data-auth-summary="true" data-account-menu="true" data-ss-profile-hover="off">
@@ -164,77 +164,145 @@
 
       <main id="app-main">
         <div id="view-container" class="creator-main" data-creator-content>
-          <section class="creator-section">
+          <section class="creator-section account-settings preferences-page">
           <div class="section-header">
             <div>
-              <span class="section-kicker">Settings</span>
-              <h2>Creator settings are moving</h2>
+              <span class="section-kicker">Preferences</span>
+              <h2>Community preferences</h2>
+              <p class="section-subtext">
+                Manage creator-scoped community controls from one dedicated surface without crowding account, billing, or profile editing.
+              </p>
             </div>
             <div class="section-actions">
-              <span class="status-pill warning">
+              <span class="status-pill success">
                 <span class="status-dot"></span>
-                Placeholder
+                Creator-managed controls
               </span>
             </div>
           </div>
 
           <div class="creator-hero">
             <div>
-              <h3>This page is a temporary placeholder.</h3>
+              <h3>Moderator assignment now lives here.</h3>
               <p>
-                Account settings will move to a dedicated page. This space will be repurposed or
-                deprecated once the new settings surface is ready.
+                Moderator assignments are scoped per creator account. One person can moderate multiple creators, and StreamSuites runtime remains the authoritative source of truth for the relationship and capability set.
               </p>
             </div>
             <div class="creator-hero-actions">
-              <a class="creator-button secondary" href="https://streamsuites.app/support.html">
-                Visit support
-              </a>
+              <a class="creator-button secondary" href="/account">Open account settings</a>
             </div>
           </div>
 
-          <div class="card-grid">
+          <div class="card-grid preferences-summary-grid">
             <article class="card">
-              <h3>What to expect</h3>
-              <p>
-                Creator account preferences, profile updates, and access controls will live on the
-                upcoming dedicated settings page.
-              </p>
-              <ul>
-                <li>No settings can be edited here today.</li>
-                <li>This view is intentionally read-only.</li>
-                <li>Links will appear once the new page is live.</li>
+              <div class="card-top">
+                <div>
+                  <h3>Moderator scope today</h3>
+                  <p>First-pass creator moderator capabilities already available through the live runtime contract.</p>
+                </div>
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>Current preset
+                </span>
+              </div>
+              <ul class="preferences-capability-list">
+                <li>Help manage overlays, artifacts, and overlay-facing chat surfaces for this creator.</li>
+                <li>Update clip metadata and assist with creator-scoped polls.</li>
+                <li>Permission granularity can expand later, but this page only reflects what exists now.</li>
               </ul>
             </article>
             <article class="card">
-              <h3>Current status</h3>
-              <p>Settings are not active in this surface yet.</p>
+              <div class="card-top">
+                <div>
+                  <h3>Future community controls</h3>
+                  <p>Reserved room for additional creator preferences without padding the page with fake settings.</p>
+                </div>
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>Planned
+                </span>
+              </div>
+              <p>
+                Future community-facing preferences can expand here once runtime-backed options exist for moderation policy, shared workspace defaults, or creator-specific collaboration rules.
+              </p>
+              <p class="account-note">
+                Until then, this page stays intentionally grounded in real moderator management instead of placeholder toggles.
+              </p>
+            </article>
+          </div>
+
+          <div class="card-grid account-grid">
+            <article class="card preferences-moderators-card" data-moderator-surface="true">
+              <div class="card-top">
+                <div>
+                  <h3>Creator moderators</h3>
+                  <p>Assign or remove moderators for this creator workspace using the authoritative StreamSuites creator relationship model.</p>
+                </div>
+                <span class="status-pill subtle" data-moderator-status-pill="true">
+                  <span class="status-dot"></span>Loading
+                </span>
+              </div>
+              <p class="account-note" data-moderator-scope-summary="true">
+                Current moderator scope loads from the authoritative StreamSuites creator relationship model.
+              </p>
               <div class="stat-grid">
                 <div>
-                  <span class="stat-label">Settings surface</span>
-                  <span class="stat-value">Planned</span>
+                  <span class="stat-label">Assigned moderators</span>
+                  <span class="stat-value" data-moderator-count="true">0</span>
                 </div>
                 <div>
-                  <span class="stat-label">Account updates</span>
-                  <span class="stat-value">Coming soon</span>
+                  <span class="stat-label">Scope model</span>
+                  <span class="stat-value">Creator-scoped</span>
                 </div>
                 <div>
-                  <span class="stat-label">Workspace preferences</span>
-                  <span class="stat-value">Pending</span>
+                  <span class="stat-label">Cross-creator support</span>
+                  <span class="stat-value">Allowed</span>
                 </div>
                 <div>
-                  <span class="stat-label">This page</span>
-                  <span class="stat-value">Placeholder</span>
+                  <span class="stat-label">Authority</span>
+                  <span class="stat-value">Runtime/API</span>
+                </div>
+              </div>
+              <div class="account-section-stack">
+                <div class="account-field">
+                  <span class="account-field-label">Find an account</span>
+                  <div class="account-inline-actions moderator-search-row">
+                    <input
+                      class="account-field-input"
+                      type="search"
+                      placeholder="Search by user code, display name, or email"
+                      data-moderator-search-input="true"
+                    />
+                    <button class="creator-button secondary" type="button" data-moderator-search-button="true">Search</button>
+                  </div>
+                  <span class="account-field-note" data-moderator-search-note="true">
+                    Search results exclude your own account and accounts already assigned here.
+                  </span>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Assignable accounts</span>
+                  <div class="account-note hidden" data-moderator-search-empty="true">No matching accounts found yet.</div>
+                  <div class="account-section-stack" data-moderator-search-results="true"></div>
+                </div>
+                <div class="account-field">
+                  <span class="account-field-label">Current moderators</span>
+                  <div class="account-note hidden" data-moderator-list-empty="true">No creator-scoped moderators assigned yet.</div>
+                  <div class="account-section-stack" data-moderator-list="true"></div>
                 </div>
               </div>
             </article>
-            <article class="card">
-              <h3>Need help now?</h3>
+
+            <article class="card preference-teaser-card">
+              <div class="card-top">
+                <div>
+                  <h3>Why this lives here</h3>
+                  <p>Account settings stay focused on profile, billing, appearance, and identity while community controls stay grouped in Preferences.</p>
+                </div>
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>Deliberate split
+                </span>
+              </div>
               <p>
-                If you need to update account details or access, reach out through support and we will
-                help you complete the request.
+                This keeps moderator management discoverable without adding more weight to the already busy account page, and it leaves room for future creator community preferences on the same route.
               </p>
-              <a href="https://streamsuites.app/support.html">Contact support -&gt;</a>
             </article>
           </div>
         </section>
@@ -255,6 +323,7 @@
 
   <script src="/js/app.js"></script>
   <script src="/js/auth.js"></script>
+  <script src="/js/creator-moderators.js"></script>
   <script src="/assets/js/ss-profile-hovercard.js"></script>
   <script src="/js/status-widget.js" defer></script>
 </body>

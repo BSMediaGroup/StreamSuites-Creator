@@ -4,6 +4,32 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Preferences Moderator Rehome - 2026-03-27
+
+- The creator sidebar settings label now reads `Preferences`, and the former `/settings` placeholder page has been repurposed into a real community-preferences surface centered on creator-scoped moderator management.
+- Creator moderator lookup, assignment, list, and removal now live on `/settings` through a shared frontend module that still calls the existing authoritative `StreamSuites` moderator relationship endpoints instead of inventing a creator-local model.
+- The busy moderator block was removed from account settings and replaced with a small pointer to Preferences so `/account` stays focused on profile, billing, appearance, and linked-auth concerns.
+
+### Files / Areas Touched
+
+- `index.html`
+- `views/settings.html`
+- `views/account.html`
+- `views/plans.html`
+- `views/triggers.html`
+- `views/platforms/discord.html`
+- `views/platforms/kick.html`
+- `views/platforms/pilled.html`
+- `views/platforms/rumble.html`
+- `views/platforms/twitch.html`
+- `views/platforms/youtube.html`
+- `js/creator-moderators.js`
+- `js/account-settings.js`
+- `js/render.js`
+- `css/creator-dashboard.css`
+- `README.md`
+- `BUMP_NOTES.md`
+
 ## Admin Creator-Capable Auth Alignment - 2026-03-27
 
 - Creator auth/session normalization now consumes the runtime-owned `creator_capable`, effective-tier, and badge payloads so admin accounts can enter the creator dashboard as admin-primary users without needing the older debug-only role-mismatch bypass.

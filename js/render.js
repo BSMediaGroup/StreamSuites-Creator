@@ -30,7 +30,7 @@
       "/js/utils/stats-svg-charts.js",
       "/js/creator-stats.js"
     ],
-    account: ["/js/account-settings.js"],
+    account: ["/js/creator-moderators.js", "/js/account-settings.js"],
     integrationsHub: ["/js/integrations-hub.js"],
     platformIntegration: ["/js/platform-integration-detail.js"],
     statistics: [
@@ -40,7 +40,7 @@
     ],
     plans: ["/js/plans.js"],
     triggers: ["/js/feature-gate.js", "/js/triggers.js"],
-    settings: ["/js/platforms.js", "/js/settings.js"],
+    settings: ["/js/creator-moderators.js"],
     creators: ["/js/creators.js"],
     jobs: ["/js/jobs.js"],
     discordPlatform: ["/js/discord-bot-integration.js"]
@@ -532,7 +532,7 @@
     });
     registerView("plans", { scripts: ViewScripts.plans, controllerName: "PlansView" });
     registerView("triggers", { scripts: ViewScripts.triggers, controllerName: "TriggersView" });
-    registerView("settings", { scripts: ViewScripts.settings, controllerName: "SettingsView" });
+    registerView("settings", { scripts: ViewScripts.settings, controllerName: "CreatorPreferencesView" });
     registerView("notifications", { controllerName: "NotificationsView" });
     registerView("updates");
     registerView("creators", { scripts: ViewScripts.creators, controllerName: "CreatorsView" });

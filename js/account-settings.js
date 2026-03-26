@@ -25,8 +25,6 @@
   const AVATAR_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/avatar`;
   const COVER_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/cover`;
   const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
-  const CREATOR_MODERATORS_ENDPOINT = `${API_BASE}/api/creator/moderators`;
-  const CREATOR_MODERATOR_LOOKUP_ENDPOINT = `${API_BASE}/api/creator/moderators/lookup`;
   const AVATAR_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
   const COVER_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
   const BACKGROUND_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
@@ -127,8 +125,6 @@
     controlsWired: false,
     previewMode: "streamsuites",
     customLinks: [],
-    moderators: [],
-    moderatorSearchResults: [],
   };
 
   function showToast(message, tone = "info", options = {}) {
@@ -175,20 +171,6 @@
       statDeployable: document.querySelector("[data-hub-stat=\"deployable\"]"),
       statLimited: document.querySelector("[data-hub-stat=\"limited\"]"),
       statPlanned: document.querySelector("[data-hub-stat=\"planned\"]"),
-    };
-  }
-
-  function getModeratorElements() {
-    return {
-      statusPill: document.querySelector("[data-moderator-status-pill=\"true\"]"),
-      scopeSummary: document.querySelector("[data-moderator-scope-summary=\"true\"]"),
-      searchInput: document.querySelector("[data-moderator-search-input=\"true\"]"),
-      searchButton: document.querySelector("[data-moderator-search-button=\"true\"]"),
-      searchNote: document.querySelector("[data-moderator-search-note=\"true\"]"),
-      searchResults: document.querySelector("[data-moderator-search-results=\"true\"]"),
-      searchEmpty: document.querySelector("[data-moderator-search-empty=\"true\"]"),
-      list: document.querySelector("[data-moderator-list=\"true\"]"),
-      listEmpty: document.querySelector("[data-moderator-list-empty=\"true\"]"),
     };
   }
 
@@ -257,186 +239,6 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
-  }
-
-  function setModeratorStatus(message, tone = "subtle") {
-    const els = getModeratorElements();
-    if (!(els.statusPill instanceof HTMLElement)) return;
-    els.statusPill.className = `status-pill ${tone}`;
-    els.statusPill.innerHTML = `<span class="status-dot"></span>${escapeHtml(message || "")}`;
-  }
-
-  function renderModeratorAssignments() {
-    const els = getModeratorElements();
-    if (!(els.list instanceof HTMLElement) || !(els.listEmpty instanceof HTMLElement)) return;
-    const assignments = Array.isArray(state.moderators) ? state.moderators : [];
-    els.list.replaceChildren();
-    els.listEmpty.classList.toggle("hidden", assignments.length > 0);
-    if (!assignments.length) {
-      return;
-    }
-    assignments.forEach((assignment) => {
-      const moderator = assignment?.moderator_account && typeof assignment.moderator_account === "object"
-        ? assignment.moderator_account
-        : {};
-      const capabilities = assignment?.capabilities && typeof assignment.capabilities === "object"
-        ? Object.entries(assignment.capabilities)
-            .filter(([, enabled]) => enabled === true)
-            .map(([key]) => key.replace(/_/g, " "))
-        : [];
-      const card = document.createElement("article");
-      card.className = "account-provider-card";
-      card.innerHTML = `
-        <div class="account-provider-header">
-          <div>
-            <h4>${escapeHtml(moderator.display_name || moderator.user_code || "Moderator")}</h4>
-            <p class="account-note">${escapeHtml(moderator.user_code || "")}${moderator.email ? ` · ${escapeHtml(moderator.email)}` : ""}</p>
-          </div>
-          <button class="creator-button secondary" type="button" data-moderator-remove="${escapeHtml(
-            assignment.moderator_account_id || ""
-          )}">Remove</button>
-        </div>
-        <p class="account-note">${escapeHtml(
-          capabilities.length
-            ? `Current scope: ${capabilities.join(", ")}`
-            : "Current scope: overlay artifacts, overlay chat, clip metadata, and polls."
-        )}</p>
-      `;
-      els.list.appendChild(card);
-    });
-    els.list.querySelectorAll("[data-moderator-remove]").forEach((button) => {
-      if (!(button instanceof HTMLButtonElement)) return;
-      button.addEventListener("click", async () => {
-        button.disabled = true;
-        try {
-          await requestJson(
-            `${CREATOR_MODERATORS_ENDPOINT}/${encodeURIComponent(button.dataset.moderatorRemove || "")}`,
-            { method: "DELETE" }
-          );
-          await loadModeratorAssignments();
-          showToast("Moderator removed.", "success", { title: "Moderators" });
-        } catch (err) {
-          showToast(err?.message || "Unable to remove moderator.", "danger", { title: "Moderators" });
-        } finally {
-          button.disabled = false;
-        }
-      });
-    });
-  }
-
-  function renderModeratorSearchResults() {
-    const els = getModeratorElements();
-    if (!(els.searchResults instanceof HTMLElement) || !(els.searchEmpty instanceof HTMLElement)) return;
-    const matches = Array.isArray(state.moderatorSearchResults) ? state.moderatorSearchResults : [];
-    els.searchResults.replaceChildren();
-    els.searchEmpty.classList.toggle("hidden", matches.length > 0);
-    matches.forEach((item) => {
-      const card = document.createElement("article");
-      card.className = "account-provider-card";
-      card.innerHTML = `
-        <div class="account-provider-header">
-          <div>
-            <h4>${escapeHtml(item.display_name || item.user_code || "Account")}</h4>
-            <p class="account-note">${escapeHtml(item.user_code || "")}${item.email ? ` · ${escapeHtml(item.email)}` : ""}</p>
-          </div>
-          <button class="creator-button primary" type="button" data-moderator-assign="${escapeHtml(
-            item.account_id || ""
-          )}">Assign</button>
-        </div>
-        <p class="account-note">${escapeHtml(
-          `Role: ${String(item.role || "public").toUpperCase()}`
-        )}</p>
-      `;
-      els.searchResults.appendChild(card);
-    });
-    els.searchResults.querySelectorAll("[data-moderator-assign]").forEach((button) => {
-      if (!(button instanceof HTMLButtonElement)) return;
-      button.addEventListener("click", async () => {
-        button.disabled = true;
-        try {
-          await requestJson(CREATOR_MODERATORS_ENDPOINT, {
-            method: "POST",
-            body: JSON.stringify({
-              moderator_account_id: button.dataset.moderatorAssign || ""
-            })
-          });
-          state.moderatorSearchResults = [];
-          renderModeratorSearchResults();
-          const searchEls = getModeratorElements();
-          if (searchEls.searchInput instanceof HTMLInputElement) {
-            searchEls.searchInput.value = "";
-          }
-          await loadModeratorAssignments();
-          showToast("Moderator assigned.", "success", { title: "Moderators" });
-        } catch (err) {
-          showToast(err?.message || "Unable to assign moderator.", "danger", { title: "Moderators" });
-        } finally {
-          button.disabled = false;
-        }
-      });
-    });
-  }
-
-  async function loadModeratorAssignments() {
-    const els = getModeratorElements();
-    if (!(els.scopeSummary instanceof HTMLElement)) return null;
-    setModeratorStatus("Loading", "subtle");
-    const payload = await requestJson(CREATOR_MODERATORS_ENDPOINT, { method: "GET" });
-    state.moderators = Array.isArray(payload.items) ? payload.items : [];
-    const scope = payload.scope_summary?.capabilities && typeof payload.scope_summary.capabilities === "object"
-      ? Object.entries(payload.scope_summary.capabilities)
-          .filter(([, enabled]) => enabled === true)
-          .map(([key]) => key.replace(/_/g, " "))
-      : [];
-    els.scopeSummary.textContent = scope.length
-      ? `Current moderator scope: ${scope.join(", ")}.`
-      : "Current moderator scope covers overlays, overlay chat surfaces, clip metadata, and polls.";
-    setModeratorStatus(
-      state.moderators.length ? `${state.moderators.length} assigned` : "No moderators assigned",
-      state.moderators.length ? "success" : "subtle"
-    );
-    renderModeratorAssignments();
-    renderModeratorSearchResults();
-    return payload;
-  }
-
-  async function handleModeratorSearch() {
-    const els = getModeratorElements();
-    const query = els.searchInput instanceof HTMLInputElement ? els.searchInput.value.trim() : "";
-    if (query.length < 2) {
-      showToast("Enter at least 2 characters to search accounts.", "warning", { title: "Moderators" });
-      return;
-    }
-    setModeratorStatus("Searching", "subtle");
-    try {
-      const payload = await requestJson(
-        `${CREATOR_MODERATOR_LOOKUP_ENDPOINT}?q=${encodeURIComponent(query)}`,
-        { method: "GET" }
-      );
-      state.moderatorSearchResults = Array.isArray(payload.items) ? payload.items : [];
-      renderModeratorSearchResults();
-      setModeratorStatus("Search ready", "subtle");
-    } catch (err) {
-      showToast(err?.message || "Unable to search accounts.", "danger", { title: "Moderators" });
-      setModeratorStatus("Search unavailable", "warning");
-    }
-  }
-
-  function wireModeratorControls() {
-    const els = getModeratorElements();
-    if (!(els.searchButton instanceof HTMLButtonElement)) return;
-    if (els.searchButton.dataset.moderatorsBound === "true") return;
-    els.searchButton.dataset.moderatorsBound = "true";
-    els.searchButton.addEventListener("click", () => {
-      void handleModeratorSearch();
-    });
-    if (els.searchInput instanceof HTMLInputElement) {
-      els.searchInput.addEventListener("keydown", (event) => {
-        if (event.key !== "Enter") return;
-        event.preventDefault();
-        void handleModeratorSearch();
-      });
-    }
   }
 
   function coerceText(value) {
@@ -3113,19 +2915,16 @@
     wireProviderButtons();
     wireEmailChange();
     wirePublicProfileControls();
-    wireModeratorControls();
 
     const tasks = await Promise.allSettled([
       refreshAuthMethods(),
       loadPublicProfile(),
-      loadCreatorIntegrations(),
-      loadModeratorAssignments()
+      loadCreatorIntegrations()
     ]);
 
     const authResult = tasks[0];
     const profileResult = tasks[1];
     const integrationsResult = tasks[2];
-    const moderatorsResult = tasks[3];
 
     if (window.location.search.includes("linked_provider=")) {
       setMessage("[data-account-provider-status-message=\"true\"]", "");
@@ -3169,20 +2968,8 @@
       }
     }
 
-    if (moderatorsResult.status === "rejected") {
-      setModeratorStatus("Moderators unavailable", "warning");
-      showToast(
-        moderatorsResult.reason?.message || "Unable to load creator moderator assignments.",
-        "danger",
-        {
-          key: "creator-moderators-load",
-          title: "Moderators",
-          autoHideMs: 6800
-        }
-      );
-    }
-
     renderBillingSection();
+    await window.CreatorModeratorSurface?.init?.();
   }
 
   function destroy() {
@@ -3193,8 +2980,7 @@
     state.savingProfile = false;
     state.controlsWired = false;
     state.previewMode = "streamsuites";
-    state.moderators = [];
-    state.moderatorSearchResults = [];
+    window.CreatorModeratorSurface?.destroy?.();
   }
 
   window.AccountSettingsView = {

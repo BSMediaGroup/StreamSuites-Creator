@@ -1716,6 +1716,54 @@ h3 {
   margin-bottom: 28px;
 }
 
+.preferences-summary-grid {
+  margin-bottom: 26px;
+}
+
+.preferences-summary-grid > .card,
+.preferences-page .preferences-moderators-card,
+.preferences-page .preference-teaser-card,
+.moderator-assignment-card,
+.moderator-search-card {
+  gap: 16px;
+}
+
+.preferences-capability-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+  color: var(--creator-text-soft);
+}
+
+.preferences-page .preferences-moderators-card,
+.preferences-page .preference-teaser-card {
+  grid-column: 1 / -1;
+}
+
+.moderator-search-row {
+  align-items: center;
+}
+
+.moderator-search-row .account-field-input {
+  flex: 1 1 320px;
+}
+
+.moderator-search-row .creator-button {
+  margin-top: 6px;
+}
+
+.moderator-assignment-top {
+  align-items: center;
+}
+
+.moderator-card-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
 .account-field-grid {
   display: grid;
   gap: 14px;

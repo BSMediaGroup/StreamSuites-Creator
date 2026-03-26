@@ -42,7 +42,7 @@
           <a href="/account" class="is-active">Account settings</a>
           <a href="/plans">Plans &amp; Tiers</a>
           <a href="/triggers">Chat Triggers</a>
-          <a href="/settings">Settings / Preferences</a>
+          <a href="/settings">Preferences</a>
         </nav>
         <div class="creator-nav-group">
           <span class="creator-nav-label">Platforms</span>
@@ -204,10 +204,13 @@
             <button class="creator-button secondary" type="button" data-account-jump="account-section-theme">FindMeHere theme</button>
             <button class="creator-button secondary" type="button" data-account-jump="account-section-custom-links">Custom links</button>
             <button class="creator-button secondary" type="button" data-account-jump="account-section-billing">Billing &amp; plan</button>
-            <button class="creator-button secondary" type="button" data-account-jump="account-section-moderators">Moderators</button>
             <button class="creator-button secondary" type="button" data-account-jump="account-section-advanced">Advanced styling</button>
             <button class="creator-button secondary" type="button" data-account-jump="account-section-preview">Previews</button>
           </nav>
+
+          <p class="account-note">
+            Moderator assignment and creator community controls now live on <a href="/settings">Preferences</a>.
+          </p>
 
           <div class="card-grid account-grid">
             <article class="card account-profile-card" id="account-section-core">
@@ -1133,47 +1136,6 @@
               </div>
             </article>
 
-            <article class="card account-moderators-card" id="account-section-moderators">
-              <div class="card-top">
-                <div>
-                  <h3>Creator Moderators</h3>
-                  <p>Assign creator-scoped moderators who can manage overlays, overlay-facing chat surfaces, clip metadata, and polls for this creator workspace.</p>
-                </div>
-                <span class="status-pill subtle" data-moderator-status-pill="true">
-                  <span class="status-dot"></span>Loading
-                </span>
-              </div>
-              <p class="account-note" data-moderator-scope-summary="true">
-                Moderator assignments load from the authoritative StreamSuites creator relationship model.
-              </p>
-              <div class="account-section-stack">
-                <div class="account-field">
-                  <span class="account-field-label">Find an account</span>
-                  <div class="account-inline-actions">
-                    <input
-                      class="account-field-input"
-                      type="search"
-                      placeholder="Search by user code, display name, or email"
-                      data-moderator-search-input="true"
-                    />
-                    <button class="creator-button secondary" type="button" data-moderator-search-button="true">Search</button>
-                  </div>
-                  <span class="account-field-note" data-moderator-search-note="true">
-                    Search results exclude your own account and accounts already assigned here.
-                  </span>
-                </div>
-                <div class="account-field">
-                  <span class="account-field-label">Assignable accounts</span>
-                  <div class="account-note hidden" data-moderator-search-empty="true">No matching accounts found yet.</div>
-                  <div class="account-section-stack" data-moderator-search-results="true"></div>
-                </div>
-                <div class="account-field">
-                  <span class="account-field-label">Current moderators</span>
-                  <div class="account-note hidden" data-moderator-list-empty="true">No creator-scoped moderators assigned yet.</div>
-                  <div class="account-section-stack" data-moderator-list="true"></div>
-                </div>
-              </div>
-            </article>
           </div>
         </section>
         </div>
@@ -1193,6 +1155,7 @@
 
   <script src="/js/app.js"></script>
   <script src="/js/auth.js"></script>
+  <script src="/js/creator-moderators.js"></script>
   <script src="/js/account-settings.js"></script>
   <script src="/assets/js/ss-profile-hovercard.js"></script>
   <script src="/js/status-widget.js" defer></script>

@@ -49,11 +49,13 @@ flowchart TD
 
 - Clean path-based creator routes are the primary navigation model, with Cloudflare Pages deep-link handling in the root `_redirects`.
 - Legacy hash-fragment and older `/platforms/*` compatibility remains in the client router, but canonical creator links now use path routes such as `/overview`, `/account`, `/statistics`, `/notifications`, `/integrations/...`, and `/modules/...`.
-- The account/settings experience is the authoritative creator-facing profile control surface for supported fields exposed by the public profile API.
-- The account/settings route now keeps integrations as a compact snapshot and link-out surface rather than the primary control center.
+- The `/account` route is the authoritative creator-facing profile control surface for supported fields exposed by the public profile API.
+- The `/settings` route is now the creator-facing Preferences surface for moderator assignment and future community controls that remain grounded in runtime-owned contracts.
+- The account route now keeps integrations as a compact snapshot and link-out surface rather than the primary control center.
 - A dedicated `/integrations` hub now acts as the full-page creator readiness surface, while per-platform routes carry the actionable setup and management workflows.
 - Creator media editing now prefers upload-from-device for avatar and cover updates while preserving manual URL inputs as secondary paths.
-- Creator account settings currently surface canonical slug editing and visibility, StreamSuites public profile visibility, FindMeHere listing controls, truthful dual share previews, reserved media fields including background image URL, bio/about, and grounded public social links.
+- Creator account settings currently surface canonical slug editing and visibility, StreamSuites public profile visibility, FindMeHere listing controls, truthful dual share previews, reserved media fields including background image URL, bio/about, grounded public social links, and a small pointer over to Preferences for moderator/community controls.
+- Creator Preferences currently surface creator-scoped moderator assignment, moderator lookup, moderator removal, and clear scope messaging backed by the authoritative runtime/API relationship model.
 - The updated account/settings layout includes the recent typography and polish work where the current UI already reflects it.
 - Notifications, statistics, onboarding, and Discord bot install panels remain consumers of backend-owned data and permissions.
 
@@ -134,6 +136,7 @@ StreamSuites-Creator/
 │   ├── account-settings.js
 │   ├── app.js
 │   ├── auth.js
+│   ├── creator-moderators.js
 │   ├── creator-stats.js
 │   ├── discord-bot-integration.js
 │   ├── integrations-hub.js
