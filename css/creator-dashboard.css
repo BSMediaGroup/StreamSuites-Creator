@@ -702,16 +702,19 @@ h3 {
 
 .streamsuites-auth-meta {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  gap: 6px;
   min-width: 0;
-  align-items: flex-start;
+  align-items: center;
   text-align: left;
+  flex: 1 1 auto;
 }
 
 .streamsuites-auth-name {
   font-size: 12px;
   letter-spacing: 0.02em;
+  flex: 0 1 auto;
+  min-width: 0;
   max-width: 18ch;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -722,8 +725,10 @@ h3 {
   display: inline-flex;
   align-items: center;
   min-height: 16px;
-  max-width: 100%;
-  min-width: 0;
+  max-width: none;
+  min-width: fit-content;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .streamsuites-auth-badges[hidden] {
@@ -732,7 +737,7 @@ h3 {
 
 .streamsuites-auth-badges .tier-pill-content {
   gap: 5px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-start;
 }
 
