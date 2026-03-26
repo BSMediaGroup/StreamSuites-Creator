@@ -39,6 +39,17 @@
     "instagram",
     "tiktok",
   ]);
+  const CUSTOM_LINK_MAX_ITEMS = 8;
+  const CUSTOM_LINK_LABEL_MAX_LENGTH = 80;
+  const CUSTOM_LINK_ICON_MAX_BYTES = 256 * 1024;
+  const CUSTOM_LINK_FALLBACK_ICON = "/assets/icons/ui/portal.svg";
+  const CUSTOM_LINK_ALLOWED_MIME_TYPES = Object.freeze([
+    "image/svg+xml",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "image/jpeg",
+  ]);
   const HEX_COLOR_RE = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
   const FINDMEHERE_THEME_DEFAULTS = Object.freeze({
     header_branding: Object.freeze({
@@ -113,6 +124,7 @@
     savingProfile: false,
     controlsWired: false,
     previewMode: "streamsuites",
+    customLinks: [],
   };
 
   function showToast(message, tone = "info", options = {}) {
@@ -281,6 +293,71 @@
       .replace(/'/g, "&#39;");
   }
 
+  function createDraftId(prefix = "draft") {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return `${prefix}-${crypto.randomUUID()}`;
+    }
+    return `${prefix}-${Math.random().toString(36).slice(2, 10)}-${Date.now().toString(36)}`;
+  }
+
+  function normalizeCustomLinkItem(item) {
+    const source = item && typeof item === "object" ? item : {};
+    return {
+      id: coerceText(source.id) || createDraftId("custom-link"),
+      label: coerceText(source.label || source.title || source.name).slice(0, CUSTOM_LINK_LABEL_MAX_LENGTH),
+      url: coerceText(source.url || source.href || source.destination),
+      icon_url: coerceText(
+        source.icon_url ||
+        source.iconUrl ||
+        source.icon ||
+        source.image_url ||
+        source.imageUrl ||
+        source.image
+      ),
+      staged_icon: null,
+    };
+  }
+
+  function normalizeCustomLinks(value) {
+    if (!Array.isArray(value)) return [];
+    return value
+      .map((item) => normalizeCustomLinkItem(item))
+      .filter((item) => item.label || item.url || item.icon_url)
+      .slice(0, CUSTOM_LINK_MAX_ITEMS);
+  }
+
+  function releaseCustomLinkIconDraft(item) {
+    if (item?.staged_icon?.previewUrl) {
+      URL.revokeObjectURL(item.staged_icon.previewUrl);
+    }
+  }
+
+  function clearCustomLinkDrafts() {
+    state.customLinks.forEach((item) => releaseCustomLinkIconDraft(item));
+  }
+
+  function getCustomLinkIconPreviewUrl(item) {
+    return item?.staged_icon?.previewUrl || coerceText(item?.icon_url) || CUSTOM_LINK_FALLBACK_ICON;
+  }
+
+  function getSanitizedCustomLinks() {
+    return state.customLinks
+      .map((item) => ({
+        label: coerceText(item?.label).slice(0, CUSTOM_LINK_LABEL_MAX_LENGTH),
+        url: coerceText(item?.url),
+        icon_url: item?.staged_icon?.dataUrl || coerceText(item?.icon_url),
+      }))
+      .filter((item) => item.label && item.url)
+      .slice(0, CUSTOM_LINK_MAX_ITEMS);
+  }
+
+  function readFileAsObjectUrl(file) {
+    if (!(file instanceof File)) {
+      throw new Error("No file selected.");
+    }
+    return URL.createObjectURL(file);
+  }
+
   function getProfileElements() {
     return {
       loadPill: document.querySelector("[data-profile-load-pill]"),
@@ -341,6 +418,10 @@
       findmeThemeCustomCssInput: document.querySelector("[data-findme-theme-custom-css]"),
       bioInput: document.querySelector("[data-profile-bio]"),
       linkInputs: Array.from(document.querySelectorAll("[data-profile-link]")),
+      customLinksList: document.querySelector("[data-custom-links-list]"),
+      customLinksSummary: document.querySelector("[data-custom-links-summary]"),
+      customLinkAddButton: document.querySelector("[data-custom-link-add]"),
+      jumpButtons: Array.from(document.querySelectorAll("[data-account-jump]")),
       identityInputs: Array.from(document.querySelectorAll("[data-profile-identity-input]")),
       saveButtons: Array.from(document.querySelectorAll("[data-profile-save]")),
       resetButtons: Array.from(document.querySelectorAll("[data-profile-reset]")),
@@ -861,6 +942,7 @@
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme || profile?.findMeHereTheme || profile?.profile_theme || profile?.profileTheme),
       bio: coerceText(profile?.bio),
       social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
+      custom_links: normalizeCustomLinks(profile?.custom_links || profile?.customLinks),
     };
   }
 
@@ -927,6 +1009,7 @@
     if (els.findmeThemeButtonColorPickerInput instanceof HTMLInputElement) {
       els.findmeThemeButtonColorPickerInput.disabled = busy || !state.profile;
     }
+    renderCustomLinksEditor();
   }
 
   function setStatusPill(element, text, tone) {
@@ -1161,6 +1244,142 @@
     });
   }
 
+  function renderCustomLinksEditor() {
+    const els = getProfileElements();
+    if (!(els.customLinksList instanceof HTMLElement)) return;
+
+    if (els.customLinksSummary instanceof HTMLElement) {
+      const count = state.customLinks.filter((item) => item.label || item.url || item.icon_url || item?.staged_icon?.dataUrl).length;
+      els.customLinksSummary.textContent = count
+        ? `${count} custom link${count === 1 ? "" : "s"} staged for FindMeHere. Existing social links remain separate and still render normally.`
+        : "Add focused destination buttons here. Existing social links stay intact, and empty custom-link rows are ignored on save.";
+    }
+
+    if (els.customLinkAddButton instanceof HTMLButtonElement) {
+      els.customLinkAddButton.disabled = state.savingProfile || !state.profile || state.customLinks.length >= CUSTOM_LINK_MAX_ITEMS;
+    }
+
+    if (!state.customLinks.length) {
+      els.customLinksList.innerHTML = `
+        <div class="custom-link-empty">
+          <h4>No custom links added yet.</h4>
+          <p>Use custom links for creator-defined buttons such as store pages, portals, media kits, or special landing pages.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const disabledAttr = state.savingProfile || !state.profile ? "disabled" : "";
+    els.customLinksList.innerHTML = state.customLinks
+      .map((item, index) => {
+        const iconPreview = getCustomLinkIconPreviewUrl(item);
+        const stagedIconName = coerceText(item?.staged_icon?.filename);
+        return `
+          <article class="custom-link-card" data-custom-link-row="${escapeHtml(item.id)}">
+            <div class="custom-link-card-header">
+              <div>
+                <h4>Custom link ${index + 1}</h4>
+                <p>${stagedIconName ? `Staged icon: ${escapeHtml(stagedIconName)}` : "Optional icon stays secondary to the destination itself."}</p>
+              </div>
+              <div class="custom-link-row-actions">
+                <button class="creator-button secondary" type="button" data-custom-link-move="up" data-custom-link-id="${escapeHtml(item.id)}" ${index === 0 ? "disabled" : disabledAttr}>Up</button>
+                <button class="creator-button secondary" type="button" data-custom-link-move="down" data-custom-link-id="${escapeHtml(item.id)}" ${index === state.customLinks.length - 1 ? "disabled" : disabledAttr}>Down</button>
+                <button class="creator-button danger" type="button" data-custom-link-remove="${escapeHtml(item.id)}" ${disabledAttr}>Remove</button>
+              </div>
+            </div>
+            <div class="account-field-grid custom-link-row-grid">
+              <div class="account-field">
+                <span class="account-field-label">Label</span>
+                <input
+                  class="account-field-input"
+                  type="text"
+                  maxlength="${CUSTOM_LINK_LABEL_MAX_LENGTH}"
+                  placeholder="Portal, Store, Media kit"
+                  data-custom-link-input="label"
+                  data-custom-link-id="${escapeHtml(item.id)}"
+                  value="${escapeHtml(item.label)}"
+                  ${disabledAttr}
+                />
+              </div>
+              <div class="account-field">
+                <span class="account-field-label">Destination URL</span>
+                <input
+                  class="account-field-input"
+                  type="url"
+                  placeholder="https://example.com/destination"
+                  data-custom-link-input="url"
+                  data-custom-link-id="${escapeHtml(item.id)}"
+                  value="${escapeHtml(item.url)}"
+                  ${disabledAttr}
+                />
+              </div>
+            </div>
+            <div class="custom-link-icon-row">
+              <div class="custom-link-icon-preview">
+                <img src="${escapeHtml(iconPreview)}" alt="" loading="lazy" decoding="async" />
+              </div>
+              <div class="custom-link-icon-fields">
+                <div class="account-field-grid custom-link-row-grid">
+                  <div class="account-field">
+                    <span class="account-field-label">Icon URL or asset path</span>
+                    <input
+                      class="account-field-input"
+                      type="text"
+                      placeholder="/assets/icons/ui/portal.svg"
+                      data-custom-link-input="icon_url"
+                      data-custom-link-id="${escapeHtml(item.id)}"
+                      value="${escapeHtml(item.icon_url)}"
+                      ${disabledAttr}
+                    />
+                    <span class="account-field-note">Optional. Leave blank to use the fallback portal icon.</span>
+                  </div>
+                  <div class="account-field">
+                    <span class="account-field-label">Upload icon</span>
+                    <div class="custom-link-upload-row">
+                      <input
+                        class="account-field-input"
+                        type="file"
+                        accept="image/svg+xml,image/png,image/webp,image/gif,image/jpeg"
+                        data-custom-link-file="${escapeHtml(item.id)}"
+                        ${disabledAttr}
+                      />
+                      <button class="creator-button secondary" type="button" data-custom-link-clear-icon="${escapeHtml(item.id)}" ${disabledAttr}>Clear icon</button>
+                    </div>
+                    <span class="account-field-note">Accepted: SVG, PNG, WEBP, GIF, JPG, or JPEG.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  function replaceCustomLinks(nextLinks) {
+    clearCustomLinkDrafts();
+    state.customLinks = normalizeCustomLinks(nextLinks);
+    renderCustomLinksEditor();
+  }
+
+  function findCustomLinkById(id) {
+    const normalized = coerceText(id);
+    return state.customLinks.find((item) => item.id === normalized) || null;
+  }
+
+  function moveCustomLink(id, direction) {
+    const index = state.customLinks.findIndex((item) => item.id === id);
+    if (index < 0) return;
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= state.customLinks.length) return;
+    const next = [...state.customLinks];
+    const [item] = next.splice(index, 1);
+    next.splice(targetIndex, 0, item);
+    state.customLinks = next;
+    renderCustomLinksEditor();
+    renderPreviewSurface();
+  }
+
   function buildPreviewModel() {
     const draft = getEditableDraft();
     const session = getActiveSession();
@@ -1190,6 +1409,11 @@
         label: key.replace(/[_-]+/g, " "),
         value: coerceText(value),
       }));
+    const customLinks = getSanitizedCustomLinks().map((item) => ({
+      label: item.label,
+      url: item.url,
+      iconUrl: coerceText(item.icon_url) || CUSTOM_LINK_FALLBACK_ICON,
+    }));
     return {
       accentColor,
       avatarUrl,
@@ -1199,6 +1423,7 @@
       brandText,
       buttonColor,
       coverImageUrl,
+      customLinks,
       displayName,
       findmeShareUrl: slug ? `https://findmehere.live/${encodeURIComponent(slug)}` : "",
       roleLabel,
@@ -1236,6 +1461,23 @@
       .map(
         ({ label, value }) =>
           `<a class="${className}" href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`
+      )
+      .join("");
+  }
+
+  function buildPreviewCustomLinkMarkup(entries) {
+    if (!entries.length) return "";
+    return entries
+      .map(
+        ({ label, url, iconUrl }) => `
+          <a class="fmh-link-item fmh-link-item-custom" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">
+            <span class="fmh-link-item-icon"><img src="${escapeHtml(iconUrl || CUSTOM_LINK_FALLBACK_ICON)}" alt="" loading="lazy" decoding="async" /></span>
+            <span class="fmh-link-item-copy">
+              <span class="fmh-link-item-label">${escapeHtml(label)}</span>
+              <span class="fmh-link-item-url">${escapeHtml(url)}</span>
+            </span>
+          </a>
+        `
       )
       .join("");
   }
@@ -1335,8 +1577,9 @@
     const showCover = model.theme.image_visibility.show_cover !== false;
     const showAvatar = model.theme.image_visibility.show_avatar !== false;
     const showBackground = model.theme.image_visibility.show_background !== false && model.backgroundImageUrl;
-    const socialMarkup = model.socialEntries.length
-      ? model.socialEntries
+    const linkMarkup = [...model.socialEntries.map((entry) => ({ kind: "social", ...entry })), ...model.customLinks.map((entry) => ({ kind: "custom", ...entry }))].length
+      ? [
+          model.socialEntries
           .map(
             ({ label, value }) => `
               <a class="fmh-link-item" href="${escapeHtml(value)}" target="_blank" rel="noopener noreferrer">
@@ -1345,6 +1588,10 @@
               </a>
             `
           )
+          .join(""),
+          buildPreviewCustomLinkMarkup(model.customLinks),
+        ]
+          .filter(Boolean)
           .join("")
       : `<div class="fmh-empty"><h2>Links coming soon</h2><p>This FindMeHere page is active, but no public platform links are available yet.</p></div>`;
     return `
@@ -1388,7 +1635,7 @@
           <div class="fmh-profile-grid">
             <section class="fmh-profile-section">
               <h2>Primary links</h2>
-              <div class="fmh-social-list">${socialMarkup}</div>
+              <div class="fmh-social-list">${linkMarkup}</div>
             </section>
             <div class="fmh-link-stack">
               <section class="fmh-profile-section">
@@ -1500,6 +1747,7 @@
       findmehere_theme: normalizeFindmeTheme(theme),
       bio: coerceText(els.bioInput?.value),
       social_links: socialLinks,
+      custom_links: getSanitizedCustomLinks(),
     };
   }
 
@@ -1522,6 +1770,7 @@
       findmehere_theme: normalizeFindmeTheme(draft.findmehere_theme),
       bio: coerceText(draft.bio),
       social_links: { ...(draft.social_links || {}) },
+      custom_links: (draft.custom_links || []).map((item) => ({ ...item })),
     };
   }
 
@@ -1547,6 +1796,7 @@
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme),
       bio: coerceText(profile?.bio),
       social_links: { ...(profile?.social_links || {}) },
+      custom_links: normalizeCustomLinks(profile?.custom_links).map(({ staged_icon, ...item }) => ({ ...item })),
     };
   }
 
@@ -1705,6 +1955,7 @@
     clearStagedUpload("cover");
     clearStagedUpload("background");
     clearStagedUpload("logo");
+    replaceCustomLinks(normalized.custom_links);
 
     const els = getProfileElements();
     if (els.displayNameInput instanceof HTMLInputElement) {
@@ -1918,6 +2169,7 @@
         findmehere_theme: draftTheme,
         bio: draft.bio,
         social_links: draft.social_links,
+        custom_links: draft.custom_links,
       };
       const response = await requestJson(PUBLIC_PROFILE_ENDPOINT, {
         method: "POST",
@@ -2189,6 +2441,121 @@
     if (els.slugInput instanceof HTMLInputElement) {
       els.slugInput.addEventListener("input", renderSlugFeedback);
     }
+    if (els.customLinkAddButton instanceof HTMLButtonElement) {
+      els.customLinkAddButton.addEventListener("click", () => {
+        if (state.customLinks.length >= CUSTOM_LINK_MAX_ITEMS) {
+          showToast(`Custom links are limited to ${CUSTOM_LINK_MAX_ITEMS}.`, "warning", {
+            key: "creator-custom-links-limit",
+            title: "Limit reached",
+          });
+          return;
+        }
+        state.customLinks = [...state.customLinks, normalizeCustomLinkItem({})];
+        renderCustomLinksEditor();
+        renderPreviewSurface();
+      });
+    }
+    if (els.customLinksList instanceof HTMLElement) {
+      els.customLinksList.addEventListener("input", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) return;
+        const field = target.getAttribute("data-custom-link-input");
+        const id = target.getAttribute("data-custom-link-id");
+        if (!field || !id) return;
+        const link = findCustomLinkById(id);
+        if (!link) return;
+        if (field === "icon_url" && link.staged_icon) {
+          releaseCustomLinkIconDraft(link);
+          link.staged_icon = null;
+        }
+        link[field] = field === "label"
+          ? coerceText(target.value).slice(0, CUSTOM_LINK_LABEL_MAX_LENGTH)
+          : coerceText(target.value);
+        if (field === "icon_url") {
+          const row = target.closest("[data-custom-link-row]");
+          const preview = row?.querySelector(".custom-link-icon-preview img");
+          if (preview instanceof HTMLImageElement) {
+            preview.src = getCustomLinkIconPreviewUrl(link);
+          }
+        }
+        renderPreviewSurface();
+      });
+      els.customLinksList.addEventListener("change", async (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) return;
+        const id = target.getAttribute("data-custom-link-file");
+        if (!id) return;
+        const link = findCustomLinkById(id);
+        const file = target.files?.[0];
+        if (!link || !file) return;
+        try {
+          if (!CUSTOM_LINK_ALLOWED_MIME_TYPES.includes(String(file.type || "").toLowerCase())) {
+            throw new Error("Select an SVG, PNG, WEBP, GIF, JPG, or JPEG icon.");
+          }
+          if (file.size > CUSTOM_LINK_ICON_MAX_BYTES) {
+            throw new Error(`Selected icon exceeds the ${Math.round(CUSTOM_LINK_ICON_MAX_BYTES / 1024)} KB limit.`);
+          }
+          releaseCustomLinkIconDraft(link);
+          link.staged_icon = {
+            filename: file.name,
+            previewUrl: readFileAsObjectUrl(file),
+            dataUrl: await readFileAsDataUrl(file),
+            type: file.type,
+            size: file.size,
+          };
+          link.icon_url = "";
+          renderCustomLinksEditor();
+          renderPreviewSurface();
+        } catch (err) {
+          if (target instanceof HTMLInputElement) target.value = "";
+          showToast(err?.message || "Unable to stage the custom link icon.", "danger", {
+            key: "creator-custom-link-icon",
+            title: "Upload failed",
+            autoHideMs: 6800,
+          });
+        }
+      });
+      els.customLinksList.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        const removeId = target.closest("[data-custom-link-remove]")?.getAttribute("data-custom-link-remove");
+        if (removeId) {
+          const link = findCustomLinkById(removeId);
+          if (link) releaseCustomLinkIconDraft(link);
+          state.customLinks = state.customLinks.filter((item) => item.id !== removeId);
+          renderCustomLinksEditor();
+          renderPreviewSurface();
+          return;
+        }
+        const clearIconId = target.closest("[data-custom-link-clear-icon]")?.getAttribute("data-custom-link-clear-icon");
+        if (clearIconId) {
+          const link = findCustomLinkById(clearIconId);
+          if (!link) return;
+          releaseCustomLinkIconDraft(link);
+          link.staged_icon = null;
+          link.icon_url = "";
+          renderCustomLinksEditor();
+          renderPreviewSurface();
+          return;
+        }
+        const moveButton = target.closest("[data-custom-link-move]");
+        if (moveButton instanceof HTMLElement) {
+          moveCustomLink(
+            moveButton.getAttribute("data-custom-link-id") || "",
+            moveButton.getAttribute("data-custom-link-move") || ""
+          );
+        }
+      });
+    }
+    els.jumpButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener("click", () => {
+        const targetId = button.getAttribute("data-account-jump") || "";
+        const section = targetId ? document.getElementById(targetId) : null;
+        if (!(section instanceof HTMLElement)) return;
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
     els.profileFields.forEach((field) => {
       const eventName = field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement ? "input" : "change";
       field.addEventListener(eventName, renderPreviewSurface);

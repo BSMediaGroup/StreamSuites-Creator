@@ -1571,6 +1571,18 @@
     });
   }
 
+  function isCreatorDashboardSummary(summary) {
+    return summary instanceof HTMLElement && summary.matches(".creator-account, [data-account-menu]");
+  }
+
+  function getRoleBadgeLabel(session) {
+    const normalizedRole = normalizeRole(session?.role);
+    if (!normalizedRole) return "Creator";
+    return normalizedRole
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
   function updateAuthSummary(session) {
     const summaries = document.querySelectorAll("[data-auth-summary]");
     summaries.forEach((summary) => {
@@ -1580,11 +1592,13 @@
       const tierEl = summary.querySelector("[data-auth-tier]");
       const logoutEl = summary.querySelector("[data-auth-logout]");
       const avatarEl = summary.querySelector("[data-auth-avatar]");
+      const creatorDashboardSummary = isCreatorDashboardSummary(summary);
 
       if (!emailEl || !tierEl || !logoutEl) return;
 
       if (!session?.authenticated) {
         if (emailEl) emailEl.textContent = "Signed out";
+        if (emailEl) emailEl.removeAttribute("data-auth-role");
         if (nameEl && nameEl !== emailEl) {
           nameEl.textContent = "Signed out";
         }
@@ -1599,7 +1613,16 @@
       const displayName = getDisplayName(session);
       const emailValue = getEmailValue(session);
       if (emailEl) {
-        emailEl.textContent = emailEl === nameEl ? displayName : emailValue;
+        emailEl.textContent = creatorDashboardSummary
+          ? getRoleBadgeLabel(session)
+          : emailEl === nameEl
+            ? displayName
+            : emailValue;
+        if (creatorDashboardSummary) {
+          emailEl.setAttribute("data-auth-role", normalizeRole(session?.role) || "creator");
+        } else {
+          emailEl.removeAttribute("data-auth-role");
+        }
       }
       if (nameEl) {
         nameEl.textContent = displayName;

@@ -197,8 +197,18 @@
             </div>
           </div>
 
+          <nav class="account-section-jumpbar" data-account-section-nav="true" aria-label="Jump to account settings section">
+            <button class="creator-button secondary" type="button" data-account-jump="account-section-core">Core profile</button>
+            <button class="creator-button secondary" type="button" data-account-jump="account-section-public">Public content</button>
+            <button class="creator-button secondary" type="button" data-account-jump="account-section-media">Media assets</button>
+            <button class="creator-button secondary" type="button" data-account-jump="account-section-theme">FindMeHere theme</button>
+            <button class="creator-button secondary" type="button" data-account-jump="account-section-custom-links">Custom links</button>
+            <button class="creator-button secondary" type="button" data-account-jump="account-section-advanced">Advanced styling</button>
+            <button class="creator-button secondary" type="button" data-account-jump="account-section-preview">Previews</button>
+          </nav>
+
           <div class="card-grid account-grid">
-            <article class="card account-profile-card">
+            <article class="card account-profile-card" id="account-section-core">
               <div class="card-top">
                 <div>
                   <h3>Core profile content</h3>
@@ -213,33 +223,35 @@
               </p>
               <div class="account-section-stack">
                 <div class="account-field-grid account-stack-fields">
-                  <div class="account-field">
-                    <span class="account-field-label">Display name</span>
-                    <input
-                      class="account-field-input"
-                      type="text"
-                      placeholder="Your display name"
-                      data-account-profile-name="true"
-                      data-profile-identity-input="display_name"
-                    />
-                    <span class="account-field-note" data-profile-display-name-feedback="true">
-                      Display name loads from the authoritative account identity.
-                    </span>
-                  </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Canonical public slug</span>
-                    <input
-                      class="account-field-input"
-                      type="text"
-                      placeholder="your-canonical-slug"
-                      autocomplete="off"
-                      spellcheck="false"
-                      data-profile-field="true"
-                      data-profile-slug-input="true"
-                    />
-                    <span class="account-field-note" data-profile-slug-feedback="true">
-                      Canonical slug validation loads from the authoritative profile model.
-                    </span>
+                  <div class="account-field-grid account-paired-fields">
+                    <div class="account-field">
+                      <span class="account-field-label">Display name</span>
+                      <input
+                        class="account-field-input"
+                        type="text"
+                        placeholder="Your display name"
+                        data-account-profile-name="true"
+                        data-profile-identity-input="display_name"
+                      />
+                      <span class="account-field-note" data-profile-display-name-feedback="true">
+                        Display name loads from the authoritative account identity.
+                      </span>
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Canonical public slug</span>
+                      <input
+                        class="account-field-input"
+                        type="text"
+                        placeholder="your-canonical-slug"
+                        autocomplete="off"
+                        spellcheck="false"
+                        data-profile-field="true"
+                        data-profile-slug-input="true"
+                      />
+                      <span class="account-field-note" data-profile-slug-feedback="true">
+                        Canonical slug validation loads from the authoritative profile model.
+                      </span>
+                    </div>
                   </div>
                   <div class="account-field" data-profile-slug-aliases-wrap="true" hidden>
                     <span class="account-field-label">Previous slug aliases</span>
@@ -248,16 +260,18 @@
                       Previous aliases stay attached to the authoritative profile identity.
                     </span>
                   </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Creator ID</span>
-                    <span class="account-field-value account-system-text" data-account-profile-user-code="true">
-                      Not available
-                    </span>
-                    <span class="account-field-note">Email or username syncs from your login method.</span>
-                  </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Email</span>
-                    <span class="account-field-value" data-account-profile-email="true"></span>
+                  <div class="account-field-grid account-paired-fields">
+                    <div class="account-field">
+                      <span class="account-field-label">Creator ID</span>
+                      <span class="account-field-value account-system-text" data-account-profile-user-code="true">
+                        Not available
+                      </span>
+                      <span class="account-field-note">Email or username syncs from your login method.</span>
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Email</span>
+                      <span class="account-field-value" data-account-profile-email="true"></span>
+                    </div>
                   </div>
                 </div>
                 <div class="profile-toggle-stack">
@@ -313,7 +327,7 @@
               </div>
             </article>
 
-            <article class="card account-profile-content-card">
+            <article class="card account-profile-content-card" id="account-section-public">
               <div class="card-top">
                 <div>
                   <h3>Public content &amp; share links</h3>
@@ -337,33 +351,41 @@
                     ></textarea>
                     <span class="account-field-note">Saved to the authoritative public profile payload.</span>
                   </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Website</span>
-                    <input class="account-field-input" type="url" placeholder="https://example.com" data-profile-field="true" data-profile-link="website" />
+                  <div class="account-field-grid account-paired-fields">
+                    <div class="account-field">
+                      <span class="account-field-label">Website</span>
+                      <input class="account-field-input" type="url" placeholder="https://example.com" data-profile-field="true" data-profile-link="website" />
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">X</span>
+                      <input class="account-field-input" type="url" placeholder="https://x.com/yourhandle" data-profile-field="true" data-profile-link="x" />
+                    </div>
                   </div>
-                  <div class="account-field">
-                    <span class="account-field-label">X</span>
-                    <input class="account-field-input" type="url" placeholder="https://x.com/yourhandle" data-profile-field="true" data-profile-link="x" />
+                  <div class="account-field-grid account-paired-fields">
+                    <div class="account-field">
+                      <span class="account-field-label">YouTube</span>
+                      <input class="account-field-input" type="url" placeholder="https://youtube.com/@yourhandle" data-profile-field="true" data-profile-link="youtube" />
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Twitch</span>
+                      <input class="account-field-input" type="url" placeholder="https://twitch.tv/yourhandle" data-profile-field="true" data-profile-link="twitch" />
+                    </div>
                   </div>
-                  <div class="account-field">
-                    <span class="account-field-label">YouTube</span>
-                    <input class="account-field-input" type="url" placeholder="https://youtube.com/@yourhandle" data-profile-field="true" data-profile-link="youtube" />
+                  <div class="account-field-grid account-paired-fields">
+                    <div class="account-field">
+                      <span class="account-field-label">Discord</span>
+                      <input class="account-field-input" type="url" placeholder="https://discord.gg/yourserver" data-profile-field="true" data-profile-link="discord" />
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Instagram</span>
+                      <input class="account-field-input" type="url" placeholder="https://instagram.com/yourhandle" data-profile-field="true" data-profile-link="instagram" />
+                    </div>
                   </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Twitch</span>
-                    <input class="account-field-input" type="url" placeholder="https://twitch.tv/yourhandle" data-profile-field="true" data-profile-link="twitch" />
-                  </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Discord</span>
-                    <input class="account-field-input" type="url" placeholder="https://discord.gg/yourserver" data-profile-field="true" data-profile-link="discord" />
-                  </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Instagram</span>
-                    <input class="account-field-input" type="url" placeholder="https://instagram.com/yourhandle" data-profile-field="true" data-profile-link="instagram" />
-                  </div>
-                  <div class="account-field">
-                    <span class="account-field-label">TikTok</span>
-                    <input class="account-field-input" type="url" placeholder="https://tiktok.com/@yourhandle" data-profile-field="true" data-profile-link="tiktok" />
+                  <div class="account-field-grid account-paired-fields">
+                    <div class="account-field">
+                      <span class="account-field-label">TikTok</span>
+                      <input class="account-field-input" type="url" placeholder="https://tiktok.com/@yourhandle" data-profile-field="true" data-profile-link="tiktok" />
+                    </div>
                   </div>
                 </div>
                 <div class="share-preview-list">
@@ -402,7 +424,7 @@
               </div>
             </article>
 
-            <article class="card account-profile-media-card">
+            <article class="card account-profile-media-card" id="account-section-media">
               <div class="card-top">
                 <div>
                   <h3>Media assets</h3>
@@ -594,7 +616,7 @@
               </div>
             </article>
 
-            <article class="card account-findme-branding-card">
+            <article class="card account-findme-branding-card" id="account-section-theme">
               <div class="card-top">
                 <div>
                   <h3>FindMeHere branding &amp; theme</h3>
@@ -606,86 +628,92 @@
               </div>
               <div class="account-section-stack">
                 <div class="account-field-grid account-stack-fields">
-                  <div class="account-field">
-                    <span class="account-field-label">FindMeHere header brand text</span>
-                    <input
-                      class="account-field-input"
-                      type="text"
-                      maxlength="80"
-                      placeholder="Brand text fallback"
-                      data-profile-field="true"
-                      data-findme-theme-brand-text="true"
-                    />
-                    <span class="account-field-note">Optional fallback text shown on your public FindMeHere page if no custom logo is used.</span>
-                  </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Page accent color</span>
-                    <div class="account-color-row">
+                  <div class="account-field-grid account-paired-fields">
+                    <div class="account-field">
+                      <span class="account-field-label">FindMeHere header brand text</span>
                       <input
-                        class="account-field-input account-color-text"
+                        class="account-field-input"
                         type="text"
-                        inputmode="text"
-                        maxlength="7"
-                        placeholder="#6ad6ff"
+                        maxlength="80"
+                        placeholder="Brand text fallback"
                         data-profile-field="true"
-                        data-findme-theme-accent-color="true"
+                        data-findme-theme-brand-text="true"
                       />
-                      <input
-                        class="account-color-picker"
-                        type="color"
-                        value="#6ad6ff"
-                        aria-label="Pick page accent color"
-                        data-findme-theme-accent-color-picker="true"
-                      />
+                      <span class="account-field-note">Optional fallback text shown on your public FindMeHere page if no custom logo is used.</span>
                     </div>
-                    <span class="account-field-note">Type a hex value or pick visually. Invalid hex values are ignored on save.</span>
-                  </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Button color</span>
-                    <div class="account-color-row">
-                      <input
-                        class="account-field-input account-color-text"
-                        type="text"
-                        inputmode="text"
-                        maxlength="7"
-                        placeholder="#3f8bff"
-                        data-profile-field="true"
-                        data-findme-theme-button-color="true"
-                      />
-                      <input
-                        class="account-color-picker"
-                        type="color"
-                        value="#3f8bff"
-                        aria-label="Pick button color"
-                        data-findme-theme-button-color-picker="true"
-                      />
+                    <div class="account-field">
+                      <span class="account-field-label">Layout preset</span>
+                      <select class="account-field-input" data-profile-field="true" data-findme-theme-layout-preset="true">
+                        <option value="standard">Standard</option>
+                        <option value="condensed">Condensed</option>
+                        <option value="expanded">Expanded</option>
+                      </select>
                     </div>
-                    <span class="account-field-note">Type a hex value or pick visually. Invalid hex values are ignored on save.</span>
                   </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Button tone</span>
-                    <select class="account-field-input" data-profile-field="true" data-findme-theme-button-tone="true">
-                      <option value="brand">Brand</option>
-                      <option value="soft">Soft</option>
-                      <option value="ghost">Ghost</option>
-                    </select>
+                  <div class="account-field-grid account-paired-fields">
+                    <div class="account-field">
+                      <span class="account-field-label">Page accent color</span>
+                      <div class="account-color-row">
+                        <input
+                          class="account-field-input account-color-text"
+                          type="text"
+                          inputmode="text"
+                          maxlength="7"
+                          placeholder="#6ad6ff"
+                          data-profile-field="true"
+                          data-findme-theme-accent-color="true"
+                        />
+                        <input
+                          class="account-color-picker"
+                          type="color"
+                          value="#6ad6ff"
+                          aria-label="Pick page accent color"
+                          data-findme-theme-accent-color-picker="true"
+                        />
+                      </div>
+                      <span class="account-field-note">Type a hex value or pick visually. Invalid hex values are ignored on save.</span>
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Button color</span>
+                      <div class="account-color-row">
+                        <input
+                          class="account-field-input account-color-text"
+                          type="text"
+                          inputmode="text"
+                          maxlength="7"
+                          placeholder="#3f8bff"
+                          data-profile-field="true"
+                          data-findme-theme-button-color="true"
+                        />
+                        <input
+                          class="account-color-picker"
+                          type="color"
+                          value="#3f8bff"
+                          aria-label="Pick button color"
+                          data-findme-theme-button-color-picker="true"
+                        />
+                      </div>
+                      <span class="account-field-note">Type a hex value or pick visually. Invalid hex values are ignored on save.</span>
+                    </div>
                   </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Font preset</span>
-                    <select class="account-field-input" data-profile-field="true" data-findme-theme-font-preset="true">
-                      <option value="default">Default</option>
-                      <option value="editorial">Editorial</option>
-                      <option value="condensed">Condensed</option>
-                      <option value="mono">Mono</option>
-                    </select>
-                  </div>
-                  <div class="account-field">
-                    <span class="account-field-label">Layout preset</span>
-                    <select class="account-field-input" data-profile-field="true" data-findme-theme-layout-preset="true">
-                      <option value="standard">Standard</option>
-                      <option value="condensed">Condensed</option>
-                      <option value="expanded">Expanded</option>
-                    </select>
+                  <div class="account-field-grid account-paired-fields">
+                    <div class="account-field">
+                      <span class="account-field-label">Button tone</span>
+                      <select class="account-field-input" data-profile-field="true" data-findme-theme-button-tone="true">
+                        <option value="brand">Brand</option>
+                        <option value="soft">Soft</option>
+                        <option value="ghost">Ghost</option>
+                      </select>
+                    </div>
+                    <div class="account-field">
+                      <span class="account-field-label">Font preset</span>
+                      <select class="account-field-input" data-profile-field="true" data-findme-theme-font-preset="true">
+                        <option value="default">Default</option>
+                        <option value="editorial">Editorial</option>
+                        <option value="condensed">Condensed</option>
+                        <option value="mono">Mono</option>
+                      </select>
+                    </div>
                   </div>
                   <div class="account-field">
                     <span class="account-field-label">Image visibility</span>
@@ -710,7 +738,35 @@
               </div>
             </article>
 
-            <article class="card account-findme-advanced-card">
+            <article class="card account-custom-links-card" id="account-section-custom-links">
+              <div class="card-top">
+                <div>
+                  <h3>Custom links</h3>
+                  <p>Creator-defined destination buttons with optional custom icons for FindMeHere.</p>
+                </div>
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>FindMeHere links
+                </span>
+              </div>
+              <div class="account-section-stack">
+                <div class="custom-link-editor-header">
+                  <p class="account-note" data-custom-links-summary="true">
+                    Add focused custom destinations here. These render alongside your existing public links on FindMeHere.
+                  </p>
+                  <button class="creator-button secondary" type="button" data-custom-link-add="true">Add custom link</button>
+                </div>
+                <div class="custom-link-list" data-custom-links-list="true"></div>
+                <span class="account-field-note">
+                  Custom icon entries accept SVG, PNG, WEBP, GIF, JPG, or JPEG. When no valid icon is provided, FindMeHere falls back to the portal icon.
+                </span>
+              </div>
+              <div class="profile-action-row">
+                <button class="creator-button primary" type="button" data-profile-save="true">Save custom links</button>
+                <button class="creator-button danger" type="button" data-profile-reset="true">Reset</button>
+              </div>
+            </article>
+
+            <article class="card account-findme-advanced-card" id="account-section-advanced">
               <div class="card-top">
                 <div>
                   <h3>Advanced FindMeHere styling</h3>
@@ -742,7 +798,7 @@
               </div>
             </article>
 
-            <article class="card account-preview-hub-card">
+            <article class="card account-preview-hub-card" id="account-section-preview">
               <div class="card-top">
                 <div>
                   <h3>Profile preview</h3>

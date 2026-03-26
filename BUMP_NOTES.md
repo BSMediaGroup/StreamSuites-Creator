@@ -4,6 +4,22 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Customization Polish + Custom Links - 2026-03-26
+
+- The creator account customization page now has a compact in-page section jump bar, tighter stacked-section spacing, and responsive paired field rows inside each section so long full-width editing flows stay easier to scan without reverting to the old side-by-side page layout.
+- A new full-width custom-links editor now lets creators add, remove, reorder, label, and URL-manage FindMeHere links with per-link custom icon uploads or manual icon references, live icon thumbnails, and portal-icon fallback behavior that matches the live FindMeHere surface and creator preview.
+- The creator dashboard top-bar user widget now shows display name plus a restrained role badge instead of the email, keeps the existing dropdown behavior intact, restores full-color avatar rendering, and the creator login buttons now reuse the newer dashboard button language instead of the older auth-page styling.
+
+### Files / Areas Touched
+
+- `views/account.html`
+- `js/account-settings.js`
+- `js/auth.js`
+- `css/creator-dashboard.css`
+- `login/index.html`
+- `css/overrides.css`
+- `BUMP_NOTES.md`
+
 ## FindMeHere Editor Hard Repair - 2026-03-26
 
 - The creator account customization surface is now a full-width stacked editor instead of the old multi-column composition, with separate stacked sections for core profile content, public content/share links, media assets, FindMeHere branding/theme, advanced styling, and a dedicated full-width preview hub.
