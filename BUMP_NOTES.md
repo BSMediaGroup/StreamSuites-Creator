@@ -4,6 +4,31 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Badge Widget + Mobile Shell Repair - 2026-03-27
+
+- The compact creator top-bar account widget no longer depends on the stale standalone `tier-pill` placeholder that was pinning the username to a fake Core visual state; it now renders a dedicated compact badge strip from the resolved authoritative badge array and effective tier.
+- The glossy tier pill treatment was restored only where it belongs: inside the creator account dropdown summary and in the account billing/plan hero, both driven by the same normalized effective tier instead of the old badge-strip fallback path.
+- Mobile shell behavior now follows the intended overlay-drawer pattern: mobile no longer inherits the desktop collapsed-rail state, the main content no longer lands in an implicit second grid column, and the header stays materially denser while the drawer opens with readable labels.
+
+### Files / Areas Touched
+
+- `index.html`
+- `views/account.html`
+- `views/onboarding.html`
+- `views/plans.html`
+- `views/settings.html`
+- `views/triggers.html`
+- `views/platforms/discord.html`
+- `views/platforms/kick.html`
+- `views/platforms/pilled.html`
+- `views/platforms/rumble.html`
+- `views/platforms/twitch.html`
+- `views/platforms/youtube.html`
+- `js/auth.js`
+- `js/app.js`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Creator Preferences Moderator Rehome - 2026-03-27
 
 - The creator sidebar settings label now reads `Preferences`, and the former `/settings` placeholder page has been repurposed into a real community-preferences surface centered on creator-scoped moderator management.

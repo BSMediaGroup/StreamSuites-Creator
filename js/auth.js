@@ -636,6 +636,9 @@
   function renderBadgeStrip(element, badges, tierLabel = "CORE") {
     if (!element) return;
     const normalizedBadges = normalizeAuthoritativeBadges(badges, tierLabel);
+    element.classList.remove("tier-pill", "tier-core", "tier-gold", "tier-pro");
+    element.removeAttribute("data-ss-badge-kind");
+    delete element.dataset.tier;
     element.classList.add("ss-role-badges");
     const row = document.createElement("span");
     row.className = "tier-pill-content";
@@ -1485,6 +1488,52 @@
     return userCode || "Not available";
   }
 
+  function getAccountTypeValue(session) {
+    const normalizedRole = normalizeRole(session?.role);
+    if (normalizedRole === "admin") {
+      return "Administrator";
+    }
+    if (normalizedRole === "creator") {
+      return "Creator";
+    }
+    return getRoleBadgeLabel(session);
+  }
+
+  function ensureAccountTypeDetailValue(menu, detailsPanel) {
+    if (!menu || !detailsPanel) return null;
+
+    const existingValue = menu.querySelector("[data-account-detail-account-type]");
+    if (existingValue) return existingValue;
+
+    const detailRow = document.createElement("div");
+    detailRow.className = "creator-account-detail";
+
+    const label = document.createElement("span");
+    label.className = "creator-account-detail-label";
+    label.textContent = "Account type";
+
+    const value = document.createElement("span");
+    value.className = "creator-account-detail-value";
+    value.dataset.accountDetailAccountType = "true";
+    value.textContent = "Creator";
+
+    detailRow.append(label, value);
+
+    const creatorIdValue = menu.querySelector("[data-account-detail-user-code]");
+    const creatorIdRow = creatorIdValue ? creatorIdValue.closest(".creator-account-detail") : null;
+    const tierValue = menu.querySelector("[data-account-detail-tier]");
+    const tierRow = tierValue ? tierValue.closest(".creator-account-detail") : null;
+    if (creatorIdRow && creatorIdRow.parentElement === detailsPanel) {
+      detailsPanel.insertBefore(detailRow, creatorIdRow);
+    } else if (tierRow && tierRow.parentElement === detailsPanel) {
+      detailsPanel.insertBefore(detailRow, tierRow);
+    } else {
+      detailsPanel.append(detailRow);
+    }
+
+    return value;
+  }
+
   function ensureCreatorIdDetailValue(menu, detailsPanel) {
     if (!menu || !detailsPanel) return null;
 
@@ -1874,6 +1923,33 @@
     return summary instanceof HTMLElement && summary.matches(".creator-account, [data-account-menu]");
   }
 
+  function ensureCreatorSummaryBadgeSlot(summary) {
+    if (!isCreatorDashboardSummary(summary)) {
+      return summary?.querySelector?.("[data-auth-tier]") || null;
+    }
+
+    let badgeSlot = summary.querySelector("[data-auth-tier]");
+    const meta = summary.querySelector(".streamsuites-auth-meta");
+    if (!meta) {
+      return badgeSlot;
+    }
+
+    if (!badgeSlot) {
+      badgeSlot = document.createElement("span");
+      badgeSlot.dataset.authTier = "true";
+      badgeSlot.hidden = true;
+    }
+
+    badgeSlot.classList.remove("streamsuites-auth-identity");
+    badgeSlot.classList.add("streamsuites-auth-badges");
+
+    if (badgeSlot.parentElement !== meta) {
+      meta.appendChild(badgeSlot);
+    }
+
+    return badgeSlot;
+  }
+
   function getRoleBadgeLabel(session) {
     const normalizedRole = normalizeRole(session?.role);
     if (!normalizedRole) return "Creator";
@@ -1886,18 +1962,22 @@
     const summaries = document.querySelectorAll("[data-auth-summary]");
     summaries.forEach((summary) => {
       removeCreatorRoleTags(summary);
-      const emailEl = summary.querySelector("[data-auth-email]");
       const nameEl = summary.querySelector("[data-auth-name]");
-      const tierEl = summary.querySelector("[data-auth-tier]");
+      const emailEl = summary.querySelector("[data-auth-email]");
       const logoutEl = summary.querySelector("[data-auth-logout]");
       const avatarEl = summary.querySelector("[data-auth-avatar]");
       const creatorDashboardSummary = isCreatorDashboardSummary(summary);
+      const tierEl = creatorDashboardSummary
+        ? ensureCreatorSummaryBadgeSlot(summary)
+        : summary.querySelector("[data-auth-tier]");
 
-      if (!emailEl || !tierEl || !logoutEl) return;
+      if (!tierEl || !logoutEl || (!creatorDashboardSummary && !emailEl)) return;
 
       if (!session?.authenticated) {
-        if (emailEl) emailEl.textContent = "Signed out";
-        if (emailEl) emailEl.removeAttribute("data-auth-role");
+        if (emailEl) {
+          emailEl.textContent = "Signed out";
+          emailEl.removeAttribute("data-auth-role");
+        }
         if (nameEl && nameEl !== emailEl) {
           nameEl.textContent = "Signed out";
         }
@@ -1912,14 +1992,8 @@
       const displayName = getDisplayName(session);
       const emailValue = getEmailValue(session);
       if (emailEl) {
-        emailEl.textContent = creatorDashboardSummary
-          ? getRoleBadgeLabel(session)
-          : emailEl === nameEl
-            ? displayName
-            : emailValue;
-        if (creatorDashboardSummary) {
-          emailEl.setAttribute("data-auth-role", normalizeRole(session?.role) || "creator");
-        } else {
+        emailEl.textContent = emailEl === nameEl ? displayName : emailValue;
+        if (!creatorDashboardSummary) {
           emailEl.removeAttribute("data-auth-role");
         }
       }
@@ -1954,6 +2028,7 @@
       const detailName = menu.querySelector("[data-account-detail-name]");
       const detailEmail = menu.querySelector("[data-account-detail-email]");
       const detailTier = menu.querySelector("[data-account-detail-tier]");
+      const detailAccountType = ensureAccountTypeDetailValue(menu, detailsPanel);
       const detailCreatorId = ensureCreatorIdDetailValue(menu, detailsPanel);
 
       if (toggle) {
@@ -1971,11 +2046,17 @@
       if (detailEmail) {
         detailEmail.textContent = authenticated ? getEmailValue(session) : "Signed out";
       }
+      if (detailAccountType) {
+        detailAccountType.textContent = authenticated ? getAccountTypeValue(session) : "Signed out";
+      }
       if (detailCreatorId) {
         detailCreatorId.textContent = authenticated ? getCreatorIdValue(session) : "Not available";
       }
       if (detailTier) {
-        renderBadgeStrip(detailTier, authenticated ? session?.badges : [], authenticated ? getTierLabel(session) : "CORE");
+        detailTier.hidden = !authenticated;
+        if (authenticated) {
+          renderTierPill(detailTier, getTierLabel(session));
+        }
       }
     });
   }
@@ -2007,7 +2088,10 @@
       userCodeValue.textContent = authenticated ? getCreatorIdValue(session) : "Not available";
     }
     if (tierValue) {
-      renderBadgeStrip(tierValue, authenticated ? session?.badges : [], authenticated ? getTierLabel(session) : "CORE");
+      tierValue.hidden = !authenticated;
+      if (authenticated) {
+        renderTierPill(tierValue, getTierLabel(session));
+      }
     }
     if (avatarImage instanceof HTMLImageElement) {
       avatarImage.src = authenticated && session?.avatar ? session.avatar : "/assets/icons/ui/profile.svg";
@@ -2221,9 +2305,14 @@
   function setAccountMenuOpen(menu, open) {
     if (!menu) return;
     const toggle = menu.querySelector("[data-account-toggle]");
+    const detailsPanel = menu.querySelector("[data-account-details-panel]");
+    const detailsToggle = menu.querySelector("[data-account-details-toggle]");
     menu.classList.toggle("is-account-open", open);
     menu.dataset.accountOpen = open ? "true" : "false";
     if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    if (detailsPanel && !detailsToggle) {
+      detailsPanel.hidden = !open;
+    }
     if (open) {
       isAccountMenuOpen = true;
       activeAccountMenu = menu;

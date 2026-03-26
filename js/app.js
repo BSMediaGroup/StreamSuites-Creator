@@ -333,8 +333,20 @@
   }
 
   function applyAutoSidebarCollapse() {
-    if (shell.hasStoredPreference) return;
-    setSidebarCollapsed(isMobileViewport(), { persist: false });
+    const storedPreference = readSidebarCollapsedPreference();
+    shell.hasStoredPreference = storedPreference !== null;
+
+    if (isMobileViewport()) {
+      setSidebarCollapsed(false, { persist: false });
+      return;
+    }
+
+    if (storedPreference !== null) {
+      setSidebarCollapsed(storedPreference, { persist: false });
+      return;
+    }
+
+    setSidebarCollapsed(false, { persist: false });
   }
 
   function onSidebarToggleClick() {
@@ -386,11 +398,7 @@
 
   function bindSidebarBehavior() {
     if (!shell.nav) return;
-    const storedPreference = readSidebarCollapsedPreference();
-    shell.hasStoredPreference = storedPreference !== null;
-    const initialCollapsed =
-      storedPreference !== null ? storedPreference : isMobileViewport();
-    setSidebarCollapsed(initialCollapsed, { persist: false });
+    applyAutoSidebarCollapse();
     setSidebarMobileOpen(false);
 
     if (!shell.resizeBound) {

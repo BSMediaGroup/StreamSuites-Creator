@@ -703,7 +703,7 @@ h3 {
 .streamsuites-auth-meta {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
   align-items: flex-start;
   text-align: left;
@@ -712,71 +712,33 @@ h3 {
 .streamsuites-auth-name {
   font-size: 12px;
   letter-spacing: 0.02em;
-}
-
-.streamsuites-auth-name::after {
-  content: "";
-  display: inline-block;
-  width: 1.4em;
-  height: 1.4em;
-  margin-left: 6px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  opacity: 0.9;
-  vertical-align: middle;
-}
-
-.creator-account:has(.tier-pill[data-tier="CORE"]) .streamsuites-auth-name::after {
-  background-image: url("/assets/icons/tierbadge-core.svg");
-}
-
-.creator-account:has(.tier-pill[data-tier="GOLD"]) .streamsuites-auth-name::after {
-  background-image: url("/assets/icons/tierbadge-gold.svg");
-}
-
-.creator-account:has(.tier-pill[data-tier="PRO"]) .streamsuites-auth-name::after {
-  background-image: url("/assets/icons/tierbadge-pro.svg");
-}
-
-.creator-account:has(.tier-pill[hidden]) .streamsuites-auth-name::after {
-  display: none;
-}
-
-.streamsuites-auth-identity {
-  display: inline-flex;
-  align-items: center;
-  min-height: 22px;
-  padding: 0 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(181, 195, 221, 0.2);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(229, 236, 249, 0.82);
-  font-size: 0.58rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  max-width: 18ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.streamsuites-auth-identity[data-auth-role="admin"] {
-  border-color: rgba(255, 214, 107, 0.24);
-  color: rgba(255, 233, 182, 0.88);
-  background: rgba(255, 214, 107, 0.08);
+.streamsuites-auth-badges {
+  display: inline-flex;
+  align-items: center;
+  min-height: 16px;
+  max-width: 100%;
+  min-width: 0;
 }
 
-.streamsuites-auth-identity[data-auth-role="creator"] {
-  border-color: rgba(154, 209, 255, 0.22);
-  color: rgba(228, 237, 249, 0.84);
+.streamsuites-auth-badges[hidden] {
+  display: none !important;
 }
 
-.streamsuites-auth-role {
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  display: none;
+.streamsuites-auth-badges .tier-pill-content {
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.streamsuites-auth-badges .tier-pill-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .streamsuites-auth-tier {
@@ -878,6 +840,7 @@ h3 {
   justify-content: space-between;
   gap: 12px;
   font-size: 10px;
+  align-items: center;
 }
 
 .creator-account-detail-label {
@@ -892,6 +855,11 @@ h3 {
 .creator-account-detail-value {
   color: var(--creator-text);
   font-weight: 100;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 20px;
+  text-align: right;
 }
 
   .creator-app :is(.creator-button, .creator-account-item, .creator-account-button, .lockout-button) {
@@ -4649,17 +4617,19 @@ body.creator-lockout-active .creator-lockout {
 
 @media (max-width: 720px) {
   .creator-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
   }
 
   .creator-header-right {
-    width: 100%;
+    width: auto;
+    min-width: 0;
   }
 
   .creator-account {
-    width: 100%;
-    justify-content: space-between;
+    width: auto;
+    max-width: min(72vw, 320px);
+    min-width: 0;
   }
 
   .creator-account-toggle {
@@ -5763,13 +5733,18 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
   }
 
   :root {
-    --app-sidebar-width: min(76vw, 252px);
+    --app-sidebar-width: min(86vw, 320px);
     --app-sidebar-collapsed-width: 64px;
   }
 
   #app.creator-app {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  #app > .ss-main {
+    grid-column: 1;
+    grid-row: 1;
   }
 
   #app-nav.creator-nav {
@@ -5795,14 +5770,22 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
   }
 
   #app-header.creator-header {
-    padding: 10px 14px;
-    flex-wrap: wrap;
+    min-height: 56px;
+    padding: 8px 14px;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  #app-header .ss-topbar-left {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   #app-header .ss-topbar-right {
-    width: 100%;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    width: auto;
+    max-width: min(70vw, 360px);
+    justify-content: flex-end;
+    flex-wrap: nowrap;
   }
 
   .account-section-jumpbar,
@@ -5881,10 +5864,11 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
   #app-header.creator-header {
     flex-direction: row;
     align-items: center;
+    padding: 8px 12px;
   }
 
   .creator-topbar-page-title {
-    max-width: 42vw;
+    max-width: 38vw;
     overflow: hidden;
     text-overflow: ellipsis;
   }
