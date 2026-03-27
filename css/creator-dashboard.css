@@ -2277,7 +2277,9 @@ h3 {
 .account-shell-tabs-wrap {
   position: sticky;
   top: var(--creator-account-tabs-top, 64px);
-  z-index: 9;
+  z-index: calc(var(--creator-shell-z-topbar) - 1);
+  flex: 0 0 auto;
+  overflow: hidden;
   padding: 10px 18px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: linear-gradient(180deg, rgba(10, 15, 24, 0.94), rgba(10, 15, 24, 0.84));

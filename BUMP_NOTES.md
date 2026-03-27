@@ -4,6 +4,28 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Account Shell Tab Row Hard Fix - 2026-03-27
+
+### Technical Notes
+
+- The earlier `/account` tab-row pass failed because the row and its header toggle were authored in `views/account.html` outside the fetched `#view-container`, and the Creator SPA only injects that container's inner markup. The live shell never mounted either control on the real `/account` route.
+- The previous account-tab behavior also targeted `window` scrolling even though the Creator workspace scrolls inside `#app-main`, which meant active-section syncing and jump behavior were wired against the wrong scroll container.
+- `js/account-settings.js` now mounts the account-only tabs button beside the sidebar control in the shared top bar, injects the shell tab row directly under the live top bar before the loader, derives tab buttons from the real account section cards, and removes both shell controls on non-account routes.
+- Account section jumps and active highlighting now follow the actual Creator scroll container, keep the active tab in view on narrow widths, and preserve the existing expandable section-card behavior with the tab row expanded by default.
+
+### Human-Readable Notes
+
+- The `/account` page now actually shows the shell tab row immediately under the top bar instead of silently missing it.
+- The tabs button in the top bar now works on `/account`, and the active tab follows the section you are viewing while the account page scrolls.
+- Other Creator routes do not inherit the account tab row or the tabs-toggle button.
+
+### Files / Areas Touched
+
+- `js/account-settings.js`
+- `views/account.html`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Creator Account Shell + Preferences Corrective Pass - 2026-03-27
 
 ### Technical Notes

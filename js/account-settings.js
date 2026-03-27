@@ -72,6 +72,18 @@
   });
   const DEFAULT_ACCENT_COLOR = "#6ad6ff";
   const DEFAULT_BUTTON_COLOR = "#3f8bff";
+  const ACCOUNT_SECTION_TAB_LABELS = Object.freeze({
+    "account-section-core": "Profile",
+    "account-section-public": "Public",
+    "account-section-media": "Media",
+    "account-section-theme": "Theme",
+    "account-section-custom-links": "Links",
+    "account-section-advanced": "Advanced",
+    "account-section-preview": "Preview",
+    "account-section-security": "Security",
+    "account-section-integrations": "Integrations",
+    "account-section-billing": "Billing",
+  });
   const RESERVED_PUBLIC_SLUGS = new Set([
     "u",
     "live",
@@ -129,6 +141,7 @@
     accountHashHandler: null,
     accountTabsHandler: null,
     accountTabsToggleHandler: null,
+    accountActiveSectionId: "",
     accountScrollQueued: false,
     previewMode: "streamsuites",
     customLinks: [],
@@ -503,6 +516,89 @@
     return getProfileElements().accountSectionCards.filter((card) => card instanceof HTMLElement);
   }
 
+  function getAccountScrollContainer() {
+    return document.getElementById("app-main");
+  }
+
+  function resolveAccountSectionTabLabel(card) {
+    if (!(card instanceof HTMLElement)) return "";
+    const explicit = coerceText(card.dataset.accountShellLabel);
+    if (explicit) return explicit;
+    const mapped = ACCOUNT_SECTION_TAB_LABELS[card.id];
+    if (mapped) return mapped;
+    const heading = coerceText(card.querySelector(".card-top h3")?.textContent);
+    if (heading) return heading;
+    return card.id.replace(/^account-section-/, "").replace(/-/g, " ");
+  }
+
+  function ensureAccountShellMounted() {
+    const shellMain = document.querySelector("#app > .ss-main");
+    const sidebarToggle = document.getElementById("sidebar-collapse-toggle");
+    if (
+      !(shellMain instanceof HTMLElement) ||
+      !(sidebarToggle instanceof HTMLButtonElement)
+    ) {
+      return false;
+    }
+
+    let accountTabsToggle = document.getElementById("account-tabs-toggle");
+    if (!(accountTabsToggle instanceof HTMLButtonElement)) {
+      accountTabsToggle = document.createElement("button");
+      accountTabsToggle.type = "button";
+      accountTabsToggle.id = "account-tabs-toggle";
+      accountTabsToggle.className = "sidebar-collapse-toggle account-tabs-toggle";
+      accountTabsToggle.setAttribute("aria-controls", "account-shell-tabs-wrap");
+      accountTabsToggle.setAttribute("aria-expanded", "true");
+      accountTabsToggle.setAttribute("aria-label", "Collapse account section tabs");
+      accountTabsToggle.setAttribute("title", "Collapse account section tabs");
+      accountTabsToggle.innerHTML = `
+        <span class="account-tabs-toggle-icon" aria-hidden="true"></span>
+        <span class="sr-only">Toggle account section tabs</span>
+      `;
+    }
+    if (!accountTabsToggle.isConnected) {
+      sidebarToggle.insertAdjacentElement("afterend", accountTabsToggle);
+    }
+
+    let accountTabsWrap = document.querySelector("[data-account-shell-tabs-wrap]");
+    if (!(accountTabsWrap instanceof HTMLElement)) {
+      accountTabsWrap = document.createElement("div");
+      accountTabsWrap.id = "account-shell-tabs-wrap";
+      accountTabsWrap.className = "account-shell-tabs-wrap";
+      accountTabsWrap.dataset.accountShellTabsWrap = "true";
+
+      const nav = document.createElement("nav");
+      nav.className = "account-shell-tabs";
+      nav.dataset.accountShellTabs = "true";
+      nav.setAttribute("aria-label", "Account settings sections");
+      accountTabsWrap.appendChild(nav);
+    }
+
+    const insertBefore = document.getElementById("global-loader") || getAccountScrollContainer();
+    if (!accountTabsWrap.isConnected) {
+      shellMain.insertBefore(accountTabsWrap, insertBefore instanceof Node ? insertBefore : null);
+    }
+
+    const accountTabs = accountTabsWrap.querySelector("[data-account-shell-tabs]");
+    if (!(accountTabs instanceof HTMLElement)) {
+      return false;
+    }
+
+    const fragment = document.createDocumentFragment();
+    getAccountSectionCards().forEach((card) => {
+      const sectionId = card.id;
+      if (!sectionId) return;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "account-shell-tab";
+      button.dataset.accountShellTab = sectionId;
+      button.textContent = resolveAccountSectionTabLabel(card);
+      fragment.appendChild(button);
+    });
+    accountTabs.replaceChildren(fragment);
+    return accountTabs.childElementCount > 0;
+  }
+
   function getAccountSectionBody(card) {
     if (!(card instanceof HTMLElement)) return null;
     return Array.from(card.children).find(
@@ -520,27 +616,17 @@
   }
 
   function getAccountScrollOffset(extra = 18) {
-    const els = getProfileElements();
-    const headerHeight = document.getElementById("app-header")?.getBoundingClientRect().height || 0;
-    const tabsVisible =
-      els.accountTabsWrap instanceof HTMLElement &&
-      els.accountTabsWrap.dataset.collapsed !== "true";
-    const tabsHeight = tabsVisible
-      ? els.accountTabsWrap?.getBoundingClientRect().height || 0
-      : 0;
-    return Math.ceil(headerHeight + tabsHeight + extra);
+    return Math.ceil(extra);
   }
 
   function syncAccountShellMetrics() {
     const els = getProfileElements();
     if (!(els.accountTabsWrap instanceof HTMLElement)) return;
     const headerHeight = document.getElementById("app-header")?.getBoundingClientRect().height || 0;
-    const tabsVisible = els.accountTabsWrap.dataset.collapsed !== "true";
-    const tabsHeight = tabsVisible ? els.accountTabsWrap.getBoundingClientRect().height || 0 : 0;
     document.documentElement.style.setProperty("--creator-account-tabs-top", `${Math.ceil(headerHeight)}px`);
     document.documentElement.style.setProperty(
       "--creator-account-scroll-offset",
-      `${Math.ceil(headerHeight + tabsHeight + 18)}px`
+      `${getAccountScrollOffset(20)}px`
     );
   }
 
@@ -588,29 +674,46 @@
 
   function highlightActiveAccountTab(sectionId) {
     const els = getProfileElements();
+    const nextSectionId = typeof sectionId === "string" ? sectionId : "";
     els.accountTabButtons.forEach((button) => {
       if (!(button instanceof HTMLButtonElement)) return;
-      const active = button.getAttribute("data-account-shell-tab") === sectionId;
+      const active = button.getAttribute("data-account-shell-tab") === nextSectionId;
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-current", active ? "true" : "false");
+      if (active && state.accountActiveSectionId !== nextSectionId) {
+        button.scrollIntoView({
+          block: "nearest",
+          inline: "nearest",
+          behavior: "auto",
+        });
+      }
     });
+    state.accountActiveSectionId = nextSectionId;
   }
 
   function updateActiveAccountTab() {
     state.accountScrollQueued = false;
+    const scrollContainer = getAccountScrollContainer();
     const cards = getAccountSectionCards();
-    if (!cards.length) return;
-    const threshold = getAccountScrollOffset(12);
+    if (!(scrollContainer instanceof HTMLElement) || !cards.length) return;
+    const scrollBounds = scrollContainer.getBoundingClientRect();
+    const threshold = Math.max(20, Math.min(120, scrollContainer.clientHeight * 0.18));
     let activeId = cards[0].id;
+    let nearestUpcomingId = cards[0].id;
+    let nearestUpcomingTop = Number.POSITIVE_INFINITY;
     for (const card of cards) {
       const rect = card.getBoundingClientRect();
-      if (rect.top - threshold <= 0) {
+      const relativeTop = rect.top - scrollBounds.top;
+      if (relativeTop <= threshold) {
         activeId = card.id;
         continue;
       }
-      break;
+      if (relativeTop < nearestUpcomingTop) {
+        nearestUpcomingTop = relativeTop;
+        nearestUpcomingId = card.id;
+      }
     }
-    highlightActiveAccountTab(activeId);
+    highlightActiveAccountTab(activeId || nearestUpcomingId);
   }
 
   function queueActiveAccountTabUpdate() {
@@ -621,6 +724,7 @@
 
   function revealAccountSection(sectionId, options = {}) {
     const target = sectionId ? document.getElementById(sectionId) : null;
+    const scrollContainer = getAccountScrollContainer();
     if (!(target instanceof HTMLElement)) return;
     setAccountSectionExpanded(target, true, { instant: !!options.instant });
     syncAccountShellMetrics();
@@ -636,9 +740,19 @@
       }
     }
     if (options.scroll === false) return;
-    const top = window.scrollY + target.getBoundingClientRect().top - getAccountScrollOffset();
-    window.scrollTo({
-      top: Math.max(top, 0),
+    if (scrollContainer instanceof HTMLElement) {
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const top =
+        scrollContainer.scrollTop + (targetRect.top - containerRect.top) - getAccountScrollOffset(12);
+      scrollContainer.scrollTo({
+        top: Math.max(top, 0),
+        behavior: options.instant ? "auto" : "smooth",
+      });
+      return;
+    }
+    target.scrollIntoView({
+      block: "start",
       behavior: options.instant ? "auto" : "smooth",
     });
   }
@@ -704,6 +818,7 @@
   }
 
   function wireAccountShell() {
+    if (!ensureAccountShellMounted()) return;
     const els = getProfileElements();
     if (!(els.accountTabsWrap instanceof HTMLElement) || !(els.accountTabs instanceof HTMLElement)) return;
     if (state.accountShellWired) {
@@ -733,6 +848,7 @@
       els.accountTabsToggle.addEventListener("click", state.accountTabsToggleHandler);
     }
 
+    const scrollContainer = getAccountScrollContainer();
     state.accountScrollHandler = () => {
       queueActiveAccountTabUpdate();
     };
@@ -746,7 +862,7 @@
       revealAccountSection(sectionId, { instant: true });
     };
 
-    window.addEventListener("scroll", state.accountScrollHandler, { passive: true });
+    scrollContainer?.addEventListener("scroll", state.accountScrollHandler, { passive: true });
     window.addEventListener("resize", state.accountResizeHandler);
     window.addEventListener("hashchange", state.accountHashHandler);
 
@@ -762,14 +878,15 @@
 
   function destroyAccountShell() {
     const els = getProfileElements();
+    const scrollContainer = getAccountScrollContainer();
     if (state.accountTabsHandler && els.accountTabs instanceof HTMLElement) {
       els.accountTabs.removeEventListener("click", state.accountTabsHandler);
     }
     if (state.accountTabsToggleHandler && els.accountTabsToggle instanceof HTMLButtonElement) {
       els.accountTabsToggle.removeEventListener("click", state.accountTabsToggleHandler);
     }
-    if (state.accountScrollHandler) {
-      window.removeEventListener("scroll", state.accountScrollHandler);
+    if (state.accountScrollHandler && scrollContainer instanceof HTMLElement) {
+      scrollContainer.removeEventListener("scroll", state.accountScrollHandler);
     }
     if (state.accountResizeHandler) {
       window.removeEventListener("resize", state.accountResizeHandler);
@@ -783,6 +900,12 @@
     state.accountScrollHandler = null;
     state.accountResizeHandler = null;
     state.accountHashHandler = null;
+    state.accountActiveSectionId = "";
+    state.accountScrollQueued = false;
+    document.getElementById("account-tabs-toggle")?.remove();
+    document.querySelector("[data-account-shell-tabs-wrap]")?.remove();
+    document.documentElement.style.removeProperty("--creator-account-tabs-top");
+    document.documentElement.style.removeProperty("--creator-account-scroll-offset");
   }
 
   function oauthStartUrl(provider) {
