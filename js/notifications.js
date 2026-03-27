@@ -300,9 +300,10 @@
         const checked = muted.has(type) ? "checked" : "";
         const label = `${type.charAt(0).toUpperCase()}${type.slice(1)}`;
         return `
-          <label class="creator-notifications-setting-toggle small">
+          <label class="creator-notifications-setting-toggle small ss-checkbox-wrapper">
             <input type="checkbox" data-mute-type="${escapeHtml(type)}" ${checked} />
-            <span>${escapeHtml(label)}</span>
+            <div class="ss-checkbox"></div>
+            <span class="ss-checkbox-text">${escapeHtml(label)}</span>
           </label>
         `;
       })

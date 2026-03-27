@@ -600,7 +600,15 @@ h3 {
   gap: 8px;
 }
 
+.creator-notifications-setting-toggle .ss-checkbox-text {
+  color: var(--creator-text);
+}
+
 .creator-notifications-setting-toggle.small {
+  font-size: 11px;
+}
+
+.creator-notifications-setting-toggle.small .ss-checkbox-text {
   font-size: 11px;
 }
 
@@ -1970,18 +1978,21 @@ h3 {
 }
 
 .account-checkbox-row {
-  display: flex;
-  align-items: center;
+  display: inline-flex;
+  align-items: flex-start;
   gap: 10px;
   margin-top: 10px;
   color: var(--creator-text);
   font-size: var(--creator-body-size-sm);
 }
 
-.account-checkbox-row input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  margin: 0;
+.account-checkbox-row .ss-checkbox {
+  margin-top: 2px;
+}
+
+.account-checkbox-row .ss-checkbox-text {
+  color: var(--creator-text);
+  font-size: var(--creator-body-size-sm);
 }
 
 .account-avatar-row {
@@ -2221,11 +2232,8 @@ h3 {
   justify-items: end;
 }
 
-.profile-toggle-control input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  accent-color: var(--creator-accent-strong);
+.profile-toggle-control .switch-button {
+  justify-self: end;
 }
 
 .profile-surface-meta {
@@ -3780,13 +3788,22 @@ h3 {
 .platform-workspace-toggle {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 14px;
   padding: 12px 14px;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
   font-size: var(--creator-body-size-sm);
   color: var(--creator-text);
+}
+
+.platform-workspace-toggle-copy {
+  flex: 1 1 auto;
+}
+
+.platform-workspace-toggle .switch-button {
+  flex: 0 0 auto;
 }
 
 .platform-workspace-footer {
@@ -5207,8 +5224,7 @@ body.creator-lockout-active .creator-lockout {
 }
 
 .trigger-toggle {
-  position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
@@ -5228,47 +5244,8 @@ body.creator-lockout-active .creator-lockout {
   color: var(--creator-text);
 }
 
-.trigger-toggle input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.trigger-switch {
-  width: 36px;
-  height: 20px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
-  position: relative;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.trigger-switch::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  top: 1px;
-  left: 1px;
-  background: #cfd8ff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.trigger-toggle input:checked + .trigger-switch {
-  background: rgba(123, 140, 255, 0.6);
-  border-color: rgba(123, 140, 255, 0.8);
-}
-
-.trigger-toggle input:checked + .trigger-switch::after {
-  transform: translateX(16px);
-  background: #0b0f16;
-}
-
-.trigger-toggle input:focus-visible + .trigger-switch {
-  box-shadow: 0 0 0 2px rgba(154, 209, 255, 0.6);
+.trigger-toggle .switch-button {
+  flex: 0 0 auto;
 }
 
 .trigger-label {

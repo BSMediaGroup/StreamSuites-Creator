@@ -266,7 +266,7 @@
                   </div>
                 </div>
                 <div class="profile-toggle-stack">
-                  <label class="profile-toggle-card">
+                  <div class="profile-toggle-card">
                     <span class="profile-toggle-copy">
                       <span class="profile-toggle-title">StreamSuites public profile</span>
                       <span class="profile-toggle-help">
@@ -278,10 +278,20 @@
                       <span class="status-pill subtle" data-profile-streamsuites-status="true">
                         <span class="status-dot"></span>Checking
                       </span>
-                      <input type="checkbox" data-profile-field="true" data-profile-streamsuites-toggle="true" />
+                      <label class="switch-button" aria-label="StreamSuites public profile">
+                        <div class="switch-scale">
+                          <div class="switch-outer">
+                            <input type="checkbox" aria-label="StreamSuites public profile" data-profile-field="true" data-profile-streamsuites-toggle="true" />
+                            <div class="ss-switch-inner">
+                              <span class="ss-switch-toggle"></span>
+                              <span class="ss-switch-indicator"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </label>
                     </span>
-                  </label>
-                  <label class="profile-toggle-card">
+                  </div>
+                  <div class="profile-toggle-card">
                     <span class="profile-toggle-copy">
                       <span class="profile-toggle-title">FindMeHere listing</span>
                       <span class="profile-toggle-help">
@@ -293,9 +303,19 @@
                       <span class="status-pill subtle" data-profile-findme-status="true">
                         <span class="status-dot"></span>Checking
                       </span>
-                      <input type="checkbox" data-profile-field="true" data-profile-findme-toggle="true" />
+                      <label class="switch-button" aria-label="FindMeHere listing">
+                        <div class="switch-scale">
+                          <div class="switch-outer">
+                            <input type="checkbox" aria-label="FindMeHere listing" data-profile-field="true" data-profile-findme-toggle="true" />
+                            <div class="ss-switch-inner">
+                              <span class="ss-switch-toggle"></span>
+                              <span class="ss-switch-indicator"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </label>
                     </span>
-                  </label>
+                  </div>
                 </div>
                 <div class="profile-surface-meta">
                   <div class="profile-status-line">
@@ -708,17 +728,20 @@
                   </div>
                   <div class="account-field">
                     <span class="account-field-label">Image visibility</span>
-                    <label class="account-checkbox-row">
+                    <label class="account-checkbox-row ss-checkbox-wrapper">
                       <input type="checkbox" data-profile-field="true" data-findme-theme-show-cover="true" />
-                      <span>Show cover image on FindMeHere</span>
+                      <div class="ss-checkbox"></div>
+                      <span class="ss-checkbox-text">Show cover image on FindMeHere</span>
                     </label>
-                    <label class="account-checkbox-row">
+                    <label class="account-checkbox-row ss-checkbox-wrapper">
                       <input type="checkbox" data-profile-field="true" data-findme-theme-show-avatar="true" />
-                      <span>Show avatar on FindMeHere</span>
+                      <div class="ss-checkbox"></div>
+                      <span class="ss-checkbox-text">Show avatar on FindMeHere</span>
                     </label>
-                    <label class="account-checkbox-row">
+                    <label class="account-checkbox-row ss-checkbox-wrapper">
                       <input type="checkbox" data-profile-field="true" data-findme-theme-show-background="true" />
-                      <span>Show background image on FindMeHere</span>
+                      <div class="ss-checkbox"></div>
+                      <span class="ss-checkbox-text">Show background image on FindMeHere</span>
                     </label>
                   </div>
                 </div>

@@ -4,6 +4,33 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Checkbox + Toggle Control Standardization - 2026-03-28
+
+### Technical Notes
+
+- The shared glowing checkbox primitive in `css/components.css` now owns the intended smaller baseline directly, reducing the old shared checkbox geometry from `24px` to a `12px` visual box while preserving the same glow treatment, checked-state animation, disabled handling, and dark-theme readability.
+- Shared focus-visible handling was added to both the glowing checkbox primitive and the existing `switch-button` Admin12121 switch primitive so Creator controls now inherit the same keyboard-treatment contract instead of mixing native focus outlines with route-local switch styling.
+- Creator checkbox drift was removed from account image-visibility flags, notification mute settings, onboarding terms acceptance, and any other remaining native checkbox-only rows by moving them onto the shared `.ss-checkbox-wrapper` markup already used by the creator-management screens.
+- Creator toggle drift was removed from the account profile visibility switches, trigger enablement switches, and platform workspace `checks_enabled` control by replacing the repo-local switch patterns with the same shared `switch-button` structure already used for the intended Admin12121 toggle style.
+
+### Human-Readable Notes
+
+- Creator checkboxes now use the same smaller glowing checkbox style across the screens that previously fell back to plain browser checkboxes.
+- Account visibility switches, trigger enablement switches, and platform workspace switches now match the intended shared toggle appearance instead of each route drawing its own version.
+- Keyboard focus is more obvious on both checkbox and switch controls without changing the existing form behavior or saved data flow.
+
+### Files / Areas Touched
+
+- `css/components.css`
+- `css/creator-dashboard.css`
+- `views/account.html`
+- `views/notifications.html`
+- `js/notifications.js`
+- `js/platform-integration-detail.js`
+- `js/triggers.js`
+- `js/onboarding.js`
+- `BUMP_NOTES.md`
+
 ## Creator Account Entitlements List Alignment Fix - 2026-03-27
 
 ### Technical Notes

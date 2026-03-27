@@ -556,8 +556,18 @@
             </select>
           </label>
           <label class="platform-workspace-toggle">
-            <input type="checkbox" name="checks_enabled"${defaults.checks_enabled ? " checked" : ""} />
-            <span>Keep runtime checks enabled for this platform</span>
+            <span class="platform-workspace-toggle-copy">Keep runtime checks enabled for this platform</span>
+            <span class="switch-button">
+              <span class="switch-scale">
+                <span class="switch-outer">
+                  <input type="checkbox" aria-label="Keep runtime checks enabled for this platform" name="checks_enabled"${defaults.checks_enabled ? " checked" : ""} />
+                  <span class="ss-switch-inner">
+                    <span class="ss-switch-toggle"></span>
+                    <span class="ss-switch-indicator"></span>
+                  </span>
+                </span>
+              </span>
+            </span>
           </label>
           <label class="account-field platform-workspace-field-wide">
             <span class="account-field-label">Workspace note</span>

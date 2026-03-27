@@ -355,16 +355,20 @@
     link.textContent = "View full terms →";
 
     const label = document.createElement("label");
-    label.className = "ss-onboarding-checkbox";
+    label.className = "ss-onboarding-checkbox ss-checkbox-wrapper";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = Boolean(currentState?.accepted_terms);
 
+    const box = document.createElement("div");
+    box.className = "ss-checkbox";
+
     const span = document.createElement("span");
+    span.className = "ss-checkbox-text";
     span.textContent = "I accept the creator terms";
 
-    label.append(checkbox, span);
+    label.append(checkbox, box, span);
 
     const error = document.createElement("p");
     error.className = "ss-onboarding-error";

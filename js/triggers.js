@@ -174,8 +174,17 @@
           <div class="trigger-card-meta">
             <span class="status-pill subtle">${escapeHtml(item.trigger_type || "chat_command")}</span>
             <label class="trigger-toggle${disabled ? " is-disabled" : ""}">
-              <input type="checkbox" data-trigger-toggle="${escapeHtml(item.trigger_id)}" ${item.enabled ? "checked" : ""} ${disabled ? "disabled" : ""} />
-              <span class="trigger-switch"></span>
+              <span class="switch-button">
+                <span class="switch-scale">
+                  <span class="switch-outer">
+                    <input type="checkbox" aria-label="${escapeHtml(item.command_text)} toggle" data-trigger-toggle="${escapeHtml(item.trigger_id)}" ${item.enabled ? "checked" : ""} ${disabled ? "disabled" : ""} />
+                    <span class="ss-switch-inner">
+                      <span class="ss-switch-toggle"></span>
+                      <span class="ss-switch-indicator"></span>
+                    </span>
+                  </span>
+                </span>
+              </span>
               <span class="trigger-label">${disabled ? "Saving" : item.enabled ? "Enabled" : "Disabled"}</span>
             </label>
           </div>
