@@ -32,12 +32,15 @@
     ["GOLD", "GOLD"],
     ["GOLDTIER", "GOLD"],
     ["PRO", "PRO"],
-    ["PROTIER", "PRO"]
+    ["PROTIER", "PRO"],
+    ["DEVELOPER", "DEVELOPER"],
+    ["DEVELOPERTIER", "DEVELOPER"]
   ]);
   const TIER_ICON_SOURCES = new Map([
     ["CORE", "/assets/icons/tier-core.svg"],
     ["GOLD", "/assets/icons/tier-gold.svg"],
-    ["PRO", "/assets/icons/tier-pro.svg"]
+    ["PRO", "/assets/icons/tier-pro.svg"],
+    ["DEVELOPER", "/assets/icons/dev-green.svg"]
   ]);
   const BADGE_ICON_SOURCES = new Map([
     ["admin", "/assets/icons/tierbadge-admin.svg"],
@@ -48,7 +51,7 @@
     ["moderator", "/assets/icons/modgavel-blue.svg"],
     ["developer", "/assets/icons/dev-green.svg"]
   ]);
-  const TIER_ID_OPTIONS = new Set(["core", "gold", "pro"]);
+  const TIER_ID_OPTIONS = new Set(["core", "gold", "pro", "developer"]);
   const PUBLIC_PATHS = new Set([
     "/login",
     "/login/",
@@ -619,15 +622,7 @@
       normalized = [{ key: tierKey, kind: "tier", label: tierKey.toUpperCase(), title: `${tierKey.toUpperCase()} Creator` }];
     }
 
-    const hasAdminBadge = normalized.some((badge) => badge?.key === "admin");
-    const hasDeveloperBadge = normalized.some((badge) => badge?.key === "developer");
-    return normalized.filter(
-      (badge) =>
-        !(
-          (hasAdminBadge && ["core", "gold", "pro"].includes(badge?.key)) ||
-          (hasDeveloperBadge && badge?.key === "pro")
-        )
-    );
+    return normalized;
   }
 
   function normalizeCompactWidgetBadges(value, tierFallback = "core", roleFallback = "") {

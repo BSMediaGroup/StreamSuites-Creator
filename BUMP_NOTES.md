@@ -495,3 +495,26 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 - Rumble secret-state presentation is now clearer and safer-looking, but any true credential verification, audit trail, or rotation workflow still depends on later backend expansion.
 - The new readiness hub and platform summaries are only as truthful as the currently deployed runtime/Auth serializer payloads; stale backend deployments will still degrade the UX into fallback messaging.
 - Pending entries for `0.4.8-alpha` go here.
+
+## Task 3P - Developer Tier + Badge Surface Matrix - 2026-03-28
+
+### Technical Notes
+
+- Creator auth/session normalization now accepts the stored `developer` tier and stops suppressing backend-owned badge combinations locally.
+- Account Settings now includes a creator-facing badge governance matrix that reads authoritative effective visibility, disables locked admin/global cells, and saves creator preferences back through `/api/public/profile/me`.
+- The account profile normalizer now retains badge arrays and badge-state data so previews and governance controls stay aligned to runtime truth.
+
+### Human-Readable Notes
+
+- Creator users can now control their own badge visibility by surface from Account Settings, while admin/global hidden cells remain visibly locked.
+- Developer accounts now display as Developer internally without creating a fake self-serve upgrade path for that tier.
+
+### Files / Areas Touched
+
+- `js/auth.js`
+- `js/account-settings.js`
+- `views/account.html`
+
+### Risks / Follow-Ups
+
+- The creator badge matrix currently writes through the existing profile endpoint additively; if that self-serve contract is split later, this section should move with it rather than reintroducing local badge state.

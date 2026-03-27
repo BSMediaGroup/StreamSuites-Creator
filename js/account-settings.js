@@ -83,6 +83,7 @@
     "account-section-security": "Security",
     "account-section-integrations": "Integrations",
     "account-section-billing": "Billing",
+    "account-section-badges": "Badges",
   });
   const RESERVED_PUBLIC_SLUGS = new Set([
     "u",
@@ -524,6 +525,10 @@
       streamsuitesPreviewTarget: document.querySelector("[data-profile-preview-target=\"streamsuites\"]"),
       tooltipPreviewTarget: document.querySelector("[data-profile-preview-target=\"tooltip\"]"),
       findmePreviewTarget: document.querySelector("[data-profile-preview-target=\"findmehere\"]"),
+      badgeGovernanceStatusPill: document.querySelector("[data-badge-governance-status-pill]"),
+      badgeGovernanceSummary: document.querySelector("[data-badge-governance-summary]"),
+      badgeGovernanceMatrix: document.querySelector("[data-badge-governance-matrix]"),
+      badgeGovernanceSaveButtons: Array.from(document.querySelectorAll("[data-badge-governance-save]")),
     };
   }
 
@@ -1557,6 +1562,9 @@
       bio: coerceText(profile?.bio),
       social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
       custom_links: normalizeCustomLinks(profile?.custom_links || profile?.customLinks),
+      badges: Array.isArray(profile?.badges) ? profile.badges : [],
+      findmehere_badges: Array.isArray(profile?.findmehere_badges || profile?.findmehereBadges) ? (profile?.findmehere_badges || profile?.findmehereBadges) : [],
+      badge_state: profile?.badge_state && typeof profile.badge_state === "object" ? profile.badge_state : {},
       paymentSummary: normalizePaymentSummary(profile?.payment_summary || profile?.paymentSummary),
     };
   }
@@ -1580,6 +1588,11 @@
       }
     });
     els.copyButtons.forEach((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = busy || !state.profile;
+      }
+    });
+    els.badgeGovernanceSaveButtons.forEach((button) => {
       if (button instanceof HTMLButtonElement) {
         button.disabled = busy || !state.profile;
       }
@@ -1900,6 +1913,152 @@
         : "Recurring renewal information is shown only from the backend-owned summary contract.";
     }
     syncAccountShellMetrics();
+  }
+
+  function getBadgeSurfaceCatalog(source) {
+    const surfaceCatalog = source?.surface_catalog;
+    if (Array.isArray(surfaceCatalog) && surfaceCatalog.length) {
+      return surfaceCatalog
+        .map((entry) => ({
+          key: coerceText(entry?.key),
+          label: coerceText(entry?.label || entry?.key)
+        }))
+        .filter((entry) => entry.key);
+    }
+    return [
+      { key: "streamsuites_profile", label: "StreamSuites Profile" },
+      { key: "findmehere_profile", label: "FindMeHere Profile" },
+      { key: "profile_card", label: "Profile Cards" },
+      { key: "user_widget", label: "User Widget" },
+      { key: "creator_surface", label: "Creator Surface" },
+      { key: "admin_surface", label: "Admin Surface" },
+      { key: "public_surface", label: "Public Surface" },
+      { key: "directory", label: "Directory" },
+    ];
+  }
+
+  function renderBadgeGovernanceSection() {
+    const els = getProfileElements();
+    if (!(els.badgeGovernanceMatrix instanceof HTMLElement)) return;
+    const badgeState = state.profile?.badge_state && typeof state.profile.badge_state === "object" ? state.profile.badge_state : {};
+    const applicable = Array.isArray(badgeState.applicable) ? badgeState.applicable : [];
+    const surfaceCatalog = getBadgeSurfaceCatalog(badgeState);
+    const governedKeys = applicable.map((item) => coerceText(item?.key || item?.value).toLowerCase()).filter(Boolean);
+    if (els.badgeGovernanceStatusPill) {
+      setStatusPill(
+        els.badgeGovernanceStatusPill,
+        governedKeys.length ? "Policy loaded" : "No badges",
+        governedKeys.length ? "success" : "subtle"
+      );
+    }
+    if (els.badgeGovernanceSummary instanceof HTMLElement) {
+      els.badgeGovernanceSummary.textContent = governedKeys.length
+        ? "Editable checkboxes control your own per-surface preference. Locked cells are disabled by admin or global policy."
+        : "No account badges are currently governed for this profile.";
+    }
+    if (!governedKeys.length) {
+      els.badgeGovernanceMatrix.innerHTML = '<p class="account-note">No governed badges are currently available for this account.</p>';
+      return;
+    }
+    const rows = applicable
+      .map((row) => {
+        const badgeKey = coerceText(row?.key || row?.value).toLowerCase();
+        const surfaces = row?.surfaces && typeof row.surfaces === "object" ? row.surfaces : {};
+        const cells = surfaceCatalog.map((surface) => {
+          const cell = surfaces[surface.key] && typeof surfaces[surface.key] === "object" ? surfaces[surface.key] : null;
+          if (!cell || cell.supported === false) {
+            return '<td class="account-note" style="text-align:center;padding:8px 6px;">—</td>';
+          }
+          const locked = cell.locked === true;
+          const checked = cell.visible === true;
+          const note = locked
+            ? "Locked by admin/global policy"
+            : checked
+            ? "Visible"
+            : "Hidden by your preference";
+          return `
+            <td style="padding:8px 6px;text-align:center;vertical-align:top;${locked ? "background:rgba(255,255,255,0.04);" : ""}">
+              <label style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <input
+                  type="checkbox"
+                  data-badge-preference-key="${escapeHtml(badgeKey)}"
+                  data-badge-preference-surface="${escapeHtml(surface.key)}"
+                  ${checked ? "checked" : ""}
+                  ${locked ? "disabled" : ""}
+                />
+                <span class="account-note" style="margin:0;">${escapeHtml(note)}</span>
+              </label>
+            </td>
+          `;
+        }).join("");
+        return `
+          <tr>
+            <th scope="row" style="text-align:left;padding:8px 10px;white-space:nowrap;">${escapeHtml(formatBadgeLabel(badgeKey))}</th>
+            ${cells}
+          </tr>
+        `;
+      })
+      .join("");
+    els.badgeGovernanceMatrix.innerHTML = `
+      <div style="overflow:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:8px 10px;">Badge</th>
+              ${surfaceCatalog.map((surface) => `<th style="padding:8px 6px;white-space:nowrap;">${escapeHtml(surface.label)}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  async function saveBadgeGovernanceSection() {
+    if (!state.profile || state.savingProfile) return;
+    const payload = { badge_preferences: {} };
+    document.querySelectorAll("[data-badge-preference-key][data-badge-preference-surface]").forEach((input) => {
+      if (!(input instanceof HTMLInputElement) || input.disabled) return;
+      const key = coerceText(input.getAttribute("data-badge-preference-key")).toLowerCase();
+      const surface = coerceText(input.getAttribute("data-badge-preference-surface")).toLowerCase();
+      if (!key || !surface) return;
+      if (!payload.badge_preferences[key] || typeof payload.badge_preferences[key] !== "object") {
+        payload.badge_preferences[key] = {};
+      }
+      payload.badge_preferences[key][surface] = input.checked;
+    });
+    state.savingProfile = true;
+    setProfileBusy(true);
+    setMessage("[data-profile-save-status=\"true\"]", "Saving badge preferences...", "neutral");
+    try {
+      const response = await requestJson(PUBLIC_PROFILE_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      applyProfile(response?.profile || response);
+      if (window.StreamSuitesAuth?.loadSession) {
+        try {
+          await window.StreamSuitesAuth.loadSession({ force: true });
+          await window.StreamSuitesAuth.refreshSummary?.();
+        } catch (_sessionError) {
+          // Keep the saved profile state even if session refresh lags.
+        }
+      }
+      setMessage("[data-profile-save-status=\"true\"]", "");
+      showToast("Badge preferences saved.", "success", {
+        key: "creator-badge-governance-save",
+        title: "Saved",
+      });
+    } catch (err) {
+      showToast(err?.message || "Unable to save badge preferences.", "danger", {
+        key: "creator-badge-governance-save",
+        title: "Save failed",
+      });
+      setMessage("[data-profile-save-status=\"true\"]", err?.message || "Unable to save badge preferences.", "warning");
+    } finally {
+      state.savingProfile = false;
+      setProfileBusy(state.loadingProfile);
+    }
   }
 
   function getStagedUpload(kind) {
@@ -2918,6 +3077,7 @@
     renderPreviewSurface();
     renderIntegrationHub();
     renderBillingSection();
+    renderBadgeGovernanceSection();
     setStatusPill(els.loadPill, "Profile loaded", "success");
     setMessage("[data-profile-save-status=\"true\"]", "Authoritative profile settings are ready to edit.", "neutral");
   }
@@ -3451,6 +3611,12 @@
         copyShareUrl(button.getAttribute("data-profile-copy-url") || "streamsuites");
       });
     });
+    els.badgeGovernanceSaveButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      if (button.dataset.accountSettingsWired === "true") return;
+      button.dataset.accountSettingsWired = "true";
+      button.addEventListener("click", saveBadgeGovernanceSection);
+    });
     els.previewModeButtons.forEach((button) => {
       if (!(button instanceof HTMLButtonElement)) return;
       button.addEventListener("click", () => {
@@ -3520,6 +3686,7 @@
     }
 
     renderBillingSection();
+    renderBadgeGovernanceSection();
     await window.CreatorModeratorSurface?.init?.();
   }
 
