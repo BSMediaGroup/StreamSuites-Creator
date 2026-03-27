@@ -72,16 +72,16 @@
   const CREATOR_VERSION_ENDPOINT = "https://admin.streamsuites.app/runtime/exports/version.json";
 
   const NAV_ICON_BY_SEGMENT = Object.freeze({
-    overview: "/assets/icons/ui/dashboard.svg",
+    overview: "/assets/icons/ui/home.svg",
     statistics: "/assets/icons/ui/statgraph.svg",
     index: "/assets/icons/ui/dashboard.svg",
     account: "/assets/icons/ui/profile.svg",
     integrations: "/assets/icons/ui/integrations.svg",
     notifications: "/assets/icons/ui/bell.svg",
-    plans: "/assets/icons/ui/checkmark.svg",
+    plans: "/assets/icons/ui/verifiedbadge.svg",
     triggers: "/assets/icons/ui/tune.svg",
     settings: "/assets/icons/ui/cog.svg",
-    clips: "/assets/icons/ui/videostack.svg",
+    clips: "/assets/icons/ui/clipcards.svg",
     polls: "/assets/icons/ui/vote.svg",
     overlays: "/assets/icons/ui/overlay1.svg",
     livechat: "/assets/icons/ui/bot.svg",
