@@ -4,6 +4,26 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Self-Serve Identity Save + Debug Proxy Repair - 2026-03-28
+
+### Technical Notes
+
+- The account settings save flow in `js/account-settings.js` now sends `display_name` through the same authoritative runtime `POST /api/public/profile/me` save used for the rest of the profile payload, removes the staged-only identity warning, and reloads the creator auth session after save so shell-level name state reflects the persisted account identity immediately.
+- The Creator auth proxy allowlist in `functions/auth/[[path]].js` now forwards `/auth/creator/debug-mode`, fixing the previous same-origin proxy `404 Not Found` when the dropdown tried to toggle debug mode through the Pages worker.
+- Creator debug visibility in `js/auth.js` is now gated by the backend-reported `creatorDebug.adminCapable` or `creatorDebug.developerCapable` flags in addition to the runtime eligibility bit, keeping the dropdown control tied to the authoritative operator capability contract.
+
+### Human-Readable Notes
+
+- Creator account settings now save your display name for real instead of leaving it as a staged-only field.
+- The debug toggle no longer dies on a missing route, and the dropdown button is now limited to admin/developer-capable sessions.
+
+### Files / Areas Touched
+
+- `js/account-settings.js`
+- `js/auth.js`
+- `functions/auth/[[path]].js`
+- `BUMP_NOTES.md`
+
 ## Creator Checkbox + Toggle Control Standardization - 2026-03-28
 
 ### Technical Notes

@@ -1898,7 +1898,13 @@
   }
 
   function isCreatorDebugModeEligible(session = sessionState.value) {
-    return session?.creatorDebug?.eligible === true;
+    return (
+      session?.creatorDebug?.eligible === true &&
+      (
+        session?.creatorDebug?.adminCapable === true ||
+        session?.creatorDebug?.developerCapable === true
+      )
+    );
   }
 
   function isCreatorDebugModeActive(session = sessionState.value) {

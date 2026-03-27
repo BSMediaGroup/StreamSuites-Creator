@@ -3,6 +3,7 @@ import { proxyAuthApiRequest } from "../_shared/auth-api-proxy.js";
 const ALLOWED_AUTH_PATHS = [
   "/auth/access-state",
   "/auth/debug/unlock",
+  "/auth/creator/debug-mode",
   "/auth/session",
   "/auth/logout",
   "/auth/login/password",

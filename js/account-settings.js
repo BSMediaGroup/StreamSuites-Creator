@@ -2739,9 +2739,9 @@
 
     if (els.displayNameFeedback) {
       els.displayNameFeedback.textContent = dirty
-        ? "Display name edits are staged here, but the current creator API does not expose a self-serve write route yet."
+        ? "Display name changes save back to your authoritative account identity."
         : "Display name loads from the authoritative account identity.";
-      els.displayNameFeedback.dataset.tone = dirty ? "warning" : "neutral";
+      els.displayNameFeedback.dataset.tone = dirty ? "success" : "neutral";
     }
   }
 
@@ -2983,11 +2983,11 @@
     const hasStagedMedia = hasPendingMediaUploads();
     const identityDirty = isIdentityProfileDirty();
 
-    if (!supportedDirty && !hasStagedMedia) {
+    if (!supportedDirty && !hasStagedMedia && !identityDirty) {
       if (slugChanged && identityDirty) {
         setMessage(
           "[data-profile-save-status=\"true\"]",
-          `Supported profile fields are unchanged. Slug and display name edits are not persisted because the current creator self-serve backend only exposes public profile settings writes here.`,
+          `Supported profile fields are unchanged. Display name edits now save here, but the canonical slug remains "${savedSlug || "unset"}" because slug writes are not exposed on this route.`,
           "warning"
         );
       } else if (slugChanged) {
@@ -3036,6 +3036,7 @@
       }
 
       const payload = {
+        display_name: draft.display_name,
         avatar_url: coerceText(workingProfile?.avatar_url || draft.avatar_url),
         streamsuites_profile_enabled: draft.streamsuites_profile_enabled,
         findmehere_enabled: draft.findmehere_enabled,
@@ -3051,21 +3052,26 @@
         body: JSON.stringify(payload),
       });
       applyProfile(response?.profile || response);
-      if (slugChanged || identityDirty) {
+      if (window.StreamSuitesAuth?.loadSession) {
+        try {
+          await window.StreamSuitesAuth.loadSession({ force: true });
+          await window.StreamSuitesAuth.refreshSummary?.();
+        } catch (_sessionError) {
+          // Keep the saved profile visible even if the summary refresh lags behind.
+        }
+      }
+      if (slugChanged) {
         const limitations = [];
         if (slugChanged) {
           limitations.push(`canonical slug remains "${state.profile.public_slug || "unset"}"`);
         }
-        if (identityDirty) {
-          limitations.push("display name remains on its saved authoritative account identity value");
-        }
         setMessage(
           "[data-profile-save-status=\"true\"]",
-          `Saved supported profile settings. ${limitations.join(", ")} because those write routes are not exposed by the current creator API.`,
+          `Saved authoritative profile settings. ${limitations.join(", ")} because slug writes are not exposed by the current creator API.`,
           "warning"
         );
         showToast(
-          `Saved supported profile settings. ${limitations.join(", ")} because those write routes are not exposed by the current creator API.`,
+          `Saved authoritative profile settings. ${limitations.join(", ")} because slug writes are not exposed by the current creator API.`,
           "warning",
           {
             key: "creator-profile-save",
@@ -3075,7 +3081,7 @@
         );
       } else {
         setMessage("[data-profile-save-status=\"true\"]", "");
-        showToast("Authoritative public profile settings saved.", "success", {
+        showToast("Authoritative profile settings saved.", "success", {
           key: "creator-profile-save",
           title: "Saved"
         });
