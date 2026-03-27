@@ -1655,6 +1655,8 @@ h3 {
 
 .account-section-card {
   gap: 0;
+  min-height: 0;
+  align-self: start;
 }
 
 .account-section-card > .card-top {
@@ -1664,6 +1666,7 @@ h3 {
 
 .account-section-body {
   overflow: hidden;
+  min-height: 0;
   max-height: none;
   opacity: 1;
   transition:
@@ -1705,20 +1708,97 @@ h3 {
 .account-section-toggle-icon {
   width: 12px;
   height: 12px;
-  background-color: currentColor;
-  -webkit-mask-image: url("/assets/icons/ui/sidebaropen.svg");
-  mask-image: url("/assets/icons/ui/sidebaropen.svg");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  transition: transform 0.18s ease;
+  background: center / contain no-repeat url("/assets/icons/ui/visiblefilled.svg");
 }
 
 .account-section-card[data-expanded="false"] .account-section-toggle-icon {
-  transform: rotate(-90deg);
+  background-image: url("/assets/icons/ui/hidden.svg");
+}
+
+.account-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.account-section-title-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  object-fit: contain;
+}
+
+.account-list-title-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.account-platform-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  object-fit: contain;
+}
+
+.account-inline-subsection,
+.account-advanced-callout {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.account-inline-subsection-top,
+.account-advanced-callout-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.account-inline-subsection-top h4,
+.account-advanced-callout-top h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.account-inline-subsection-top p,
+.account-advanced-callout-top p {
+  margin: 0;
+}
+
+.account-inline-subsection-actions,
+.account-advanced-callout-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.account-advanced-callout {
+  border-color: rgba(255, 193, 87, 0.3);
+  background:
+    linear-gradient(160deg, rgba(69, 44, 8, 0.28), rgba(18, 16, 10, 0.72)),
+    rgba(255, 255, 255, 0.02);
+}
+
+.account-advanced-eyebrow {
+  display: inline-flex;
+  margin-bottom: 8px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #ffd989;
+  font-family: var(--creator-heading);
+}
+
+.account-advanced-callout-note {
+  color: rgba(255, 224, 168, 0.84);
 }
 
 .account-profile-card,
@@ -3540,6 +3620,58 @@ h3 {
   margin-bottom: 18px;
 }
 
+.platform-page-header {
+  align-items: flex-start;
+}
+
+.platform-page-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.platform-page-title-logo-wrap {
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(20, 27, 39, 0.94), rgba(10, 14, 22, 0.88));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+}
+
+.platform-page-title-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.platform-page-topper {
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  align-items: flex-start;
+}
+
+.platform-page-topper-copy {
+  display: grid;
+  gap: 6px;
+  max-width: 860px;
+}
+
+.platform-page-topper h3 {
+  margin-bottom: 0;
+  font-size: 18px;
+}
+
+.platform-page-topper p {
+  max-width: none;
+}
+
 .platform-security-panel {
   display: grid;
   gap: 10px;
@@ -4869,7 +5001,9 @@ h3 {
 
   .account-section-card > .card-top,
   .moderator-assignment-top,
-  .moderator-search-row {
+  .moderator-search-row,
+  .account-inline-subsection-top,
+  .account-advanced-callout-top {
     flex-direction: column;
     align-items: stretch;
   }
@@ -4883,6 +5017,26 @@ h3 {
   .account-billing-hero,
   .account-billing-panel {
     padding: 16px;
+  }
+
+  .account-inline-subsection,
+  .account-advanced-callout {
+    padding: 16px;
+  }
+
+  .platform-page-title {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .platform-page-title-logo-wrap {
+    width: 40px;
+    height: 40px;
+    padding: 7px;
+  }
+
+  .platform-page-topper {
+    padding: 14px 16px;
   }
 }
 

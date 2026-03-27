@@ -4,6 +4,34 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Account Section Merge + Platform Topper Polish - 2026-03-28
+
+### Technical Notes
+
+- `views/account.html` now merges the former standalone `Custom links` editor into `Public content & share links`, folds the old `Advanced FindMeHere styling` controls into `FindMeHere branding & theme`, adds the requested section-title SVG prefixes, adds repo-local platform-icon prefixes for the login and integration rows, and renames the X sign-in label to `Twitter(X)`.
+- `css/creator-dashboard.css` now gives account section cards their own zero-stretch collapse baseline, swaps the section toggle art over to `visiblefilled.svg` and `hidden.svg`, adds the shared account title/icon row styles, introduces nested subsection and advanced-warning treatments, and defines the new slim platform-page title/topper layout with the logo moved inline before the page title.
+- `js/account-settings.js` now drops the removed account shell tab labels for the former standalone `Links` and `Advanced` cards so the sticky tab row follows the live merged card structure.
+- The individual platform views for `discord`, `rumble`, `youtube`, `twitch`, `kick`, and `pilled` now move the platform logo into the page title row and retitle the old `Platform hero` summary card as `Readiness summary`, reducing duplicate stacked header chrome without removing readiness pills or downstream management content.
+
+### Human-Readable Notes
+
+- Account settings is cleaner to scan: related link/theme controls now live together, the requested header and platform icons are visible, and the advanced FindMeHere CSS area is clearly marked for advanced users only with a docs link.
+- Platform pages now use a slimmer topper with the platform logo inline before the page title instead of spending a full hero block on the logo alone.
+- Account section collapse behavior now targets the section card container cleanly on small screens instead of leaving the old stretched shell behind the collapsed body.
+
+### Files / Areas Touched
+
+- `views/account.html`
+- `views/platforms/discord.html`
+- `views/platforms/rumble.html`
+- `views/platforms/youtube.html`
+- `views/platforms/twitch.html`
+- `views/platforms/kick.html`
+- `views/platforms/pilled.html`
+- `css/creator-dashboard.css`
+- `js/account-settings.js`
+- `BUMP_NOTES.md`
+
 ## Creator Self-Serve Identity Save + Debug Proxy Repair - 2026-03-28
 
 ### Technical Notes

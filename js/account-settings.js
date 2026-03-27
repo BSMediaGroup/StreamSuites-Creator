@@ -77,8 +77,6 @@
     "account-section-public": "Public",
     "account-section-media": "Media",
     "account-section-theme": "Theme",
-    "account-section-custom-links": "Links",
-    "account-section-advanced": "Advanced",
     "account-section-preview": "Preview",
     "account-section-security": "Security",
     "account-section-integrations": "Integrations",

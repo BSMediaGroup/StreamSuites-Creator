@@ -202,7 +202,10 @@
             <article class="card account-profile-card" id="account-section-core">
               <div class="card-top">
                 <div>
-                  <h3>Core profile content</h3>
+                  <h3 class="account-section-title">
+                    <img class="account-section-title-icon" src="/assets/icons/ui/idcardfilled.svg" alt="" aria-hidden="true" />
+                    <span>Core profile content</span>
+                  </h3>
                   <p>Canonical identity, audience-facing visibility, and the authoritative public profile basics.</p>
                 </div>
                 <span class="status-pill subtle" data-profile-load-pill="true">
@@ -341,7 +344,10 @@
             <article class="card account-profile-content-card" id="account-section-public">
               <div class="card-top">
                 <div>
-                  <h3>Public content &amp; share links</h3>
+                  <h3 class="account-section-title">
+                    <img class="account-section-title-icon" src="/assets/icons/ui/addlink.svg" alt="" aria-hidden="true" />
+                    <span>Public content &amp; share links</span>
+                  </h3>
                   <p>Bio, socials, and truthful saved URLs for each public surface.</p>
                 </div>
                 <span class="status-pill subtle">
@@ -428,6 +434,27 @@
                 <p class="account-note">
                   Share previews always reflect the current saved canonical slug and backend visibility state.
                 </p>
+                <section class="account-inline-subsection account-custom-links-inline">
+                  <div class="account-inline-subsection-top">
+                    <div>
+                      <h4>Custom links</h4>
+                      <p>Creator-defined destination buttons with optional custom icons for FindMeHere.</p>
+                    </div>
+                    <div class="account-inline-subsection-actions">
+                      <span class="status-pill subtle">
+                        <span class="status-dot"></span>FindMeHere links
+                      </span>
+                      <button class="creator-button secondary" type="button" data-custom-link-add="true">Add custom link</button>
+                    </div>
+                  </div>
+                  <p class="account-note" data-custom-links-summary="true">
+                    Add focused custom destinations here. These render alongside your existing public links on FindMeHere.
+                  </p>
+                  <div class="custom-link-list" data-custom-links-list="true"></div>
+                  <span class="account-field-note">
+                    Custom icon entries accept SVG, PNG, WEBP, GIF, JPG, or JPEG. When no valid icon is provided, FindMeHere falls back to the portal icon.
+                  </span>
+                </section>
               </div>
               <div class="profile-action-row">
                 <button class="creator-button primary" type="button" data-profile-save="true">Save public content</button>
@@ -438,7 +465,10 @@
             <article class="card account-profile-media-card" id="account-section-media">
               <div class="card-top">
                 <div>
-                  <h3>Media assets</h3>
+                  <h3 class="account-section-title">
+                    <img class="account-section-title-icon" src="/assets/icons/ui/photostack.svg" alt="" aria-hidden="true" />
+                    <span>Media assets</span>
+                  </h3>
                   <p>Separate upload/save flows for avatar, cover, background, and custom logo. Manual URL or saved media paths stay secondary.</p>
                 </div>
                 <span class="status-pill subtle">
@@ -630,7 +660,10 @@
             <article class="card account-findme-branding-card" id="account-section-theme">
               <div class="card-top">
                 <div>
-                  <h3>FindMeHere branding &amp; theme</h3>
+                  <h3 class="account-section-title">
+                    <img class="account-section-title-icon" src="/assets/icons/ui/findmehereicon.svg" alt="" aria-hidden="true" />
+                    <span>FindMeHere branding &amp; theme</span>
+                  </h3>
                   <p>Header branding, colors, button treatment, font/layout presets, and image visibility toggles.</p>
                 </div>
                 <span class="status-pill subtle">
@@ -745,6 +778,46 @@
                     </label>
                   </div>
                 </div>
+                <section class="account-advanced-callout">
+                  <div class="account-advanced-callout-top">
+                    <div>
+                      <span class="account-advanced-eyebrow">Advanced users only</span>
+                      <h4>Advanced FindMeHere styling</h4>
+                      <p>
+                        Custom CSS can override the live page layout. Only use this if you are comfortable
+                        debugging FindMeHere-specific presentation issues yourself.
+                      </p>
+                    </div>
+                    <div class="account-advanced-callout-actions">
+                      <span class="status-pill warning">
+                        <span class="status-dot"></span>Advanced CSS
+                      </span>
+                      <a
+                        class="creator-button secondary"
+                        href="https://docs.streamsuites.app/docs/find-me-here/advanced-css"
+                        target="_blank"
+                        rel="noreferrer"
+                      >Open CSS guide</a>
+                    </div>
+                  </div>
+                  <p class="account-note account-advanced-callout-note">
+                    Save only scoped FindMeHere overrides here. Unsupported or unsafe rules may be ignored by the public renderer.
+                  </p>
+                  <div class="account-field">
+                    <span class="account-field-label">Advanced custom CSS</span>
+                    <textarea
+                      class="account-field-input account-field-textarea"
+                      rows="7"
+                      maxlength="4000"
+                      placeholder="/* Advanced FindMeHere-only CSS */"
+                      data-profile-field="true"
+                      data-findme-theme-custom-css="true"
+                    ></textarea>
+                    <span class="account-field-note">
+                      Reference the advanced CSS guide before shipping overrides that materially change layout, spacing, or readability.
+                    </span>
+                  </div>
+                </section>
               </div>
               <div class="profile-action-row">
                 <button class="creator-button primary" type="button" data-profile-save="true">Save FindMeHere theme</button>
@@ -752,70 +825,13 @@
               </div>
             </article>
 
-            <article class="card account-custom-links-card" id="account-section-custom-links">
-              <div class="card-top">
-                <div>
-                  <h3>Custom links</h3>
-                  <p>Creator-defined destination buttons with optional custom icons for FindMeHere.</p>
-                </div>
-                <span class="status-pill subtle">
-                  <span class="status-dot"></span>FindMeHere links
-                </span>
-              </div>
-              <div class="account-section-stack">
-                <div class="custom-link-editor-header">
-                  <p class="account-note" data-custom-links-summary="true">
-                    Add focused custom destinations here. These render alongside your existing public links on FindMeHere.
-                  </p>
-                  <button class="creator-button secondary" type="button" data-custom-link-add="true">Add custom link</button>
-                </div>
-                <div class="custom-link-list" data-custom-links-list="true"></div>
-                <span class="account-field-note">
-                  Custom icon entries accept SVG, PNG, WEBP, GIF, JPG, or JPEG. When no valid icon is provided, FindMeHere falls back to the portal icon.
-                </span>
-              </div>
-              <div class="profile-action-row">
-                <button class="creator-button primary" type="button" data-profile-save="true">Save custom links</button>
-                <button class="creator-button danger" type="button" data-profile-reset="true">Reset</button>
-              </div>
-            </article>
-
-            <article class="card account-findme-advanced-card" id="account-section-advanced">
-              <div class="card-top">
-                <div>
-                  <h3>Advanced FindMeHere styling</h3>
-                  <p>Optional advanced CSS for experienced users. Keep this scoped and concise.</p>
-                </div>
-                <span class="status-pill subtle">
-                  <span class="status-dot"></span>Advanced
-                </span>
-              </div>
-              <div class="account-section-stack">
-                <div class="account-field">
-                  <span class="account-field-label">Advanced custom CSS</span>
-                  <textarea
-                    class="account-field-input account-field-textarea"
-                    rows="7"
-                    maxlength="4000"
-                    placeholder="/* Advanced FindMeHere-only CSS */"
-                    data-profile-field="true"
-                    data-findme-theme-custom-css="true"
-                  ></textarea>
-                  <span class="account-field-note">
-                    Stored as raw FindMeHere-scoped CSS text. Unsupported or unsafe rules may be ignored by the public renderer.
-                  </span>
-                </div>
-              </div>
-              <div class="profile-action-row">
-                <button class="creator-button primary" type="button" data-profile-save="true">Save advanced styling</button>
-                <button class="creator-button danger" type="button" data-profile-reset="true">Reset</button>
-              </div>
-            </article>
-
             <article class="card account-preview-hub-card" id="account-section-preview">
               <div class="card-top">
                 <div>
-                  <h3>Profile preview</h3>
+                  <h3 class="account-section-title">
+                    <img class="account-section-title-icon" src="/assets/icons/ui/preview.svg" alt="" aria-hidden="true" />
+                    <span>Profile preview</span>
+                  </h3>
                   <p>Dedicated full-width preview with switching between the real StreamSuites profile, tooltip hovercard, and FindMeHere page structures.</p>
                 </div>
                 <span class="status-pill subtle">
@@ -843,7 +859,10 @@
             <article class="card account-security-card" id="account-section-security">
               <div class="card-top">
                 <div>
-                  <h3>Login &amp; Security</h3>
+                  <h3 class="account-section-title">
+                    <img class="account-section-title-icon" src="/assets/icons/ui/key.svg" alt="" aria-hidden="true" />
+                    <span>Login &amp; security</span>
+                  </h3>
                   <p>Supported sign-in methods and identity flows for your StreamSuites account.</p>
                 </div>
                 <span class="status-pill subtle">
@@ -888,7 +907,10 @@
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
-                    <span class="account-list-title">Discord</span>
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/discord.svg" alt="" aria-hidden="true" />
+                      <span>Discord</span>
+                    </span>
                     <span class="account-list-note" data-account-provider-note="discord"></span>
                   </div>
                   <span class="status-pill subtle" data-account-provider-status="discord">
@@ -901,7 +923,10 @@
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
-                    <span class="account-list-title">Google</span>
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/google.svg" alt="" aria-hidden="true" />
+                      <span>Google</span>
+                    </span>
                     <span class="account-list-note" data-account-provider-note="google"></span>
                   </div>
                   <span class="status-pill subtle" data-account-provider-status="google">
@@ -914,7 +939,10 @@
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
-                    <span class="account-list-title">GitHub</span>
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/github.svg" alt="" aria-hidden="true" />
+                      <span>GitHub</span>
+                    </span>
                     <span class="account-list-note" data-account-provider-note="github"></span>
                   </div>
                   <span class="status-pill subtle" data-account-provider-status="github">
@@ -927,7 +955,10 @@
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
-                    <span class="account-list-title">X</span>
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/twitter.svg" alt="" aria-hidden="true" />
+                      <span>Twitter(X)</span>
+                    </span>
                     <span class="account-list-note" data-account-provider-note="x"></span>
                   </div>
                   <span class="status-pill subtle" data-account-provider-status="x">
@@ -940,7 +971,10 @@
                 </li>
                 <li class="account-list-item">
                   <div class="account-list-meta">
-                    <span class="account-list-title">Twitch</span>
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/twitch.svg" alt="" aria-hidden="true" />
+                      <span>Twitch</span>
+                    </span>
                   </div>
                   <span class="status-pill subtle" data-account-provider-status="twitch">
                     <span class="status-dot"></span>Not connected
@@ -957,7 +991,10 @@
             <article class="card account-integration-hub" id="account-section-integrations">
               <div class="card-top">
                 <div>
-                  <h3>Creator integration snapshot</h3>
+                  <h3 class="account-section-title">
+                    <img class="account-section-title-icon" src="/assets/icons/ui/integrations.svg" alt="" aria-hidden="true" />
+                    <span>Creator integration snapshot</span>
+                  </h3>
                   <p>Compact account-page summary only. Use the full integrations hub for platform management and rollout planning.</p>
                 </div>
                 <div class="platform-actions">
@@ -1040,7 +1077,10 @@
                 <ul class="account-list">
                 <li class="account-list-item" data-integration-row="rumble">
                   <div class="account-list-meta">
-                    <span class="account-list-title">Rumble</span>
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/rumble.svg" alt="" aria-hidden="true" />
+                      <span>Rumble</span>
+                    </span>
                     <span class="account-list-note" data-integration-note="rumble">Managed on the Rumble platform page</span>
                   </div>
                   <span class="status-pill subtle" data-integration-status="rumble"><span class="status-dot"></span>Loading</span>
@@ -1051,7 +1091,10 @@
                 </li>
                 <li class="account-list-item" data-integration-row="youtube">
                   <div class="account-list-meta">
-                    <span class="account-list-title">YouTube</span>
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/youtube.svg" alt="" aria-hidden="true" />
+                      <span>YouTube</span>
+                    </span>
                     <span class="account-list-note" data-integration-note="youtube">Managed on the YouTube platform page</span>
                   </div>
                   <span class="status-pill subtle" data-integration-status="youtube"><span class="status-dot"></span>Loading</span>
@@ -1060,20 +1103,12 @@
                     <a class="creator-button secondary" href="/integrations/youtube">Open YouTube</a>
                   </div>
                 </li>
-                <li class="account-list-item" data-integration-row="twitch">
-                  <div class="account-list-meta">
-                    <span class="account-list-title">Twitch</span>
-                    <span class="account-list-note" data-integration-note="twitch">Managed on the Twitch platform page</span>
-                  </div>
-                  <span class="status-pill subtle" data-integration-status="twitch"><span class="status-dot"></span>Loading</span>
-                  <span class="account-provider-value" data-integration-summary="twitch">Loading authoritative status...</span>
-                  <div class="account-provider-actions">
-                    <a class="creator-button secondary" href="/integrations/twitch">Open Twitch</a>
-                  </div>
-                </li>
                 <li class="account-list-item" data-integration-row="kick">
                   <div class="account-list-meta">
-                    <span class="account-list-title">Kick</span>
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/kick.svg" alt="" aria-hidden="true" />
+                      <span>Kick</span>
+                    </span>
                     <span class="account-list-note" data-integration-note="kick">Managed on the Kick platform page</span>
                   </div>
                   <span class="status-pill subtle" data-integration-status="kick"><span class="status-dot"></span>Loading</span>
@@ -1084,13 +1119,30 @@
                 </li>
                 <li class="account-list-item" data-integration-row="pilled">
                   <div class="account-list-meta">
-                    <span class="account-list-title">Pilled</span>
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/pilled.svg" alt="" aria-hidden="true" />
+                      <span>Pilled</span>
+                    </span>
                     <span class="account-list-note" data-integration-note="pilled">Managed on the Pilled platform page</span>
                   </div>
                   <span class="status-pill subtle" data-integration-status="pilled"><span class="status-dot"></span>Loading</span>
                   <span class="account-provider-value" data-integration-summary="pilled">Loading authoritative status...</span>
                   <div class="account-provider-actions">
                     <a class="creator-button secondary" href="/integrations/pilled">Open Pilled</a>
+                  </div>
+                </li>
+                <li class="account-list-item" data-integration-row="twitch">
+                  <div class="account-list-meta">
+                    <span class="account-list-title account-list-title-with-icon">
+                      <img class="account-platform-icon" src="/assets/icons/twitch.svg" alt="" aria-hidden="true" />
+                      <span>Twitch</span>
+                    </span>
+                    <span class="account-list-note" data-integration-note="twitch">Managed on the Twitch platform page</span>
+                  </div>
+                  <span class="status-pill subtle" data-integration-status="twitch"><span class="status-dot"></span>Loading</span>
+                  <span class="account-provider-value" data-integration-summary="twitch">Loading authoritative status...</span>
+                  <div class="account-provider-actions">
+                    <a class="creator-button secondary" href="/integrations/twitch">Open Twitch</a>
                   </div>
                 </li>
                 </ul>
@@ -1103,7 +1155,10 @@
             <article class="card account-billing-card" id="account-section-billing">
               <div class="card-top">
                 <div>
-                  <h3>Billing &amp; Plan</h3>
+                  <h3 class="account-section-title">
+                    <img class="account-section-title-icon" src="/assets/icons/ui/payments.svg" alt="" aria-hidden="true" />
+                    <span>Billing &amp; Plan</span>
+                  </h3>
                   <p>Current tier, payment history, and supporter state from the authoritative StreamSuites account contract.</p>
                 </div>
                 <div class="platform-actions">
