@@ -629,13 +629,27 @@
     );
   }
 
+  function normalizeCompactWidgetBadges(value, tierFallback = "core", roleFallback = "") {
+    const normalized = normalizeAuthoritativeBadges(value, tierFallback, roleFallback);
+    const roleBadge = normalized.find(
+      (badge) => badge?.key === "admin" || badge?.key === "developer"
+    );
+    if (roleBadge) {
+      return [roleBadge];
+    }
+    const tierBadge = normalized.find((badge) => ["core", "gold", "pro"].includes(badge?.key));
+    return tierBadge ? [tierBadge] : [];
+  }
+
   function badgeIconSource(key) {
     return BADGE_ICON_SOURCES.get(normalizeBadgeKey(key)) || "";
   }
 
-  function renderBadgeStrip(element, badges, tierLabel = "CORE") {
+  function renderBadgeStrip(element, badges, tierLabel = "CORE", options = {}) {
     if (!element) return;
-    const normalizedBadges = normalizeAuthoritativeBadges(badges, tierLabel);
+    const normalizedBadges = options.compactWidget
+      ? normalizeCompactWidgetBadges(badges, tierLabel, options.roleFallback)
+      : normalizeAuthoritativeBadges(badges, tierLabel, options.roleFallback);
     element.classList.remove("tier-pill", "tier-core", "tier-gold", "tier-pro");
     element.removeAttribute("data-ss-badge-kind");
     delete element.dataset.tier;
@@ -2001,7 +2015,10 @@
         nameEl.textContent = displayName;
       }
       const tierLabel = getTierLabel(session);
-      renderBadgeStrip(tierEl, session?.badges, tierLabel);
+      renderBadgeStrip(tierEl, session?.badges, tierLabel, {
+        compactWidget: creatorDashboardSummary,
+        roleFallback: session?.role
+      });
       tierEl.hidden = false;
       logoutEl.hidden = false;
       if (avatarEl) {

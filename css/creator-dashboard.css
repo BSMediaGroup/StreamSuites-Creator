@@ -672,8 +672,9 @@ h3 {
 .streamsuites-auth {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 6px 12px;
+  gap: 9px;
+  min-height: 38px;
+  padding: 4px 10px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: linear-gradient(180deg, rgba(20, 28, 41, 0.88), rgba(11, 16, 25, 0.82));
@@ -681,8 +682,8 @@ h3 {
 }
 
 .streamsuites-auth-avatar {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.08);
@@ -703,7 +704,7 @@ h3 {
 .streamsuites-auth-meta {
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
   align-items: center;
   text-align: left;
@@ -711,11 +712,11 @@ h3 {
 }
 
 .streamsuites-auth-name {
-  font-size: 12px;
+  font-size: 11.5px;
   letter-spacing: 0.02em;
   flex: 0 1 auto;
   min-width: 0;
-  max-width: 18ch;
+  max-width: 17ch;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -724,7 +725,7 @@ h3 {
 .streamsuites-auth-badges {
   display: inline-flex;
   align-items: center;
-  min-height: 16px;
+  min-height: 14px;
   max-width: none;
   min-width: fit-content;
   flex: 0 0 auto;
@@ -742,8 +743,8 @@ h3 {
 }
 
 .streamsuites-auth-badges .tier-pill-icon {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
 .streamsuites-auth-tier {
@@ -776,7 +777,7 @@ h3 {
 .creator-account-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: transparent;
   border: none;
   color: inherit;
@@ -1631,12 +1632,80 @@ h3 {
 
 .account-settings .account-grid > .card {
   grid-column: 1 / -1;
-  scroll-margin-top: 96px;
+  scroll-margin-top: var(--creator-account-scroll-offset, 132px);
 }
 
 .account-settings .account-grid > .card:not(.account-profile-card) {
   gap: 16px;
   padding: 24px;
+}
+
+.account-section-card {
+  gap: 0;
+}
+
+.account-section-card > .card-top {
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.account-section-body {
+  overflow: hidden;
+  max-height: none;
+  opacity: 1;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.16s ease;
+}
+
+.account-section-toggle {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(214, 226, 255, 0.78);
+  min-height: 34px;
+  padding: 0 10px 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: var(--creator-font);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  flex: 0 0 auto;
+  transition:
+    color 0.14s ease,
+    border-color 0.14s ease,
+    background 0.14s ease;
+}
+
+.account-section-toggle:hover,
+.account-section-toggle:focus-visible {
+  color: #eef4ff;
+  border-color: rgba(154, 209, 255, 0.38);
+  background: rgba(154, 209, 255, 0.1);
+  outline: none;
+}
+
+.account-section-toggle-icon {
+  width: 12px;
+  height: 12px;
+  background-color: currentColor;
+  -webkit-mask-image: url("/assets/icons/ui/sidebaropen.svg");
+  mask-image: url("/assets/icons/ui/sidebaropen.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  transition: transform 0.18s ease;
+}
+
+.account-section-card[data-expanded="false"] .account-section-toggle-icon {
+  transform: rotate(-90deg);
 }
 
 .account-profile-card,
@@ -1699,10 +1768,16 @@ h3 {
 
 .preferences-capability-list {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 1.15rem;
+  list-style-position: outside;
   display: grid;
-  gap: 10px;
+  gap: 9px;
   color: var(--creator-text-soft);
+}
+
+.preferences-capability-list li {
+  padding-left: 0.2rem;
+  line-height: 1.48;
 }
 
 .preferences-page .preferences-moderators-card,
@@ -1711,7 +1786,8 @@ h3 {
 }
 
 .moderator-search-row {
-  align-items: center;
+  align-items: stretch;
+  gap: 10px;
 }
 
 .moderator-search-row .account-field-input {
@@ -1719,11 +1795,12 @@ h3 {
 }
 
 .moderator-search-row .creator-button {
-  margin-top: 6px;
+  flex: 0 0 auto;
+  margin-top: 0;
 }
 
 .moderator-assignment-top {
-  align-items: center;
+  align-items: flex-start;
 }
 
 .moderator-card-heading {
@@ -1731,6 +1808,44 @@ h3 {
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+}
+
+.moderator-user-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.moderator-user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  flex: 0 0 auto;
+}
+
+.moderator-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.moderator-user-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.moderator-user-copy h4 {
+  margin: 0;
+}
+
+.moderator-user-meta {
+  color: rgba(214, 226, 255, 0.52);
 }
 
 .account-field-grid {
@@ -2157,6 +2272,95 @@ h3 {
 
 .account-section-jumpbar .creator-button {
   min-height: 36px;
+}
+
+.account-shell-tabs-wrap {
+  position: sticky;
+  top: var(--creator-account-tabs-top, 64px);
+  z-index: 9;
+  padding: 10px 18px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(10, 15, 24, 0.94), rgba(10, 15, 24, 0.84));
+  backdrop-filter: blur(18px);
+  transition:
+    padding 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.account-shell-tabs-wrap.is-collapsed {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom-color: transparent;
+}
+
+.account-shell-tabs {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.account-shell-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.account-shell-tabs-wrap.is-collapsed .account-shell-tabs {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.account-shell-tab {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(214, 226, 255, 0.74);
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-family: var(--creator-font);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  flex: 1 0 110px;
+  cursor: pointer;
+  transition:
+    color 0.14s ease,
+    border-color 0.14s ease,
+    background 0.14s ease;
+}
+
+.account-shell-tab:hover,
+.account-shell-tab:focus-visible {
+  color: #eef4ff;
+  border-color: rgba(154, 209, 255, 0.36);
+  background: rgba(154, 209, 255, 0.1);
+  outline: none;
+}
+
+.account-shell-tab.is-active {
+  color: #f7faff;
+  border-color: rgba(154, 209, 255, 0.44);
+  background: linear-gradient(180deg, rgba(75, 112, 180, 0.3), rgba(44, 63, 110, 0.24));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.account-tabs-toggle-icon {
+  width: 18px;
+  height: 18px;
+  background-color: currentColor;
+  -webkit-mask-image: url("/assets/icons/ui/tabs.svg");
+  mask-image: url("/assets/icons/ui/tabs.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 .alias-chip-row {
@@ -3137,11 +3341,26 @@ h3 {
   gap: 16px;
 }
 
+.account-integration-hub .integration-hub-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.account-integration-hub .integration-hub-grid > :nth-child(1),
+.account-integration-hub .integration-hub-grid > :nth-child(4) {
+  grid-column: span 5;
+}
+
+.account-integration-hub .integration-hub-grid > :nth-child(2),
+.account-integration-hub .integration-hub-grid > :nth-child(3) {
+  grid-column: span 7;
+}
+
 .integration-health-card,
 .trigger-summary-card {
   display: grid;
-  gap: 12px;
-  padding: 16px;
+  gap: 10px;
+  padding: 14px;
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(9, 13, 22, 0.62);
@@ -3176,7 +3395,7 @@ h3 {
 .platform-status-list li {
   display: grid;
   gap: 6px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border-radius: 12px;
   background: rgba(6, 10, 18, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -4301,9 +4520,9 @@ h3 {
 
 .account-billing-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.95fr);
-  gap: 18px;
-  padding: 18px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+  gap: 14px;
+  padding: 16px;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
@@ -4315,7 +4534,7 @@ h3 {
 .account-billing-panel,
 .account-billing-kpi-grid {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .account-billing-pill-row {
@@ -4327,28 +4546,28 @@ h3 {
 
 .account-billing-hero-copy h4 {
   margin: 0;
-  font-size: clamp(1.35rem, 2vw, 1.85rem);
+  font-size: clamp(1.22rem, 1.8vw, 1.62rem);
   line-height: 1.08;
 }
 
 .account-billing-hero-stats {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
 .account-billing-inline-stat {
-  min-width: 120px;
+  min-width: 0;
   display: grid;
-  gap: 4px;
-  padding: 12px 14px;
+  gap: 3px;
+  padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(0, 0, 0, 0.18);
 }
 
 .account-billing-inline-stat strong {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -4366,7 +4585,7 @@ h3 {
 .account-billing-kpi-card {
   display: grid;
   gap: 6px;
-  padding: 14px;
+  padding: 12px 13px;
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.04);
@@ -4380,23 +4599,23 @@ h3 {
 }
 
 .account-billing-kpi-card strong {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.2;
 }
 
 .account-billing-kpi-card span {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--creator-muted);
 }
 
 .account-billing-layout {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  grid-template-columns: minmax(0, 1.12fr) minmax(280px, 0.88fr);
+  gap: 14px;
 }
 
 .account-billing-panel {
-  padding: 18px;
+  padding: 16px;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(9, 13, 22, 0.7);
@@ -4414,13 +4633,13 @@ h3 {
 .account-billing-meta-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
 .account-billing-meta-item {
   display: grid;
   gap: 4px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.07);
   background: rgba(255, 255, 255, 0.03);
@@ -4481,6 +4700,17 @@ h3 {
 }
 
 @media (max-width: 980px) {
+  .account-integration-hub .integration-hub-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .account-integration-hub .integration-hub-grid > :nth-child(1),
+  .account-integration-hub .integration-hub-grid > :nth-child(2),
+  .account-integration-hub .integration-hub-grid > :nth-child(3),
+  .account-integration-hub .integration-hub-grid > :nth-child(4) {
+    grid-column: auto;
+  }
+
   .account-billing-hero,
   .account-billing-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -4488,6 +4718,22 @@ h3 {
 }
 
 @media (max-width: 720px) {
+  .account-shell-tabs-wrap {
+    padding-inline: 14px;
+  }
+
+  .account-shell-tab {
+    flex-basis: 96px;
+  }
+
+  .account-section-card > .card-top,
+  .moderator-assignment-top,
+  .moderator-search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .account-billing-hero-stats,
   .account-billing-kpi-grid,
   .account-billing-meta-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -5734,7 +5980,7 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
   }
 
   :root {
-    --app-sidebar-width: min(86vw, 320px);
+    --app-sidebar-width: min(74vw, 276px);
     --app-sidebar-collapsed-width: 64px;
   }
 
@@ -5789,7 +6035,7 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
     flex-wrap: nowrap;
   }
 
-  .account-section-jumpbar,
+  .account-shell-tabs-wrap,
   .custom-link-editor-header,
   .custom-link-card-header,
   .custom-link-row-actions {

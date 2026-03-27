@@ -20,6 +20,8 @@
   const API_BASE = resolveApiBase();
   const CREATOR_MODERATORS_ENDPOINT = `${API_BASE}/api/creator/moderators`;
   const CREATOR_MODERATOR_LOOKUP_ENDPOINT = `${API_BASE}/api/creator/moderators/lookup`;
+  const SEARCH_DEBOUNCE_MS = 180;
+  const FALLBACK_AVATAR = "/assets/icons/ui/profile.svg";
 
   const state = {
     moderators: [],
@@ -29,6 +31,12 @@
     boundSearchInput: null,
     boundSearchHandler: null,
     boundInputHandler: null,
+    boundTypingHandler: null,
+    searchDebounceTimer: 0,
+    searchRequestId: 0,
+    latestAppliedSearchId: 0,
+    searchQuery: "",
+    searchLoading: false,
   };
 
   function hasModeratorSurface() {
@@ -45,6 +53,7 @@
       searchButton: document.querySelector("[data-moderator-search-button=\"true\"]"),
       searchResults: document.querySelector("[data-moderator-search-results=\"true\"]"),
       searchEmpty: document.querySelector("[data-moderator-search-empty=\"true\"]"),
+      searchNote: document.querySelector("[data-moderator-search-note=\"true\"]"),
       list: document.querySelector("[data-moderator-list=\"true\"]"),
       listEmpty: document.querySelector("[data-moderator-list-empty=\"true\"]"),
     };
@@ -58,6 +67,26 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
+  }
+
+  function coerceText(value) {
+    return typeof value === "string" ? value.trim() : "";
+  }
+
+  function titleCase(value) {
+    return coerceText(value)
+      .replace(/[_-]+/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
+  function renderAvatarMarkup(avatarUrl, label) {
+    const resolved = coerceText(avatarUrl) || FALLBACK_AVATAR;
+    const alt = escapeHtml(label || "Account");
+    return `
+      <span class="moderator-user-avatar">
+        <img src="${escapeHtml(resolved)}" alt="${alt}" loading="lazy" decoding="async" />
+      </span>
+    `;
   }
 
   function showToast(message, tone = "info", options = {}) {
@@ -90,7 +119,7 @@
     let payload = null;
     try {
       payload = await response.json();
-    } catch (err) {
+    } catch (_err) {
       payload = null;
     }
     if (!response.ok) {
@@ -117,6 +146,17 @@
     els.statusPill.innerHTML = `<span class="status-dot"></span>${escapeHtml(message || "")}`;
   }
 
+  function setSearchNote(message, tone = "") {
+    const els = getElements();
+    if (!(els.searchNote instanceof HTMLElement)) return;
+    els.searchNote.textContent = message || "";
+    if (tone) {
+      els.searchNote.dataset.tone = tone;
+    } else {
+      delete els.searchNote.dataset.tone;
+    }
+  }
+
   function updateModeratorCount() {
     const els = getElements();
     if (!(els.countValue instanceof HTMLElement)) return;
@@ -134,6 +174,35 @@
       : ["overlay artifacts", "overlay chat", "clip metadata", "polls"];
   }
 
+  function getAccountSummaryBits(account) {
+    const userCode = coerceText(account?.user_code);
+    const email = coerceText(account?.email);
+    const role = titleCase(account?.role || "public");
+    const tier = coerceText(account?.tier).toUpperCase();
+    const secondary = [userCode, email].filter(Boolean);
+    const meta = [role, tier].filter(Boolean).join(" · ");
+    return {
+      secondary: secondary.length ? secondary.join(" · ") : "No public account identifier exported",
+      meta: meta || "Creator-scoped account",
+    };
+  }
+
+  function resetSearchResults(options = {}) {
+    state.moderatorSearchResults = [];
+    state.searchLoading = false;
+    renderModeratorSearchResults();
+    if (options.clearQuery) {
+      state.searchQuery = "";
+    }
+  }
+
+  function cancelPendingSearch() {
+    if (state.searchDebounceTimer) {
+      window.clearTimeout(state.searchDebounceTimer);
+      state.searchDebounceTimer = 0;
+    }
+  }
+
   function renderModeratorAssignments() {
     const els = getElements();
     if (!(els.list instanceof HTMLElement) || !(els.listEmpty instanceof HTMLElement)) return;
@@ -145,16 +214,22 @@
         ? assignment.moderator_account
         : {};
       const capabilities = getCapabilitySummary(assignment?.capabilities);
+      const label = moderator.display_name || moderator.user_code || "Moderator";
+      const summaryBits = getAccountSummaryBits(moderator);
       const card = document.createElement("article");
       card.className = "card moderator-assignment-card";
       card.innerHTML = `
         <div class="card-top moderator-assignment-top">
-          <div>
-            <div class="moderator-card-heading">
-              <h4>${escapeHtml(moderator.display_name || moderator.user_code || "Moderator")}</h4>
-              <span class="status-pill success"><span class="status-dot"></span>Active</span>
+          <div class="moderator-user-summary">
+            ${renderAvatarMarkup(moderator.avatar_url, label)}
+            <div class="moderator-user-copy">
+              <div class="moderator-card-heading">
+                <h4>${escapeHtml(label)}</h4>
+                <span class="status-pill success"><span class="status-dot"></span>Active</span>
+              </div>
+              <p class="account-note">${escapeHtml(summaryBits.secondary)}</p>
+              <p class="account-note moderator-user-meta">${escapeHtml(summaryBits.meta)}</p>
             </div>
-            <p class="account-note">${escapeHtml(moderator.user_code || "")}${moderator.email ? ` · ${escapeHtml(moderator.email)}` : ""}</p>
           </div>
           <button class="creator-button secondary" type="button" data-moderator-remove="${escapeHtml(
             assignment.moderator_account_id || ""
@@ -178,6 +253,9 @@
             { method: "DELETE" }
           );
           await loadModeratorAssignments();
+          if (state.searchQuery.length >= 2) {
+            void runModeratorSearch(state.searchQuery, { silentStatus: true });
+          }
           showToast("Moderator removed.", "success", { title: "Moderators" });
         } catch (err) {
           showToast(err?.message || "Unable to remove moderator.", "danger", { title: "Moderators" });
@@ -193,21 +271,35 @@
     if (!(els.searchResults instanceof HTMLElement) || !(els.searchEmpty instanceof HTMLElement)) return;
     const matches = Array.isArray(state.moderatorSearchResults) ? state.moderatorSearchResults : [];
     els.searchResults.replaceChildren();
-    els.searchEmpty.classList.toggle("hidden", matches.length > 0);
+
+    const showEmpty =
+      state.searchQuery.length >= 2 &&
+      !state.searchLoading &&
+      matches.length === 0;
+    els.searchEmpty.classList.toggle("hidden", !showEmpty);
+    if (showEmpty) {
+      els.searchEmpty.textContent = `No matching accounts found for "${state.searchQuery}".`;
+    }
+
     matches.forEach((item) => {
+      const label = item.display_name || item.user_code || "Account";
+      const summaryBits = getAccountSummaryBits(item);
       const card = document.createElement("article");
       card.className = "card moderator-search-card";
       card.innerHTML = `
         <div class="card-top moderator-assignment-top">
-          <div>
-            <h4>${escapeHtml(item.display_name || item.user_code || "Account")}</h4>
-            <p class="account-note">${escapeHtml(item.user_code || "")}${item.email ? ` · ${escapeHtml(item.email)}` : ""}</p>
+          <div class="moderator-user-summary">
+            ${renderAvatarMarkup(item.avatar_url, label)}
+            <div class="moderator-user-copy">
+              <h4>${escapeHtml(label)}</h4>
+              <p class="account-note">${escapeHtml(summaryBits.secondary)}</p>
+              <p class="account-note moderator-user-meta">${escapeHtml(summaryBits.meta)}</p>
+            </div>
           </div>
           <button class="creator-button primary" type="button" data-moderator-assign="${escapeHtml(
             item.account_id || ""
           )}">Assign</button>
         </div>
-        <p class="account-note">Role: ${escapeHtml(String(item.role || "public").toUpperCase())}</p>
       `;
       els.searchResults.appendChild(card);
     });
@@ -222,12 +314,16 @@
               moderator_account_id: button.dataset.moderatorAssign || "",
             }),
           });
-          state.moderatorSearchResults = [];
-          renderModeratorSearchResults();
+          resetSearchResults({ clearQuery: true });
           const searchEls = getElements();
           if (searchEls.searchInput instanceof HTMLInputElement) {
             searchEls.searchInput.value = "";
+            searchEls.searchInput.focus();
           }
+          setSearchNote(
+            "Search results exclude your own account and accounts already assigned here.",
+            ""
+          );
           await loadModeratorAssignments();
           showToast("Moderator assigned.", "success", { title: "Moderators" });
         } catch (err) {
@@ -257,26 +353,81 @@
     return payload;
   }
 
-  async function handleModeratorSearch() {
-    const els = getElements();
-    const query = els.searchInput instanceof HTMLInputElement ? els.searchInput.value.trim() : "";
-    if (query.length < 2) {
-      showToast("Enter at least 2 characters to search accounts.", "warning", { title: "Moderators" });
+  async function runModeratorSearch(query, options = {}) {
+    const normalizedQuery = coerceText(query);
+    const requestId = ++state.searchRequestId;
+    state.searchQuery = normalizedQuery;
+
+    if (normalizedQuery.length < 2) {
+      resetSearchResults();
+      setSearchNote(
+        "Type at least 2 characters to search by user code, display name, or email.",
+        ""
+      );
+      if (!options.silentStatus) {
+        setModeratorStatus(
+          state.moderators.length ? `${state.moderators.length} assigned` : "No moderators assigned",
+          state.moderators.length ? "success" : "subtle"
+        );
+      }
       return;
     }
-    setModeratorStatus("Searching", "subtle");
+
+    state.searchLoading = true;
+    renderModeratorSearchResults();
+    setSearchNote(`Searching for "${normalizedQuery}"...`, "");
+    if (!options.silentStatus) {
+      setModeratorStatus("Searching", "subtle");
+    }
+
     try {
       const payload = await requestJson(
-        `${CREATOR_MODERATOR_LOOKUP_ENDPOINT}?q=${encodeURIComponent(query)}`,
+        `${CREATOR_MODERATOR_LOOKUP_ENDPOINT}?q=${encodeURIComponent(normalizedQuery)}`,
         { method: "GET" }
       );
+      if (requestId < state.searchRequestId) {
+        return;
+      }
+      state.latestAppliedSearchId = requestId;
+      state.searchLoading = false;
       state.moderatorSearchResults = Array.isArray(payload.items) ? payload.items : [];
       renderModeratorSearchResults();
-      setModeratorStatus("Search ready", "subtle");
+      setSearchNote(
+        state.moderatorSearchResults.length
+          ? `Showing ${state.moderatorSearchResults.length} account match${state.moderatorSearchResults.length === 1 ? "" : "es"} for "${normalizedQuery}".`
+          : `No assignable accounts matched "${normalizedQuery}".`,
+        state.moderatorSearchResults.length ? "success" : "warning"
+      );
+      if (!options.silentStatus) {
+        setModeratorStatus("Search ready", "subtle");
+      }
     } catch (err) {
+      if (requestId < state.searchRequestId) {
+        return;
+      }
+      state.searchLoading = false;
+      state.moderatorSearchResults = [];
+      renderModeratorSearchResults();
+      setSearchNote(err?.message || "Unable to search accounts right now.", "danger");
       showToast(err?.message || "Unable to search accounts.", "danger", { title: "Moderators" });
-      setModeratorStatus("Search unavailable", "warning");
+      if (!options.silentStatus) {
+        setModeratorStatus("Search unavailable", "warning");
+      }
     }
+  }
+
+  function queueModeratorSearch(immediate = false) {
+    const els = getElements();
+    const query = els.searchInput instanceof HTMLInputElement ? els.searchInput.value : "";
+    cancelPendingSearch();
+    if (immediate) {
+      void runModeratorSearch(query);
+      return;
+    }
+    state.searchDebounceTimer = window.setTimeout(() => {
+      state.searchDebounceTimer = 0;
+      void runModeratorSearch(query, { silentStatus: true });
+    }, SEARCH_DEBOUNCE_MS);
   }
 
   function wireModeratorControls() {
@@ -286,20 +437,31 @@
     if (state.boundSearchButton instanceof HTMLButtonElement && typeof state.boundSearchHandler === "function") {
       state.boundSearchButton.removeEventListener("click", state.boundSearchHandler);
     }
-    if (state.boundSearchInput instanceof HTMLInputElement && typeof state.boundInputHandler === "function") {
-      state.boundSearchInput.removeEventListener("keydown", state.boundInputHandler);
+    if (state.boundSearchInput instanceof HTMLInputElement) {
+      if (typeof state.boundInputHandler === "function") {
+        state.boundSearchInput.removeEventListener("keydown", state.boundInputHandler);
+      }
+      if (typeof state.boundTypingHandler === "function") {
+        state.boundSearchInput.removeEventListener("input", state.boundTypingHandler);
+      }
     }
     state.boundSearchHandler = () => {
-      void handleModeratorSearch();
+      queueModeratorSearch(true);
     };
     state.boundInputHandler = (event) => {
       if (event.key !== "Enter") return;
       event.preventDefault();
-      void handleModeratorSearch();
+      queueModeratorSearch(true);
+    };
+    state.boundTypingHandler = () => {
+      queueModeratorSearch(false);
     };
     els.searchButton.addEventListener("click", state.boundSearchHandler);
     if (els.searchInput instanceof HTMLInputElement) {
+      els.searchInput.setAttribute("autocomplete", "off");
+      els.searchInput.setAttribute("spellcheck", "false");
       els.searchInput.addEventListener("keydown", state.boundInputHandler);
+      els.searchInput.addEventListener("input", state.boundTypingHandler);
       state.boundSearchInput = els.searchInput;
     } else {
       state.boundSearchInput = null;
@@ -313,6 +475,10 @@
     if (state.activeSurface === els.surface) return;
     state.activeSurface = els.surface;
     wireModeratorControls();
+    setSearchNote(
+      "Type at least 2 characters to search by user code, display name, or email.",
+      ""
+    );
     try {
       await loadModeratorAssignments();
     } catch (err) {
@@ -330,9 +496,12 @@
   }
 
   function destroyModeratorSurface() {
+    cancelPendingSearch();
     state.moderators = [];
     state.moderatorSearchResults = [];
     state.activeSurface = null;
+    state.searchQuery = "";
+    state.searchLoading = false;
   }
 
   window.CreatorModeratorSurface = {

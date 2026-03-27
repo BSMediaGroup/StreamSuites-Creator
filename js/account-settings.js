@@ -123,6 +123,13 @@
     loadingProfile: false,
     savingProfile: false,
     controlsWired: false,
+    accountShellWired: false,
+    accountScrollHandler: null,
+    accountResizeHandler: null,
+    accountHashHandler: null,
+    accountTabsHandler: null,
+    accountTabsToggleHandler: null,
+    accountScrollQueued: false,
     previewMode: "streamsuites",
     customLinks: [],
   };
@@ -473,12 +480,16 @@
       customLinksList: document.querySelector("[data-custom-links-list]"),
       customLinksSummary: document.querySelector("[data-custom-links-summary]"),
       customLinkAddButton: document.querySelector("[data-custom-link-add]"),
-      jumpButtons: Array.from(document.querySelectorAll("[data-account-jump]")),
       identityInputs: Array.from(document.querySelectorAll("[data-profile-identity-input]")),
       saveButtons: Array.from(document.querySelectorAll("[data-profile-save]")),
       resetButtons: Array.from(document.querySelectorAll("[data-profile-reset]")),
       copyButtons: Array.from(document.querySelectorAll("[data-profile-copy-url]")),
       profileFields: Array.from(document.querySelectorAll("[data-profile-field]")),
+      accountTabsWrap: document.querySelector("[data-account-shell-tabs-wrap]"),
+      accountTabs: document.querySelector("[data-account-shell-tabs]"),
+      accountTabButtons: Array.from(document.querySelectorAll("[data-account-shell-tab]")),
+      accountTabsToggle: document.getElementById("account-tabs-toggle"),
+      accountSectionCards: Array.from(document.querySelectorAll(".account-settings .account-grid > .card[id]")),
       previewHub: document.querySelector("[data-profile-preview-hub]"),
       previewModeButtons: Array.from(document.querySelectorAll("[data-profile-preview-mode]")),
       previewPanels: Array.from(document.querySelectorAll("[data-preview-panel]")),
@@ -486,6 +497,292 @@
       tooltipPreviewTarget: document.querySelector("[data-profile-preview-target=\"tooltip\"]"),
       findmePreviewTarget: document.querySelector("[data-profile-preview-target=\"findmehere\"]"),
     };
+  }
+
+  function getAccountSectionCards() {
+    return getProfileElements().accountSectionCards.filter((card) => card instanceof HTMLElement);
+  }
+
+  function getAccountSectionBody(card) {
+    if (!(card instanceof HTMLElement)) return null;
+    return Array.from(card.children).find(
+      (child) => child instanceof HTMLElement && child.classList.contains("account-section-body")
+    ) || null;
+  }
+
+  function withNoTransition(element, callback) {
+    if (!(element instanceof HTMLElement) || typeof callback !== "function") return;
+    const previousTransition = element.style.transition;
+    element.style.transition = "none";
+    callback();
+    void element.offsetHeight;
+    element.style.transition = previousTransition;
+  }
+
+  function getAccountScrollOffset(extra = 18) {
+    const els = getProfileElements();
+    const headerHeight = document.getElementById("app-header")?.getBoundingClientRect().height || 0;
+    const tabsVisible =
+      els.accountTabsWrap instanceof HTMLElement &&
+      els.accountTabsWrap.dataset.collapsed !== "true";
+    const tabsHeight = tabsVisible
+      ? els.accountTabsWrap?.getBoundingClientRect().height || 0
+      : 0;
+    return Math.ceil(headerHeight + tabsHeight + extra);
+  }
+
+  function syncAccountShellMetrics() {
+    const els = getProfileElements();
+    if (!(els.accountTabsWrap instanceof HTMLElement)) return;
+    const headerHeight = document.getElementById("app-header")?.getBoundingClientRect().height || 0;
+    const tabsVisible = els.accountTabsWrap.dataset.collapsed !== "true";
+    const tabsHeight = tabsVisible ? els.accountTabsWrap.getBoundingClientRect().height || 0 : 0;
+    document.documentElement.style.setProperty("--creator-account-tabs-top", `${Math.ceil(headerHeight)}px`);
+    document.documentElement.style.setProperty(
+      "--creator-account-scroll-offset",
+      `${Math.ceil(headerHeight + tabsHeight + 18)}px`
+    );
+  }
+
+  function setAccountSectionExpanded(card, expanded, options = {}) {
+    if (!(card instanceof HTMLElement)) return;
+    const body = getAccountSectionBody(card);
+    const toggle = card.querySelector("[data-account-section-toggle]");
+    if (!(body instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) return;
+
+    const applyExpandedState = () => {
+      card.dataset.expanded = expanded ? "true" : "false";
+      toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+      toggle.setAttribute("title", expanded ? "Collapse section" : "Expand section");
+      toggle.querySelector(".account-section-toggle-label")?.replaceChildren(
+        document.createTextNode(expanded ? "Collapse" : "Expand")
+      );
+      body.setAttribute("aria-hidden", expanded ? "false" : "true");
+      if ("inert" in body) {
+        body.inert = !expanded;
+      }
+      body.style.opacity = expanded ? "1" : "0";
+      body.style.pointerEvents = expanded ? "auto" : "none";
+    };
+
+    if (options.instant) {
+      withNoTransition(body, () => {
+        applyExpandedState();
+        body.style.maxHeight = expanded ? "none" : "0px";
+      });
+      return;
+    }
+
+    if (expanded) {
+      applyExpandedState();
+      body.style.maxHeight = `${body.scrollHeight}px`;
+    } else {
+      if (body.style.maxHeight === "none" || !body.style.maxHeight) {
+        body.style.maxHeight = `${body.scrollHeight}px`;
+        void body.offsetHeight;
+      }
+      applyExpandedState();
+      body.style.maxHeight = "0px";
+    }
+  }
+
+  function highlightActiveAccountTab(sectionId) {
+    const els = getProfileElements();
+    els.accountTabButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      const active = button.getAttribute("data-account-shell-tab") === sectionId;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-current", active ? "true" : "false");
+    });
+  }
+
+  function updateActiveAccountTab() {
+    state.accountScrollQueued = false;
+    const cards = getAccountSectionCards();
+    if (!cards.length) return;
+    const threshold = getAccountScrollOffset(12);
+    let activeId = cards[0].id;
+    for (const card of cards) {
+      const rect = card.getBoundingClientRect();
+      if (rect.top - threshold <= 0) {
+        activeId = card.id;
+        continue;
+      }
+      break;
+    }
+    highlightActiveAccountTab(activeId);
+  }
+
+  function queueActiveAccountTabUpdate() {
+    if (state.accountScrollQueued) return;
+    state.accountScrollQueued = true;
+    window.requestAnimationFrame(updateActiveAccountTab);
+  }
+
+  function revealAccountSection(sectionId, options = {}) {
+    const target = sectionId ? document.getElementById(sectionId) : null;
+    if (!(target instanceof HTMLElement)) return;
+    setAccountSectionExpanded(target, true, { instant: !!options.instant });
+    syncAccountShellMetrics();
+    highlightActiveAccountTab(sectionId);
+    if (options.updateHash !== false) {
+      try {
+        const nextHash = `#${sectionId}`;
+        if (window.location.hash !== nextHash) {
+          window.history.replaceState(null, "", nextHash);
+        }
+      } catch (_err) {
+        // Ignore history update failures.
+      }
+    }
+    if (options.scroll === false) return;
+    const top = window.scrollY + target.getBoundingClientRect().top - getAccountScrollOffset();
+    window.scrollTo({
+      top: Math.max(top, 0),
+      behavior: options.instant ? "auto" : "smooth",
+    });
+  }
+
+  function setAccountTabsCollapsed(collapsed) {
+    const els = getProfileElements();
+    if (!(els.accountTabsWrap instanceof HTMLElement) || !(els.accountTabsToggle instanceof HTMLButtonElement)) {
+      return;
+    }
+    els.accountTabsWrap.dataset.collapsed = collapsed ? "true" : "false";
+    els.accountTabsWrap.classList.toggle("is-collapsed", collapsed);
+    els.accountTabsToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    els.accountTabsToggle.setAttribute(
+      "title",
+      collapsed ? "Expand account section tabs" : "Collapse account section tabs"
+    );
+    syncAccountShellMetrics();
+    queueActiveAccountTabUpdate();
+  }
+
+  function prepareAccountSections() {
+    getAccountSectionCards().forEach((card) => {
+      if (card.dataset.accountSectionReady === "true") return;
+      const top = Array.from(card.children).find(
+        (child) => child instanceof HTMLElement && child.classList.contains("card-top")
+      );
+      if (!(top instanceof HTMLElement)) return;
+
+      const body = document.createElement("div");
+      body.className = "account-section-body";
+      body.id = `${card.id}-body`;
+      while (top.nextSibling) {
+        body.appendChild(top.nextSibling);
+      }
+      card.appendChild(body);
+
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "account-section-toggle";
+      toggle.setAttribute("data-account-section-toggle", card.id);
+      toggle.setAttribute("aria-controls", body.id);
+      toggle.innerHTML = `
+        <span class="account-section-toggle-label">Collapse</span>
+        <span class="account-section-toggle-icon" aria-hidden="true"></span>
+      `;
+      toggle.addEventListener("click", () => {
+        setAccountSectionExpanded(card, card.dataset.expanded !== "true");
+        syncAccountShellMetrics();
+      });
+      top.appendChild(toggle);
+
+      body.addEventListener("transitionend", (event) => {
+        if (event.propertyName !== "max-height") return;
+        if (card.dataset.expanded === "true") {
+          body.style.maxHeight = "none";
+        }
+      });
+
+      card.dataset.accountSectionReady = "true";
+      card.classList.add("account-section-card");
+      setAccountSectionExpanded(card, true, { instant: true });
+    });
+  }
+
+  function wireAccountShell() {
+    const els = getProfileElements();
+    if (!(els.accountTabsWrap instanceof HTMLElement) || !(els.accountTabs instanceof HTMLElement)) return;
+    if (state.accountShellWired) {
+      syncAccountShellMetrics();
+      queueActiveAccountTabUpdate();
+      return;
+    }
+
+    prepareAccountSections();
+    setAccountTabsCollapsed(false);
+
+    state.accountTabsHandler = (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const button = target.closest("[data-account-shell-tab]");
+      if (!(button instanceof HTMLButtonElement)) return;
+      const sectionId = button.getAttribute("data-account-shell-tab") || "";
+      revealAccountSection(sectionId);
+    };
+    els.accountTabs.addEventListener("click", state.accountTabsHandler);
+
+    if (els.accountTabsToggle instanceof HTMLButtonElement) {
+      state.accountTabsToggleHandler = () => {
+        const collapsed = els.accountTabsWrap.dataset.collapsed === "true";
+        setAccountTabsCollapsed(!collapsed);
+      };
+      els.accountTabsToggle.addEventListener("click", state.accountTabsToggleHandler);
+    }
+
+    state.accountScrollHandler = () => {
+      queueActiveAccountTabUpdate();
+    };
+    state.accountResizeHandler = () => {
+      syncAccountShellMetrics();
+      queueActiveAccountTabUpdate();
+    };
+    state.accountHashHandler = () => {
+      const sectionId = (window.location.hash || "").replace(/^#/, "").trim();
+      if (!sectionId) return;
+      revealAccountSection(sectionId, { instant: true });
+    };
+
+    window.addEventListener("scroll", state.accountScrollHandler, { passive: true });
+    window.addEventListener("resize", state.accountResizeHandler);
+    window.addEventListener("hashchange", state.accountHashHandler);
+
+    state.accountShellWired = true;
+    syncAccountShellMetrics();
+    const initialHash = (window.location.hash || "").replace(/^#/, "").trim();
+    if (initialHash) {
+      revealAccountSection(initialHash, { instant: true });
+    } else {
+      updateActiveAccountTab();
+    }
+  }
+
+  function destroyAccountShell() {
+    const els = getProfileElements();
+    if (state.accountTabsHandler && els.accountTabs instanceof HTMLElement) {
+      els.accountTabs.removeEventListener("click", state.accountTabsHandler);
+    }
+    if (state.accountTabsToggleHandler && els.accountTabsToggle instanceof HTMLButtonElement) {
+      els.accountTabsToggle.removeEventListener("click", state.accountTabsToggleHandler);
+    }
+    if (state.accountScrollHandler) {
+      window.removeEventListener("scroll", state.accountScrollHandler);
+    }
+    if (state.accountResizeHandler) {
+      window.removeEventListener("resize", state.accountResizeHandler);
+    }
+    if (state.accountHashHandler) {
+      window.removeEventListener("hashchange", state.accountHashHandler);
+    }
+    state.accountShellWired = false;
+    state.accountTabsHandler = null;
+    state.accountTabsToggleHandler = null;
+    state.accountScrollHandler = null;
+    state.accountResizeHandler = null;
+    state.accountHashHandler = null;
   }
 
   function oauthStartUrl(provider) {
@@ -819,6 +1116,7 @@
     });
     const els = getIntegrationElements();
     renderIntegrationHub(payload);
+    syncAccountShellMetrics();
   }
 
   async function loadCreatorIntegrations() {
@@ -1255,9 +1553,9 @@
 
     if (heroStatsEl instanceof HTMLElement) {
       heroStatsEl.innerHTML = [
-        { label: "Plan status", value: planStatus },
-        { label: "Entitlement", value: grantSummary },
+        { label: "Status", value: planStatus },
         { label: "Next due", value: nextDue },
+        { label: "Supporter", value: supporterState },
       ].map((item) => `
         <div class="account-billing-inline-stat">
           <span>${escapeHtml(item.label)}</span>
@@ -1279,24 +1577,18 @@
           note: lastPaymentDate
         },
         {
-          label: "Donation total",
-          value: donationTotal,
-          note: summary?.hasOneoffDonation ? `${summary?.donationCount || 0} donation${summary?.donationCount === 1 ? "" : "s"}` : "No donation history"
+          label: "Entitlement",
+          value: grantSummary,
+          note: summary?.isAdminGrantedTier ? "Admin-controlled entitlement" : recurringState
         },
         {
-          label: "Supporter state",
-          value: supporterState,
-          note: summary?.sourceOfTruth || "runtime_auth"
-        },
-        {
-          label: "Discounts",
-          value: activeDiscountSummary,
-          note: summary?.hasDiscount ? "Authoritative offers attached to this account" : "No active discount offers"
-        },
-        {
-          label: "Credits / write-offs",
-          value: balanceRelief,
-          note: summary?.balanceReliefTotalCents ? "Runtime-side balance relief entries" : "No balance relief entries"
+          label: "Discounts / relief",
+          value: summary?.hasDiscount ? activeDiscountSummary : balanceRelief,
+          note: summary?.hasDiscount
+            ? "Authoritative discount state"
+            : summary?.balanceReliefTotalCents
+            ? "Credits and write-offs exported"
+            : "No discount or balance relief exported"
         },
       ].map((item) => `
         <article class="account-billing-kpi-card">
@@ -1310,16 +1602,12 @@
     if (paymentGridEl instanceof HTMLElement) {
       paymentGridEl.innerHTML = [
         { label: "Current plan", value: tierLabel },
-        { label: "Plan status", value: planStatus },
-        { label: "Supporter state", value: supporterState },
+        { label: "Recurring state", value: recurringState },
         { label: "Lifetime total", value: lifetimePaid },
-        { label: "Donation total", value: donationTotal },
-        { label: "Last payment amount", value: lastPaymentAmount },
-        { label: "Last payment date", value: lastPaymentDate },
-        { label: "Next renewal", value: nextDue },
+        { label: "Last payment", value: `${lastPaymentAmount} · ${lastPaymentDate}` },
+        { label: "Supporter / donations", value: `${supporterState} · ${donationTotal}` },
         { label: "Entitlement source", value: grantSummary },
-        { label: "Active discounts", value: activeDiscountSummary },
-        { label: "Credits / write-offs", value: balanceRelief },
+        { label: "Discounts / credits", value: `${activeDiscountSummary} · ${balanceRelief}` },
       ].map((item) => `
         <div class="account-billing-meta-item">
           <span class="label">${escapeHtml(item.label)}</span>
@@ -1347,6 +1635,7 @@
         ? "Recurring renewal schedules and billing-management actions are still hidden until the backend exposes a real recurring billing contract."
         : "Recurring renewal information is shown only from the backend-owned summary contract.";
     }
+    syncAccountShellMetrics();
   }
 
   function getStagedUpload(kind) {
@@ -2869,15 +3158,6 @@
         }
       });
     }
-    els.jumpButtons.forEach((button) => {
-      if (!(button instanceof HTMLButtonElement)) return;
-      button.addEventListener("click", () => {
-        const targetId = button.getAttribute("data-account-jump") || "";
-        const section = targetId ? document.getElementById(targetId) : null;
-        if (!(section instanceof HTMLElement)) return;
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
     els.profileFields.forEach((field) => {
       const eventName = field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement ? "input" : "change";
       field.addEventListener(eventName, renderPreviewSurface);
@@ -2915,6 +3195,7 @@
     wireProviderButtons();
     wireEmailChange();
     wirePublicProfileControls();
+    wireAccountShell();
 
     const tasks = await Promise.allSettled([
       refreshAuthMethods(),
@@ -2980,6 +3261,7 @@
     state.savingProfile = false;
     state.controlsWired = false;
     state.previewMode = "streamsuites";
+    destroyAccountShell();
     window.CreatorModeratorSurface?.destroy?.();
   }
 

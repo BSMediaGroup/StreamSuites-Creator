@@ -4,6 +4,30 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Account Shell + Preferences Corrective Pass - 2026-03-27
+
+### Technical Notes
+
+- The compact creator top-bar widget now renders a compact-only badge subset from the authoritative badge array, which keeps admin or developer over tier when applicable, keeps tier fallback for normal creator accounts, and suppresses founder from the widget without changing richer profile/dropdown surfaces.
+- Preferences moderator management now uses debounced live partial-match lookup against the authoritative creator-moderator endpoint, with avatar-backed result cards, safer stale-request handling, and the existing assignment/remove flow preserved.
+- The `/account` route now owns an account-only sticky tab row under the top bar, a tabs-toggle control using `assets/icons/ui/tabs.svg`, collapsible major section cards expanded by default, slimmer integration and billing layouts, and a narrower mobile drawer width.
+
+### Human-Readable Notes
+
+- The Creator header account pill is shorter, cleaner, and no longer wastes space on founder in the compact top-bar widget.
+- Moderator assignment is easier to use because results appear while typing and now show who each account actually is before you assign them.
+- Account settings is easier to scan because sections can be collapsed individually and the old jump-link strip is replaced with a shell-level sticky tab row that follows the page.
+
+### Files / Areas Touched
+
+- `views/account.html`
+- `views/settings.html`
+- `js/auth.js`
+- `js/account-settings.js`
+- `js/creator-moderators.js`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Creator Badge Widget + Mobile Shell Repair - 2026-03-27
 
 - The compact creator top-bar account widget no longer depends on the stale standalone `tier-pill` placeholder that was pinning the username to a fake Core visual state; it now renders a dedicated compact badge strip from the resolved authoritative badge array and effective tier.

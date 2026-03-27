@@ -80,6 +80,18 @@
             <span class="sidebar-collapse-toggle-icon" aria-hidden="true"></span>
             <span class="sr-only">Toggle sidebar</span>
           </button>
+          <button
+            type="button"
+            id="account-tabs-toggle"
+            class="sidebar-collapse-toggle account-tabs-toggle"
+            aria-controls="account-shell-tabs-wrap"
+            aria-expanded="true"
+            aria-label="Collapse account section tabs"
+            title="Collapse account section tabs"
+          >
+            <span class="account-tabs-toggle-icon" aria-hidden="true"></span>
+            <span class="sr-only">Toggle account section tabs</span>
+          </button>
           <span class="ss-topbar-title creator-topbar-page-title">Account Settings</span>
         </div>
                 <div class="ss-topbar-right creator-header-right">
@@ -126,6 +138,21 @@
           </div>
         </div>
       </header>
+
+      <div id="account-shell-tabs-wrap" class="account-shell-tabs-wrap" data-account-shell-tabs-wrap="true">
+        <nav class="account-shell-tabs" data-account-shell-tabs="true" aria-label="Account settings sections">
+          <button class="account-shell-tab is-active" type="button" data-account-shell-tab="account-section-core">Profile</button>
+          <button class="account-shell-tab" type="button" data-account-shell-tab="account-section-public">Public</button>
+          <button class="account-shell-tab" type="button" data-account-shell-tab="account-section-media">Media</button>
+          <button class="account-shell-tab" type="button" data-account-shell-tab="account-section-theme">Theme</button>
+          <button class="account-shell-tab" type="button" data-account-shell-tab="account-section-custom-links">Links</button>
+          <button class="account-shell-tab" type="button" data-account-shell-tab="account-section-security">Security</button>
+          <button class="account-shell-tab" type="button" data-account-shell-tab="account-section-integrations">Integrations</button>
+          <button class="account-shell-tab" type="button" data-account-shell-tab="account-section-billing">Billing</button>
+          <button class="account-shell-tab" type="button" data-account-shell-tab="account-section-advanced">Advanced</button>
+          <button class="account-shell-tab" type="button" data-account-shell-tab="account-section-preview">Preview</button>
+        </nav>
+      </div>
 
       <div
         id="global-loader"
@@ -193,17 +220,6 @@
               <a class="creator-button secondary" href="https://streamsuites.app/support.html">Support</a>
             </div>
           </div>
-
-          <nav class="account-section-jumpbar" data-account-section-nav="true" aria-label="Jump to account settings section">
-            <button class="creator-button secondary" type="button" data-account-jump="account-section-core">Core profile</button>
-            <button class="creator-button secondary" type="button" data-account-jump="account-section-public">Public content</button>
-            <button class="creator-button secondary" type="button" data-account-jump="account-section-media">Media assets</button>
-            <button class="creator-button secondary" type="button" data-account-jump="account-section-theme">FindMeHere theme</button>
-            <button class="creator-button secondary" type="button" data-account-jump="account-section-custom-links">Custom links</button>
-            <button class="creator-button secondary" type="button" data-account-jump="account-section-billing">Billing &amp; plan</button>
-            <button class="creator-button secondary" type="button" data-account-jump="account-section-advanced">Advanced styling</button>
-            <button class="creator-button secondary" type="button" data-account-jump="account-section-preview">Previews</button>
-          </nav>
 
           <p class="account-note">
             Moderator assignment and creator community controls now live on <a href="/settings">Preferences</a>.
@@ -828,9 +844,16 @@
               </div>
             </article>
 
-            <article class="card">
-              <h3>Login &amp; Security</h3>
-              <p>Supported sign-in methods for your StreamSuites account.</p>
+            <article class="card account-security-card" id="account-section-security">
+              <div class="card-top">
+                <div>
+                  <h3>Login &amp; Security</h3>
+                  <p>Supported sign-in methods and identity flows for your StreamSuites account.</p>
+                </div>
+                <span class="status-pill subtle">
+                  <span class="status-dot"></span>Identity
+                </span>
+              </div>
               <div class="account-settings-tools">
                 <div class="account-field">
                   <span class="account-field-label">Password</span>
@@ -935,7 +958,7 @@
               <p class="account-note" data-account-provider-status-message="true">Manage sign-in methods for this account.</p>
             </article>
 
-            <article class="card account-integration-hub">
+            <article class="card account-integration-hub" id="account-section-integrations">
               <div class="card-top">
                 <div>
                   <h3>Creator integration snapshot</h3>
