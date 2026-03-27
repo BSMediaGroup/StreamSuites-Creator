@@ -4,6 +4,23 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Account Entitlements List Alignment Fix - 2026-03-27
+
+### Technical Notes
+
+- The `Current entitlements` list in the account billing card was relying on native list markers inside a broader `.card ul` reset that zeroes base list padding, then reintroducing only a small local indent on `.account-billing-feature-list`; that left marker placement and wrapped-line alignment to the browser's default list box behavior.
+- `css/creator-dashboard.css` now localizes the fix to `.account-billing-feature-list` by removing native bullets for that list only and rendering each entitlement row as a two-column marker/text grid, which keeps the marker, first line, and wrapped lines aligned consistently without changing the surrounding card layout.
+
+### Human-Readable Notes
+
+- The `Current entitlements` bullets in Creator account settings now line up cleanly, and longer lines wrap under their own text instead of drifting against the marker.
+- This was a small billing-card polish pass only; the card content, hierarchy, and other account layouts were left intact.
+
+### Files / Areas Touched
+
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Creator Account Shell Tab Row Hard Fix - 2026-03-27
 
 ### Technical Notes

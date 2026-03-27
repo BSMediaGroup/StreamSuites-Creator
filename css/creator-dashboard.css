@@ -4764,7 +4764,8 @@ h3 {
 
 .account-billing-feature-list {
   margin: 0;
-  padding-left: 18px;
+  padding: 0;
+  list-style: none;
   display: grid;
   gap: 10px;
 }
@@ -4772,6 +4773,19 @@ h3 {
 .account-billing-feature-list li {
   color: var(--creator-text);
   line-height: 1.5;
+  display: grid;
+  grid-template-columns: 6px minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: start;
+}
+
+.account-billing-feature-list li::before {
+  content: "";
+  inline-size: 6px;
+  block-size: 6px;
+  margin-top: 0.45rem;
+  border-radius: 999px;
+  background: rgba(154, 209, 255, 0.72);
 }
 
 .account-billing-footer {
