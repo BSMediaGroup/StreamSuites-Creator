@@ -602,7 +602,13 @@
 
   function readCreatorIdFromSession() {
     const isAuthenticated = window.App?.session?.authenticated === true;
-    const sessionCode = isAuthenticated ? window.App?.session?.user_code : "";
+    const activeContext =
+      typeof window.StreamSuitesAuth?.creatorContext?.getActiveContext === "function"
+        ? window.StreamSuitesAuth.creatorContext.getActiveContext(window.App?.session || null)
+        : null;
+    const sessionCode = isAuthenticated
+      ? activeContext?.creatorUserCode || window.App?.session?.user_code
+      : "";
     if (typeof sessionCode === "string" && sessionCode.trim()) {
       return sessionCode.trim();
     }

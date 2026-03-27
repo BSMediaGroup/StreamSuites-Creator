@@ -323,6 +323,13 @@
     };
   }
 
+  function buildCreatorContextHeaders() {
+    if (typeof window.StreamSuitesAuth?.creatorContext?.buildHeaders !== "function") {
+      return {};
+    }
+    return window.StreamSuitesAuth.creatorContext.buildHeaders();
+  }
+
   function normalizeNotes(notes) {
     if (!Array.isArray(notes)) return [];
     return notes
@@ -388,7 +395,8 @@
             method: "GET",
             credentials: "include",
             headers: {
-              Accept: "application/json"
+              Accept: "application/json",
+              ...buildCreatorContextHeaders(),
             }
           },
           DEFAULT_REFRESH_TIMEOUT_MS

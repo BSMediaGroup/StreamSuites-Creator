@@ -164,6 +164,13 @@
     return Math.abs(hash);
   }
 
+  function buildCreatorContextHeaders() {
+    if (typeof window.StreamSuitesAuth?.creatorContext?.buildHeaders !== "function") {
+      return {};
+    }
+    return window.StreamSuitesAuth.creatorContext.buildHeaders();
+  }
+
   function createSeededRng(seedInput) {
     let seed = Math.max(1, Math.abs(Number(seedInput) || 1)) % 2147483647;
     return () => {
@@ -706,7 +713,8 @@
             method: "GET",
             credentials: "include",
             headers: {
-              Accept: "application/json"
+              Accept: "application/json",
+              ...buildCreatorContextHeaders(),
             }
           },
           timeoutMs

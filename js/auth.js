@@ -7,6 +7,7 @@
   const AUTH_ENDPOINTS = Object.freeze({
     accessState: `${AUTH_BASE_URL}/auth/access-state`,
     debugUnlock: `${AUTH_BASE_URL}/auth/debug/unlock`,
+    creatorDebugMode: `${AUTH_BASE_URL}/auth/creator/debug-mode`,
     session: `${AUTH_BASE_URL}/auth/session`,
     logout: `${AUTH_BASE_URL}/auth/logout`,
     emailLogin: `${AUTH_BASE_URL}/auth/login/password`,
@@ -886,6 +887,72 @@
     };
   }
 
+  function normalizeCreatorContext(raw) {
+    const source = raw && typeof raw === "object" ? raw : {};
+    return {
+      creatorAccountId: coerceText(source.creator_account_id || source.creatorAccountId),
+      creatorUserCode: coerceText(source.creator_user_code || source.creatorUserCode),
+      creatorDisplayName: coerceText(source.creator_display_name || source.creatorDisplayName),
+      creatorAvatarUrl: coerceText(source.creator_avatar_url || source.creatorAvatarUrl),
+      contextType: coerceText(source.context_type || source.contextType).toLowerCase(),
+      owner: source.owner === true,
+      permissionPreset: coerceText(source.permission_preset || source.permissionPreset).toLowerCase(),
+      capabilities:
+        source.capabilities && typeof source.capabilities === "object"
+          ? { ...source.capabilities }
+          : {},
+      allowedRoutes: Array.isArray(source.allowed_routes || source.allowedRoutes)
+        ? (source.allowed_routes || source.allowedRoutes)
+            .map((item) => coerceText(item).toLowerCase())
+            .filter(Boolean)
+        : [],
+      debug: source.debug === true,
+    };
+  }
+
+  function normalizeCreatorDebugState(raw) {
+    const source = raw && typeof raw === "object" ? raw : {};
+    return {
+      eligible: source.eligible === true,
+      active: source.active === true,
+      requested: source.requested === true,
+      adminCapable: source.admin_capable === true || source.adminCapable === true,
+      developerCapable: source.developer_capable === true || source.developerCapable === true,
+      reason: coerceText(source.reason).toLowerCase(),
+      datasetSource: coerceText(source.dataset_source || source.datasetSource).toLowerCase(),
+      sampleCreatorAvailable:
+        source.sample_creator_available === true || source.sampleCreatorAvailable === true,
+      activeContext: normalizeCreatorContext(source.active_context || source.activeContext),
+      operator:
+        source.operator && typeof source.operator === "object"
+          ? {
+              accountId: coerceText(source.operator.account_id || source.operator.accountId),
+              role: normalizeRole(source.operator.role),
+              email: coerceText(source.operator.email),
+              displayName: coerceText(
+                source.operator.display_name || source.operator.displayName
+              ),
+              userCode: coerceText(source.operator.user_code || source.operator.userCode),
+            }
+          : null,
+      sampleCreator:
+        source.sample_creator && typeof source.sample_creator === "object"
+          ? {
+              accountId: coerceText(
+                source.sample_creator.account_id || source.sample_creator.accountId
+              ),
+              email: coerceText(source.sample_creator.email),
+              displayName: coerceText(
+                source.sample_creator.display_name || source.sample_creator.displayName
+              ),
+              userCode: coerceText(
+                source.sample_creator.user_code || source.sample_creator.userCode
+              ),
+            }
+          : null,
+    };
+  }
+
   function normalizeSessionPayload(payload) {
     if (!payload || typeof payload !== "object") {
       return { authenticated: false };
@@ -986,6 +1053,9 @@
     const creatorWorkspaceAccess = normalizeCreatorWorkspaceAccess(
       sessionSource.creator_workspace_access || sessionSource.creatorWorkspaceAccess
     );
+    const creatorDebug = normalizeCreatorDebugState(
+      sessionSource.creator_debug || sessionSource.creatorDebug
+    );
     const creatorCapable =
       creatorWorkspaceAccess.allowed === true ||
       sessionSource.creator_capable === true ||
@@ -1007,6 +1077,7 @@
       adminAccess,
       moderatorAccess,
       creatorWorkspaceAccess,
+      creatorDebug,
       badges: normalizeAuthoritativeBadges(sessionSource.badges, tier, role),
       findmehereBadges: normalizeAuthoritativeBadges(
         sessionSource.findmehere_badges || sessionSource.findmehereBadges,
@@ -1469,6 +1540,7 @@
       JSON.stringify(left.moderatorAccess || null) === JSON.stringify(right.moderatorAccess || null) &&
       JSON.stringify(left.creatorWorkspaceAccess || null) ===
         JSON.stringify(right.creatorWorkspaceAccess || null) &&
+      JSON.stringify(left.creatorDebug || null) === JSON.stringify(right.creatorDebug || null) &&
       JSON.stringify(left.features || {}) === JSON.stringify(right.features || {}) &&
       JSON.stringify(left.paymentSummary || null) === JSON.stringify(right.paymentSummary || null) &&
       !!left.onboardingRequired === !!right.onboardingRequired
@@ -1493,12 +1565,38 @@
     return allowedRoutes.includes(normalizedRoute);
   }
 
+  function getActiveCreatorContext(session = sessionState.value) {
+    const debugContext = session?.creatorDebug?.activeContext;
+    if (debugContext?.creatorAccountId) {
+      return debugContext;
+    }
+    const workspaceAccess = session?.creatorWorkspaceAccess;
+    const contexts = Array.isArray(workspaceAccess?.contexts) ? workspaceAccess.contexts : [];
+    const defaultCreatorAccountId = coerceText(workspaceAccess?.defaultCreatorAccountId);
+    if (defaultCreatorAccountId) {
+      const match = contexts.find((entry) => entry?.creatorAccountId === defaultCreatorAccountId);
+      if (match) return match;
+    }
+    return contexts.find((entry) => entry?.creatorAccountId) || null;
+  }
+
+  function buildCreatorContextHeaders(headers = {}, session = sessionState.value) {
+    const normalizedHeaders =
+      headers && typeof headers === "object" && !Array.isArray(headers) ? { ...headers } : {};
+    const context = getActiveCreatorContext(session);
+    if (context?.creatorAccountId) {
+      normalizedHeaders["X-StreamSuites-Creator-Account-Id"] = context.creatorAccountId;
+    }
+    return normalizedHeaders;
+  }
+
   function getTierLabel(session) {
     return normalizeTier(session?.effectiveTier?.tierLabel || session?.tier || "CORE");
   }
 
   function getCreatorIdValue(session) {
-    const userCode = typeof session?.user_code === "string" ? session.user_code.trim() : "";
+    const context = getActiveCreatorContext(session);
+    const userCode = coerceText(context?.creatorUserCode || session?.user_code);
     return userCode || "Not available";
   }
 
@@ -1596,6 +1694,7 @@
       adminAccess: session?.adminAccess || null,
       moderatorAccess: session?.moderatorAccess || null,
       creatorWorkspaceAccess: session?.creatorWorkspaceAccess || null,
+      creatorDebug: session?.creatorDebug || null,
       features: session?.features || {},
       paymentSummary: session?.paymentSummary || null,
       onboardingRequired: session?.onboardingRequired === true
@@ -1624,6 +1723,7 @@
       adminAccess: session?.adminAccess || null,
       moderatorAccess: session?.moderatorAccess || null,
       creatorWorkspaceAccess: session?.creatorWorkspaceAccess || null,
+      creatorDebug: session?.creatorDebug || null,
       features: session?.features || {},
       paymentSummary: session?.paymentSummary || null,
       onboardingRequired: session?.onboardingRequired === true
@@ -1759,7 +1859,7 @@
     pill = document.createElement("span");
     pill.className = "creator-debug-pill";
     pill.dataset.creatorDebugIndicator = "true";
-    pill.textContent = "Debug Mode";
+    pill.textContent = "Test Creator";
     pill.hidden = true;
 
     const tierEl = summary.querySelector("[data-auth-tier]");
@@ -1772,9 +1872,9 @@
     return pill;
   }
 
-  function ensureCreatorDebugExitControl(menu) {
+  function ensureCreatorDebugToggleControl(menu) {
     if (!menu) return null;
-    let control = menu.querySelector("[data-creator-debug-exit]");
+    let control = menu.querySelector("[data-creator-debug-toggle]");
     if (control) return control;
 
     const dropdown = menu.querySelector("[data-account-dropdown]");
@@ -1783,8 +1883,8 @@
     control = document.createElement("button");
     control.type = "button";
     control.className = "creator-account-item secondary";
-    control.dataset.creatorDebugExit = "true";
-    control.textContent = "Exit Debug Mode";
+    control.dataset.creatorDebugToggle = "true";
+    control.textContent = "Enter Debug Mode";
     control.hidden = true;
 
     const logoutButton = dropdown.querySelector("[data-auth-logout]");
@@ -1798,29 +1898,37 @@
   }
 
   function isCreatorDebugModeEligible(session = sessionState.value) {
-    return isAdminSession(session) && !isCreatorSession(session);
+    return session?.creatorDebug?.eligible === true;
   }
 
   function isCreatorDebugModeActive(session = sessionState.value) {
-    if (!isCreatorDebugModeEligible(session)) return false;
-    return readCreatorDebugModeFlag();
+    return session?.creatorDebug?.active === true;
   }
 
   function syncDebugModeUI(session = sessionState.value) {
     const enabled = isCreatorDebugModeActive(session);
+    const eligible = isCreatorDebugModeEligible(session);
+    const sampleLabel = coerceText(
+      session?.creatorDebug?.sampleCreator?.displayName ||
+        session?.creatorDebug?.sampleCreator?.userCode ||
+        "Test Creator"
+    );
 
     document.querySelectorAll("[data-auth-summary]").forEach((summary) => {
       removeCreatorRoleTags(summary);
       const pill = ensureCreatorDebugPill(summary);
       if (pill) {
+        pill.textContent = enabled ? `${sampleLabel}` : "Test Creator";
         pill.hidden = !enabled;
       }
     });
 
     document.querySelectorAll("[data-account-menu]").forEach((menu) => {
-      const exitControl = ensureCreatorDebugExitControl(menu);
-      if (exitControl) {
-        exitControl.hidden = !enabled;
+      const toggleControl = ensureCreatorDebugToggleControl(menu);
+      if (toggleControl) {
+        toggleControl.hidden = !eligible;
+        toggleControl.textContent = enabled ? "Exit Debug Mode" : "Enter Debug Mode";
+        toggleControl.dataset.state = enabled ? "active" : "inactive";
       }
     });
 
@@ -1830,30 +1938,26 @@
   }
 
   function syncCreatorDebugModeState(session = sessionState.value) {
-    const requested = readCreatorDebugModeFlag();
+    clearCreatorDebugModeFlag();
+    const creatorDebug = session?.creatorDebug || {};
     const authenticated = !!session?.authenticated;
     const creatorSession = isCreatorSession(session);
     const adminSession = isAdminSession(session);
-    const eligible = isCreatorDebugModeEligible(session);
-
-    const forcedOffForCreator = authenticated && creatorSession && requested;
-    if (authenticated && creatorSession) {
-      clearCreatorDebugModeFlag();
-    } else if (authenticated && !eligible && requested) {
-      clearCreatorDebugModeFlag();
-    }
-    const forcedOffForIneligible = authenticated && !creatorSession && !eligible && requested;
-
-    const requestedAfterEnforcement = readCreatorDebugModeFlag();
-    const enabled = adminSession && !creatorSession && requestedAfterEnforcement;
+    const eligible = creatorDebug.eligible === true;
+    const enabled = creatorDebug.active === true;
+    const requested = creatorDebug.requested === true;
 
     ensureAppNamespace();
     window.App.creatorDebugMode = {
       enabled,
       eligible,
-      requested: requestedAfterEnforcement,
+      requested,
       isAdminSession: adminSession,
       isCreatorSession: creatorSession,
+      useFallbackState: false,
+      datasetSource: creatorDebug.datasetSource || "session_account",
+      sampleCreator: creatorDebug.sampleCreator || null,
+      activeContext: creatorDebug.activeContext || null,
       storageKey: CREATOR_DEBUG_MODE_KEY,
       storageKeys: CREATOR_DEBUG_MODE_STORAGE_KEYS.slice()
     };
@@ -1866,25 +1970,44 @@
           eligible,
           isAdminSession: adminSession,
           isCreatorSession: creatorSession,
-          forcedOffForIneligible,
-          forcedOffForCreator
+          requested,
+          activeContext: creatorDebug.activeContext || null
         }
       })
     );
     return enabled;
   }
 
-  function setCreatorDebugModeEnabled(enabled, session = sessionState.value) {
+  async function setCreatorDebugModeEnabled(enabled, session = sessionState.value) {
     if (enabled && !isCreatorDebugModeEligible(session)) {
       return false;
     }
-    if (enabled) {
-      writeCreatorDebugModeFlag(true);
-    } else {
-      clearCreatorDebugModeFlag();
+    const response = await fetch(AUTH_ENDPOINTS.creatorDebugMode, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ enabled: Boolean(enabled) }),
+    });
+    let payload = {};
+    try {
+      payload = await response.json();
+    } catch (_err) {
+      payload = {};
     }
-    syncCreatorDebugModeState(session);
-    return true;
+    if (!response.ok || payload?.success === false) {
+      const error = new Error(payload?.error || `Unable to update debug mode (${response.status})`);
+      error.status = response.status;
+      throw error;
+    }
+    const nextSession =
+      payload?.user && typeof payload.user === "object"
+        ? normalizeSessionPayload({ authenticated: true, user: payload.user })
+        : await loadSession({ force: true });
+    applySessionUpdate(nextSession);
+    return isCreatorDebugModeActive(nextSession);
   }
 
   function isRoleMismatchBypassAllowed(session = sessionState.value) {
@@ -2304,31 +2427,36 @@
       if (proceedButton) {
         event.preventDefault();
         const session = sessionState.value || window.App?.session || null;
-        if (!setCreatorDebugModeEnabled(true, session)) {
-          showAuthToast("Debug Mode is only available to admin accounts.");
-          return;
-        }
-        if (session?.authenticated) {
-          persistLocalSession(session);
-        }
-        window.location.reload();
+        Promise.resolve()
+          .then(() => setCreatorDebugModeEnabled(true, session))
+          .catch((err) => {
+            const message =
+              err?.status === 403
+                ? "Debug Mode is only available to admin or developer accounts."
+                : err?.message || "Unable to enable Debug Mode.";
+            showAuthToast(message, { tone: "danger" });
+          });
         return;
       }
 
-      const exitButton = target.closest("[data-creator-debug-exit]");
-      if (!exitButton) return;
+      const toggleButton = target.closest("[data-creator-debug-toggle], [data-creator-debug-exit]");
+      if (!toggleButton) return;
 
       event.preventDefault();
-      setCreatorDebugModeEnabled(false, sessionState.value || window.App?.session || null);
-
-      if (sessionState.value?.authenticated && !isCreatorSession(sessionState.value)) {
-        toggleCreatorLockout(true, { variant: LOCKOUT_VARIANT_ROLE_MISMATCH });
-        setCreatorShellVisible(false);
-      } else {
-        toggleCreatorLockout(false);
-        setCreatorShellVisible(true);
-      }
-      showAuthToast("Debug Mode disabled.");
+      const currentSession = sessionState.value || window.App?.session || null;
+      const nextEnabled = !isCreatorDebugModeActive(currentSession);
+      Promise.resolve()
+        .then(() => setCreatorDebugModeEnabled(nextEnabled, currentSession))
+        .then((isEnabled) => {
+          toggleCreatorLockout(false);
+          setCreatorShellVisible(true);
+          showAuthToast(isEnabled ? "Debug Mode enabled." : "Debug Mode disabled.");
+        })
+        .catch((err) => {
+          showAuthToast(err?.message || "Unable to update Debug Mode.", {
+            tone: "danger"
+          });
+        });
     });
   }
 
@@ -3351,16 +3479,16 @@
     lockout.dataset.variant = variant;
 
     if (variant === LOCKOUT_VARIANT_ROLE_MISMATCH) {
-      const adminSession = isAdminSession(sessionState.value);
+      const elevatedSession = isCreatorDebugModeEligible(sessionState.value);
       const debugEnabled = isCreatorDebugModeActive(sessionState.value);
 
-      if (adminSession) {
+      if (elevatedSession) {
         lockout.innerHTML = `
           <div class="lockout-card">
             <span class="lockout-pill">Creator access required</span>
             <h2>This area is for creators.</h2>
             <p>
-              You are signed in with an admin account. You can continue with sample data in Debug Mode.
+              You are signed in with an elevated operator account. You can continue with the sample creator in Debug Mode.
             </p>
             <div class="lockout-actions">
               <button class="lockout-button" type="button" data-creator-debug-proceed="true">
@@ -3996,6 +4124,11 @@
     creatorAccess: {
       getAllowedRoutes: (session) => getAllowedCreatorRoutes(session),
       isRouteAllowed: (route, session) => isCreatorRouteAllowed(route, session)
+    },
+    creatorContext: {
+      getActiveContext: (session) => getActiveCreatorContext(session || sessionState.value),
+      buildHeaders: (headers = {}, session) =>
+        buildCreatorContextHeaders(headers, session || sessionState.value),
     },
     normalizeBadges: (value, tierFallback, roleFallback) =>
       normalizeAuthoritativeBadges(value, tierFallback, roleFallback),

@@ -175,6 +175,10 @@
   }
 
   function requestJson(url, options = {}) {
+    const creatorHeaders =
+      typeof window.StreamSuitesAuth?.creatorContext?.buildHeaders === "function"
+        ? window.StreamSuitesAuth.creatorContext.buildHeaders()
+        : {};
     return fetch(url, {
       credentials: "include",
       cache: "no-store",
@@ -183,6 +187,7 @@
       headers: {
         Accept: "application/json",
         ...(options.body ? { "Content-Type": "application/json" } : {}),
+        ...creatorHeaders,
         ...(options.headers || {})
       }
     }).then(async (response) => {

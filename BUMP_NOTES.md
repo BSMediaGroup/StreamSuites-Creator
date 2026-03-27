@@ -309,6 +309,44 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into the released `0.4.2-alpha` section above.
 
+### Creator Debug Mode UX Alignment - 2026-03-28
+
+### Technical Notes
+
+- `js/auth.js` now consumes the runtime-owned `creator_debug` session contract, normalizes the active creator context, and toggles debug mode through `POST /auth/creator/debug-mode` instead of treating local storage as the source of truth.
+- Creator request helpers that operate on creator-scoped account, integrations, stats, trigger, Discord, and notification surfaces now attach the authoritative creator-context headers exported by the shared auth module so the runtime can resolve the intended effective creator account consistently.
+- The account dropdown debug control now renders only for sessions marked debug-eligible by runtime/Auth, switches cleanly between enter/exit labels, and a subtle shell pill now appears only while the sample creator context is active.
+- `js/state.js` now treats runtime-reported debug state as authoritative for mutation-blocking behavior so admin and developer sessions in active debug mode are handled correctly even when they are also creator-capable.
+- Pending entries for `0.4.8-alpha` go here.
+
+### Human-Readable Notes
+
+- Admin and developer users now land in the normal Creator experience by default and only switch into the sample creator view when they explicitly choose Debug Mode from the account menu.
+- When debug mode is active, the shell shows a small test-creator indicator and the dashboard hydrates against the runtime-defined sample creator instead of quietly mixing operator and creator identities.
+- The debug toggle no longer appears for ordinary creator, viewer, or moderator sessions that lack admin/developer capability.
+- Pending entries for `0.4.8-alpha` go here.
+
+### Files / Areas Touched
+
+- `css/creator-dashboard.css`
+- `js/account-settings.js`
+- `js/app.js`
+- `js/auth.js`
+- `js/creator-stats.js`
+- `js/discord-bot-integration.js`
+- `js/integrations-hub.js`
+- `js/platform-integration-detail.js`
+- `js/state.js`
+- `js/triggers.js`
+- `js/utils/notifications-store.js`
+- Pending entries for `0.4.8-alpha` go here.
+
+### Risks / Follow-Ups
+
+- This repo now depends more directly on the runtime `creator_debug` and active-context contract, so stale backend deployments will leave the toggle hidden or inactive even if the frontend bundle is current.
+- Debug-mode write behavior is only as safe as the covered creator-scoped endpoints; any new creator write surface added later needs to keep using the shared creator-context headers and runtime workspace resolution.
+- Pending entries for `0.4.8-alpha` go here.
+
 ### Creator Dashboard Shared Button System Refresh - 2026-03-22
 
 - `css/creator-dashboard.css` now owns a cleaner shared Creator dashboard button family for `creator-button`, `creator-account-item`, `creator-account-button`, and `lockout-button`, replacing the earlier duplicated high-gloss gradient blocks with a tighter primary/secondary/danger token set.

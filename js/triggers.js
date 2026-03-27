@@ -37,11 +37,16 @@
   };
 
   function requestJson(url, options = {}) {
+    const creatorHeaders =
+      typeof window.StreamSuitesAuth?.creatorContext?.buildHeaders === "function"
+        ? window.StreamSuitesAuth.creatorContext.buildHeaders()
+        : {};
     return fetch(url, {
       credentials: "include",
       ...options,
       headers: {
         "Content-Type": "application/json",
+        ...creatorHeaders,
         ...(options.headers || {}),
       },
     }).then(async (response) => {

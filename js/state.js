@@ -46,7 +46,6 @@
   const TRIGGER_MATCH_MODES = new Set(["equals_icase", "contains_icase"]);
 
   const STORAGE_KEY = "streamsuites.stateRootOverride";
-  const CREATOR_DEBUG_MODE_KEY = "ss_creator_debug_mode";
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const CREATOR_ROLE = "creator";
   const CREATOR_DEBUG_MODE_EVENT = "streamsuites:creator-debug-mode";
@@ -182,14 +181,6 @@
     return isAdminRole(session.role);
   }
 
-  function readDebugModeFlag() {
-    try {
-      return localStorage.getItem(CREATOR_DEBUG_MODE_KEY) === "1";
-    } catch (_err) {
-      return false;
-    }
-  }
-
   function readPersistedSession() {
     try {
       const raw = localStorage.getItem(LOCAL_SESSION_KEY);
@@ -203,16 +194,11 @@
 
   function isCreatorDebugModeActive() {
     const appMode = window.App?.creatorDebugMode;
-    if (
-      appMode &&
-      appMode.enabled === true &&
-      appMode.eligible === true &&
-      appMode.isCreatorSession !== true
-    ) {
+    if (appMode && appMode.enabled === true) {
       return true;
     }
     const session = window.App?.session || readPersistedSession();
-    return readDebugModeFlag() && isAdminSession(session) && !isCreatorSession(session);
+    return session?.creatorDebug?.active === true || session?.creator_debug?.active === true;
   }
 
   function clearDebugModeStateCaches() {
@@ -1014,7 +1000,6 @@
   "use strict";
 
   const PLATFORM_KEYS = ["youtube", "twitch", "kick", "pilled", "rumble"];
-  const CREATOR_DEBUG_MODE_KEY = "ss_creator_debug_mode";
   const LOCAL_SESSION_KEY = "streamsuites.creator.session";
   const CREATOR_ROLE = "creator";
   const CREATOR_DEBUG_MODE_EVENT = "streamsuites:creator-debug-mode";
@@ -1164,14 +1149,6 @@
     return isAdminRole(session.role);
   }
 
-  function readDebugModeFlag() {
-    try {
-      return localStorage.getItem(CREATOR_DEBUG_MODE_KEY) === "1";
-    } catch (_err) {
-      return false;
-    }
-  }
-
   function readPersistedSession() {
     try {
       const raw = localStorage.getItem(LOCAL_SESSION_KEY);
@@ -1185,16 +1162,11 @@
 
   function isDebugModeActive() {
     const appMode = window.App?.creatorDebugMode;
-    if (
-      appMode &&
-      appMode.enabled === true &&
-      appMode.eligible === true &&
-      appMode.isCreatorSession !== true
-    ) {
+    if (appMode && appMode.enabled === true) {
       return true;
     }
     const session = window.App?.session || readPersistedSession();
-    return readDebugModeFlag() && isAdminSession(session) && !isCreatorSession(session);
+    return session?.creatorDebug?.active === true || session?.creator_debug?.active === true;
   }
 
   function clearConfigDebugCaches() {

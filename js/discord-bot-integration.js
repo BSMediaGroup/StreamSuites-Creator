@@ -112,6 +112,13 @@
     return `${API_BASE_URL}${path}`;
   }
 
+  function buildCreatorContextHeaders() {
+    if (typeof window.StreamSuitesAuth?.creatorContext?.buildHeaders !== "function") {
+      return {};
+    }
+    return window.StreamSuitesAuth.creatorContext.buildHeaders();
+  }
+
   function formatTimestamp(value) {
     const formatted = window.StreamSuitesState?.formatTimestamp?.(value);
     if (typeof formatted === "string" && formatted.trim()) return formatted;
@@ -163,7 +170,8 @@
       method,
       credentials: "include",
       headers: {
-        Accept: "application/json"
+        Accept: "application/json",
+        ...buildCreatorContextHeaders()
       }
     };
 

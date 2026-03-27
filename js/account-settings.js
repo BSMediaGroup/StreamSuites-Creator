@@ -198,11 +198,16 @@
   }
 
   async function requestJson(url, options = {}) {
+    const creatorHeaders =
+      typeof window.StreamSuitesAuth?.creatorContext?.buildHeaders === "function"
+        ? window.StreamSuitesAuth.creatorContext.buildHeaders()
+        : {};
     const response = await fetch(url, {
       credentials: "include",
       ...options,
       headers: {
         "Content-Type": "application/json",
+        ...creatorHeaders,
         ...(options.headers || {}),
       },
     });
@@ -230,11 +235,16 @@
   }
 
   async function requestForm(url, formData, options = {}) {
+    const creatorHeaders =
+      typeof window.StreamSuitesAuth?.creatorContext?.buildHeaders === "function"
+        ? window.StreamSuitesAuth.creatorContext.buildHeaders()
+        : {};
     const response = await fetch(url, {
       method: options.method || "POST",
       credentials: "include",
       body: formData,
       headers: {
+        ...creatorHeaders,
         ...(options.headers || {}),
       },
     });
