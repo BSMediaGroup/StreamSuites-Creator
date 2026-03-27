@@ -141,8 +141,11 @@
     accountHashHandler: null,
     accountTabsHandler: null,
     accountTabsToggleHandler: null,
+    accountTabsArrowHandler: null,
+    accountTabsOverflowHandler: null,
     accountActiveSectionId: "",
     accountScrollQueued: false,
+    accountTabsOverflowQueued: false,
     previewMode: "streamsuites",
     customLinks: [],
   };
@@ -499,9 +502,11 @@
       copyButtons: Array.from(document.querySelectorAll("[data-profile-copy-url]")),
       profileFields: Array.from(document.querySelectorAll("[data-profile-field]")),
       accountTabsWrap: document.querySelector("[data-account-shell-tabs-wrap]"),
+      accountTabsScroller: document.querySelector("[data-account-shell-tabs-scroller]"),
       accountTabs: document.querySelector("[data-account-shell-tabs]"),
       accountTabButtons: Array.from(document.querySelectorAll("[data-account-shell-tab]")),
       accountTabsToggle: document.getElementById("account-tabs-toggle"),
+      accountTabsArrowButtons: Array.from(document.querySelectorAll("[data-account-tabs-arrow]")),
       accountSectionCards: Array.from(document.querySelectorAll(".account-settings .account-grid > .card[id]")),
       previewHub: document.querySelector("[data-profile-preview-hub]"),
       previewModeButtons: Array.from(document.querySelectorAll("[data-profile-preview-mode]")),
@@ -574,14 +579,63 @@
       accountTabsWrap.appendChild(nav);
     }
 
+    let accountTabs = accountTabsWrap.querySelector("[data-account-shell-tabs]");
+    if (!(accountTabs instanceof HTMLElement)) {
+      accountTabs = document.createElement("nav");
+      accountTabs.className = "account-shell-tabs";
+      accountTabs.dataset.accountShellTabs = "true";
+      accountTabs.setAttribute("aria-label", "Account settings sections");
+      accountTabsWrap.appendChild(accountTabs);
+    }
+
+    let accountTabsScroller = accountTabsWrap.querySelector("[data-account-shell-tabs-scroller]");
+    if (!(accountTabsScroller instanceof HTMLElement)) {
+      accountTabsScroller = document.createElement("div");
+      accountTabsScroller.className = "account-shell-tabs-scroller";
+      accountTabsScroller.dataset.accountShellTabsScroller = "true";
+      accountTabs.replaceWith(accountTabsScroller);
+      accountTabsScroller.appendChild(accountTabs);
+    } else if (!accountTabsScroller.contains(accountTabs)) {
+      accountTabsScroller.appendChild(accountTabs);
+    }
+
+    const ensureTabsArrowButton = (direction) => {
+      const selector = `[data-account-tabs-arrow="${direction}"]`;
+      let button = accountTabsWrap.querySelector(selector);
+      if (!(button instanceof HTMLButtonElement)) {
+        button = document.createElement("button");
+        button.type = "button";
+        button.className = `account-shell-tabs-arrow is-${direction}`;
+        button.dataset.accountTabsArrow = direction;
+        button.hidden = true;
+        button.disabled = true;
+        button.setAttribute("aria-hidden", "true");
+        button.setAttribute(
+          "aria-label",
+          direction === "start" ? "Scroll account tabs left" : "Scroll account tabs right"
+        );
+        button.setAttribute(
+          "title",
+          direction === "start" ? "Scroll account tabs left" : "Scroll account tabs right"
+        );
+        button.innerHTML = `<span class="account-shell-tabs-arrow-icon" aria-hidden="true"></span>`;
+      }
+      if (!button.isConnected) {
+        if (direction === "start") {
+          accountTabsWrap.insertBefore(button, accountTabsScroller);
+        } else {
+          accountTabsWrap.appendChild(button);
+        }
+      }
+      return button;
+    };
+
+    ensureTabsArrowButton("start");
+    ensureTabsArrowButton("end");
+
     const insertBefore = document.getElementById("global-loader") || getAccountScrollContainer();
     if (!accountTabsWrap.isConnected) {
       shellMain.insertBefore(accountTabsWrap, insertBefore instanceof Node ? insertBefore : null);
-    }
-
-    const accountTabs = accountTabsWrap.querySelector("[data-account-shell-tabs]");
-    if (!(accountTabs instanceof HTMLElement)) {
-      return false;
     }
 
     const fragment = document.createDocumentFragment();
@@ -628,6 +682,53 @@
       "--creator-account-scroll-offset",
       `${getAccountScrollOffset(20)}px`
     );
+  }
+
+  function setAccountTabsArrowState(button, visible) {
+    if (!(button instanceof HTMLButtonElement)) return;
+    button.hidden = !visible;
+    button.disabled = !visible;
+    button.setAttribute("aria-hidden", visible ? "false" : "true");
+  }
+
+  function updateAccountTabOverflowControls() {
+    state.accountTabsOverflowQueued = false;
+    const els = getProfileElements();
+    if (!(els.accountTabsWrap instanceof HTMLElement) || !(els.accountTabs instanceof HTMLElement)) {
+      return;
+    }
+
+    const collapsed = els.accountTabsWrap.dataset.collapsed === "true";
+    const maxScrollLeft = Math.max(0, els.accountTabs.scrollWidth - els.accountTabs.clientWidth);
+    const overflowing = !collapsed && maxScrollLeft > 2;
+    const showStart = overflowing && els.accountTabs.scrollLeft > 2;
+    const showEnd = overflowing && els.accountTabs.scrollLeft < maxScrollLeft - 2;
+
+    els.accountTabsWrap.dataset.overflowing = overflowing ? "true" : "false";
+    els.accountTabsWrap.dataset.overflowStart = showStart ? "true" : "false";
+    els.accountTabsWrap.dataset.overflowEnd = showEnd ? "true" : "false";
+
+    els.accountTabsArrowButtons.forEach((button) => {
+      const direction = button.getAttribute("data-account-tabs-arrow");
+      setAccountTabsArrowState(button, direction === "start" ? showStart : showEnd);
+    });
+  }
+
+  function queueAccountTabOverflowUpdate() {
+    if (state.accountTabsOverflowQueued) return;
+    state.accountTabsOverflowQueued = true;
+    window.requestAnimationFrame(updateAccountTabOverflowControls);
+  }
+
+  function scrollAccountTabsByDirection(direction) {
+    const els = getProfileElements();
+    if (!(els.accountTabs instanceof HTMLElement)) return;
+    const distance = Math.max(140, Math.round(els.accountTabs.clientWidth * 0.72));
+    const delta = direction === "start" ? -distance : distance;
+    els.accountTabs.scrollBy({
+      left: delta,
+      behavior: "smooth",
+    });
   }
 
   function setAccountSectionExpanded(card, expanded, options = {}) {
@@ -686,6 +787,7 @@
           inline: "nearest",
           behavior: "auto",
         });
+        queueAccountTabOverflowUpdate();
       }
     });
     state.accountActiveSectionId = nextSectionId;
@@ -771,6 +873,7 @@
     );
     syncAccountShellMetrics();
     queueActiveAccountTabUpdate();
+    queueAccountTabOverflowUpdate();
   }
 
   function prepareAccountSections() {
@@ -824,6 +927,7 @@
     if (state.accountShellWired) {
       syncAccountShellMetrics();
       queueActiveAccountTabUpdate();
+      queueAccountTabOverflowUpdate();
       return;
     }
 
@@ -848,6 +952,22 @@
       els.accountTabsToggle.addEventListener("click", state.accountTabsToggleHandler);
     }
 
+    state.accountTabsArrowHandler = (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const button = target.closest("[data-account-tabs-arrow]");
+      if (!(button instanceof HTMLButtonElement)) return;
+      const direction = button.getAttribute("data-account-tabs-arrow");
+      if (direction !== "start" && direction !== "end") return;
+      scrollAccountTabsByDirection(direction);
+    };
+    els.accountTabsWrap.addEventListener("click", state.accountTabsArrowHandler);
+
+    state.accountTabsOverflowHandler = () => {
+      queueAccountTabOverflowUpdate();
+    };
+    els.accountTabs.addEventListener("scroll", state.accountTabsOverflowHandler, { passive: true });
+
     const scrollContainer = getAccountScrollContainer();
     state.accountScrollHandler = () => {
       queueActiveAccountTabUpdate();
@@ -855,6 +975,7 @@
     state.accountResizeHandler = () => {
       syncAccountShellMetrics();
       queueActiveAccountTabUpdate();
+      queueAccountTabOverflowUpdate();
     };
     state.accountHashHandler = () => {
       const sectionId = (window.location.hash || "").replace(/^#/, "").trim();
@@ -868,6 +989,7 @@
 
     state.accountShellWired = true;
     syncAccountShellMetrics();
+    queueAccountTabOverflowUpdate();
     const initialHash = (window.location.hash || "").replace(/^#/, "").trim();
     if (initialHash) {
       revealAccountSection(initialHash, { instant: true });
@@ -885,6 +1007,12 @@
     if (state.accountTabsToggleHandler && els.accountTabsToggle instanceof HTMLButtonElement) {
       els.accountTabsToggle.removeEventListener("click", state.accountTabsToggleHandler);
     }
+    if (state.accountTabsArrowHandler && els.accountTabsWrap instanceof HTMLElement) {
+      els.accountTabsWrap.removeEventListener("click", state.accountTabsArrowHandler);
+    }
+    if (state.accountTabsOverflowHandler && els.accountTabs instanceof HTMLElement) {
+      els.accountTabs.removeEventListener("scroll", state.accountTabsOverflowHandler);
+    }
     if (state.accountScrollHandler && scrollContainer instanceof HTMLElement) {
       scrollContainer.removeEventListener("scroll", state.accountScrollHandler);
     }
@@ -900,8 +1028,11 @@
     state.accountScrollHandler = null;
     state.accountResizeHandler = null;
     state.accountHashHandler = null;
+    state.accountTabsArrowHandler = null;
+    state.accountTabsOverflowHandler = null;
     state.accountActiveSectionId = "";
     state.accountScrollQueued = false;
+    state.accountTabsOverflowQueued = false;
     document.getElementById("account-tabs-toggle")?.remove();
     document.querySelector("[data-account-shell-tabs-wrap]")?.remove();
     document.documentElement.style.removeProperty("--creator-account-tabs-top");

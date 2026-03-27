@@ -11,12 +11,17 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 - The earlier `/account` tab-row pass failed because the row and its header toggle were authored in `views/account.html` outside the fetched `#view-container`, and the Creator SPA only injects that container's inner markup. The live shell never mounted either control on the real `/account` route.
 - The previous account-tab behavior also targeted `window` scrolling even though the Creator workspace scrolls inside `#app-main`, which meant active-section syncing and jump behavior were wired against the wrong scroll container.
 - `js/account-settings.js` now mounts the account-only tabs button beside the sidebar control in the shared top bar, injects the shell tab row directly under the live top bar before the loader, derives tab buttons from the real account section cards, and removes both shell controls on non-account routes.
-- Account section jumps and active highlighting now follow the actual Creator scroll container, keep the active tab in view on narrow widths, and preserve the existing expandable section-card behavior with the tab row expanded by default.
+- Account section jumps and active highlighting now follow the actual Creator scroll container, keep the active tab in view on narrow widths, preserve the existing expandable section-card behavior with the tab row expanded by default, and add discreet end-cap arrow controls that appear only when horizontal tab overflow exists in that direction.
+- The creator account dropdown now uses a viewport-capped mobile width instead of inheriting the desktop `min-width` behavior that could push the panel off the right edge on phones, and long account-detail values now wrap inside the panel instead of re-expanding it.
+- Creator auth summary avatars now carry an explicit fallback state so the default `profile.svg` placeholder can be recolored for dark-surface contrast without tinting real uploaded avatars, and the mobile top-bar account widget now collapses to avatar-only while the desktop widget keeps the existing name-and-badge layout.
 
 ### Human-Readable Notes
 
 - The `/account` page now actually shows the shell tab row immediately under the top bar instead of silently missing it.
 - The tabs button in the top bar now works on `/account`, and the active tab follows the section you are viewing while the account page scrolls.
+- When the account tabs overflow horizontally, small left/right arrow buttons now appear at the row edges so the hidden tabs remain discoverable and navigable.
+- The mobile account menu now opens fully on-screen instead of spawning half off the viewport edge.
+- The fallback user avatar is now readable against the dark Creator shell, and on mobile the top-bar user widget only shows the avatar to save space.
 - Other Creator routes do not inherit the account tab row or the tabs-toggle button.
 
 ### Files / Areas Touched

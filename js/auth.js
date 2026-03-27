@@ -1926,6 +1926,17 @@
     setProfileHoverAttr(node, "data-ss-badges", JSON.stringify(session?.badges || []));
   }
 
+  function setAvatarImageSource(imageEl, src, options = {}) {
+    if (!(imageEl instanceof HTMLImageElement)) return;
+    const fallbackSrc = "/assets/icons/ui/profile.svg";
+    const nextSrc = typeof src === "string" && src.trim() ? src.trim() : fallbackSrc;
+    const fallback =
+      options.fallback === true ||
+      (!src || nextSrc === fallbackSrc);
+    imageEl.src = nextSrc;
+    imageEl.dataset.avatarFallback = fallback ? "true" : "false";
+  }
+
   function ensureTopbarProfileHoverOptOut() {
     document.querySelectorAll('#app-header [data-auth-summary], .ss-topbar [data-auth-summary]').forEach((node) => {
       node.setAttribute("data-ss-profile-hover", "off");
@@ -1997,7 +2008,7 @@
         }
         tierEl.hidden = true;
         logoutEl.hidden = true;
-        if (avatarEl) avatarEl.src = "/assets/icons/ui/profile.svg";
+        setAvatarImageSource(avatarEl, "", { fallback: true });
         if (nameEl) nameEl.classList.remove("ss-profile-hover");
         if (avatarEl) avatarEl.classList.remove("ss-profile-hover");
         return;
@@ -2021,9 +2032,9 @@
       });
       tierEl.hidden = false;
       logoutEl.hidden = false;
-      if (avatarEl) {
-        avatarEl.src = session.avatar || "/assets/icons/ui/profile.svg";
-      }
+      setAvatarImageSource(avatarEl, session?.avatar || "", {
+        fallback: !session?.avatar
+      });
       applyProfileHoverSummaryAttrs(nameEl, session);
       applyProfileHoverSummaryAttrs(avatarEl, session);
     });
@@ -2111,7 +2122,9 @@
       }
     }
     if (avatarImage instanceof HTMLImageElement) {
-      avatarImage.src = authenticated && session?.avatar ? session.avatar : "/assets/icons/ui/profile.svg";
+      setAvatarImageSource(avatarImage, authenticated && session?.avatar ? session.avatar : "", {
+        fallback: !(authenticated && session?.avatar)
+      });
     }
     applyProfileHoverSummaryAttrs(nameInput, session);
     applyProfileHoverSummaryAttrs(userCodeValue, session);
