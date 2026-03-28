@@ -4,6 +4,24 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Cloudflare Pages Shell Route Manifest Parity - 2026-03-28
+
+### Technical Notes
+
+- Audited the current Creator client router against the repo-root Cloudflare Pages `_redirects` manifest and found manifest drift: the shell supports the exact `/integrations` hub route, but `_redirects` only covered `/integrations/*`.
+- Added the missing exact `/integrations -> /index.html 200` rewrite so the Creator integrations hub does not rely on the Pages Function fallback path when the deployment is behaving as static-only.
+- No custom 404 behavior was removed or redesigned in this pass. The branded `404.html` still handles genuine misses, while valid Creator shell routes are now more explicitly declared at the static rewrite layer.
+
+### Human-Readable Notes
+
+- The Creator integrations hub is now treated as a first-class dashboard route during direct entry and refresh instead of depending on the fallback safety net.
+- Real bad Creator URLs still stay on the branded 404 page.
+
+### Files / Areas Touched
+
+- `_redirects`
+- `BUMP_NOTES.md`
+
 ## Creator Cloudflare Pages Deep-Link Fallback Hardening - 2026-03-28
 
 ### Technical Notes
