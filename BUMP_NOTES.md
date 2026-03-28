@@ -4,6 +4,22 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Account Section Toggle Icon Color Follow-Up - 2026-03-28
+
+### Technical Notes
+
+- The Account Settings expand/collapse button glyph in `css/creator-dashboard.css` was still using a raw `background-image` swap for `visiblefilled.svg` and `hidden.svg`, which kept the SVG art locked to its source fill instead of inheriting the surrounding button text color.
+- The toggle icon now uses the same `currentColor` mask treatment as the corrected section-prefix icons, with the expanded/collapsed state switching only the mask image.
+
+### Human-Readable Notes
+
+- The Account Settings collapse/expand eye icons now render in the same visible color as the button text instead of showing up black.
+
+### Files / Areas Touched
+
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Creator Account Settings Hydration + Section Icon Correction - 2026-03-28
 
 ### Technical Notes

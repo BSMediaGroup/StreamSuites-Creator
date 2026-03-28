@@ -1706,13 +1706,23 @@ h3 {
 }
 
 .account-section-toggle-icon {
+  display: inline-block;
   width: 12px;
   height: 12px;
-  background: center / contain no-repeat url("/assets/icons/ui/visiblefilled.svg");
+  background-color: currentColor;
+  -webkit-mask-image: url("/assets/icons/ui/visiblefilled.svg");
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-image: url("/assets/icons/ui/visiblefilled.svg");
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
 }
 
 .account-section-card[data-expanded="false"] .account-section-toggle-icon {
-  background-image: url("/assets/icons/ui/hidden.svg");
+  -webkit-mask-image: url("/assets/icons/ui/hidden.svg");
+  mask-image: url("/assets/icons/ui/hidden.svg");
 }
 
 .account-section-title {
