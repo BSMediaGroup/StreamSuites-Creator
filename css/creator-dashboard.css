@@ -2665,9 +2665,18 @@ h3 {
 }
 
 .share-preview-title {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 14px;
   font-weight: 700;
+}
+
+.share-preview-title-logo {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  object-fit: contain;
 }
 
 .share-preview-note {
