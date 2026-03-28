@@ -302,13 +302,25 @@
     return srcMap[normalized] || "";
   }
 
+  function resolveBadgeDisplayMeta(rawBadge, options = {}) {
+    const key = coerceText(rawBadge?.key ?? rawBadge).toLowerCase();
+    const fallback = options.fallbackLabel || key;
+    const label = formatBadgeLabel(rawBadge?.label || fallback);
+    return {
+      key,
+      iconPath: badgeIconPath(key),
+      label,
+      title: formatBadgeLabel(rawBadge?.title || rawBadge?.label || fallback),
+    };
+  }
+
   function renderBadgeChoiceLabel(key, meta = "") {
-    const iconPath = badgeIconPath(key);
+    const badgeMeta = resolveBadgeDisplayMeta(key);
     return `
       <span class="accounts-badge-choice-label-wrap">
-        ${iconPath ? `<img class="accounts-badge-choice-icon" src="${escapeHtml(iconPath)}" alt="" aria-hidden="true" />` : ""}
+        ${badgeMeta.iconPath ? `<img class="accounts-badge-choice-icon" src="${escapeHtml(badgeMeta.iconPath)}" alt="" aria-hidden="true" />` : ""}
         <span class="accounts-badge-choice-copy">
-          <span class="accounts-badge-choice-label">${escapeHtml(formatBadgeLabel(key))}</span>
+          <span class="accounts-badge-choice-label">${escapeHtml(badgeMeta.label)}</span>
           ${meta ? `<span class="accounts-badge-choice-meta">${escapeHtml(meta)}</span>` : ""}
         </span>
       </span>
@@ -320,10 +332,9 @@
     if (!badges.length) return `<span class="account-note">${escapeHtml(emptyLabel)}</span>`;
     return badges
       .map((badge) => {
-        const key = coerceText(badge?.key).toLowerCase();
-        const src = badgeIconPath(key);
-        return src
-          ? `<img class="accounts-details-preview-badge" src="${escapeHtml(src)}" alt="${escapeHtml(formatBadgeLabel(badge?.label || key))}" title="${escapeHtml(formatBadgeLabel(badge?.title || badge?.label || key))}" />`
+        const badgeMeta = resolveBadgeDisplayMeta(badge);
+        return badgeMeta.iconPath
+          ? `<img class="accounts-details-preview-badge" src="${escapeHtml(badgeMeta.iconPath)}" alt="${escapeHtml(badgeMeta.label)}" title="${escapeHtml(badgeMeta.title)}" />`
           : "";
       })
       .filter(Boolean)

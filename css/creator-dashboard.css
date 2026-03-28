@@ -1723,10 +1723,19 @@ h3 {
 }
 
 .account-section-title-icon {
+  display: inline-block;
   width: 18px;
   height: 18px;
   flex: 0 0 18px;
-  object-fit: contain;
+  background-color: currentColor;
+  -webkit-mask-image: var(--account-section-title-icon);
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-image: var(--account-section-title-icon);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
 }
 
 .account-list-title-with-icon {

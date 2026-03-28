@@ -4,6 +4,26 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Account Settings Hydration + Section Icon Correction - 2026-03-28
+
+### Technical Notes
+
+- The broken badge-governance pass had introduced `formatBadgeLabel(...)` call sites into the Creator account badge row/icon renderers without carrying over the helper definition, which caused `renderBadgeGovernanceSection()` to throw during `AccountSettingsView.init()` and blocked the `/account` route from finishing hydration.
+- `js/account-settings.js` now keeps the badge label/title/icon resolution on one shared helper path rooted in the module-scoped `formatBadgeLabel(...)` formatter, so the badge governance renderer and effective-badge strip no longer depend on scattered direct label formatting calls.
+- `views/account.html` no longer renders the Account Settings section-prefix icons as raw `<img>` elements. Those headers now emit masked inline spans, and `css/creator-dashboard.css` applies `currentColor` masking so the prefix glyphs inherit the visible section-title color instead of preserving the SVG's original black fill.
+
+### Human-Readable Notes
+
+- Creator Account Settings no longer dies when the badge-governance section loads.
+- The section header icons now match the nearby title color instead of showing up as black SVGs.
+
+### Files / Areas Touched
+
+- `js/account-settings.js`
+- `views/account.html`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Badge Governance Matrix Polish - 2026-03-28
 
 ### Technical Notes
