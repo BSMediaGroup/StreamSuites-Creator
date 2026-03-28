@@ -4,6 +4,25 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Badge Governance Matrix Polish - 2026-03-28
+
+### Technical Notes
+
+- `js/account-settings.js` now filters redundant badge-governance surfaces (`creator_surface`, `admin_surface`, `public_surface`, and `directory`) out of the live badge surface catalog before rendering the account-settings matrix, while keeping the existing badge preference save contract for the remaining surfaces intact.
+- Creator badge visibility states no longer rely on the original SVG file color. The governance renderer now outputs mask-based visible/hidden glyph spans, and `css/creator-dashboard.css` applies `currentColor` masking so `visiblefilled.svg` inherits the creator success green while `hidden.svg` follows the surrounding neutral UI tone.
+- The Creator badge-governance section now includes a compact effective-badge icon strip, icon-bearing badge row labels, and a denser matrix/card layout that keeps locked admin-governed cells readable without changing the existing checkbox edit path.
+
+### Human-Readable Notes
+
+- Badge governance in Creator settings now matches the Admin cleanup: fewer redundant columns, readable green/neutral state icons, visible badge art, and a tighter matrix that wastes less space.
+- Locked cells still stay obvious, but the section is easier to scan and edit at a glance.
+
+### Files / Areas Touched
+
+- `js/account-settings.js`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Creator Account Section Merge + Platform Topper Polish - 2026-03-28
 
 ### Technical Notes

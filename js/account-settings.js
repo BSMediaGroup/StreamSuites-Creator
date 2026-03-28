@@ -83,6 +83,8 @@
     "account-section-billing": "Billing",
     "account-section-badges": "Badges",
   });
+  const BADGE_ORDER = Object.freeze(["admin", "core", "gold", "pro", "founder", "moderator", "developer"]);
+  const HIDDEN_BADGE_GOVERNANCE_SURFACES = new Set(["creator_surface", "admin_surface", "public_surface", "directory"]);
   const RESERVED_PUBLIC_SLUGS = new Set([
     "u",
     "live",
@@ -275,6 +277,57 @@
 
   function coerceText(value) {
     return typeof value === "string" ? value.trim() : "";
+  }
+
+  function formatBadgeLabel(value) {
+    const text = coerceText(value) || "unknown";
+    return text
+      .replace(/[_-]+/g, " ")
+      .split(" ")
+      .map((part) => (part ? part[0].toUpperCase() + part.slice(1).toLowerCase() : ""))
+      .join(" ");
+  }
+
+  function badgeIconPath(key) {
+    const normalized = coerceText(key).toLowerCase();
+    const srcMap = {
+      admin: "/assets/icons/tierbadge-admin.svg",
+      core: "/assets/icons/tierbadge-core.svg",
+      gold: "/assets/icons/tierbadge-gold.svg",
+      pro: "/assets/icons/tierbadge-pro.svg",
+      founder: "/assets/icons/founder-gold.svg",
+      moderator: "/assets/icons/modgavel-blue.svg",
+      developer: "/assets/icons/dev-green.svg",
+    };
+    return srcMap[normalized] || "";
+  }
+
+  function renderBadgeChoiceLabel(key, meta = "") {
+    const iconPath = badgeIconPath(key);
+    return `
+      <span class="accounts-badge-choice-label-wrap">
+        ${iconPath ? `<img class="accounts-badge-choice-icon" src="${escapeHtml(iconPath)}" alt="" aria-hidden="true" />` : ""}
+        <span class="accounts-badge-choice-copy">
+          <span class="accounts-badge-choice-label">${escapeHtml(formatBadgeLabel(key))}</span>
+          ${meta ? `<span class="accounts-badge-choice-meta">${escapeHtml(meta)}</span>` : ""}
+        </span>
+      </span>
+    `;
+  }
+
+  function renderBadgeIconStrip(items, emptyLabel = "No effective badge icons") {
+    const badges = Array.isArray(items) ? items : [];
+    if (!badges.length) return `<span class="account-note">${escapeHtml(emptyLabel)}</span>`;
+    return badges
+      .map((badge) => {
+        const key = coerceText(badge?.key).toLowerCase();
+        const src = badgeIconPath(key);
+        return src
+          ? `<img class="accounts-details-preview-badge" src="${escapeHtml(src)}" alt="${escapeHtml(formatBadgeLabel(badge?.label || key))}" title="${escapeHtml(formatBadgeLabel(badge?.title || badge?.label || key))}" />`
+          : "";
+      })
+      .filter(Boolean)
+      .join("");
   }
 
   function normalizeInteger(value) {
@@ -1921,18 +1974,23 @@
           key: coerceText(entry?.key),
           label: coerceText(entry?.label || entry?.key)
         }))
-        .filter((entry) => entry.key);
+        .filter((entry) => entry.key && !HIDDEN_BADGE_GOVERNANCE_SURFACES.has(entry.key));
     }
     return [
       { key: "streamsuites_profile", label: "StreamSuites Profile" },
       { key: "findmehere_profile", label: "FindMeHere Profile" },
       { key: "profile_card", label: "Profile Cards" },
       { key: "user_widget", label: "User Widget" },
-      { key: "creator_surface", label: "Creator Surface" },
-      { key: "admin_surface", label: "Admin Surface" },
-      { key: "public_surface", label: "Public Surface" },
-      { key: "directory", label: "Directory" },
     ];
+  }
+
+  function renderVisibilityGlyph(visible, label) {
+    return `
+      <span class="badge-governance-state${visible ? " is-visible" : " is-hidden"}" title="${escapeHtml(label)}">
+        <span class="badge-governance-glyph${visible ? " is-visible" : " is-hidden"}" aria-hidden="true"></span>
+        <span class="badge-governance-state-text">${escapeHtml(visible ? "Visible" : "Hidden")}</span>
+      </span>
+    `;
   }
 
   function renderBadgeGovernanceSection() {
@@ -1958,14 +2016,32 @@
       els.badgeGovernanceMatrix.innerHTML = '<p class="account-note">No governed badges are currently available for this account.</p>';
       return;
     }
-    const rows = applicable
+    const sortedKeys = [...new Set(governedKeys)]
+      .sort((left, right) => {
+        const leftIndex = BADGE_ORDER.indexOf(left);
+        const rightIndex = BADGE_ORDER.indexOf(right);
+        return (leftIndex === -1 ? 999 : leftIndex) - (rightIndex === -1 ? 999 : rightIndex);
+      });
+    const visibleCellCount = sortedKeys.reduce((count, key) => {
+      const row = applicable.find((item) => coerceText(item?.key || item?.value).toLowerCase() === key);
+      const surfaces = row?.surfaces && typeof row.surfaces === "object" ? row.surfaces : {};
+      return count + surfaceCatalog.filter((surface) => surfaces[surface.key]?.visible === true).length;
+    }, 0);
+    const rows = [...applicable]
+      .sort((left, right) => {
+        const leftKey = coerceText(left?.key || left?.value).toLowerCase();
+        const rightKey = coerceText(right?.key || right?.value).toLowerCase();
+        const leftIndex = BADGE_ORDER.indexOf(leftKey);
+        const rightIndex = BADGE_ORDER.indexOf(rightKey);
+        return (leftIndex === -1 ? 999 : leftIndex) - (rightIndex === -1 ? 999 : rightIndex);
+      })
       .map((row) => {
         const badgeKey = coerceText(row?.key || row?.value).toLowerCase();
         const surfaces = row?.surfaces && typeof row.surfaces === "object" ? row.surfaces : {};
         const cells = surfaceCatalog.map((surface) => {
           const cell = surfaces[surface.key] && typeof surfaces[surface.key] === "object" ? surfaces[surface.key] : null;
           if (!cell || cell.supported === false) {
-            return '<td class="account-note" style="text-align:center;padding:8px 6px;">—</td>';
+            return '<td class="badge-governance-cell is-unsupported"><span class="badge-governance-empty">—</span></td>';
           }
           const locked = cell.locked === true;
           const checked = cell.visible === true;
@@ -1975,39 +2051,62 @@
             ? "Visible"
             : "Hidden by your preference";
           return `
-            <td style="padding:8px 6px;text-align:center;vertical-align:top;${locked ? "background:rgba(255,255,255,0.04);" : ""}">
-              <label style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <td class="badge-governance-cell${locked ? " is-locked" : ""}">
+              <label class="badge-governance-cell-stack">
+                ${renderVisibilityGlyph(checked, note)}
                 <input
                   type="checkbox"
+                  class="badge-governance-checkbox-input"
                   data-badge-preference-key="${escapeHtml(badgeKey)}"
                   data-badge-preference-surface="${escapeHtml(surface.key)}"
                   ${checked ? "checked" : ""}
                   ${locked ? "disabled" : ""}
                 />
-                <span class="account-note" style="margin:0;">${escapeHtml(note)}</span>
+                <span class="badge-governance-cell-note">${escapeHtml(note)}</span>
               </label>
             </td>
           `;
         }).join("");
         return `
           <tr>
-            <th scope="row" style="text-align:left;padding:8px 10px;white-space:nowrap;">${escapeHtml(formatBadgeLabel(badgeKey))}</th>
+            <th scope="row" class="badge-governance-row-label">${renderBadgeChoiceLabel(badgeKey)}</th>
             ${cells}
           </tr>
         `;
       })
       .join("");
     els.badgeGovernanceMatrix.innerHTML = `
-      <div style="overflow:auto;">
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <thead>
-            <tr>
-              <th style="text-align:left;padding:8px 10px;">Badge</th>
-              ${surfaceCatalog.map((surface) => `<th style="padding:8px 6px;white-space:nowrap;">${escapeHtml(surface.label)}</th>`).join("")}
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
+      <div class="badge-governance-creator-grid">
+        <div class="account-billing-panel badge-governance-summary-card">
+          <div class="badge-governance-card-head">
+            <div>
+              <h4>Effective badges</h4>
+              <p class="account-note">Live icons and cell counts from the authoritative runtime badge state.</p>
+            </div>
+            <span class="status-pill subtle">${escapeHtml(String(visibleCellCount || 0))} visible cells</span>
+          </div>
+          <div class="badge-governance-icon-strip">${renderBadgeIconStrip(state.profile?.badges, "No effective badge icons")}</div>
+        </div>
+        <div class="account-billing-panel badge-governance-matrix-card">
+          <div class="badge-governance-card-head">
+            <div>
+              <h4>Your badge matrix</h4>
+              <p class="account-note">Only supported surfaces remain visible here. Locked cells continue to reflect admin/global policy.</p>
+            </div>
+            <span class="status-pill subtle">${escapeHtml(String(surfaceCatalog.length || 0))} surfaces</span>
+          </div>
+          <div class="badge-governance-table-scroll">
+            <table class="badge-governance-table">
+              <thead>
+                <tr>
+                  <th>Badge</th>
+                  ${surfaceCatalog.map((surface) => `<th>${escapeHtml(surface.label)}</th>`).join("")}
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </div>
       </div>
     `;
   }

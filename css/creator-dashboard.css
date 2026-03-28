@@ -4867,6 +4867,13 @@ h3 {
   gap: 14px;
 }
 
+.badge-governance-creator-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
+  gap: 14px;
+  align-items: start;
+}
+
 .account-billing-panel {
   padding: 16px;
   border-radius: 18px;
@@ -4881,6 +4888,196 @@ h3 {
 .account-billing-panel .card-top h4 {
   margin: 0;
   font-size: 14px;
+}
+
+.accounts-badge-choice-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  width: 100%;
+}
+
+.accounts-badge-choice-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.accounts-badge-choice-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.accounts-badge-choice-label {
+  color: var(--creator-text);
+  font-size: 12px;
+}
+
+.accounts-badge-choice-meta {
+  color: var(--creator-muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.accounts-details-preview-badge {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.badge-governance-summary-card,
+.badge-governance-matrix-card {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.badge-governance-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.badge-governance-card-head h4,
+.badge-governance-card-head p {
+  margin: 0;
+}
+
+.badge-governance-icon-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  min-height: 24px;
+}
+
+.badge-governance-table-scroll {
+  overflow: auto;
+  padding-bottom: 4px;
+}
+
+.badge-governance-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12px;
+}
+
+.badge-governance-table thead th {
+  padding: 8px 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--creator-muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.badge-governance-table thead th:first-child {
+  text-align: left;
+  padding-left: 12px;
+}
+
+.badge-governance-table tbody th,
+.badge-governance-table tbody td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.badge-governance-table tbody tr:last-child th,
+.badge-governance-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.badge-governance-row-label {
+  min-width: 210px;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.badge-governance-cell {
+  min-width: 114px;
+  padding: 10px 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.badge-governance-cell.is-locked {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.badge-governance-cell-stack {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.badge-governance-checkbox-input {
+  margin: 0;
+  inline-size: 16px;
+  block-size: 16px;
+  accent-color: var(--creator-accent-strong);
+}
+
+.badge-governance-cell-note,
+.badge-governance-empty {
+  color: var(--creator-muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.badge-governance-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: rgba(214, 226, 255, 0.72);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.badge-governance-state.is-visible {
+  color: var(--creator-success);
+}
+
+.badge-governance-state.is-hidden {
+  color: rgba(214, 226, 255, 0.62);
+}
+
+.badge-governance-glyph {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+.badge-governance-glyph.is-visible {
+  -webkit-mask-image: url("/assets/icons/ui/visiblefilled.svg");
+  mask-image: url("/assets/icons/ui/visiblefilled.svg");
+}
+
+.badge-governance-glyph.is-hidden {
+  -webkit-mask-image: url("/assets/icons/ui/hidden.svg");
+  mask-image: url("/assets/icons/ui/hidden.svg");
+}
+
+.badge-governance-state-text {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .account-billing-meta-grid {
@@ -4980,6 +5177,10 @@ h3 {
 
   .account-billing-hero,
   .account-billing-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .badge-governance-creator-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
