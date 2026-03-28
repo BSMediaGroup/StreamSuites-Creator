@@ -4,6 +4,26 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Checkbox Admin-Style Alignment - 2026-03-28
+
+### Technical Notes
+
+- The Creator repo already carried the same shared `ss-checkbox` primitive used by Admin, but the redesigned badge-governance matrix in `js/account-settings.js` was still rendering native checkbox inputs instead of that shared wrapper structure.
+- Badge-governance cells now render through the shared `ss-checkbox-wrapper` + `ss-checkbox` markup path, so the Creator badge matrix inherits the same Admin checkbox visuals, checked animation, focus treatment, and disabled treatment already defined in `css/components.css`.
+- `css/components.css` now also carries the small `.ss-checkbox-wrapper.muted .ss-checkbox-text` parity rule present in Admin so muted Creator checkbox rows can match the Admin shared component contract instead of diverging.
+
+### Human-Readable Notes
+
+- Badge Governance checkboxes in Creator now use the same checkbox style as Admin.
+- Creator’s shared checkbox primitive is now back on the same path as the Admin checkbox component instead of mixing native checkbox boxes into the dashboard.
+
+### Files / Areas Touched
+
+- `js/account-settings.js`
+- `css/creator-dashboard.css`
+- `css/components.css`
+- `BUMP_NOTES.md`
+
 ## Creator Badge Governance Full-Width Matrix Redesign - 2026-03-28
 
 ### Technical Notes

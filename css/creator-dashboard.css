@@ -5199,6 +5199,15 @@ h3 {
   flex-wrap: wrap;
 }
 
+.badge-governance-cell-toggle.ss-checkbox-wrapper {
+  min-width: 0;
+  align-items: flex-start;
+}
+
+.badge-governance-cell-toggle .ss-checkbox {
+  margin-top: 1px;
+}
+
 .badge-governance-control-pill {
   display: inline-flex;
   align-items: center;
@@ -5221,17 +5230,15 @@ h3 {
   background: rgba(255, 176, 80, 0.12);
 }
 
-.badge-governance-checkbox-input {
-  margin: 0;
-  inline-size: 16px;
-  block-size: 16px;
-  flex: 0 0 auto;
-  accent-color: var(--creator-accent-strong);
-}
-
 .badge-governance-cell-note,
 .badge-governance-empty {
   color: var(--creator-muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.badge-governance-cell-note.ss-checkbox-text {
+  gap: 0;
   font-size: 11px;
   line-height: 1.35;
 }

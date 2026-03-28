@@ -2085,23 +2085,23 @@
           const note = locked ? "Admin/global policy" : "Your preference";
           return `
             <td class="badge-governance-cell${locked ? " is-locked" : ""}">
-              <label class="badge-governance-cell-stack">
+              <div class="badge-governance-cell-stack">
                 <span class="badge-governance-cell-topline">
                   ${renderVisibilityGlyph(checked, checked ? "Currently visible" : "Currently hidden")}
                   <span class="badge-governance-control-pill${locked ? " is-locked" : " is-editable"}">${escapeHtml(locked ? "Locked" : "Editable")}</span>
                 </span>
-                <span class="badge-governance-cell-toggle">
+                <label class="badge-governance-cell-toggle ss-checkbox-wrapper${locked ? " ss-checkbox-disabled" : ""}">
                   <input
                     type="checkbox"
-                    class="badge-governance-checkbox-input"
                     data-badge-preference-key="${escapeHtml(badgeKey)}"
                     data-badge-preference-surface="${escapeHtml(surface.key)}"
                     ${checked ? "checked" : ""}
                     ${locked ? "disabled" : ""}
                   />
-                  <span class="badge-governance-cell-note">${escapeHtml(note)}</span>
-                </span>
-              </label>
+                  <span class="ss-checkbox"></span>
+                  <span class="ss-checkbox-text badge-governance-cell-note">${escapeHtml(note)}</span>
+                </label>
+              </div>
             </td>
           `;
         }).join("");

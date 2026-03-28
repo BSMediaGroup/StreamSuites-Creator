@@ -891,6 +891,10 @@
   color: var(--text-muted);
 }
 
+.ss-checkbox-wrapper.muted .ss-checkbox-text {
+  color: var(--text-secondary);
+}
+
 .checkbox-row label {
   display: inline-flex;
   align-items: center;
