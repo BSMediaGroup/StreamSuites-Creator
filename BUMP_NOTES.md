@@ -4,6 +4,26 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Badge Governance Full-Width Matrix Redesign - 2026-03-28
+
+### Technical Notes
+
+- `views/account.html` no longer nests the Badge Governance article body inside the shared `account-billing-layout` two-column grid. The old section had only one child panel in that grid, so the governance surface was auto-placed into the first column and started artificially narrow before the inner matrix layout even rendered.
+- `js/account-settings.js` now renders the creator-facing governance surface as a full-width self-service composition: an overview/status strip, compact effective-badge and legend panels, and a single full-width matrix stage. Existing checkbox save behavior, supported-surface filtering, effective visibility rendering, and locked admin/global policy handling remain on the same data path.
+- `css/creator-dashboard.css` now gives the governance section its own full-width matrix treatment with wider sticky row labels, deliberate matrix scrolling, denser cell controls, clearer editable/locked pills, and responsive stacking that keeps the user-context framing intact instead of mimicking the admin editor outright.
+
+### Human-Readable Notes
+
+- Creator Badge Governance now reads like a real settings panel instead of a squeezed nested card.
+- The matrix gets the available width, locked policy cells stay obvious, and the section is framed around what the creator can control versus what policy still owns.
+
+### Files / Areas Touched
+
+- `views/account.html`
+- `js/account-settings.js`
+- `css/creator-dashboard.css`
+- `BUMP_NOTES.md`
+
 ## Creator Account Section Toggle Icon Color Follow-Up - 2026-03-28
 
 ### Technical Notes

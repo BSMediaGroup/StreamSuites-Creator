@@ -4886,13 +4886,6 @@ h3 {
   gap: 14px;
 }
 
-.badge-governance-creator-grid {
-  display: grid;
-  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
-  gap: 14px;
-  align-items: start;
-}
-
 .account-billing-panel {
   padding: 16px;
   border-radius: 18px;
@@ -4946,11 +4939,17 @@ h3 {
   display: block;
 }
 
-.badge-governance-summary-card,
-.badge-governance-matrix-card {
+.account-badge-governance-card {
+  gap: 16px;
+}
+
+.badge-governance-section-note {
+  max-width: 78ch;
+}
+
+.badge-governance-shell {
   display: grid;
-  gap: 12px;
-  align-content: start;
+  gap: 14px;
 }
 
 .badge-governance-card-head {
@@ -4966,6 +4965,88 @@ h3 {
   margin: 0;
 }
 
+.badge-governance-status-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(155deg, rgba(15, 22, 34, 0.94), rgba(9, 13, 22, 0.78)),
+    radial-gradient(circle at top right, rgba(106, 214, 255, 0.16), transparent 42%);
+}
+
+.badge-governance-status-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.badge-governance-kicker {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(154, 209, 255, 0.82);
+}
+
+.badge-governance-status-copy h4 {
+  margin: 0;
+  font-size: clamp(1.04rem, 1.45vw, 1.24rem);
+  line-height: 1.18;
+}
+
+.badge-governance-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.badge-governance-metric {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  padding: 12px 13px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.badge-governance-metric strong {
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.badge-governance-metric span {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--creator-muted);
+}
+
+.badge-governance-support-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(320px, 1.15fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.badge-governance-panel,
+.badge-governance-matrix-stage {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(9, 13, 22, 0.66);
+}
+
+.badge-governance-matrix-stage {
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(13, 18, 30, 0.96), rgba(8, 11, 20, 0.86)),
+    radial-gradient(circle at top right, rgba(63, 139, 255, 0.12), transparent 38%);
+}
+
 .badge-governance-icon-strip {
   display: flex;
   flex-wrap: wrap;
@@ -4974,9 +5055,57 @@ h3 {
   min-height: 24px;
 }
 
+.badge-governance-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.badge-governance-legend-item {
+  display: grid;
+  gap: 5px;
+  align-content: start;
+  padding: 12px 13px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.badge-governance-legend-item strong {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.badge-governance-legend-item span {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--creator-muted);
+}
+
 .badge-governance-table-scroll {
   overflow: auto;
-  padding-bottom: 4px;
+  padding: 0 4px 6px;
+  margin: 0 -4px;
+  scrollbar-gutter: stable both-edges;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+}
+
+.badge-governance-table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.badge-governance-table-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.badge-governance-table-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.badge-governance-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.38);
 }
 
 .badge-governance-table {
@@ -4988,17 +5117,25 @@ h3 {
 }
 
 .badge-governance-table thead th {
-  padding: 8px 8px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 10px 12px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 11, 20, 0.96);
   color: var(--creator-muted);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-align: center;
   white-space: nowrap;
+  backdrop-filter: blur(12px);
 }
 
 .badge-governance-table thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 4;
   text-align: left;
   padding-left: 12px;
 }
@@ -5008,40 +5145,87 @@ h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.badge-governance-table tbody tr:hover th,
+.badge-governance-table tbody tr:hover td {
+  background-color: rgba(255, 255, 255, 0.025);
+}
+
 .badge-governance-table tbody tr:last-child th,
 .badge-governance-table tbody tr:last-child td {
   border-bottom: 0;
 }
 
 .badge-governance-row-label {
-  min-width: 210px;
-  padding: 10px 12px;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 248px;
+  padding: 12px 12px;
   text-align: left;
-  vertical-align: middle;
-  white-space: nowrap;
+  vertical-align: top;
+  white-space: normal;
+  background:
+    linear-gradient(90deg, rgba(8, 11, 20, 0.98) 82%, rgba(8, 11, 20, 0.78) 92%, rgba(8, 11, 20, 0));
+  backdrop-filter: blur(12px);
 }
 
 .badge-governance-cell {
-  min-width: 114px;
-  padding: 10px 8px;
-  text-align: center;
-  vertical-align: middle;
+  min-width: 148px;
+  padding: 12px 10px;
+  text-align: left;
+  vertical-align: top;
 }
 
 .badge-governance-cell.is-locked {
-  background: rgba(255, 255, 255, 0.035);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.badge-governance-cell.is-unsupported {
+  text-align: center;
+  color: var(--creator-muted);
 }
 
 .badge-governance-cell-stack {
   display: grid;
-  justify-items: center;
-  gap: 6px;
+  gap: 8px;
+  align-content: start;
+}
+
+.badge-governance-cell-topline,
+.badge-governance-cell-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge-governance-control-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badge-governance-control-pill.is-editable {
+  color: rgba(154, 209, 255, 0.94);
+  background: rgba(63, 139, 255, 0.12);
+}
+
+.badge-governance-control-pill.is-locked {
+  color: rgba(255, 223, 177, 0.9);
+  background: rgba(255, 176, 80, 0.12);
 }
 
 .badge-governance-checkbox-input {
   margin: 0;
   inline-size: 16px;
   block-size: 16px;
+  flex: 0 0 auto;
   accent-color: var(--creator-accent-strong);
 }
 
@@ -5052,10 +5236,24 @@ h3 {
   line-height: 1.35;
 }
 
+.badge-governance-empty-state {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(9, 13, 22, 0.55);
+}
+
+.badge-governance-empty-state h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
 .badge-governance-state {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px;
   color: rgba(214, 226, 255, 0.72);
   font-size: 11px;
@@ -5097,6 +5295,11 @@ h3 {
   font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.badge-governance-actions {
+  align-items: center;
+  padding-top: 2px;
 }
 
 .account-billing-meta-grid {
@@ -5199,7 +5402,8 @@ h3 {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .badge-governance-creator-grid {
+  .badge-governance-status-strip,
+  .badge-governance-support-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -5242,6 +5446,20 @@ h3 {
   .account-inline-subsection,
   .account-advanced-callout {
     padding: 16px;
+  }
+
+  .badge-governance-status-strip,
+  .badge-governance-panel,
+  .badge-governance-matrix-stage {
+    padding: 14px;
+  }
+
+  .badge-governance-row-label {
+    min-width: 220px;
+  }
+
+  .badge-governance-cell {
+    min-width: 136px;
   }
 
   .platform-page-title {

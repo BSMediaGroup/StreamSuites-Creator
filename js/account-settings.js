@@ -2004,6 +2004,15 @@
     `;
   }
 
+  function renderBadgeGovernanceMetric(value, label) {
+    return `
+      <div class="badge-governance-metric">
+        <strong>${escapeHtml(String(value))}</strong>
+        <span>${escapeHtml(label)}</span>
+      </div>
+    `;
+  }
+
   function renderBadgeGovernanceSection() {
     const els = getProfileElements();
     if (!(els.badgeGovernanceMatrix instanceof HTMLElement)) return;
@@ -2018,13 +2027,16 @@
         governedKeys.length ? "success" : "subtle"
       );
     }
-    if (els.badgeGovernanceSummary instanceof HTMLElement) {
-      els.badgeGovernanceSummary.textContent = governedKeys.length
-        ? "Editable checkboxes control your own per-surface preference. Locked cells are disabled by admin or global policy."
-        : "No account badges are currently governed for this profile.";
-    }
     if (!governedKeys.length) {
-      els.badgeGovernanceMatrix.innerHTML = '<p class="account-note">No governed badges are currently available for this account.</p>';
+      if (els.badgeGovernanceSummary instanceof HTMLElement) {
+        els.badgeGovernanceSummary.textContent = "No account badges are currently governed for this profile.";
+      }
+      els.badgeGovernanceMatrix.innerHTML = `
+        <div class="badge-governance-empty-state">
+          <h4>No governed badges available</h4>
+          <p class="account-note">This account currently does not expose any creator-managed badge visibility overrides.</p>
+        </div>
+      `;
       return;
     }
     const sortedKeys = [...new Set(governedKeys)]
@@ -2033,11 +2045,10 @@
         const rightIndex = BADGE_ORDER.indexOf(right);
         return (leftIndex === -1 ? 999 : leftIndex) - (rightIndex === -1 ? 999 : rightIndex);
       });
-    const visibleCellCount = sortedKeys.reduce((count, key) => {
-      const row = applicable.find((item) => coerceText(item?.key || item?.value).toLowerCase() === key);
-      const surfaces = row?.surfaces && typeof row.surfaces === "object" ? row.surfaces : {};
-      return count + surfaceCatalog.filter((surface) => surfaces[surface.key]?.visible === true).length;
-    }, 0);
+    let visibleCellCount = 0;
+    let lockedCellCount = 0;
+    let editableCellCount = 0;
+    let unsupportedCellCount = 0;
     const rows = [...applicable]
       .sort((left, right) => {
         const leftKey = coerceText(left?.key || left?.value).toLowerCase();
@@ -2049,62 +2060,125 @@
       .map((row) => {
         const badgeKey = coerceText(row?.key || row?.value).toLowerCase();
         const surfaces = row?.surfaces && typeof row.surfaces === "object" ? row.surfaces : {};
+        let rowVisibleCount = 0;
+        let rowLockedCount = 0;
+        let rowEditableCount = 0;
         const cells = surfaceCatalog.map((surface) => {
           const cell = surfaces[surface.key] && typeof surfaces[surface.key] === "object" ? surfaces[surface.key] : null;
           if (!cell || cell.supported === false) {
+            unsupportedCellCount += 1;
             return '<td class="badge-governance-cell is-unsupported"><span class="badge-governance-empty">—</span></td>';
           }
           const locked = cell.locked === true;
           const checked = cell.visible === true;
-          const note = locked
-            ? "Locked by admin/global policy"
-            : checked
-            ? "Visible"
-            : "Hidden by your preference";
+          if (checked) {
+            visibleCellCount += 1;
+            rowVisibleCount += 1;
+          }
+          if (locked) {
+            lockedCellCount += 1;
+            rowLockedCount += 1;
+          } else {
+            editableCellCount += 1;
+            rowEditableCount += 1;
+          }
+          const note = locked ? "Admin/global policy" : "Your preference";
           return `
             <td class="badge-governance-cell${locked ? " is-locked" : ""}">
               <label class="badge-governance-cell-stack">
-                ${renderVisibilityGlyph(checked, note)}
-                <input
-                  type="checkbox"
-                  class="badge-governance-checkbox-input"
-                  data-badge-preference-key="${escapeHtml(badgeKey)}"
-                  data-badge-preference-surface="${escapeHtml(surface.key)}"
-                  ${checked ? "checked" : ""}
-                  ${locked ? "disabled" : ""}
-                />
-                <span class="badge-governance-cell-note">${escapeHtml(note)}</span>
+                <span class="badge-governance-cell-topline">
+                  ${renderVisibilityGlyph(checked, checked ? "Currently visible" : "Currently hidden")}
+                  <span class="badge-governance-control-pill${locked ? " is-locked" : " is-editable"}">${escapeHtml(locked ? "Locked" : "Editable")}</span>
+                </span>
+                <span class="badge-governance-cell-toggle">
+                  <input
+                    type="checkbox"
+                    class="badge-governance-checkbox-input"
+                    data-badge-preference-key="${escapeHtml(badgeKey)}"
+                    data-badge-preference-surface="${escapeHtml(surface.key)}"
+                    ${checked ? "checked" : ""}
+                    ${locked ? "disabled" : ""}
+                  />
+                  <span class="badge-governance-cell-note">${escapeHtml(note)}</span>
+                </span>
               </label>
             </td>
           `;
         }).join("");
+        const rowMeta = [
+          `${rowVisibleCount} visible`,
+          `${rowEditableCount} editable`,
+          rowLockedCount ? `${rowLockedCount} locked` : "",
+        ].filter(Boolean).join(" · ");
         return `
           <tr>
-            <th scope="row" class="badge-governance-row-label">${renderBadgeChoiceLabel(badgeKey)}</th>
+            <th scope="row" class="badge-governance-row-label">${renderBadgeChoiceLabel(badgeKey, rowMeta)}</th>
             ${cells}
           </tr>
         `;
       })
       .join("");
+    if (els.badgeGovernanceSummary instanceof HTMLElement) {
+      els.badgeGovernanceSummary.textContent =
+        `${sortedKeys.length} governed badge ${sortedKeys.length === 1 ? "type" : "types"} across ${surfaceCatalog.length} surfaces. Editable cells use your creator preference; locked cells stay dictated by admin or global policy.`;
+    }
     els.badgeGovernanceMatrix.innerHTML = `
-      <div class="badge-governance-creator-grid">
-        <div class="account-billing-panel badge-governance-summary-card">
-          <div class="badge-governance-card-head">
-            <div>
-              <h4>Effective badges</h4>
-              <p class="account-note">Live icons and cell counts from the authoritative runtime badge state.</p>
-            </div>
-            <span class="status-pill subtle">${escapeHtml(String(visibleCellCount || 0))} visible cells</span>
+      <div class="badge-governance-shell">
+        <section class="badge-governance-status-strip">
+          <div class="badge-governance-status-copy">
+            <span class="badge-governance-kicker">Self-service badge controls</span>
+            <h4>Control only the surfaces that are still delegated to your account.</h4>
+            <p class="account-note">This stays creator-focused rather than admin-owned: effective visibility is still runtime truth, and only unlocked cells accept your saved preference.</p>
           </div>
-          <div class="badge-governance-icon-strip">${renderBadgeIconStrip(state.profile?.badges, "No effective badge icons")}</div>
+          <div class="badge-governance-metric-grid">
+            ${renderBadgeGovernanceMetric(sortedKeys.length, "badge types")}
+            ${renderBadgeGovernanceMetric(surfaceCatalog.length, "surfaces")}
+            ${renderBadgeGovernanceMetric(editableCellCount, "editable cells")}
+            ${renderBadgeGovernanceMetric(lockedCellCount, "locked cells")}
+          </div>
+        </section>
+        <div class="badge-governance-support-grid">
+          <section class="badge-governance-panel">
+            <div class="badge-governance-card-head">
+              <div>
+                <h4>Effective badges</h4>
+                <p class="account-note">Live icon strip from the authoritative runtime badge state.</p>
+              </div>
+              <span class="status-pill subtle">${escapeHtml(String(visibleCellCount || 0))} visible cells</span>
+            </div>
+            <div class="badge-governance-icon-strip">${renderBadgeIconStrip(state.profile?.badges, "No effective badge icons")}</div>
+          </section>
+          <section class="badge-governance-panel badge-governance-legend-panel">
+            <div class="badge-governance-card-head">
+              <div>
+                <h4>How to read this</h4>
+                <p class="account-note">Policy remains authoritative even when your preference is shown below.</p>
+              </div>
+              <span class="status-pill subtle">${escapeHtml(String(unsupportedCellCount || 0))} unsupported</span>
+            </div>
+            <div class="badge-governance-legend-grid">
+              <div class="badge-governance-legend-item">
+                <strong>Editable</strong>
+                <span>You can change this surface yourself and save the checkbox state below.</span>
+              </div>
+              <div class="badge-governance-legend-item">
+                <strong>Locked</strong>
+                <span>Admin or global policy already decides the outcome, so the cell stays read-only here.</span>
+              </div>
+              <div class="badge-governance-legend-item">
+                <strong>Visible / Hidden</strong>
+                <span>The glyph always shows the effective result that viewers currently get on that surface.</span>
+              </div>
+            </div>
+          </section>
         </div>
-        <div class="account-billing-panel badge-governance-matrix-card">
+        <section class="badge-governance-matrix-stage">
           <div class="badge-governance-card-head">
             <div>
-              <h4>Your badge matrix</h4>
-              <p class="account-note">Only supported surfaces remain visible here. Locked cells continue to reflect admin/global policy.</p>
+              <h4>Surface visibility matrix</h4>
+              <p class="account-note">Supported surfaces stay in one full-width grid so you can compare what is visible, what is policy-locked, and what still responds to your own preference.</p>
             </div>
-            <span class="status-pill subtle">${escapeHtml(String(surfaceCatalog.length || 0))} surfaces</span>
+            <span class="status-pill subtle">${escapeHtml(String(editableCellCount || 0))} editable cells</span>
           </div>
           <div class="badge-governance-table-scroll">
             <table class="badge-governance-table">
@@ -2117,7 +2191,7 @@
               <tbody>${rows}</tbody>
             </table>
           </div>
-        </div>
+        </section>
       </div>
     `;
   }
