@@ -4,6 +4,26 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Cloudflare Pages Deep-Link Fallback Hardening - 2026-03-28
+
+### Technical Notes
+
+- The Creator shell previously depended on `_redirects` plus a `404.html` route-rescue script that tried to bounce valid dashboard URLs back into the SPA after Cloudflare Pages had already failed the request. That shim was loop-prone and made the 404 document do shell-routing work it should never have owned.
+- Added a repo-root `functions/[[path]].js` Pages Function that only intercepts `GET` and `HEAD` requests which truly 404, limits fallback coverage to known Creator shell routes (`/overview`, `/account`, `/statistics`, `/notifications`, `/integrations/*`, `/modules/*`, `/platforms/*`, and related shell views), and then serves `/index.html` with a `200` response. Asset requests, real files, login pages, and invalid routes still fall through normally.
+- `404.html` was intentionally shortened by removing the old client-side route-restore script and its dependency on `js/routes.js`. The file remains as the branded real-404 surface, but it no longer tries to repair valid shell navigation after a server miss.
+
+### Human-Readable Notes
+
+- Refreshing or opening valid Creator dashboard URLs in a new tab no longer depends on the 404 page trying to save the route after the host already failed it.
+- Real Creator routes now get the dashboard shell directly, while real bad URLs still stay bad URLs.
+
+### Files / Areas Touched
+
+- `functions/[[path]].js`
+- `404.html`
+- `README.md`
+- `BUMP_NOTES.md`
+
 ## Creator Checkbox Admin-Style Alignment - 2026-03-28
 
 ### Technical Notes

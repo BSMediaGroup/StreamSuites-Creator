@@ -47,7 +47,7 @@ flowchart TD
 
 ## Current Surface Model
 
-- Clean path-based creator routes are the primary navigation model, with Cloudflare Pages deep-link handling in the root `_redirects`.
+- Clean path-based creator routes are the primary navigation model, with Cloudflare Pages deep-link handling anchored in the root `_redirects` and a route-scoped `functions/[[path]].js` fallback for valid shell routes that would otherwise 404 on direct entry or refresh.
 - Legacy hash-fragment and older `/platforms/*` compatibility remains in the client router, but canonical creator links now use path routes such as `/overview`, `/account`, `/statistics`, `/notifications`, `/integrations/...`, and `/modules/...`.
 - The `/account` route is the authoritative creator-facing profile control surface for supported fields exposed by the public profile API.
 - The `/settings` route is now the creator-facing Preferences surface for moderator assignment and future community controls that remain grounded in runtime-owned contracts.
@@ -110,6 +110,7 @@ StreamSuites-Creator/
 │   │   └── auth-api-proxy.js
 │   ├── auth/
 │   │   └── [[path]].js
+│   ├── [[path]].js
 │   └── oauth/
 │       └── [[path]].js
 ├── assets/
