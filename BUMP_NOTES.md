@@ -4,6 +4,26 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Developer Tier Polish + Account Surface Consistency - 2026-03-29
+
+### Technical Notes
+
+- Extended the shared creator tier-pill styling in `css/creator-dashboard.css` so the existing tier family now renders `DEVELOPER` with the same glass and sheen behavior already used for Core, Gold, and Pro, while continuing to use the backend-owned tier mapping and `/assets/icons/dev-green.svg` from `js/auth.js`.
+- Updated `views/account.html` and `css/creator-dashboard.css` so the account settings integration snapshot now reads `Integrations snapshot`, each platform quick link uses one structurally consistent two-row layout, the four media-reference URL inputs reuse the existing creator mono font treatment only on those targeted fields, and the StreamSuites / FindMeHere visibility cards now carry the requested prefixed logos without changing the toggle controls.
+- Tightened the shared platform-page heading layout in `css/creator-dashboard.css` so every individual platform page stacks the `Platform` kicker cleanly above the hero title instead of leaving it floating in the gutter. No platform routes, cards, or content sections were redesigned or removed.
+
+### Human-Readable Notes
+
+- Developer-tier creator accounts now look intentional anywhere the existing tier pills already appeared.
+- Account Settings reads more consistently: the integrations summary rows stack cleanly, the media reference fields now look like technical URLs and filenames, and the two public visibility cards now show the right product logos at a glance.
+- The individual platform pages now open with a cleaner title block that matches the stronger page-title pattern already used elsewhere.
+
+### Files / Areas Touched
+
+- `css/creator-dashboard.css`
+- `views/account.html`
+- `BUMP_NOTES.md`
+
 ## Creator Cloudflare Pages Shell Route Manifest Parity - 2026-03-28
 
 ### Technical Notes

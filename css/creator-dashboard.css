@@ -1491,6 +1491,13 @@ h3 {
     --tier-pill-border: rgba(255, 110, 214, 0.65);
   }
 
+  .tier-pill[data-tier="DEVELOPER"] {
+    --tier-pill-bg: linear-gradient(135deg, rgba(103, 193, 36, 0.38), rgba(189, 233, 102, 0.14));
+    --tier-pill-glow: rgba(143, 217, 72, 0.34);
+    --tier-pill-text: #f3ffd5;
+    --tier-pill-border: rgba(171, 226, 88, 0.62);
+  }
+
 .tier-pill:hover::after {
   opacity: 0.32;
   animation: tier-glass-sheen 3.2s cubic-bezier(0.2, 0.8, 0.3, 1) infinite;
@@ -2204,6 +2211,33 @@ h3 {
     radial-gradient(circle at top right, rgba(122, 140, 255, 0.14), transparent 45%);
 }
 
+.account-list-item-platform-link {
+  align-items: stretch;
+}
+
+.account-list-item-platform-link .account-list-main {
+  gap: 10px;
+}
+
+.account-list-support-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  align-items: flex-start;
+}
+
+.account-list-item-platform-link .account-provider-actions {
+  margin-left: 0;
+  justify-content: flex-start;
+}
+
+.account-media-reference-input {
+  font-family: var(--creator-mono-font);
+  font-variation-settings: "wght" 460;
+  letter-spacing: 0.01em;
+  color: rgba(226, 235, 248, 0.88);
+}
+
 .profile-upload-card {
   display: grid;
   gap: 6px;
@@ -2311,6 +2345,19 @@ h3 {
 .profile-toggle-copy {
   display: grid;
   gap: 6px;
+}
+
+.profile-toggle-title-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-toggle-title-logo {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  object-fit: contain;
 }
 
 .profile-toggle-title {
@@ -3641,6 +3688,11 @@ h3 {
 
 .platform-page-header {
   align-items: flex-start;
+}
+
+.platform-page-header > div:first-child {
+  display: grid;
+  gap: 6px;
 }
 
 .platform-page-title {

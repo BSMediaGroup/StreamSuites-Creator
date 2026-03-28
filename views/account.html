@@ -271,7 +271,10 @@
                 <div class="profile-toggle-stack">
                   <div class="profile-toggle-card">
                     <span class="profile-toggle-copy">
-                      <span class="profile-toggle-title">StreamSuites public profile</span>
+                      <span class="profile-toggle-title profile-toggle-title-with-icon">
+                        <img class="profile-toggle-title-logo" src="/assets/logos/sscmatte.png" alt="" aria-hidden="true" />
+                        <span>StreamSuites public profile</span>
+                      </span>
                       <span class="profile-toggle-help">
                         Controls whether your canonical StreamSuites profile is visible on the main public site.
                       </span>
@@ -296,7 +299,10 @@
                   </div>
                   <div class="profile-toggle-card">
                     <span class="profile-toggle-copy">
-                      <span class="profile-toggle-title">FindMeHere listing</span>
+                      <span class="profile-toggle-title profile-toggle-title-with-icon">
+                        <img class="profile-toggle-title-logo" src="/assets/logos/fmhcmattered.png" alt="" aria-hidden="true" />
+                        <span>FindMeHere listing</span>
+                      </span>
                       <span class="profile-toggle-help">
                         Separate public-facing creator listing powered by the same profile identity and canonical slug.
                       </span>
@@ -517,7 +523,7 @@
                     </span>
                   </div>
                   <input
-                    class="account-field-input profile-upload-secondary-input"
+                    class="account-field-input profile-upload-secondary-input account-media-reference-input creator-mono"
                     type="url"
                     placeholder="https://cdn.example.com/avatar.webp"
                     data-profile-avatar-url="true"
@@ -559,7 +565,7 @@
                     </span>
                   </div>
                   <input
-                    class="account-field-input profile-upload-secondary-input"
+                    class="account-field-input profile-upload-secondary-input account-media-reference-input creator-mono"
                     type="url"
                     placeholder="https://cdn.example.com/cover.webp"
                     data-profile-field="true"
@@ -600,7 +606,7 @@
                     </span>
                   </div>
                   <input
-                    class="account-field-input profile-upload-secondary-input"
+                    class="account-field-input profile-upload-secondary-input account-media-reference-input creator-mono"
                     type="url"
                     placeholder="https://cdn.example.com/background.webp"
                     data-profile-field="true"
@@ -642,7 +648,7 @@
                     </span>
                   </div>
                   <input
-                    class="account-field-input profile-upload-secondary-input"
+                    class="account-field-input profile-upload-secondary-input account-media-reference-input creator-mono"
                     type="url"
                     placeholder="https://cdn.example.com/brand-logo.webp"
                     data-profile-field="true"
@@ -993,7 +999,7 @@
                 <div>
                   <h3 class="account-section-title">
                     <span class="account-section-title-icon" style="--account-section-title-icon:url('/assets/icons/ui/integrations.svg');" aria-hidden="true"></span>
-                    <span>Creator integration snapshot</span>
+                    <span>Integrations snapshot</span>
                   </h3>
                   <p>Compact account-page summary only. Use the full integrations hub for platform management and rollout planning.</p>
                 </div>
@@ -1075,74 +1081,104 @@
                   <a href="/integrations">Open the full hub -&gt;</a>
                 </div>
                 <ul class="account-list">
-                <li class="account-list-item" data-integration-row="rumble">
-                  <div class="account-list-meta">
-                    <span class="account-list-title account-list-title-with-icon">
-                      <img class="account-platform-icon" src="/assets/icons/rumble.svg" alt="" aria-hidden="true" />
-                      <span>Rumble</span>
-                    </span>
-                    <span class="account-list-note" data-integration-note="rumble">Managed on the Rumble platform page</span>
-                  </div>
-                  <span class="status-pill subtle" data-integration-status="rumble"><span class="status-dot"></span>Loading</span>
-                  <span class="account-provider-value" data-integration-summary="rumble">Loading authoritative status...</span>
-                  <div class="account-provider-actions">
-                    <a class="creator-button secondary" href="/integrations/rumble">Open Rumble</a>
-                  </div>
-                </li>
-                <li class="account-list-item" data-integration-row="youtube">
-                  <div class="account-list-meta">
-                    <span class="account-list-title account-list-title-with-icon">
-                      <img class="account-platform-icon" src="/assets/icons/youtube.svg" alt="" aria-hidden="true" />
-                      <span>YouTube</span>
-                    </span>
-                    <span class="account-list-note" data-integration-note="youtube">Managed on the YouTube platform page</span>
-                  </div>
-                  <span class="status-pill subtle" data-integration-status="youtube"><span class="status-dot"></span>Loading</span>
-                  <span class="account-provider-value" data-integration-summary="youtube">Loading authoritative status...</span>
-                  <div class="account-provider-actions">
-                    <a class="creator-button secondary" href="/integrations/youtube">Open YouTube</a>
+                <li class="account-list-item account-list-item-platform-link" data-integration-row="rumble">
+                  <div class="account-list-main">
+                    <div class="account-list-header">
+                      <div class="account-list-meta">
+                        <span class="account-list-title account-list-title-with-icon">
+                          <img class="account-platform-icon" src="/assets/icons/rumble.svg" alt="" aria-hidden="true" />
+                          <span>Rumble</span>
+                        </span>
+                        <span class="account-list-note" data-integration-note="rumble">Managed on the Rumble platform page</span>
+                      </div>
+                      <div class="account-provider-actions">
+                        <a class="creator-button secondary" href="/integrations/rumble">Open Rumble</a>
+                      </div>
+                    </div>
+                    <div class="account-list-support-row">
+                      <span class="status-pill subtle" data-integration-status="rumble"><span class="status-dot"></span>Loading</span>
+                      <span class="account-provider-value" data-integration-summary="rumble">Loading authoritative status...</span>
+                    </div>
                   </div>
                 </li>
-                <li class="account-list-item" data-integration-row="kick">
-                  <div class="account-list-meta">
-                    <span class="account-list-title account-list-title-with-icon">
-                      <img class="account-platform-icon" src="/assets/icons/kick.svg" alt="" aria-hidden="true" />
-                      <span>Kick</span>
-                    </span>
-                    <span class="account-list-note" data-integration-note="kick">Managed on the Kick platform page</span>
-                  </div>
-                  <span class="status-pill subtle" data-integration-status="kick"><span class="status-dot"></span>Loading</span>
-                  <span class="account-provider-value" data-integration-summary="kick">Loading authoritative status...</span>
-                  <div class="account-provider-actions">
-                    <a class="creator-button secondary" href="/integrations/kick">Open Kick</a>
-                  </div>
-                </li>
-                <li class="account-list-item" data-integration-row="pilled">
-                  <div class="account-list-meta">
-                    <span class="account-list-title account-list-title-with-icon">
-                      <img class="account-platform-icon" src="/assets/icons/pilled.svg" alt="" aria-hidden="true" />
-                      <span>Pilled</span>
-                    </span>
-                    <span class="account-list-note" data-integration-note="pilled">Managed on the Pilled platform page</span>
-                  </div>
-                  <span class="status-pill subtle" data-integration-status="pilled"><span class="status-dot"></span>Loading</span>
-                  <span class="account-provider-value" data-integration-summary="pilled">Loading authoritative status...</span>
-                  <div class="account-provider-actions">
-                    <a class="creator-button secondary" href="/integrations/pilled">Open Pilled</a>
+                <li class="account-list-item account-list-item-platform-link" data-integration-row="youtube">
+                  <div class="account-list-main">
+                    <div class="account-list-header">
+                      <div class="account-list-meta">
+                        <span class="account-list-title account-list-title-with-icon">
+                          <img class="account-platform-icon" src="/assets/icons/youtube.svg" alt="" aria-hidden="true" />
+                          <span>YouTube</span>
+                        </span>
+                        <span class="account-list-note" data-integration-note="youtube">Managed on the YouTube platform page</span>
+                      </div>
+                      <div class="account-provider-actions">
+                        <a class="creator-button secondary" href="/integrations/youtube">Open YouTube</a>
+                      </div>
+                    </div>
+                    <div class="account-list-support-row">
+                      <span class="status-pill subtle" data-integration-status="youtube"><span class="status-dot"></span>Loading</span>
+                      <span class="account-provider-value" data-integration-summary="youtube">Loading authoritative status...</span>
+                    </div>
                   </div>
                 </li>
-                <li class="account-list-item" data-integration-row="twitch">
-                  <div class="account-list-meta">
-                    <span class="account-list-title account-list-title-with-icon">
-                      <img class="account-platform-icon" src="/assets/icons/twitch.svg" alt="" aria-hidden="true" />
-                      <span>Twitch</span>
-                    </span>
-                    <span class="account-list-note" data-integration-note="twitch">Managed on the Twitch platform page</span>
+                <li class="account-list-item account-list-item-platform-link" data-integration-row="kick">
+                  <div class="account-list-main">
+                    <div class="account-list-header">
+                      <div class="account-list-meta">
+                        <span class="account-list-title account-list-title-with-icon">
+                          <img class="account-platform-icon" src="/assets/icons/kick.svg" alt="" aria-hidden="true" />
+                          <span>Kick</span>
+                        </span>
+                        <span class="account-list-note" data-integration-note="kick">Managed on the Kick platform page</span>
+                      </div>
+                      <div class="account-provider-actions">
+                        <a class="creator-button secondary" href="/integrations/kick">Open Kick</a>
+                      </div>
+                    </div>
+                    <div class="account-list-support-row">
+                      <span class="status-pill subtle" data-integration-status="kick"><span class="status-dot"></span>Loading</span>
+                      <span class="account-provider-value" data-integration-summary="kick">Loading authoritative status...</span>
+                    </div>
                   </div>
-                  <span class="status-pill subtle" data-integration-status="twitch"><span class="status-dot"></span>Loading</span>
-                  <span class="account-provider-value" data-integration-summary="twitch">Loading authoritative status...</span>
-                  <div class="account-provider-actions">
-                    <a class="creator-button secondary" href="/integrations/twitch">Open Twitch</a>
+                </li>
+                <li class="account-list-item account-list-item-platform-link" data-integration-row="pilled">
+                  <div class="account-list-main">
+                    <div class="account-list-header">
+                      <div class="account-list-meta">
+                        <span class="account-list-title account-list-title-with-icon">
+                          <img class="account-platform-icon" src="/assets/icons/pilled.svg" alt="" aria-hidden="true" />
+                          <span>Pilled</span>
+                        </span>
+                        <span class="account-list-note" data-integration-note="pilled">Managed on the Pilled platform page</span>
+                      </div>
+                      <div class="account-provider-actions">
+                        <a class="creator-button secondary" href="/integrations/pilled">Open Pilled</a>
+                      </div>
+                    </div>
+                    <div class="account-list-support-row">
+                      <span class="status-pill subtle" data-integration-status="pilled"><span class="status-dot"></span>Loading</span>
+                      <span class="account-provider-value" data-integration-summary="pilled">Loading authoritative status...</span>
+                    </div>
+                  </div>
+                </li>
+                <li class="account-list-item account-list-item-platform-link" data-integration-row="twitch">
+                  <div class="account-list-main">
+                    <div class="account-list-header">
+                      <div class="account-list-meta">
+                        <span class="account-list-title account-list-title-with-icon">
+                          <img class="account-platform-icon" src="/assets/icons/twitch.svg" alt="" aria-hidden="true" />
+                          <span>Twitch</span>
+                        </span>
+                        <span class="account-list-note" data-integration-note="twitch">Managed on the Twitch platform page</span>
+                      </div>
+                      <div class="account-provider-actions">
+                        <a class="creator-button secondary" href="/integrations/twitch">Open Twitch</a>
+                      </div>
+                    </div>
+                    <div class="account-list-support-row">
+                      <span class="status-pill subtle" data-integration-status="twitch"><span class="status-dot"></span>Loading</span>
+                      <span class="account-provider-value" data-integration-summary="twitch">Loading authoritative status...</span>
+                    </div>
                   </div>
                 </li>
                 </ul>
