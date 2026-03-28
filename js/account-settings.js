@@ -1988,8 +1988,8 @@
         .filter((entry) => entry.key && !HIDDEN_BADGE_GOVERNANCE_SURFACES.has(entry.key));
     }
     return [
-      { key: "streamsuites_profile", label: "StreamSuites Profile" },
-      { key: "findmehere_profile", label: "FindMeHere Profile" },
+      { key: "streamsuites_profile", label: "SS Profile" },
+      { key: "findmehere_profile", label: "FMH Profile" },
       { key: "profile_card", label: "Profile Cards" },
       { key: "user_widget", label: "User Widget" },
     ];
