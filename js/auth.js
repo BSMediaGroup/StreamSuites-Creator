@@ -713,13 +713,49 @@
         : typeof raw.tierLabel === "string"
           ? raw.tierLabel.trim()
           : "";
+    const storedTierId = normalizeTierId(raw.stored_tier_id || raw.storedTierId);
+    const storedTierLabel =
+      typeof raw.stored_tier_label === "string"
+        ? raw.stored_tier_label.trim()
+        : typeof raw.storedTierLabel === "string"
+          ? raw.storedTierLabel.trim()
+          : "";
+    const displayTierId = normalizeTierId(raw.display_tier_id || raw.displayTierId);
+    const displayTierLabel =
+      typeof raw.display_tier_label === "string"
+        ? raw.display_tier_label.trim()
+        : typeof raw.displayTierLabel === "string"
+          ? raw.displayTierLabel.trim()
+          : "";
     const visibility = normalizeVisibility(raw.visibility);
 
-    if (!tierId && !tierLabel && !visibility) return null;
+    if (
+      !tierId &&
+      !tierLabel &&
+      !storedTierId &&
+      !storedTierLabel &&
+      !displayTierId &&
+      !displayTierLabel &&
+      !visibility
+    ) return null;
 
     return {
       tierId,
       tierLabel: tierLabel || (tierId ? tierId.toUpperCase() : ""),
+      storedTierId,
+      storedTierLabel: storedTierLabel || (storedTierId ? storedTierId.toUpperCase() : ""),
+      displayTierId: displayTierId || storedTierId || tierId,
+      displayTierLabel:
+        displayTierLabel ||
+        storedTierLabel ||
+        tierLabel ||
+        (displayTierId
+          ? displayTierId.toUpperCase()
+          : storedTierId
+            ? storedTierId.toUpperCase()
+            : tierId
+              ? tierId.toUpperCase()
+              : ""),
       visibility
     };
   }
@@ -1055,7 +1091,11 @@
       creatorWorkspaceAccess.allowed === true ||
       sessionSource.creator_capable === true ||
       sessionSource.creatorCapable === true;
-    const tier = normalizeTier(effectiveTier?.tierId || sessionSource.tier);
+    const tier = normalizeTier(
+      effectiveTier?.displayTierId ||
+        effectiveTier?.storedTierId ||
+        sessionSource.tier
+    );
 
     return {
       authenticated: true,
@@ -1530,6 +1570,10 @@
       JSON.stringify(left.findmehereBadges || []) === JSON.stringify(right.findmehereBadges || []) &&
       (left.effectiveTier?.tierId || "") === (right.effectiveTier?.tierId || "") &&
       (left.effectiveTier?.tierLabel || "") === (right.effectiveTier?.tierLabel || "") &&
+      (left.effectiveTier?.storedTierId || "") === (right.effectiveTier?.storedTierId || "") &&
+      (left.effectiveTier?.storedTierLabel || "") === (right.effectiveTier?.storedTierLabel || "") &&
+      (left.effectiveTier?.displayTierId || "") === (right.effectiveTier?.displayTierId || "") &&
+      (left.effectiveTier?.displayTierLabel || "") === (right.effectiveTier?.displayTierLabel || "") &&
       (left.effectiveTier?.visibility || "") === (right.effectiveTier?.visibility || "") &&
       JSON.stringify(left.adminAccess || null) === JSON.stringify(right.adminAccess || null) &&
       JSON.stringify(left.moderatorAccess || null) === JSON.stringify(right.moderatorAccess || null) &&
@@ -1586,7 +1630,12 @@
   }
 
   function getTierLabel(session) {
-    return normalizeTier(session?.effectiveTier?.tierLabel || session?.tier || "CORE");
+    return normalizeTier(
+      session?.effectiveTier?.displayTierLabel ||
+        session?.effectiveTier?.storedTierLabel ||
+        session?.tier ||
+        "CORE"
+    );
   }
 
   function getCreatorIdValue(session) {

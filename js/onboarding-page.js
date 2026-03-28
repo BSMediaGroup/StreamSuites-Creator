@@ -282,6 +282,8 @@
       effectiveTier?.tierId || session?.tier || REQUIRED_TIER_ID
     );
     const tierLabel =
+      effectiveTier?.displayTierLabel ||
+      effectiveTier?.storedTierLabel ||
       effectiveTier?.tierLabel ||
       (typeof normalizeTier === "function"
         ? normalizeTier(currentTierId || REQUIRED_TIER_ID)

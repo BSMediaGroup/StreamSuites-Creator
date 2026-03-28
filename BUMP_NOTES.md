@@ -4,6 +4,28 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Live Tier Pill Refresh Fix - 2026-03-29
+
+### Technical Notes
+
+- Traced the stale creator pill path to `js/auth.js`, where session normalization collapsed the runtime payload down to the effective capability tier and the silent-session equivalence check ignored stored/display-tier metadata. That meant a live `PRO <-> DEVELOPER` change could arrive from the backend while the creator shell still treated the session as unchanged and kept rendering the old pill.
+- Updated `js/auth.js` so the creator session keeps the backend-owned stored/display-tier metadata, re-renders when those fields change, and feeds all shared creator tier-pill surfaces from the authoritative display tier rather than the capability-only effective tier.
+- Updated `js/account-settings.js`, `js/onboarding-page.js`, and `js/onboarding.js` so the account billing card and onboarding tier reads use the same display-tier fallback chain. No styles, icons, or matrix-governance rules were redesigned; the change is strictly on the live tier-display data path.
+- No files were created or removed in this repo. The affected files are slightly longer because the old implicit tier fallback was replaced with explicit display-tier handling.
+
+### Human-Readable Notes
+
+- Creator tier pills now follow live account tier changes instead of waiting for a restart when the backend keeps Developer on the existing implicit Pro capability path.
+- The visible pill and the account billing plan label stay aligned with the same backend-owned display tier.
+
+### Files / Areas Touched
+
+- `js/auth.js`
+- `js/account-settings.js`
+- `js/onboarding-page.js`
+- `js/onboarding.js`
+- `BUMP_NOTES.md`
+
 ## Creator Developer Tier Polish + Account Surface Consistency - 2026-03-29
 
 ### Technical Notes

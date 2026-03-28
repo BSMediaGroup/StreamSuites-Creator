@@ -1838,7 +1838,13 @@
     const session = getActiveSession();
     const summary = paymentSummaryForView();
     const effectiveTier = session?.effectiveTier || {};
-    const tierLabel = summary?.planName || coerceText(effectiveTier.tierLabel) || coerceText(session?.tier) || "Core Tier";
+    const tierLabel =
+      summary?.planName ||
+      coerceText(effectiveTier.displayTierLabel) ||
+      coerceText(effectiveTier.storedTierLabel) ||
+      coerceText(effectiveTier.tierLabel) ||
+      coerceText(session?.tier) ||
+      "Core Tier";
     const planStatus = humanizeStatusToken(summary?.planStatus, "Active");
     const recurringState = describeRecurringState(summary);
     const supporterState = describeSupporterState(summary);

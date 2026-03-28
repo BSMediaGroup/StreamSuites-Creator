@@ -126,6 +126,8 @@
   function getEffectiveTierLabel(session) {
     const effectiveTier = session?.effectiveTier;
     if (typeof normalizeTier !== "function") return null;
+    if (effectiveTier?.displayTierLabel) return normalizeTier(effectiveTier.displayTierLabel);
+    if (effectiveTier?.storedTierLabel) return normalizeTier(effectiveTier.storedTierLabel);
     if (effectiveTier?.tierLabel) return normalizeTier(effectiveTier.tierLabel);
     if (effectiveTier?.tierId) return normalizeTier(effectiveTier.tierId);
     return null;
