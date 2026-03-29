@@ -84,7 +84,7 @@
     clips: "/assets/icons/ui/clipcards.svg",
     polls: "/assets/icons/ui/vote.svg",
     overlays: "/assets/icons/ui/overlay1.svg",
-    livechat: "/assets/icons/ui/bot.svg",
+    livechat: "/assets/icons/ui/chatnotiffill.svg",
     rumble: "/assets/icons/rumble-0.svg",
     youtube: "/assets/icons/youtube-0.svg",
     twitch: "/assets/icons/twitch-0.svg",
