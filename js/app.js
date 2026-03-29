@@ -80,7 +80,7 @@
     notifications: "/assets/icons/ui/bell.svg",
     plans: "/assets/icons/ui/verifiedbadge.svg",
     triggers: "/assets/icons/ui/tune.svg",
-    settings: "/assets/icons/ui/cog.svg",
+    settings: "/assets/icons/ui/toggles.svg",
     clips: "/assets/icons/ui/clipcards.svg",
     polls: "/assets/icons/ui/vote.svg",
     overlays: "/assets/icons/ui/overlay1.svg",
