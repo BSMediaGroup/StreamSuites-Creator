@@ -1,0 +1,111 @@
+{
+  "profile": "admin",
+  "bot_user_id": 1452732468405997713,
+  "running": true,
+  "connected": true,
+  "last_heartbeat_ts": "2026-03-28T03:44:45.536875+00:00",
+  "task_count": 2,
+  "tasks": 2,
+  "guild_count": 1,
+  "guild_config_count": 5,
+  "enabled_guild_count": 1,
+  "guild_config_summary": {
+    "guild_config_count": 5,
+    "enabled_guild_count": 1
+  },
+  "guilds": [
+    {
+      "guild_id": 123456789012345678,
+      "guild_name": null,
+      "bot_present": false,
+      "authorized_for_user": false,
+      "authorization_reason": "none",
+      "logging": {
+        "enabled": false,
+        "channel_id": null
+      },
+      "notifications": {
+        "enabled": false,
+        "general": {
+          "channel_id": null
+        },
+        "clips": {
+          "rumble": {
+            "channel_id": null
+          },
+          "youtube": {
+            "channel_id": null
+          },
+          "kick": {
+            "channel_id": null
+          },
+          "pilled": {
+            "channel_id": null
+          },
+          "twitch": {
+            "channel_id": null
+          }
+        }
+      }
+    },
+    {
+      "guild_id": 1449303974086967306,
+      "guild_name": "StreamSuites\u2122",
+      "bot_present": true,
+      "authorized_for_user": false,
+      "authorization_reason": "none",
+      "logging": {
+        "enabled": true,
+        "channel_id": "1449303976058028139"
+      },
+      "notifications": {
+        "enabled": true,
+        "general": {
+          "channel_id": "1459493308563853415"
+        },
+        "clips": {
+          "rumble": {
+            "channel_id": "1449303975672283278"
+          },
+          "youtube": {
+            "channel_id": "1449303975672283282"
+          },
+          "kick": {
+            "channel_id": "1456817505011105792"
+          },
+          "pilled": {
+            "channel_id": "1456817666710049086"
+          },
+          "twitch": {
+            "channel_id": "1449303975672283281"
+          }
+        }
+      }
+    }
+  ],
+  "runtime_resources_detected": true,
+  "runtime_connectivity_detected": true,
+  "fatal_error": null,
+  "status": {
+    "text": "\ud83c\udf0e streamsuites.app",
+    "emoji": null,
+    "profile": "admin"
+  },
+  "presence": {
+    "status_text": "\ud83c\udf0e streamsuites.app",
+    "status_emoji": null
+  },
+  "heartbeat": {
+    "started_at": "2026-03-25T18:54:31.910592+00:00",
+    "last_tick_at": "2026-03-28T03:44:45.536875+00:00",
+    "connected": true,
+    "metadata": {}
+  },
+  "heartbeat_status": {
+    "profile": "admin",
+    "bot_user_id": 1452732468405997713,
+    "connected_guild_count": 1,
+    "runtime_resources_detected": true,
+    "runtime_connectivity_detected": true
+  }
+}

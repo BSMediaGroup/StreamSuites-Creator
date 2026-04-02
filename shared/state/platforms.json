@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "generated_at": "2026-01-20T00:00:00Z",
+    "source": "StreamSuites runtime",
+    "scope": "platform-status"
+  },
+  "platforms": [
+    {
+      "name": "youtube",
+      "status": "active",
+      "mode": "chat+ingest",
+      "notes": "Polling chat, validation trigger emits actions",
+      "replay_supported": true,
+      "overlay_supported": true
+    },
+    {
+      "name": "twitch",
+      "status": "active",
+      "mode": "chat+ingest",
+      "notes": "IRC chat ingest with non-empty validation trigger",
+      "replay_supported": true,
+      "overlay_supported": true
+    },
+    {
+      "name": "rumble",
+      "status": "paused",
+      "mode": "browser+sse",
+      "notes": "Workers retained; platform intentionally disabled",
+      "replay_supported": false,
+      "overlay_supported": false
+    },
+    {
+      "name": "kick",
+      "status": "scaffold",
+      "mode": "chat-stub",
+      "notes": "Feature-flagged scheduler wiring runs stub chat worker and trigger counters",
+      "replay_supported": false,
+      "overlay_supported": false
+    },
+    {
+      "name": "pilled",
+      "status": "planned",
+      "mode": "ingest-only",
+      "notes": "Architecture reserved for future ingest",
+      "replay_supported": true,
+      "overlay_supported": false
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "meta": {
+    "project": "StreamSuites\u2122",
+    "scope": "runtime-roadmap",
+    "version": "0.3.0-alpha",
+    "generated_at": "2026-01-18"
+  },
+  "entries": [
+    {
+      "id": "auth-api-core",
+      "title": "Central authentication and account API",
+      "status": "complete",
+      "progress": 100,
+      "description": "Central Auth API is live and authoritative for accounts, sessions, roles, and tier scaffolding. Supports Google, GitHub, Discord OAuth and email magic-link login with secure cookie-based sessions."
+    },
+    {
+      "id": "account-model-roles-tiers",
+      "title": "Account model with roles and tiers",
+      "status": "complete",
+      "progress": 100,
+      "description": "Unified account model implemented with one account per email, multi-provider linking, role enforcement (creator/admin), and tier scaffolding (OPEN/GOLD/PRO) for future authorization."
+    },
+    {
+      "id": "multi-repo-web-separation",
+      "title": "Multi-repo, multi-domain web surface separation",
+      "status": "complete",
+      "progress": 100,
+      "description": "Public, Creator, and Admin web surfaces are fully separated into distinct repositories and domains, with domains acting as OAuth security boundaries and runtime remaining authoritative."
+    },
+    {
+      "id": "quota-enforcement",
+      "title": "Quota enforcement",
+      "status": "complete",
+      "progress": 95,
+      "description": "Per-creator and per-platform daily quotas are enforced with buffer and hard caps; runtime wiring is stable with minor observability refinements pending."
+    },
+    {
+      "id": "quota-snapshot-export",
+      "title": "Quota snapshot export",
+      "status": "complete",
+      "progress": 90,
+      "description": "Scheduled quota snapshot exports are produced to shared/state/quotas.json for downstream dashboard use; export cadence is stable and treated as public reference data."
+    },
+    {
+      "id": "discord-control-plane",
+      "title": "Discord control-plane scaffolding",
+      "status": "partial",
+      "progress": 55,
+      "description": "Discord runtime scaffolding exists for control-plane publishing with dashboard state updates; ingestion remains limited and action execution is not enabled."
+    },
+    {
+      "id": "twitch-chat-triggers",
+      "title": "Twitch chat trigger scaffolds",
+      "status": "active",
+      "progress": 60,
+      "description": "Twitch chat workers are active for evaluation-only triggers; ingestion is stable for testing but production-safe trigger execution is not yet enabled."
+    },
+    {
+      "id": "youtube-chat-triggers",
+      "title": "YouTube chat trigger scaffolds",
+      "status": "active",
+      "progress": 55,
+      "description": "YouTube chat workers are online for evaluation-only trigger detection with known gaps around throttling and long-running stream coverage."
+    },
+    {
+      "id": "rumble-chat-workers",
+      "title": "Rumble chat workers",
+      "status": "paused",
+      "progress": 30,
+      "description": "Rumble chat ingestion remains paused; worker code is preserved but disabled due to unstable chat_id discovery and inconsistent endpoints."
+    },
+    {
+      "id": "quota-registry-hardening",
+      "title": "Quota registry hardening",
+      "status": "active",
+      "progress": 70,
+      "description": "Registry wiring across platform workers is being tightened to ensure deterministic quota application and consistent shutdown behavior."
+    },
+    {
+      "id": "dashboard-quota-observability",
+      "title": "Dashboard quota observability",
+      "status": "partial",
+      "progress": 45,
+      "description": "Dashboard surfaces consume quota snapshots for read-only visibility; additional metrics and alerts are planned before declaring completeness."
+    },
+    {
+      "id": "shutdown-ordering",
+      "title": "Shutdown ordering across runtimes",
+      "status": "active",
+      "progress": 65,
+      "description": "Runtime shutdown sequencing has been tightened alongside Desktop Admin service controls to avoid orphaned workers and ensure exports flush safely."
+    },
+    {
+      "id": "twitch-youtube-validation",
+      "title": "YouTube/Twitch trigger validation",
+      "status": "active",
+      "progress": 65,
+      "description": "Live credential validation for YouTube and Twitch trigger scaffolds is ongoing to prove ingestion stability ahead of broader rollout."
+    },
+    {
+      "id": "config-driven-triggers",
+      "title": "Config-driven trigger definitions",
+      "status": "planned",
+      "progress": 15,
+      "description": "Trigger definitions are slated to move to config with persisted cooldowns; no runtime wiring exists yet beyond design placeholders."
+    },
+    {
+      "id": "dashboard-config-introspection",
+      "title": "Dashboard config introspection",
+      "status": "planned",
+      "progress": 10,
+      "description": "Read-only dashboard tooling for creator configuration is planned; no runtime endpoints or exports have been built."
+    },
+    {
+      "id": "twitter-control-plane",
+      "title": "Twitter/X control-plane parity",
+      "status": "planned",
+      "progress": 5,
+      "description": "Control-plane parity for Twitter/X is planned; no worker scaffolding or integrations exist."
+    },
+    {
+      "id": "scheduler-telemetry-alerting",
+      "title": "Scheduler telemetry and alerts",
+      "status": "planned",
+      "progress": 20,
+      "description": "Scheduler telemetry and alerting surfaces are planned to detect worker health and ingestion failures; only basic logging exists today."
+    },
+    {
+      "id": "trigger-action-dispatch",
+      "title": "Trigger action execution and dispatch",
+      "status": "planned",
+      "progress": 10,
+      "description": "Action dispatch for triggers remains future work; runtime intentionally omits write or execution paths pending deterministic ingestion results."
+    },
+    {
+      "id": "operator-tooling",
+      "title": "Operator tooling",
+      "status": "active",
+      "progress": 75,
+      "description": "WinForms Desktop Admin now functions as a local operator control plane with start/stop/restart controls, crash detection, log streaming, persistence, and safety hardening."
+    },
+    {
+      "id": "path-configuration-groundwork",
+      "title": "Path configuration groundwork",
+      "status": "active",
+      "progress": 40,
+      "description": "Local path management is being wired through Desktop Admin to keep runtime snapshots and exports configurable on-disk while preserving read-only downstream consumption."
+    },
+    {
+      "id": "chat-logging-replay",
+      "title": "Historical chat logging and replay",
+      "status": "planned",
+      "progress": 5,
+      "description": "Historical chat logging and replay remains a future capability; runtime currently processes live streams only."
+    },
+    {
+      "id": "dashboard-trigger-controls",
+      "title": "Dashboard trigger editing and live controls",
+      "status": "planned",
+      "progress": 5,
+      "description": "Dashboard-based trigger editing and live controls are not started; runtime keeps dashboard read-only for now."
+    },
+    {
+      "id": "chat-runtime-plumbing",
+      "title": "Chat runtime plumbing",
+      "status": "planned",
+      "progress": 10,
+      "description": "Chat runtime plumbing remains not yet live; dashboard chat surfaces render preview-only data with no runtime socket wiring."
+    },
+    {
+      "id": "browser-extension-feed-hydration",
+      "title": "Browser extension feed hydration",
+      "status": "planned",
+      "progress": 5,
+      "description": "Extension feed hydration is in planning and not started; extensions continue to show placeholder content until runtime ingestion exists."
+    },
+    {
+      "id": "obs-overlay-runtime-feeds",
+      "title": "OBS overlay runtime feeds",
+      "status": "partial",
+      "progress": 35,
+      "description": "OBS overlay UI surfaces are ready using mock data; runtime feed wiring is pending and overlays remain preview-only."
+    },
+    {
+      "id": "live-chat-socket-ingestion",
+      "title": "Live chat socket ingestion",
+      "status": "planned",
+      "progress": 15,
+      "description": "Live chat socket ingestion is planned but not wired; dashboard previews rely on exported placeholders instead of active sockets."
+    },
+    {
+      "id": "multi-platform-identity-routing",
+      "title": "Multi-platform identity routing",
+      "status": "planned",
+      "progress": 10,
+      "description": "Identity routing across platforms remains planned; no runtime linkage exists between chat identities in preview surfaces."
+    },
+    {
+      "id": "deterministic-replay-ingestion",
+      "title": "Deterministic replay ingestion",
+      "status": "planned",
+      "progress": 10,
+      "description": "Deterministic replay ingestion is planned; chat replay overlays continue to use mock data until runtime export wiring is added."
+    },
+    {
+      "id": "kick-chatbot-scaffold",
+      "title": "Kick chatbot scaffold",
+      "status": "active",
+      "progress": 50,
+      "description": "Kick chat scaffold now validates env credentials, emits normalized messages through scheduler triggers, and remains feature-flagged for future live sockets."
+    },
+    {
+      "id": "pilled-ingest-plan",
+      "title": "Pilled ingest-only planning",
+      "status": "planned",
+      "progress": 5,
+      "description": "Architecture reserved for a future Pilled ingest-only client; placeholders exist but no runtime wiring is active."
+    }
+  ]
+}

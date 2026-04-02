@@ -1,0 +1,237 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-03-28T18:37:08.149273Z",
+  "server_generated_at": "2026-03-28T18:37:08.149273Z",
+  "count": 0,
+  "bots": [],
+  "supported_platforms": [
+    "kick",
+    "rumble",
+    "twitch",
+    "youtube"
+  ],
+  "platform_capabilities": [
+    {
+      "platform": "kick",
+      "label": "Kick",
+      "implemented": true,
+      "manual_deploy_enabled": true,
+      "staged": false,
+      "disabled_reason": "",
+      "required_env_keys": [],
+      "target_label": "Channel Login",
+      "target_placeholder": "e.g. creatorname",
+      "target_help": "Kick channel login used for runtime manual deploy.",
+      "extra_help": ""
+    },
+    {
+      "platform": "pilled",
+      "label": "Pilled",
+      "implemented": false,
+      "manual_deploy_enabled": false,
+      "staged": true,
+      "disabled_reason": "Pilled manual deploy is staged/disabled in runtime.",
+      "required_env_keys": [],
+      "target_label": "",
+      "target_placeholder": "",
+      "target_help": "",
+      "extra_help": ""
+    },
+    {
+      "platform": "rumble",
+      "label": "Rumble",
+      "implemented": true,
+      "manual_deploy_enabled": true,
+      "staged": false,
+      "disabled_reason": "",
+      "required_env_keys": [],
+      "target_label": "Stream Watch URL",
+      "target_placeholder": "https://rumble.com/...",
+      "target_help": "Rumble stream watch URL consumed by runtime manual deploy.",
+      "extra_help": ""
+    },
+    {
+      "platform": "twitch",
+      "label": "Twitch",
+      "implemented": true,
+      "manual_deploy_enabled": true,
+      "staged": false,
+      "disabled_reason": "",
+      "required_env_keys": [
+        "TWITCH_OAUTH_TOKEN_DANIEL"
+      ],
+      "target_label": "Target Channel Login",
+      "target_placeholder": "e.g. danclancy",
+      "target_help": "Twitch IRC channel login (without #).",
+      "extra_help": "Bot nickname and OAuth token come from runtime config/secrets. If missing, runtime returns a deploy error."
+    },
+    {
+      "platform": "youtube",
+      "label": "YouTube",
+      "implemented": true,
+      "manual_deploy_enabled": true,
+      "staged": false,
+      "disabled_reason": "",
+      "required_env_keys": [
+        "YOUTUBE_API_KEY_DANIEL"
+      ],
+      "target_label": "Live Chat ID",
+      "target_placeholder": "e.g. Cg0KC...",
+      "target_help": "Live Chat ID required by runtime manual deploy for YouTube chat workers.",
+      "extra_help": ""
+    }
+  ],
+  "platforms": [
+    {
+      "platform": "kick",
+      "label": "Kick",
+      "available": true,
+      "implemented": true,
+      "runtime_ready": true,
+      "status": "ready",
+      "paused": false,
+      "paused_reason": null,
+      "error": null,
+      "staged": false,
+      "disabled_reason": "",
+      "required_env_keys": [],
+      "missing_env_keys": [],
+      "details": {
+        "bot_count": 0,
+        "bot_online_count": 0,
+        "bot_paused_count": 0,
+        "bot_error_count": 0,
+        "manual_override_count": 0,
+        "implemented": true,
+        "runtime_ready": true,
+        "required_env_keys": [],
+        "missing_env_keys": []
+      },
+      "last_log": null
+    },
+    {
+      "platform": "pilled",
+      "label": "Pilled",
+      "available": false,
+      "implemented": false,
+      "runtime_ready": true,
+      "status": "staged",
+      "paused": false,
+      "paused_reason": null,
+      "error": null,
+      "staged": true,
+      "disabled_reason": "Pilled manual deploy is staged/disabled in runtime.",
+      "required_env_keys": [],
+      "missing_env_keys": [],
+      "details": {
+        "bot_count": 0,
+        "bot_online_count": 0,
+        "bot_paused_count": 0,
+        "bot_error_count": 0,
+        "manual_override_count": 0,
+        "implemented": false,
+        "runtime_ready": true,
+        "required_env_keys": [],
+        "missing_env_keys": []
+      },
+      "last_log": null
+    },
+    {
+      "platform": "rumble",
+      "label": "Rumble",
+      "available": true,
+      "implemented": true,
+      "runtime_ready": true,
+      "status": "ready",
+      "paused": false,
+      "paused_reason": null,
+      "error": null,
+      "staged": false,
+      "disabled_reason": "",
+      "required_env_keys": [],
+      "missing_env_keys": [],
+      "details": {
+        "bot_count": 0,
+        "bot_online_count": 0,
+        "bot_paused_count": 0,
+        "bot_error_count": 0,
+        "manual_override_count": 0,
+        "implemented": true,
+        "runtime_ready": true,
+        "required_env_keys": [],
+        "missing_env_keys": []
+      },
+      "last_log": null
+    },
+    {
+      "platform": "twitch",
+      "label": "Twitch",
+      "available": false,
+      "implemented": true,
+      "runtime_ready": false,
+      "status": "not_configured",
+      "paused": false,
+      "paused_reason": null,
+      "error": null,
+      "staged": false,
+      "disabled_reason": "",
+      "required_env_keys": [
+        "TWITCH_OAUTH_TOKEN_DANIEL"
+      ],
+      "missing_env_keys": [
+        "TWITCH_OAUTH_TOKEN_DANIEL"
+      ],
+      "details": {
+        "bot_count": 0,
+        "bot_online_count": 0,
+        "bot_paused_count": 0,
+        "bot_error_count": 0,
+        "manual_override_count": 0,
+        "implemented": true,
+        "runtime_ready": false,
+        "required_env_keys": [
+          "TWITCH_OAUTH_TOKEN_DANIEL"
+        ],
+        "missing_env_keys": [
+          "TWITCH_OAUTH_TOKEN_DANIEL"
+        ]
+      },
+      "last_log": null
+    },
+    {
+      "platform": "youtube",
+      "label": "YouTube",
+      "available": false,
+      "implemented": true,
+      "runtime_ready": false,
+      "status": "not_configured",
+      "paused": false,
+      "paused_reason": null,
+      "error": null,
+      "staged": false,
+      "disabled_reason": "",
+      "required_env_keys": [
+        "YOUTUBE_API_KEY_DANIEL"
+      ],
+      "missing_env_keys": [
+        "YOUTUBE_API_KEY_DANIEL"
+      ],
+      "details": {
+        "bot_count": 0,
+        "bot_online_count": 0,
+        "bot_paused_count": 0,
+        "bot_error_count": 0,
+        "manual_override_count": 0,
+        "implemented": true,
+        "runtime_ready": false,
+        "required_env_keys": [
+          "YOUTUBE_API_KEY_DANIEL"
+        ],
+        "missing_env_keys": [
+          "YOUTUBE_API_KEY_DANIEL"
+        ]
+      },
+      "last_log": null
+    }
+  ]
+}

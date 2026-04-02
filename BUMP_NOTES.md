@@ -4,6 +4,31 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Shared State Fallback Hardening + Local Mirror Restore - 2026-04-03
+
+### Technical Notes
+
+- Root-caused the creator-side shared hydration regression to the state loader itself rather than the routed views: `js/state.js` still treated the first local `404` or timeout as terminal, so the Creator shell never reached its GitHub/raw fallback when `./shared/state/*` was absent, and it continued using the older `1500ms` timeout budget that the admin surface had already outgrown.
+- Updated `js/state.js` to use the same bounded `6000ms` timeout posture plus one retry window for retryable failures, and changed `loadStateJson(...)` so a missing or timed-out first root no longer aborts the whole fallback chain before the remaining configured roots are attempted.
+- Added a local `shared/state/` mirror under the Creator repo and refreshed it from the authoritative `StreamSuites` contract set so creator-side runtime snapshot, live-status, quota, and Discord runtime reads once again have a truthful local export-first source before remote fallback is needed.
+- No older files were removed in this repo. The old fail-fast branch in `js/state.js` was replaced in place because it was the direct regression, and `README.md` needed a tree update because `shared/state/` now exists in the repo root.
+
+### Human-Readable Notes
+
+- Creator shared-state hydration no longer dies on the first missing local JSON file.
+- The Creator repo now has a real local shared-state mirror again for the runtime snapshot and live-status family of contracts.
+- When the local mirror is genuinely unavailable, the loader now keeps trying its configured fallbacks instead of silently freezing stale state.
+
+### Files / Areas Touched
+
+- `js/state.js`
+- `shared/state/runtime_snapshot.json`
+- `shared/state/live_status.json`
+- `shared/state/quotas.json`
+- `shared/state/discord/runtime.json`
+- `README.md`
+- `BUMP_NOTES.md`
+
 ## Creator Shell Startup Route Preservation + Guard Normalization - 2026-04-03
 
 ### Technical Notes

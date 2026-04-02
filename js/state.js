@@ -59,7 +59,9 @@
 
   const RUNTIME_AVAILABILITY_FLAG = "__RUNTIME_AVAILABLE__";
   const RUNTIME_OFFLINE_FLAG = "__STREAMSUITES_RUNTIME_OFFLINE__";
-  const STATE_FETCH_TIMEOUT_MS = 1500;
+  const STATE_FETCH_TIMEOUT_MS = 6000;
+  const STATE_FETCH_RETRY_COUNT = 1;
+  const STATE_FETCH_RETRY_DELAY_MS = 220;
 
   /* Tracks which missing state files have already been logged this boot */
   const _missingStateLogged = new Set();
@@ -333,6 +335,20 @@
     }
   }
 
+  function wait(ms) {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, ms);
+    });
+  }
+
+  function isRetryableStatus(status) {
+    return status === 408 || status === 425 || status === 429 || status >= 500;
+  }
+
+  function isRetryableError(err) {
+    return err?.name === "AbortError" || err?.message === "Failed to fetch";
+  }
+
   async function loadStateJson(relativePath) {
     if (isCreatorDebugModeActive()) {
       const debugPath = resolveDebugStatePath(relativePath);
@@ -352,43 +368,60 @@
     console.log("[BOOT:STATE:ENTER] loadStateJson", relativePath, performance.now());
     const roots = getConfiguredStateRoots();
     const attempts = roots.slice(0, 2);
+    let sawMissing = false;
 
     for (const root of attempts) {
       const url = buildStateUrl(root, relativePath);
       if (!url) continue;
 
-      try {
-        const res = await fetchWithTimeout(url, { cache: "no-store" });
-        if (res.status === 404) {
-          if (!_missingStateLogged.has(relativePath)) {
-            console.info(
-              `[State][Offline] ${relativePath} not present (runtime offline or export not yet generated)`
-            );
-            _missingStateLogged.add(relativePath);
+      for (let attempt = 0; attempt <= STATE_FETCH_RETRY_COUNT; attempt += 1) {
+        try {
+          const res = await fetchWithTimeout(url, { cache: "no-store" });
+          if (res.status === 404) {
+            sawMissing = true;
+            break;
           }
-          stateCache[relativePath] = null;
-          return null;
-        }
-        if (!res.ok) continue;
-        const data = await res.json();
-        console.log(
-          "[BOOT:STATE:EXIT] loadStateJson OK",
-          relativePath,
-          performance.now()
-        );
-        return data;
-      } catch (err) {
-        const isAbort = err?.name === "AbortError";
-        console.warn(
-          "[BOOT:STATE:EXIT] loadStateJson FAIL",
-          relativePath,
-          isAbort ? "timeout" : err,
-          performance.now()
-        );
-        if (isAbort) {
-          return null;
+          if (!res.ok) {
+            if (attempt < STATE_FETCH_RETRY_COUNT && isRetryableStatus(res.status)) {
+              await wait(STATE_FETCH_RETRY_DELAY_MS * (attempt + 1));
+              continue;
+            }
+            break;
+          }
+          const data = await res.json();
+          stateCache[relativePath] = data;
+          console.log(
+            "[BOOT:STATE:EXIT] loadStateJson OK",
+            relativePath,
+            performance.now()
+          );
+          return data;
+        } catch (err) {
+          const isAbort = err?.name === "AbortError";
+          console.warn(
+            "[BOOT:STATE:EXIT] loadStateJson FAIL",
+            relativePath,
+            isAbort ? "timeout" : err,
+            performance.now()
+          );
+          if (attempt < STATE_FETCH_RETRY_COUNT && isRetryableError(err)) {
+            await wait(STATE_FETCH_RETRY_DELAY_MS * (attempt + 1));
+            continue;
+          }
+          break;
         }
       }
+    }
+
+    if (sawMissing) {
+      if (!_missingStateLogged.has(relativePath)) {
+        console.info(
+          `[State][Offline] ${relativePath} not present (runtime offline or export not yet generated)`
+        );
+        _missingStateLogged.add(relativePath);
+      }
+      stateCache[relativePath] = null;
+      return null;
     }
 
     console.log(

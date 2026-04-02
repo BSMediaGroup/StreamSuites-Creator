@@ -1,0 +1,5112 @@
+{
+  "schema_version": "v1",
+  "exported_at": "2026-03-28T03:44:47.996438Z",
+  "runtime": {
+    "project": "StreamSuites\u2122 Runtime",
+    "version": "0.4.2-alpha",
+    "build": "2026.03.28+006"
+  },
+  "audit": [
+    {
+      "id": "483a0779-76ae-4497-a158-76b5565fd50d",
+      "ts": "2026-03-28T03:44:22Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "founder_badges_reconciled",
+      "metadata": {
+        "already_enabled_accounts": 0,
+        "eligible_existing_accounts": 13,
+        "founder_cutoff_date": "2026-07-31",
+        "manually_disabled_accounts": 0,
+        "skipped_accounts": 0,
+        "updated_accounts": 13
+      }
+    },
+    {
+      "id": "a65c818b-3701-4580-ac4e-5cbe81d8ec21",
+      "ts": "2026-03-28T03:44:15Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "badge_governance_updated",
+      "metadata": {
+        "after": {
+          "catalog": [
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "admin",
+              "key": "admin",
+              "kind": "role",
+              "label": "Admin",
+              "manually_assignable": false,
+              "order": 10,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Administrator",
+              "value": "admin"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "core",
+              "key": "core",
+              "kind": "tier",
+              "label": "Core",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Core Creator",
+              "value": "core"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "gold",
+              "key": "gold",
+              "kind": "tier",
+              "label": "Gold",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Gold Creator",
+              "value": "gold"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "pro",
+              "key": "pro",
+              "kind": "tier",
+              "label": "Pro",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Pro Creator",
+              "value": "pro"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": false
+              },
+              "icon_key": "founder",
+              "key": "founder",
+              "kind": "entitlement",
+              "label": "Founder",
+              "manually_assignable": true,
+              "order": 30,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Founding Member",
+              "value": "founder"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": false
+              },
+              "icon_key": "moderator",
+              "key": "moderator",
+              "kind": "entitlement",
+              "label": "Moderator",
+              "manually_assignable": true,
+              "order": 40,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Moderator",
+              "value": "moderator"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "developer",
+              "key": "developer",
+              "kind": "tier",
+              "label": "Developer",
+              "manually_assignable": false,
+              "order": 50,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Developer",
+              "value": "developer"
+            }
+          ],
+          "default_visibility": {
+            "admin": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "core": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "developer": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "founder": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": false
+            },
+            "gold": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "moderator": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": false
+            },
+            "pro": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            }
+          },
+          "founder_cutoff_date": "2026-07-31",
+          "founder_policy": {
+            "auto_assignment_enabled": true,
+            "cutoff_date": "2026-07-31",
+            "cutoff_end_at": "2026-07-31T23:59:59Z",
+            "cutoff_end_ts": 1785542399,
+            "cutoff_inclusive": true,
+            "cutoff_timezone": "UTC"
+          },
+          "founder_reconcile": {
+            "eligible_existing_accounts": 13,
+            "enabled_accounts": 0,
+            "manually_disabled_accounts": 0,
+            "pending_accounts": 13
+          },
+          "managed_entitlement_keys": [
+            "founder",
+            "moderator"
+          ],
+          "surface_catalog": [
+            {
+              "key": "streamsuites_profile",
+              "label": "StreamSuites Profile"
+            },
+            {
+              "key": "findmehere_profile",
+              "label": "FindMeHere Profile"
+            },
+            {
+              "key": "profile_card",
+              "label": "Profile Cards"
+            },
+            {
+              "key": "user_widget",
+              "label": "User Widget"
+            },
+            {
+              "key": "creator_surface",
+              "label": "Creator Surface"
+            },
+            {
+              "key": "admin_surface",
+              "label": "Admin Surface"
+            },
+            {
+              "key": "public_surface",
+              "label": "Public Surface"
+            },
+            {
+              "key": "directory",
+              "label": "Directory"
+            }
+          ]
+        },
+        "before": {
+          "catalog": [
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "admin",
+              "key": "admin",
+              "kind": "role",
+              "label": "Admin",
+              "manually_assignable": false,
+              "order": 10,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Administrator",
+              "value": "admin"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "core",
+              "key": "core",
+              "kind": "tier",
+              "label": "Core",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Core Creator",
+              "value": "core"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "gold",
+              "key": "gold",
+              "kind": "tier",
+              "label": "Gold",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Gold Creator",
+              "value": "gold"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "pro",
+              "key": "pro",
+              "kind": "tier",
+              "label": "Pro",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Pro Creator",
+              "value": "pro"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": false
+              },
+              "icon_key": "founder",
+              "key": "founder",
+              "kind": "entitlement",
+              "label": "Founder",
+              "manually_assignable": true,
+              "order": 30,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Founding Member",
+              "value": "founder"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": false
+              },
+              "icon_key": "moderator",
+              "key": "moderator",
+              "kind": "entitlement",
+              "label": "Moderator",
+              "manually_assignable": true,
+              "order": 40,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Moderator",
+              "value": "moderator"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "developer",
+              "key": "developer",
+              "kind": "tier",
+              "label": "Developer",
+              "manually_assignable": false,
+              "order": 50,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Developer",
+              "value": "developer"
+            }
+          ],
+          "default_visibility": {
+            "admin": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "core": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "developer": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "founder": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": false
+            },
+            "gold": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "moderator": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": false
+            },
+            "pro": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            }
+          },
+          "founder_cutoff_date": "",
+          "founder_policy": {
+            "auto_assignment_enabled": false,
+            "cutoff_date": "",
+            "cutoff_end_at": null,
+            "cutoff_end_ts": null,
+            "cutoff_inclusive": true,
+            "cutoff_timezone": "UTC"
+          },
+          "managed_entitlement_keys": [
+            "founder",
+            "moderator"
+          ],
+          "surface_catalog": [
+            {
+              "key": "streamsuites_profile",
+              "label": "StreamSuites Profile"
+            },
+            {
+              "key": "findmehere_profile",
+              "label": "FindMeHere Profile"
+            },
+            {
+              "key": "profile_card",
+              "label": "Profile Cards"
+            },
+            {
+              "key": "user_widget",
+              "label": "User Widget"
+            },
+            {
+              "key": "creator_surface",
+              "label": "Creator Surface"
+            },
+            {
+              "key": "admin_surface",
+              "label": "Admin Surface"
+            },
+            {
+              "key": "public_surface",
+              "label": "Public Surface"
+            },
+            {
+              "key": "directory",
+              "label": "Directory"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f2de9a20-7079-4cdd-a216-4d2d60517d75",
+      "ts": "2026-03-28T03:42:58Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "c9691d7c-f282-435b-9c2c-307cd5424141",
+      "ts": "2026-03-28T02:30:01Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "badge_governance_updated",
+      "metadata": {
+        "after": {
+          "catalog": [
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "admin",
+              "key": "admin",
+              "kind": "role",
+              "label": "Admin",
+              "manually_assignable": false,
+              "order": 10,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Administrator",
+              "value": "admin"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "core",
+              "key": "core",
+              "kind": "tier",
+              "label": "Core",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Core Creator",
+              "value": "core"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "gold",
+              "key": "gold",
+              "kind": "tier",
+              "label": "Gold",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Gold Creator",
+              "value": "gold"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "pro",
+              "key": "pro",
+              "kind": "tier",
+              "label": "Pro",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Pro Creator",
+              "value": "pro"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": false
+              },
+              "icon_key": "founder",
+              "key": "founder",
+              "kind": "entitlement",
+              "label": "Founder",
+              "manually_assignable": true,
+              "order": 30,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Founding Member",
+              "value": "founder"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": false
+              },
+              "icon_key": "moderator",
+              "key": "moderator",
+              "kind": "entitlement",
+              "label": "Moderator",
+              "manually_assignable": true,
+              "order": 40,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Moderator",
+              "value": "moderator"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "developer",
+              "key": "developer",
+              "kind": "tier",
+              "label": "Developer",
+              "manually_assignable": false,
+              "order": 50,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Developer",
+              "value": "developer"
+            }
+          ],
+          "default_visibility": {
+            "admin": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "core": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "developer": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "founder": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": false
+            },
+            "gold": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "moderator": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": false
+            },
+            "pro": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            }
+          },
+          "founder_cutoff_date": "",
+          "founder_policy": {
+            "auto_assignment_enabled": false,
+            "cutoff_date": "",
+            "cutoff_end_at": null,
+            "cutoff_end_ts": null,
+            "cutoff_inclusive": true,
+            "cutoff_timezone": "UTC"
+          },
+          "founder_reconcile": {
+            "eligible_existing_accounts": 0,
+            "enabled_accounts": 0,
+            "manually_disabled_accounts": 0,
+            "pending_accounts": 0
+          },
+          "managed_entitlement_keys": [
+            "founder",
+            "moderator"
+          ],
+          "surface_catalog": [
+            {
+              "key": "streamsuites_profile",
+              "label": "StreamSuites Profile"
+            },
+            {
+              "key": "findmehere_profile",
+              "label": "FindMeHere Profile"
+            },
+            {
+              "key": "profile_card",
+              "label": "Profile Cards"
+            },
+            {
+              "key": "user_widget",
+              "label": "User Widget"
+            },
+            {
+              "key": "creator_surface",
+              "label": "Creator Surface"
+            },
+            {
+              "key": "admin_surface",
+              "label": "Admin Surface"
+            },
+            {
+              "key": "public_surface",
+              "label": "Public Surface"
+            },
+            {
+              "key": "directory",
+              "label": "Directory"
+            }
+          ]
+        },
+        "before": {
+          "catalog": [
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "admin",
+              "key": "admin",
+              "kind": "role",
+              "label": "Admin",
+              "manually_assignable": false,
+              "order": 10,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Administrator",
+              "value": "admin"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "core",
+              "key": "core",
+              "kind": "tier",
+              "label": "Core",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Core Creator",
+              "value": "core"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "gold",
+              "key": "gold",
+              "kind": "tier",
+              "label": "Gold",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Gold Creator",
+              "value": "gold"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "pro",
+              "key": "pro",
+              "kind": "tier",
+              "label": "Pro",
+              "manually_assignable": false,
+              "order": 20,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Pro Creator",
+              "value": "pro"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "directory": true,
+                "findmehere_profile": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "founder",
+              "key": "founder",
+              "kind": "entitlement",
+              "label": "Founder",
+              "manually_assignable": true,
+              "order": 30,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "directory",
+                "findmehere_profile",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Founding Member",
+              "value": "founder"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "moderator",
+              "key": "moderator",
+              "kind": "entitlement",
+              "label": "Moderator",
+              "manually_assignable": true,
+              "order": 40,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Moderator",
+              "value": "moderator"
+            },
+            {
+              "default_visibility": {
+                "admin_surface": true,
+                "creator_surface": true,
+                "profile_card": true,
+                "public_surface": true,
+                "streamsuites_profile": true,
+                "user_widget": true
+              },
+              "icon_key": "developer",
+              "key": "developer",
+              "kind": "tier",
+              "label": "Developer",
+              "manually_assignable": false,
+              "order": 50,
+              "surfaces": [
+                "admin_surface",
+                "creator_surface",
+                "profile_card",
+                "public_surface",
+                "streamsuites_profile",
+                "user_widget"
+              ],
+              "title": "Developer",
+              "value": "developer"
+            }
+          ],
+          "default_visibility": {
+            "admin": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "core": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "developer": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "founder": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "gold": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "moderator": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            },
+            "pro": {
+              "admin_surface": true,
+              "creator_surface": true,
+              "directory": true,
+              "findmehere_profile": true,
+              "profile_card": true,
+              "public_surface": true,
+              "streamsuites_profile": true,
+              "user_widget": true
+            }
+          },
+          "founder_cutoff_date": "",
+          "founder_policy": {
+            "auto_assignment_enabled": false,
+            "cutoff_date": "",
+            "cutoff_end_at": null,
+            "cutoff_end_ts": null,
+            "cutoff_inclusive": true,
+            "cutoff_timezone": "UTC"
+          },
+          "managed_entitlement_keys": [
+            "founder",
+            "moderator"
+          ],
+          "surface_catalog": [
+            {
+              "key": "streamsuites_profile",
+              "label": "StreamSuites Profile"
+            },
+            {
+              "key": "findmehere_profile",
+              "label": "FindMeHere Profile"
+            },
+            {
+              "key": "profile_card",
+              "label": "Profile Cards"
+            },
+            {
+              "key": "user_widget",
+              "label": "User Widget"
+            },
+            {
+              "key": "creator_surface",
+              "label": "Creator Surface"
+            },
+            {
+              "key": "admin_surface",
+              "label": "Admin Surface"
+            },
+            {
+              "key": "public_surface",
+              "label": "Public Surface"
+            },
+            {
+              "key": "directory",
+              "label": "Directory"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "2058ebc8-eaf4-4f6a-b96b-5155449b1d94",
+      "ts": "2026-03-28T02:29:27Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 10,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "350e2568-b592-4b8c-84ef-1c2e5ae2041d",
+      "ts": "2026-03-28T02:28:46Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "18989677-69fa-40ac-95b4-1fdb8c48479d",
+      "ts": "2026-03-27T14:51:44Z",
+      "actor_user_id": null,
+      "actor_user_code": null,
+      "actor_role": null,
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "fallback_admin_email_normalized",
+      "metadata": {
+        "email": "admin@streamsuites.app",
+        "source": "admin_fallback_email_env"
+      }
+    },
+    {
+      "id": "6e21db86-16fa-45bd-a0e8-d5aa041ed43e",
+      "ts": "2026-03-27T14:51:44Z",
+      "actor_user_id": null,
+      "actor_user_code": null,
+      "actor_role": null,
+      "target_user_id": "d61f5f01-a8e2-4f8c-8a7d-d6023652ae49",
+      "target_user_code": "UGHW8WQ",
+      "action": "test_creator_bootstrapped",
+      "metadata": {
+        "action": "created",
+        "email": "test@streamsuites.app",
+        "source": "ss_test_env",
+        "user": "SStestAcc"
+      }
+    },
+    {
+      "id": "80d5c070-1e5d-49a7-9cf8-57401a88a3dc",
+      "ts": "2026-03-19T17:48:30Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 10,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "89980964-788c-48b2-9ce7-cc576456761d",
+      "ts": "2026-03-19T17:36:45Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 10,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "dde06733-c183-48e7-bea1-c0e11bb8d532",
+      "ts": "2026-03-19T17:35:49Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 10,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "ffbeb4ba-922d-4e05-a235-59c8df5d8ab6",
+      "ts": "2026-03-19T17:35:08Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 10,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "45d1eda1-17de-4f12-b78b-827cdba03875",
+      "ts": "2026-03-19T17:31:51Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 10,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "12fd2432-9005-4c95-bbf4-d1d3e3e207c5",
+      "ts": "2026-03-19T17:30:35Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 10,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "3eaa0bff-bd65-4f88-95d6-92add01e5e81",
+      "ts": "2026-03-19T17:26:36Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "0e255032-109d-4470-98c0-41162bfe0b20",
+      "ts": "2026-03-19T17:23:38Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "85fa91ee-d3e3-4b35-bd5e-935946f9051c",
+      "ts": "2026-03-19T17:23:01Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "300f4573-79ed-446f-a1a1-3c4dd264d969",
+      "ts": "2026-03-19T17:18:48Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "d8fea330-5efe-4a86-bbd8-1e846569e83a",
+      "ts": "2026-03-19T16:47:35Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "54a29f7f-f9c2-4745-bc05-24567f903afe"
+      }
+    },
+    {
+      "id": "d0fee244-d9a2-45d8-a00c-19525d13b581",
+      "ts": "2026-03-19T14:30:00Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "e021e2d1-07d0-4e93-81b5-8f7d36c322e4"
+      }
+    },
+    {
+      "id": "6a5d3479-12cf-47f2-bfd1-00ec74abcdfa",
+      "ts": "2026-03-19T14:13:24Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "e021e2d1-07d0-4e93-81b5-8f7d36c322e4"
+      }
+    },
+    {
+      "id": "e54eef95-c2e5-4677-be79-ab80220137bd",
+      "ts": "2026-03-19T13:51:37Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "54a29f7f-f9c2-4745-bc05-24567f903afe"
+      }
+    },
+    {
+      "id": "2774c163-6c77-4bbc-aa32-f236529ca5f5",
+      "ts": "2026-03-19T13:50:57Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "54a29f7f-f9c2-4745-bc05-24567f903afe"
+      }
+    },
+    {
+      "id": "4eee5764-75f3-4887-b712-1c80652213cc",
+      "ts": "2026-03-19T11:23:43Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "2956fd13-6906-494b-984e-839762becdd3",
+      "ts": "2026-03-19T11:22:52Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "dc8baea3-98ab-47a6-95a7-a029178824fb",
+      "ts": "2026-03-19T11:21:52Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "0983930d-9be1-4e07-9d60-baa763e083e3",
+      "ts": "2026-03-19T11:18:32Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "e021e2d1-07d0-4e93-81b5-8f7d36c322e4"
+      }
+    },
+    {
+      "id": "c048bcbe-d385-4425-9812-2927bb6f383d",
+      "ts": "2026-03-19T11:17:23Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "71f9f3ce-9e3b-471a-a934-109cffff686e",
+      "ts": "2026-03-19T11:16:13Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "50e411e2-af42-407f-952e-c6c8c89910d6",
+      "ts": "2026-03-19T11:14:32Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "4f557dd6-a216-4d82-bbe9-970c6907cfec",
+      "ts": "2026-03-19T11:13:55Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "66095e04-309f-41f6-a78b-993ba8430a6a",
+      "ts": "2026-03-19T11:13:26Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "420e1d21-a3e4-4ae5-8147-9fab3da4f408",
+      "ts": "2026-03-19T11:12:28Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "79cf3ce3-fa9e-49a6-9942-1d25d8e68ef5",
+      "ts": "2026-03-19T11:09:59Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "b9926a29-6c81-45d2-8180-77c5b2e82f89",
+      "ts": "2026-03-19T11:07:04Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "1dbc3e6c-c1bf-4b35-a500-fda0fb09b829",
+      "ts": "2026-03-19T11:06:42Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "9b4eda96-fdba-4195-b465-482bda944c43",
+      "ts": "2026-03-19T11:05:32Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "6952d4ed-bb04-4989-87f2-756a15ee188c",
+      "ts": "2026-03-19T11:04:01Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "31d164e8-c74d-47be-904e-44fb197b1fa3",
+      "ts": "2026-03-19T11:03:26Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "b9a58997-5b97-45b3-8c23-314e03e7eac2",
+      "ts": "2026-03-19T11:02:24Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "d1ba31ae-5ef7-49ba-a6d5-66aa0e8a96b5",
+      "ts": "2026-03-19T11:00:05Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "9c5690b3-aed9-4035-86db-44047fc0e8a9",
+      "ts": "2026-03-19T10:46:54Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "54a29f7f-f9c2-4745-bc05-24567f903afe"
+      }
+    },
+    {
+      "id": "ee3ab278-ed7c-48fe-86be-ed43079eb919",
+      "ts": "2026-03-19T09:43:32Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "a712d630-6af2-4455-bf9f-f3ce97773f9f",
+      "ts": "2026-03-19T09:39:40Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "4f9934a1-bbf9-4f1b-84c7-8301749364b5",
+      "ts": "2026-03-19T09:36:46Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "d4d4a043-653c-42ae-a132-fa3861785742",
+      "ts": "2026-03-19T07:25:02Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "f9404087-fe0d-42f7-aa77-6145921824da",
+      "ts": "2026-03-19T07:02:09Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "54a29f7f-f9c2-4745-bc05-24567f903afe"
+      }
+    },
+    {
+      "id": "1df2f142-752b-43d8-be11-422f1bceeee4",
+      "ts": "2026-03-19T04:55:51Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "e021e2d1-07d0-4e93-81b5-8f7d36c322e4"
+      }
+    },
+    {
+      "id": "fa7083cb-ba72-4420-b688-bcf7c27575fe",
+      "ts": "2026-03-19T04:55:29Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "eaa4b3f1-dd39-4389-baa3-fa2721c76820",
+      "ts": "2026-03-19T04:45:10Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "baca7711-a5c1-4875-8961-f5b7dd0aa160",
+      "ts": "2026-03-19T04:41:59Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "54a29f7f-f9c2-4745-bc05-24567f903afe"
+      }
+    },
+    {
+      "id": "8ba15253-8ec5-4af9-9f9f-45f4a7699c5e",
+      "ts": "2026-03-19T02:17:26Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "e021e2d1-07d0-4e93-81b5-8f7d36c322e4"
+      }
+    },
+    {
+      "id": "4c79e21b-cf76-4623-a330-2bf11ac244f8",
+      "ts": "2026-03-19T01:43:41Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "e5db300b-4480-4546-81fa-ee8c1663ca5a",
+      "ts": "2026-03-19T01:43:14Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_test_triggered",
+      "metadata": {
+        "event_type": "public_page_visit",
+        "force": false,
+        "history_ids": [
+          "d5200e29-dc44-4a38-983b-fa6ad8bc400e"
+        ],
+        "rule_id": null
+      }
+    },
+    {
+      "id": "99d9c3a4-f79a-469a-8e9d-7702cff8a59d",
+      "ts": "2026-03-19T01:41:49Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_test_triggered",
+      "metadata": {
+        "event_type": "runtime_error_spike",
+        "force": false,
+        "history_ids": [
+          "1f0b5275-6853-44e5-aa65-f04576184e4a",
+          "ea76e7ac-3837-49c7-9de6-7e5413b2b4fc"
+        ],
+        "rule_id": null
+      }
+    },
+    {
+      "id": "16c46e6b-7330-4e6f-b1e0-4f1cd9448efc",
+      "ts": "2026-03-19T01:38:02Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "4da9f461-9f7d-40c8-9d57-e4a95fef95f4",
+      "ts": "2026-03-19T01:37:01Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "04158761-8924-4648-8270-399a512cf122",
+      "ts": "2026-03-19T01:37:01Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_registered",
+      "metadata": {
+        "device_type": "windows_client",
+        "owner_account_id": null,
+        "target_id": "e021e2d1-07d0-4e93-81b5-8f7d36c322e4"
+      }
+    },
+    {
+      "id": "37b787e6-6e2d-4c40-a200-550e5970fcf0",
+      "ts": "2026-03-19T01:33:20Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_configuration_updated",
+      "metadata": {
+        "rule_count": 11,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "7c410edc-aa47-4c8c-8da8-bc45758ff8d9",
+      "ts": "2026-03-19T01:31:57Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "142637eb-ea3f-463f-abe2-c465389b43f4",
+      "ts": "2026-03-19T01:31:25Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "055c7956-e46f-4374-a7df-2ea5812ab03f",
+      "ts": "2026-03-19T01:31:25Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_registered",
+      "metadata": {
+        "device_type": "windows_client",
+        "owner_account_id": null,
+        "target_id": "54a29f7f-f9c2-4745-bc05-24567f903afe"
+      }
+    },
+    {
+      "id": "5dc13334-2c33-41de-9985-105de8749134",
+      "ts": "2026-03-07T14:49:43Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "38581d55-ec92-48d0-93f0-12ba7c7d4d44",
+      "ts": "2026-03-07T14:49:21Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "9dff3b61-2ec8-4997-b105-ea5ab19a59dd",
+      "ts": "2026-03-07T14:05:58Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "7d16d916-8284-494a-bca4-402bb5c36964",
+      "ts": "2026-03-07T14:05:07Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "e5304e3c-3fda-4256-b8ea-96aca65703a4"
+      }
+    },
+    {
+      "id": "ab5a661c-2165-4abd-a2c7-bb0fb754be98",
+      "ts": "2026-03-07T14:03:44Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_updated",
+      "metadata": {
+        "device_type": "windows_client",
+        "enabled": true,
+        "target_id": "e5304e3c-3fda-4256-b8ea-96aca65703a4"
+      }
+    },
+    {
+      "id": "bfe3ee4b-27da-4d77-83d1-9cf61c3cfc34",
+      "ts": "2026-03-07T13:07:59Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "3e521bc8-0fd9-4450-b3d8-7d3fbe180076",
+      "ts": "2026-03-07T08:34:01Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "auth_failure_spike",
+        "rule_id": "38413d8f-cc2d-41c9-a52c-2f53fa3c8188"
+      }
+    },
+    {
+      "id": "89e00b95-3a8c-4824-baeb-c1bb894d8864",
+      "ts": "2026-03-07T08:33:36Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "runtime_error_spike",
+        "rule_id": "91ea53a8-6bbc-4b5f-ad3d-2ca30873681a"
+      }
+    },
+    {
+      "id": "df6873b5-29f7-4681-b3f4-a1cd671ebc77",
+      "ts": "2026-03-07T08:33:28Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "creator_signup",
+        "rule_id": "59eab606-b99a-44ad-b6a6-4118012945c3"
+      }
+    },
+    {
+      "id": "c42cee19-6300-4300-afd5-b1e855319764",
+      "ts": "2026-03-07T08:33:17Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "viewer_signup",
+        "rule_id": "2dbfad16-b9d8-4543-90e3-fec2a362fc59"
+      }
+    },
+    {
+      "id": "fc9a4af3-9367-47a4-970e-cb5ea0c9d9c9",
+      "ts": "2026-03-07T08:32:24Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "sync_failure_spike",
+        "rule_id": "7e05557e-4232-4bed-b909-eb3f7a42f4de"
+      }
+    },
+    {
+      "id": "e9b32d18-3e8c-4e0f-99d0-6f194e56c395",
+      "ts": "2026-03-07T08:31:54Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "public_page_visit_spike",
+        "rule_id": "2ca9049b-e25a-4a5f-860a-192b8b5d1f43"
+      }
+    },
+    {
+      "id": "ed023fb1-29a0-4f53-a7d6-6d5b1c52761d",
+      "ts": "2026-03-07T08:30:01Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "sync_failure_spike",
+        "rule_id": "7e05557e-4232-4bed-b909-eb3f7a42f4de"
+      }
+    },
+    {
+      "id": "77e4ed0d-52a5-4fd3-906c-8ac2dd091cb4",
+      "ts": "2026-03-07T08:29:06Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "login_success",
+        "rule_id": "e8eaaca5-95bf-4f1c-a195-54b3d96f2955"
+      }
+    },
+    {
+      "id": "737b163c-64aa-497f-921b-88fc777fdd29",
+      "ts": "2026-03-07T08:28:16Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_preferences_updated",
+      "metadata": {
+        "master_enabled": true,
+        "quiet_hours_enabled": false,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "989f5542-0333-43b1-b645-7e8d6738ad00",
+      "ts": "2026-03-07T08:28:04Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "viewer_signup",
+        "rule_id": "2dbfad16-b9d8-4543-90e3-fec2a362fc59"
+      }
+    },
+    {
+      "id": "77968043-ba27-4ee8-a000-90706229da95",
+      "ts": "2026-03-07T08:27:33Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "runtime_offline",
+        "rule_id": "05d097bf-dfc6-4902-93f4-2fe7e3056724"
+      }
+    },
+    {
+      "id": "503b300d-ad2a-49c2-8ce7-3a856fca565d",
+      "ts": "2026-03-07T08:26:58Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "admin_login",
+        "rule_id": "648ec5a6-a6f7-475f-9174-d3a853ef8934"
+      }
+    },
+    {
+      "id": "da9c19c7-ac7c-43c5-8461-a9ab7e55be23",
+      "ts": "2026-03-07T08:26:21Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "public_page_visit_spike",
+        "rule_id": "2ca9049b-e25a-4a5f-860a-192b8b5d1f43"
+      }
+    },
+    {
+      "id": "fb726586-7c99-4552-9aee-5f0473db59ba",
+      "ts": "2026-03-07T08:25:56Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "public_page_visit_spike",
+        "rule_id": "2ca9049b-e25a-4a5f-860a-192b8b5d1f43"
+      }
+    },
+    {
+      "id": "eefd7e23-402f-4a84-98bc-aebe493d26c2",
+      "ts": "2026-03-07T08:25:38Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "creator_signup",
+        "rule_id": "59eab606-b99a-44ad-b6a6-4118012945c3"
+      }
+    },
+    {
+      "id": "dbff9398-3992-403f-951d-c7cd5e2e9fcc",
+      "ts": "2026-03-07T08:25:22Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "auth_failure_spike",
+        "rule_id": "38413d8f-cc2d-41c9-a52c-2f53fa3c8188"
+      }
+    },
+    {
+      "id": "d0f0eb6a-c9e0-4039-8154-a25c5f060160",
+      "ts": "2026-03-07T08:25:04Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "auth_failure_spike",
+        "rule_id": "38413d8f-cc2d-41c9-a52c-2f53fa3c8188"
+      }
+    },
+    {
+      "id": "c51edab4-7527-4951-b090-d905e6f4a95c",
+      "ts": "2026-03-07T08:24:24Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "creator_signup",
+        "rule_id": "59eab606-b99a-44ad-b6a6-4118012945c3"
+      }
+    },
+    {
+      "id": "78b3414b-ca55-4f9f-8a8f-dc2c48f7e1e3",
+      "ts": "2026-03-07T05:17:19Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "runtime_error_spike",
+        "rule_id": "91ea53a8-6bbc-4b5f-ad3d-2ca30873681a"
+      }
+    },
+    {
+      "id": "323f3ed4-7f71-473c-8ef1-247df98cfbd9",
+      "ts": "2026-03-07T05:16:50Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_updated",
+      "metadata": {
+        "enabled": true,
+        "event_type": "public_page_visit",
+        "rule_id": "219c641f-545a-4e9f-b3e4-e10b51ea3a42"
+      }
+    },
+    {
+      "id": "22572a01-77df-4d01-a564-5c56ded55d0f",
+      "ts": "2026-03-07T05:09:40Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_deleted",
+      "metadata": {
+        "event_type": "public_page_visit",
+        "rule_id": "3056bfda-376d-4b10-86d9-c85cb069e020"
+      }
+    },
+    {
+      "id": "c59e6f6e-2da0-40ca-aaff-eb1ff989ab7a",
+      "ts": "2026-03-07T05:09:20Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "public_page_visit",
+        "rule_id": "219c641f-545a-4e9f-b3e4-e10b51ea3a42"
+      }
+    },
+    {
+      "id": "de1faa40-8e15-42e4-bde0-ac15b815b279",
+      "ts": "2026-03-07T05:09:10Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_rule_created",
+      "metadata": {
+        "enabled": true,
+        "event_type": "public_page_visit",
+        "rule_id": "3056bfda-376d-4b10-86d9-c85cb069e020"
+      }
+    },
+    {
+      "id": "5eee263e-cd96-4f57-b6e0-c73fabd6d3be",
+      "ts": "2026-03-07T05:06:11Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_test_triggered",
+      "metadata": {
+        "event_type": "public_page_visit",
+        "force": true,
+        "history_ids": [
+          "cf0157f1-b0cf-4559-bf47-821c96f358cb"
+        ],
+        "rule_id": null
+      }
+    },
+    {
+      "id": "b6f87dfb-603d-4b0e-b5bf-cdf47636561e",
+      "ts": "2026-03-07T05:05:48Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_test_triggered",
+      "metadata": {
+        "event_type": "runtime_error_spike",
+        "force": false,
+        "history_ids": [
+          "b769d20f-1fe6-4601-bfa7-70aedb9d5f7c"
+        ],
+        "rule_id": null
+      }
+    },
+    {
+      "id": "dd9d9757-040b-4922-b9f2-ea8e8a362126",
+      "ts": "2026-03-07T05:05:29Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "alert_test_triggered",
+      "metadata": {
+        "event_type": "runtime_error_spike",
+        "force": false,
+        "history_ids": [
+          "f36557b2-8bd6-4976-afdb-1d8c19d8a026"
+        ],
+        "rule_id": null
+      }
+    },
+    {
+      "id": "81f52191-c04e-461e-bded-797b5c3ea99d",
+      "ts": "2026-03-07T05:03:57Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "5e96d11d-0792-460d-add0-c784b3f510cd",
+      "ts": "2026-03-07T05:03:43Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "alert_target_registered",
+      "metadata": {
+        "device_type": "windows_client",
+        "owner_account_id": null,
+        "target_id": "e5304e3c-3fda-4256-b8ea-96aca65703a4"
+      }
+    },
+    {
+      "id": "e04d866e-4375-418f-a226-5d7ade03204d",
+      "ts": "2026-03-07T05:03:25Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "571d75ec-b84f-4402-a828-49e3d2d764f1",
+      "ts": "2026-03-07T04:48:58Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "a60a4a8f-039d-4fe7-90a3-cc6bc1e2147d",
+      "ts": "2026-03-07T04:28:59Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "171504c1-e928-484d-8d7d-2f87af408220",
+      "ts": "2026-03-01T11:43:37Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "8572a7c5-d222-454f-87ea-424ca7a4f197",
+      "ts": "2026-03-01T11:43:37Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "c0ec06b4-2dff-4c3e-918f-dbf8e133eb46",
+      "ts": "2026-03-01T11:43:37Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "e80f7727-6087-45f4-abfc-2a6878bee03a",
+      "ts": "2026-03-01T11:43:36Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "4ea1cac0-8207-452b-aa84-12a7fabba2ad",
+      "ts": "2026-03-01T03:16:28Z",
+      "actor_user_id": "494098e5-1409-40ea-99a5-ec4a1b797da4",
+      "actor_user_code": "CZ3FKGJ",
+      "actor_role": "public",
+      "target_user_id": "494098e5-1409-40ea-99a5-ec4a1b797da4",
+      "target_user_code": "CZ3FKGJ",
+      "action": "account_created",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "8e04ac62-3bc8-450d-a604-e62127c2a1cb",
+      "ts": "2026-03-01T03:16:28Z",
+      "actor_user_id": "494098e5-1409-40ea-99a5-ec4a1b797da4",
+      "actor_user_code": "CZ3FKGJ",
+      "actor_role": "public",
+      "target_user_id": "494098e5-1409-40ea-99a5-ec4a1b797da4",
+      "target_user_code": "CZ3FKGJ",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "1d3c7b66-a7d0-4ae0-84fc-136ead1fa00e",
+      "ts": "2026-03-01T00:38:53Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "30ea0621-c7a4-4390-8c55-dffc40fcd95e",
+      "ts": "2026-02-28T15:12:44Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "ecc55a23-67ba-443a-a495-f94b0bddb2cd",
+      "ts": "2026-02-28T12:29:28Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "8136453f-77ed-4fb3-b78a-74711c6fb234",
+      "ts": "2026-02-27T06:25:55Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "1fc5b51f-2cca-4516-aad5-996976a71367",
+      "ts": "2026-02-27T05:37:13Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "9a050ae1-1cad-4061-a5e4-b2a17ce17099",
+      "ts": "2026-02-21T20:52:00Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "33c1fc7f-9e18-4a8a-a508-4c7b3edc56e8",
+      "ts": "2026-02-21T20:51:09Z",
+      "actor_user_id": null,
+      "actor_user_code": null,
+      "actor_role": null,
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "role_changed",
+      "metadata": {
+        "source": "fallback_login"
+      }
+    },
+    {
+      "id": "5d837ca7-7c8f-4a80-ba44-ee1a6f6a0250",
+      "ts": "2026-02-21T20:51:09Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "account_created",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "2782a0d1-5097-4d4b-aeef-6415f1621a11",
+      "ts": "2026-02-21T20:51:09Z",
+      "actor_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "actor_user_code": "YR992ZS",
+      "actor_role": "admin",
+      "target_user_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "target_user_code": "YR992ZS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "fallback"
+      }
+    },
+    {
+      "id": "23e78641-ddf8-4663-9a2f-6bafd8cf54a7",
+      "ts": "2026-02-20T06:37:12Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "e0c1fa94-7dbd-438a-9cfc-6649d1cb3b66",
+      "ts": "2026-02-18T18:56:26Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "9e62e028-14be-481e-a78c-809633cb313f",
+      "ts": "2026-02-16T12:41:40Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "73cc140a-6235-4af7-b3d4-8242f6bcefa2",
+      "ts": "2026-02-15T11:03:27Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": null,
+      "target_user_code": null,
+      "action": "export_audit_json",
+      "metadata": {
+        "count": 151
+      }
+    },
+    {
+      "id": "af41104d-3c16-41e2-a920-e68b04151ac5",
+      "ts": "2026-02-15T08:34:51Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "15ac6fb1-9a48-400b-bf7c-d80e079ca1b0",
+      "ts": "2026-02-14T19:47:01Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "34e66301-4b7c-4385-97ed-085e89360faf",
+      "ts": "2026-02-14T19:33:41Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": null,
+      "target_user_code": null,
+      "action": "export_audit_json",
+      "metadata": {
+        "count": 148
+      }
+    },
+    {
+      "id": "28e9a105-1acd-40f5-baed-e2483f3f33e4",
+      "ts": "2026-02-14T19:33:30Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": null,
+      "target_user_code": null,
+      "action": "export_audit_csv",
+      "metadata": {
+        "count": 147
+      }
+    },
+    {
+      "id": "7a8955b3-d604-48a4-8419-9d6290d4501a",
+      "ts": "2026-02-14T17:46:58Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "7003d917-a543-4e6a-b087-5db1330ea865",
+      "ts": "2026-02-14T16:31:55Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "0b9034c3-c35d-4f5b-96f8-c344dbea1287",
+      "ts": "2026-02-14T12:59:40Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "admin_bypass_updated",
+      "metadata": {
+        "changes": {
+          "admin_tier_config_bypass": false
+        }
+      }
+    },
+    {
+      "id": "e465adb6-a8d7-48a8-90f8-8cbfebd9a0db",
+      "ts": "2026-02-14T12:59:17Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "admin_bypass_updated",
+      "metadata": {
+        "changes": {
+          "admin_tier_config_bypass": true
+        }
+      }
+    },
+    {
+      "id": "b08afe2b-dd89-42f2-bf83-ecc6b738e2b2",
+      "ts": "2026-02-14T12:58:37Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "tier_config_updated",
+      "metadata": {
+        "version": "1.0"
+      }
+    },
+    {
+      "id": "1b86ba28-a507-4d9e-a643-eecbe1de68ba",
+      "ts": "2026-02-14T12:57:48Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "tier_config_updated",
+      "metadata": {
+        "version": "1.0"
+      }
+    },
+    {
+      "id": "d57661ef-3f73-4f08-92e8-e064da0be6c5",
+      "ts": "2026-02-14T07:51:20Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "b345fed3-de30-49c3-8224-0c5c0f8b5b4e",
+      "ts": "2026-02-14T07:46:27Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "eff8059c-05ed-4b5b-bf84-3cf9b1cb7d49",
+      "ts": "2026-02-14T07:35:52Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "1fc5b1e6-2077-4439-ad53-d9f102c588ed",
+      "ts": "2026-02-13T17:09:23Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "b0633dae-6c0a-4d5d-ae13-99887570e333",
+      "ts": "2026-02-13T17:05:31Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "ddf45af0-2329-4828-af24-215858d1c9ad",
+      "ts": "2026-02-13T15:18:13Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "47bb0181-02c1-4ee3-b0bd-3564c0db1900",
+      "ts": "2026-02-13T14:49:41Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "154e91e2-5c4d-4353-9f6f-e093cf9f79e6",
+      "ts": "2026-02-13T14:12:21Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "728c2072-e438-45ef-9dc3-f72447300949",
+      "ts": "2026-02-13T13:43:01Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "70d84f0a-9f14-48cf-a260-7a54f40d039d",
+      "ts": "2026-02-13T12:33:41Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "06dd71dc-1e0b-4171-b356-c66a4d40bac9",
+      "ts": "2026-02-13T10:22:13Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "cf0c5bf1-6a1a-4685-826b-f0758b765a97",
+      "ts": "2026-02-13T10:17:28Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "2a1569c7-c812-4e33-baed-95d26a22f038",
+      "ts": "2026-02-13T10:16:53Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "a0a7fda9-024a-478f-a0c9-33b623a027d9",
+      "ts": "2026-02-13T07:27:23Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "c7112584-e354-4218-860f-007c3c549a70",
+      "ts": "2026-02-13T07:09:30Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "fd106f55-36eb-4194-b613-229082169bf9",
+      "ts": "2026-02-13T06:22:09Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "b9e20125-26a9-40b3-b434-060d58c341ff",
+      "ts": "2026-02-12T07:41:13Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "a410288e-d4b4-4d08-9a8e-ae0035dc19e6",
+      "ts": "2026-02-11T19:30:44Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "ea970444-7dd2-4d40-9c43-bc31cf3c87b7",
+      "ts": "2026-02-11T18:05:09Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "436ce7b3-93bb-47e9-b6bf-bf82db2dc461",
+      "ts": "2026-02-10T14:42:26Z",
+      "actor_user_id": "338edf81-9e24-4730-977a-c9972aecba4d",
+      "actor_user_code": "rDbzSZQ",
+      "actor_role": "creator",
+      "target_user_id": "338edf81-9e24-4730-977a-c9972aecba4d",
+      "target_user_code": "rDbzSZQ",
+      "action": "account_created",
+      "metadata": {
+        "provider": "twitch"
+      }
+    },
+    {
+      "id": "5fd3af6c-c8b1-4b2d-89b7-1021d200b80d",
+      "ts": "2026-02-10T14:42:26Z",
+      "actor_user_id": "338edf81-9e24-4730-977a-c9972aecba4d",
+      "actor_user_code": "rDbzSZQ",
+      "actor_role": "creator",
+      "target_user_id": "338edf81-9e24-4730-977a-c9972aecba4d",
+      "target_user_code": "rDbzSZQ",
+      "action": "login_success",
+      "metadata": {
+        "provider": "twitch"
+      }
+    },
+    {
+      "id": "59bad468-add0-4ea4-bcab-00c60a16947c",
+      "ts": "2026-02-09T23:46:26Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "6825edcc-e223-4a48-8c57-258b5823d359",
+      "ts": "2026-02-09T23:09:45Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "caf903c6-291f-40d7-8064-435008f14ed1",
+      "ts": "2026-02-09T22:51:25Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "c3ac1799-f16f-467f-8285-70bcbc523d1c",
+      "ts": "2026-02-09T21:12:08Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "e1e47d51-0ee4-4124-8c05-4c796fc2d662",
+      "ts": "2026-02-09T21:11:08Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "4d802187-1949-400a-a6b5-b83c93548d0e",
+      "ts": "2026-02-09T21:10:16Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "7a97dd6f-8127-4568-8830-5ad8b719fb76",
+      "ts": "2026-02-09T20:43:31Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "b902bd83-d7bd-4de2-8cd2-76d017bab6d5",
+      "ts": "2026-02-09T20:37:43Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "dfd4cd7c-29ba-4b08-9963-1aed7102116b",
+      "ts": "2026-02-09T20:34:31Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "9c90d614-4516-4954-905e-2a29e0827514",
+      "ts": "2026-02-09T20:33:28Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "c55996ff-df78-4dcd-ab8b-bfcfa2546df4",
+      "ts": "2026-02-09T20:27:58Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "e603a003-341d-452c-8ca7-a6b53c712545",
+      "ts": "2026-02-09T20:20:36Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "e61f26d9-0356-4463-a754-450be0adcf3a",
+      "ts": "2026-02-09T20:07:35Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "5625850f-c446-4d6b-a099-cb1fb8e5a9c5",
+      "ts": "2026-02-09T19:34:59Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "7b2ab1e0-929b-4a82-8c67-053026470e1f",
+      "ts": "2026-02-09T13:13:26Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "f2ac5d5c-4bca-41c6-9f57-b282901f7cd6",
+      "ts": "2026-02-09T12:31:20Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "1bb444f4-1bbf-4395-b120-a5561f874695",
+      "ts": "2026-02-09T12:29:33Z",
+      "actor_user_id": "75d556b3-dd22-40b6-9d3e-8a034af552d6",
+      "actor_user_code": "84BPuNT",
+      "actor_role": "creator",
+      "target_user_id": "75d556b3-dd22-40b6-9d3e-8a034af552d6",
+      "target_user_code": "84BPuNT",
+      "action": "login_success",
+      "metadata": {
+        "provider": "x"
+      }
+    },
+    {
+      "id": "ba993b66-aa57-4ed9-8bb6-e58550597c35",
+      "ts": "2026-02-09T12:28:41Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "d2ba2d52-d33d-485c-94ab-239939ccc4b1",
+      "ts": "2026-02-09T12:27:53Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "c587b2a7-47a9-4178-932f-804772c29362",
+      "ts": "2026-02-09T11:15:36Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "88d2af50-252d-4020-8bcb-9f43af14bdf4",
+      "ts": "2026-02-09T09:57:06Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "913f3759-0692-4ef2-b0e1-f42467f71011",
+      "ts": "2026-02-09T09:47:18Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "793a8c7a-a64d-48dc-a25a-9ee7706491c9",
+      "ts": "2026-02-09T09:45:04Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "39d79bb1-8cd4-4e99-b561-37b4341591a6",
+      "ts": "2026-02-09T09:10:32Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "b2b09c0c-993c-4701-a6f8-d098a3605d1f",
+      "ts": "2026-02-09T09:10:05Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "9132e38b-8234-46bb-8e04-d86985d26d8d",
+      "ts": "2026-02-09T07:31:53Z",
+      "actor_user_id": "75d556b3-dd22-40b6-9d3e-8a034af552d6",
+      "actor_user_code": "84BPuNT",
+      "actor_role": "creator",
+      "target_user_id": "75d556b3-dd22-40b6-9d3e-8a034af552d6",
+      "target_user_code": "84BPuNT",
+      "action": "account_created",
+      "metadata": {
+        "provider": "x"
+      }
+    },
+    {
+      "id": "97981f41-0558-4e0f-9532-9741ed281d8d",
+      "ts": "2026-02-09T07:31:53Z",
+      "actor_user_id": "75d556b3-dd22-40b6-9d3e-8a034af552d6",
+      "actor_user_code": "84BPuNT",
+      "actor_role": "creator",
+      "target_user_id": "75d556b3-dd22-40b6-9d3e-8a034af552d6",
+      "target_user_code": "84BPuNT",
+      "action": "login_success",
+      "metadata": {
+        "provider": "x"
+      }
+    },
+    {
+      "id": "be34ebae-6cc6-4dcf-a0dc-9bad96344e0d",
+      "ts": "2026-02-08T17:05:02Z",
+      "actor_user_id": "3a190fb9-1804-4a8f-b0d4-03cbf03ef06c",
+      "actor_user_code": "HNNqTcX",
+      "actor_role": "creator",
+      "target_user_id": "3a190fb9-1804-4a8f-b0d4-03cbf03ef06c",
+      "target_user_code": "HNNqTcX",
+      "action": "account_created",
+      "metadata": {
+        "provider": "x"
+      }
+    },
+    {
+      "id": "c63b3379-8855-4865-a169-ab96d1369299",
+      "ts": "2026-02-08T17:05:02Z",
+      "actor_user_id": "3a190fb9-1804-4a8f-b0d4-03cbf03ef06c",
+      "actor_user_code": "HNNqTcX",
+      "actor_role": "creator",
+      "target_user_id": "3a190fb9-1804-4a8f-b0d4-03cbf03ef06c",
+      "target_user_code": "HNNqTcX",
+      "action": "login_success",
+      "metadata": {
+        "provider": "x"
+      }
+    },
+    {
+      "id": "3f85dc71-1c0c-43e1-afe5-7b943398bd2d",
+      "ts": "2026-02-08T11:31:04Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "4f06e62c-b4f7-4564-ab5c-c4299ad8f89f",
+      "ts": "2026-02-08T06:00:34Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "9183c627-e9a5-4e76-8dc3-6d375a272aa9",
+      "ts": "2026-02-08T02:18:06Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "762b9af0-6e13-4eac-b685-4e344448432f",
+      "ts": "2026-02-07T19:28:23Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "ip": "135.196.82.7",
+        "provider": "email_password",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "id": "49ea2c56-0683-47ab-b9bb-aa7723ae6d0f",
+      "ts": "2026-02-07T15:32:58Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "admin_bypass_updated",
+      "metadata": {
+        "changes": {
+          "admin_tier_config_bypass": false
+        }
+      }
+    },
+    {
+      "id": "1bf9bed8-6d2d-47a4-af38-f6634fc281c6",
+      "ts": "2026-02-05T15:55:54Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "9d66a41b-4502-43aa-8c7d-63c267b8132f",
+      "ts": "2026-02-04T15:14:40Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "e86c708e-ac64-4e14-87e9-a0c124a0fa4e",
+      "ts": "2026-02-04T15:00:50Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "0b8c29cd-4b81-4a08-9730-24d254b3e7d4",
+      "ts": "2026-02-04T12:12:22Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "fe08bd60-3710-487e-8ff8-97eac46c55d5",
+      "ts": "2026-02-03T12:57:41Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "77fdbdfd-5e6d-48e3-b91e-cc8b4e4f712a",
+      "ts": "2026-02-02T23:53:32Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "6aca770f-77c2-4b00-8d5e-43f0534526b7",
+      "ts": "2026-02-02T05:22:58Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "d60f3768-e680-4ae6-bd9d-056e3d84e517",
+      "ts": "2026-02-01T17:28:17Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "af43e1a8-d009-45d6-aed4-5449138e4a03",
+      "ts": "2026-02-01T17:00:10Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "core"
+        },
+        "previous_tier": "core",
+        "tier": "pro"
+      }
+    },
+    {
+      "id": "14c1ffc1-145a-4e73-8fd4-3d526f0e8979",
+      "ts": "2026-02-01T16:48:33Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "core"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "gold"
+        },
+        "previous_tier": "gold",
+        "tier": "core"
+      }
+    },
+    {
+      "id": "096dd7bb-0052-4c14-90ef-9e886dc1dc0e",
+      "ts": "2026-02-01T16:46:26Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "gold"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "previous_tier": "pro",
+        "tier": "gold"
+      }
+    },
+    {
+      "id": "00062e19-227c-45b5-a2dc-366482ac6697",
+      "ts": "2026-02-01T11:56:29Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "gold"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "core"
+        },
+        "previous_tier": "core",
+        "tier": "gold"
+      }
+    },
+    {
+      "id": "d99bf2b7-60a9-44de-a991-f136bbe2164f",
+      "ts": "2026-02-01T11:55:19Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "gold"
+        },
+        "previous_tier": "gold",
+        "tier": "pro"
+      }
+    },
+    {
+      "id": "8f09eb5c-4fe6-46b9-97e2-eae40274827d",
+      "ts": "2026-02-01T11:40:51Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "gold"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "previous_tier": "pro",
+        "tier": "gold"
+      }
+    },
+    {
+      "id": "a51d2116-6e2e-45d7-9077-8524f8c55c3e",
+      "ts": "2026-02-01T10:18:07Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "core"
+        },
+        "previous_tier": "core",
+        "tier": "pro"
+      }
+    },
+    {
+      "id": "b72263eb-a245-438d-a7c7-5b870b784d87",
+      "ts": "2026-02-01T10:11:34Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "core"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "previous_tier": "pro",
+        "tier": "core"
+      }
+    },
+    {
+      "id": "9d23e7df-b662-4b89-b5ac-03227837ff49",
+      "ts": "2026-02-01T10:10:10Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "gold"
+        },
+        "previous_tier": "gold",
+        "tier": "pro"
+      }
+    },
+    {
+      "id": "8824a07c-f30e-4381-95a1-98720c6c25ac",
+      "ts": "2026-02-01T09:47:22Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "gold"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "previous_tier": "pro",
+        "tier": "gold"
+      }
+    },
+    {
+      "id": "edf299c8-de8f-44c9-abb3-8b04ece76ae8",
+      "ts": "2026-02-01T09:26:08Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "2c3795a5-4061-47df-b9de-eaa51429f893",
+      "ts": "2026-02-01T07:56:46Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "6be929e5-40d6-4e01-a62d-553aa46e37cc",
+      "ts": "2026-02-01T07:56:21Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "df54eaed-599e-4a31-8070-bf8042d13310",
+      "ts": "2026-02-01T06:42:54Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "ab942946-8cff-4ded-8f80-07b073559c63",
+      "ts": "2026-02-01T06:34:02Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "fd6060d4-b006-44ee-bc62-3cc1700557b0",
+      "ts": "2026-02-01T05:59:51Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "core"
+        },
+        "previous_tier": "core",
+        "tier": "pro"
+      }
+    },
+    {
+      "id": "5fb35bba-bc42-4817-b290-bb9e4e98d6ec",
+      "ts": "2026-02-01T05:57:39Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "core"
+        },
+        "previous_tier": "core",
+        "tier": "pro"
+      }
+    },
+    {
+      "id": "61019bc7-7a26-43e9-b588-5e2bc97228d5",
+      "ts": "2026-02-01T05:57:12Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "tier_changed",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "pro"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "core"
+        },
+        "previous_tier": "core",
+        "tier": "pro"
+      }
+    },
+    {
+      "id": "2f6a357d-37c7-43e7-9483-b1b3e0ffbe04",
+      "ts": "2026-02-01T05:13:56Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "1ac5e162-cef2-4aba-8f10-ab8de6d977d1",
+      "ts": "2026-01-31T21:53:40Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "5ed94411-4982-4e1d-ac1d-166674891c26",
+      "ts": "2026-01-31T20:31:07Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "3aafad63-ae31-438e-9dea-f09c1cbd5801",
+      "ts": "2026-01-31T20:08:39Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "7b3d9b3c-c06c-4696-9217-04c0a4cd4e37",
+      "ts": "2026-01-31T15:29:51Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "d731db3a-a7a8-4e2e-be02-12cef96cb5be",
+      "ts": "2026-01-31T15:06:08Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "8a516eb7-c913-4f68-bc73-bf9eebe01c1f",
+      "ts": "2026-01-31T15:01:06Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "56ad2aa8-3a49-4238-b832-13187834a8ea",
+      "ts": "2026-01-30T17:10:59Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "provider_linked",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "b81fd35f-4b41-4bd3-8196-865a70404f1e",
+      "ts": "2026-01-30T17:10:59Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "20ee8f7e-f0b8-437e-a42b-91cb985d4854",
+      "ts": "2026-01-30T14:53:27Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "60c723f4-a6d1-4ff5-85e9-3d0f79108fc0",
+      "ts": "2026-01-30T14:45:46Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "46b43cad-47c8-4dd5-9091-b124b0f9deb3",
+      "ts": "2026-01-30T12:48:39Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "6d94aabd-2a65-47f9-86d8-73179edd71d4",
+      "ts": "2026-01-29T16:27:37Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "b3f24122-0aa0-4cf0-b3e8-2161a8d6410e",
+      "ts": "2026-01-29T15:56:30Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "afff07de-b02f-4fad-8850-1da2148ced3c",
+      "ts": "2026-01-25T09:34:56Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "4a29cc37-fc64-4e24-8817-e95b2e307383",
+      "ts": "2026-01-23T21:44:36Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "account_created",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "f97e255b-5767-4c51-8195-fe30072d95d7",
+      "ts": "2026-01-23T21:44:36Z",
+      "actor_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "actor_user_code": "7lPBEiA",
+      "actor_role": "creator",
+      "target_user_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "target_user_code": "7lPBEiA",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "0d35404d-a95b-4c96-80e8-520ae7c7e138",
+      "ts": "2026-01-22T16:38:28Z",
+      "actor_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "actor_user_code": "VIvXsPS",
+      "actor_role": "creator",
+      "target_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "target_user_code": "VIvXsPS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "0ff6a60b-bd72-4d92-a78c-81fdd51c8087",
+      "ts": "2026-01-22T08:26:42Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "631dd725-646b-480a-bdb0-11b4dd98e97c",
+      "ts": "2026-01-22T08:20:33Z",
+      "actor_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "actor_user_code": "VIvXsPS",
+      "actor_role": "creator",
+      "target_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "target_user_code": "VIvXsPS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "33987926-5618-44aa-9a1d-ab6d0507a3b8",
+      "ts": "2026-01-22T08:19:17Z",
+      "actor_user_id": null,
+      "actor_user_code": null,
+      "actor_role": null,
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "rate_limit_blocked",
+      "metadata": {
+        "email_redacted": "ka***@gmail.com",
+        "ip": "83.171.250.195",
+        "reason": "login_backoff",
+        "retry_after": 5
+      }
+    },
+    {
+      "id": "4f0584ff-1842-4013-9c86-c85b6b24108a",
+      "ts": "2026-01-22T05:46:07Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "d52fd24c-5c1f-434e-857d-df86be1a337b",
+      "ts": "2026-01-22T05:45:05Z",
+      "actor_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "actor_user_code": "JqhcS2m",
+      "actor_role": "creator",
+      "target_user_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "target_user_code": "JqhcS2m",
+      "action": "account_created",
+      "metadata": {
+        "provider": "email_password"
+      }
+    },
+    {
+      "id": "e3b5bcb0-4f55-4824-98cf-f06720bc697f",
+      "ts": "2026-01-20T16:35:18Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "f8e89a2a-c608-447a-b003-2f39f3fc1b25",
+      "ts": "2026-01-20T16:08:36Z",
+      "actor_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "actor_user_code": "VIvXsPS",
+      "actor_role": "creator",
+      "target_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "target_user_code": "VIvXsPS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "f50179eb-7a97-4d49-824f-8d64315238a7",
+      "ts": "2026-01-20T16:07:43Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "target_user_code": "VIvXsPS",
+      "action": "onboarding_reset",
+      "metadata": {
+        "after": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "open"
+        },
+        "before": {
+          "onboarding": "required",
+          "status": "active",
+          "tier": "open"
+        },
+        "previous_status": "required",
+        "sessions_invalidated": 2
+      }
+    },
+    {
+      "id": "2031b971-bce7-49f6-8c2d-e954e8616f9d",
+      "ts": "2026-01-20T16:05:49Z",
+      "actor_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "actor_user_code": "VIvXsPS",
+      "actor_role": "creator",
+      "target_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "target_user_code": "VIvXsPS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "e62dee84-5c9e-48d1-bc6b-c13e992843b0",
+      "ts": "2026-01-20T13:56:18Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "4598444b-b59e-4d04-b17c-0cf060c45ed3",
+      "ts": "2026-01-20T13:50:45Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "61fdcf45-f754-4775-9c5c-b1574df935df",
+      "ts": "2026-01-20T13:49:11Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "4af4414e-44cc-4365-92ed-775aa763a751",
+      "ts": "2026-01-20T13:46:02Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "b4aef8f7-c4cc-4ff7-8044-386a96e5e8b5",
+      "ts": "2026-01-20T12:26:38Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "b40622b5-960f-4e24-a2ed-86911f1df696",
+      "ts": "2026-01-20T12:25:44Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "c6b8a5b4-d203-4fca-a0ba-5ea83ac57931",
+      "ts": "2026-01-20T08:28:16Z",
+      "actor_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "actor_user_code": "VIvXsPS",
+      "actor_role": "creator",
+      "target_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "target_user_code": "VIvXsPS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "10b037da-6616-46cb-bda4-236935621f2f",
+      "ts": "2026-01-20T08:28:04Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "fb28e6d8-e594-42b7-b2fb-622b52360803",
+      "ts": "2026-01-20T08:27:42Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "8fdddc41-3d5b-4ebb-9ef9-c7a7a9403dec",
+      "ts": "2026-01-20T08:15:35Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "74a419fe-da32-435f-8c92-6f2d3d90b19e",
+      "ts": "2026-01-20T08:14:10Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "0a8652d5-047f-407f-962e-3c37a5eb2081",
+      "ts": "2026-01-20T08:12:56Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "474f5d9a-fc04-416e-aa39-aaa742491f79",
+      "ts": "2026-01-20T07:54:07Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "46e655ff-45a6-40cd-b4f5-e6eed816d0e6",
+      "ts": "2026-01-20T07:53:22Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "f45d415a-6e9e-4157-82bf-b03899be55af",
+      "ts": "2026-01-20T07:40:35Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "7616e070-1b69-4079-9219-4e243ae5ab1c",
+      "ts": "2026-01-20T07:39:03Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "d3349164-59f9-479c-8cc1-99ce4bb7770b",
+      "ts": "2026-01-20T07:38:33Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "d7e74f0c-0b34-4ce0-9fa9-19972a082fac",
+      "ts": "2026-01-20T06:55:52Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "bc1158b7-07d7-44f1-97db-711239c34c2b",
+      "ts": "2026-01-20T06:53:26Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "ad7bd12e-114f-47d1-8606-48f487b71c77",
+      "ts": "2026-01-20T06:52:59Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "348fe321-161e-48b2-b7c0-3f7a91c7acf2",
+      "ts": "2026-01-20T06:52:11Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "1d3e610c-5eda-4cee-96ea-901f2ed1c129",
+      "ts": "2026-01-20T04:28:14Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "09018cee-abc6-461f-9689-37e27a73de85",
+      "ts": "2026-01-20T03:55:05Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "f2e1449b-771a-4cc6-80b5-7abe31b94716",
+      "ts": "2026-01-20T03:54:02Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "f82da777-785d-4fd6-98c6-ae0c849baf3d",
+      "ts": "2026-01-20T03:00:15Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "account_created",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "782ff1ca-3a68-41aa-875e-28beaecb4ea2",
+      "ts": "2026-01-20T03:00:15Z",
+      "actor_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "actor_user_code": "hVRt8Qp",
+      "actor_role": "creator",
+      "target_user_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "target_user_code": "hVRt8Qp",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "a29b505e-bb77-4839-ab99-5c2c92ddbc72",
+      "ts": "2026-01-19T09:36:58Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "39017d74-b1e4-4432-baf9-dd2287b323b9",
+      "ts": "2026-01-19T09:34:39Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    },
+    {
+      "id": "79fd1108-cee0-40c0-8fb7-b43587542bb4",
+      "ts": "2026-01-19T09:34:06Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "e183a526-3977-4d95-9d1d-73dd99392f6e",
+      "ts": "2026-01-19T09:33:50Z",
+      "actor_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "actor_user_code": "7XaVoy7",
+      "actor_role": "admin",
+      "target_user_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "target_user_code": "7XaVoy7",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "a497e64f-d009-4e18-b5d6-3d2efcf59422",
+      "ts": "2026-01-19T07:45:49Z",
+      "actor_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "actor_user_code": "VIvXsPS",
+      "actor_role": "creator",
+      "target_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "target_user_code": "VIvXsPS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "d982219e-6352-446e-bae4-4348755136ac",
+      "ts": "2026-01-19T07:08:24Z",
+      "actor_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "actor_user_code": "VIvXsPS",
+      "actor_role": "creator",
+      "target_user_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "target_user_code": "VIvXsPS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "google"
+      }
+    },
+    {
+      "id": "92e9b09d-03a8-491f-a916-ae9cfc7f27c4",
+      "ts": "2026-01-19T06:26:36Z",
+      "actor_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "actor_user_code": "4TiOlvS",
+      "actor_role": "admin",
+      "target_user_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "target_user_code": "4TiOlvS",
+      "action": "login_success",
+      "metadata": {
+        "provider": "github"
+      }
+    }
+  ]
+}

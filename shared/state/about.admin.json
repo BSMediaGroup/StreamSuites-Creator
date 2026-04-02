@@ -1,0 +1,44 @@
+{
+  "scope": "admin",
+  "surface": "about",
+  "version": "v0.3.0-alpha",
+  "build": "2025.03",
+  "last_updated": "2026-01-01",
+  "owner": "Daniel Clancy",
+  "copyright": "\u00a9 2026 Brainstream Media Group",
+  "notice": "Version: v0.3.0-alpha  \u2022  Build: 2025.03  \u2022  Last updated: 2026-01-01  \u2022  Owner: Daniel Clancy  \u2022  Copyright: \u00a9 2026 Brainstream Media Group",
+  "platform_status": [
+    {
+      "platform": "youtube",
+      "status": "active",
+      "notes": "Polling chat ingestion with trigger evaluation"
+    },
+    {
+      "platform": "twitch",
+      "status": "active",
+      "notes": "IRC ingestion with validation trigger"
+    },
+    {
+      "platform": "rumble",
+      "status": "paused",
+      "notes": "Browser/SSE ingest retained but disabled"
+    },
+    {
+      "platform": "kick",
+      "status": "scaffold",
+      "notes": "Scheduler-flagged stub chat worker emits normalized events"
+    },
+    {
+      "platform": "pilled",
+      "status": "planned",
+      "notes": "Ingest-only placeholders reserved"
+    }
+  ],
+  "control_planes": [
+    {
+      "name": "desktop_admin_exe",
+      "status": "planned",
+      "notes": "Local admin control plane planned; runtime exposes file/telemetry boundaries for safe writes"
+    }
+  ]
+}

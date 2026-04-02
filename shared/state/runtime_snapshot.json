@@ -1,0 +1,443 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-03-28T03:44:47.156636Z",
+  "heartbeat": "2026-03-28T03:44:47.156636Z",
+  "runtime": {
+    "project": "StreamSuites\u2122 Runtime",
+    "version": "0.4.2-alpha",
+    "build": "2026.03.28+006"
+  },
+  "system": {
+    "platform_polling_enabled": {
+      "admin_surface": true,
+      "creator_surface": true,
+      "profile_card": true,
+      "public_surface": true,
+      "streamsuites_profile": true,
+      "user_widget": true
+    },
+    "platforms": {
+      "youtube": true,
+      "twitch": true,
+      "discord": true,
+      "kick": false
+    },
+    "hot_reload": {
+      "enabled": false,
+      "watch_path": "runtime/exports",
+      "interval_seconds": 5.0
+    },
+    "live_status": {
+      "enabled": true,
+      "export_path": "live_status.json",
+      "providers": {
+        "twitch": {
+          "cadence_seconds": 45,
+          "stale_after_seconds": 90
+        },
+        "youtube": {
+          "cadence_seconds": 75,
+          "stale_after_seconds": 150
+        },
+        "rumble": {
+          "cadence_seconds": 60,
+          "stale_after_seconds": 180
+        }
+      }
+    },
+    "chat": {
+      "api": {
+        "enabled": true,
+        "host": "0.0.0.0",
+        "port": 8210
+      },
+      "synthetic": {
+        "enabled": true
+      }
+    }
+  },
+  "jobs": [
+    {
+      "name": "clips",
+      "enabled": true,
+      "applied": false,
+      "reason": "restart required"
+    },
+    {
+      "name": "polls",
+      "enabled": true,
+      "applied": false,
+      "reason": "restart required"
+    },
+    {
+      "name": "tallies",
+      "enabled": true,
+      "applied": false,
+      "reason": "restart required"
+    }
+  ],
+  "platforms": [
+    {
+      "name": "discord",
+      "platform": "discord",
+      "enabled": false,
+      "paused": false,
+      "telemetry_enabled": false,
+      "state": "disabled",
+      "status": "disabled",
+      "paused_reason": null,
+      "last_heartbeat": null,
+      "last_success_ts": null,
+      "last_event_ts": null,
+      "error": null,
+      "counters": {
+        "messages": 0,
+        "triggers": 0,
+        "actions": 0,
+        "actions_failed": 0
+      },
+      "replay_supported": false,
+      "overlay_supported": false
+    },
+    {
+      "name": "kick",
+      "platform": "kick",
+      "enabled": false,
+      "paused": false,
+      "telemetry_enabled": true,
+      "state": "disabled",
+      "status": "disabled",
+      "paused_reason": null,
+      "last_heartbeat": null,
+      "last_success_ts": null,
+      "last_event_ts": null,
+      "error": null,
+      "counters": {
+        "messages": 0,
+        "triggers": 0,
+        "actions": 0,
+        "actions_failed": 0
+      },
+      "replay_supported": false,
+      "overlay_supported": false
+    },
+    {
+      "name": "pilled",
+      "platform": "pilled",
+      "enabled": false,
+      "paused": false,
+      "telemetry_enabled": false,
+      "state": "disabled",
+      "status": "disabled",
+      "paused_reason": null,
+      "last_heartbeat": null,
+      "last_success_ts": null,
+      "last_event_ts": null,
+      "error": null,
+      "counters": {
+        "messages": 0,
+        "triggers": 0,
+        "actions": 0,
+        "actions_failed": 0
+      },
+      "replay_supported": true,
+      "overlay_supported": false
+    },
+    {
+      "name": "rumble",
+      "platform": "rumble",
+      "enabled": true,
+      "paused": true,
+      "telemetry_enabled": true,
+      "state": "paused",
+      "status": "paused",
+      "paused_reason": "Platform ingestion paused",
+      "last_heartbeat": "2026-03-28T03:44:42.991717Z",
+      "last_success_ts": null,
+      "last_event_ts": null,
+      "error": null,
+      "counters": {
+        "messages": 0,
+        "triggers": 0,
+        "actions": 0,
+        "actions_failed": 0
+      },
+      "replay_supported": false,
+      "overlay_supported": false
+    },
+    {
+      "name": "twitch",
+      "platform": "twitch",
+      "enabled": true,
+      "paused": false,
+      "telemetry_enabled": true,
+      "state": "active",
+      "status": "inactive",
+      "paused_reason": null,
+      "last_heartbeat": null,
+      "last_success_ts": null,
+      "last_event_ts": null,
+      "error": null,
+      "counters": {
+        "messages": 0,
+        "triggers": 0,
+        "actions": 0,
+        "actions_failed": 0
+      },
+      "replay_supported": true,
+      "overlay_supported": true
+    },
+    {
+      "name": "twitter",
+      "platform": "twitter",
+      "enabled": true,
+      "paused": false,
+      "telemetry_enabled": true,
+      "state": "active",
+      "status": "inactive",
+      "paused_reason": null,
+      "last_heartbeat": null,
+      "last_success_ts": null,
+      "last_event_ts": null,
+      "error": null,
+      "counters": {
+        "messages": 0,
+        "triggers": 0,
+        "actions": 0,
+        "actions_failed": 0
+      },
+      "replay_supported": false,
+      "overlay_supported": false
+    },
+    {
+      "name": "youtube",
+      "platform": "youtube",
+      "enabled": true,
+      "paused": false,
+      "telemetry_enabled": true,
+      "state": "active",
+      "status": "inactive",
+      "paused_reason": null,
+      "last_heartbeat": null,
+      "last_success_ts": null,
+      "last_event_ts": null,
+      "error": null,
+      "counters": {
+        "messages": 0,
+        "triggers": 0,
+        "actions": 0,
+        "actions_failed": 0
+      },
+      "replay_supported": true,
+      "overlay_supported": true
+    }
+  ],
+  "creators": [
+    {
+      "creator_id": "As5TyU",
+      "display_name": "Daniel Clancy",
+      "enabled": true,
+      "platforms": {
+        "rumble": true,
+        "youtube": true,
+        "twitch": true,
+        "pilled": false,
+        "twitter": true,
+        "discord": true
+      },
+      "last_heartbeat": "2026-03-28T03:44:42.991717Z",
+      "error": null,
+      "live_status": {
+        "creator_id": "As5TyU",
+        "display_name": "Daniel Clancy",
+        "is_live": false,
+        "active_provider": null,
+        "active_status": null,
+        "last_checked_at": "2026-03-28T03:44:35.739070Z",
+        "freshness": "fresh",
+        "stale": false,
+        "checked_provider_count": 3,
+        "statuses": [
+          {
+            "creator_id": "As5TyU",
+            "provider": "twitch",
+            "is_live": false,
+            "provider_account_id": null,
+            "provider_account_login": null,
+            "live_title": null,
+            "live_url": null,
+            "thumbnail_url": null,
+            "viewer_count": null,
+            "game_name": null,
+            "started_at": null,
+            "last_checked_at": "2026-03-28T03:44:35.739070Z",
+            "stale": false,
+            "freshness": "fresh",
+            "error": null
+          },
+          {
+            "creator_id": "As5TyU",
+            "provider": "youtube",
+            "is_live": false,
+            "provider_account_id": null,
+            "provider_account_login": null,
+            "live_title": null,
+            "live_url": null,
+            "thumbnail_url": null,
+            "viewer_count": null,
+            "game_name": null,
+            "started_at": null,
+            "last_checked_at": "2026-03-28T03:43:35.742269Z",
+            "stale": false,
+            "freshness": "fresh",
+            "error": null
+          },
+          {
+            "creator_id": "As5TyU",
+            "provider": "rumble",
+            "is_live": false,
+            "provider_account_id": null,
+            "provider_account_login": null,
+            "live_title": null,
+            "live_url": "https://rumble.com/c/StreamSuites",
+            "thumbnail_url": null,
+            "viewer_count": null,
+            "game_name": null,
+            "started_at": null,
+            "last_checked_at": "2026-03-28T03:44:20.222747Z",
+            "stale": false,
+            "freshness": "fresh",
+            "error": "Rumble live-status polling scaffolded; authenticated/provider-specific implementation pending private creator settings wiring"
+          }
+        ]
+      }
+    }
+  ],
+  "triggers": {
+    "source": "shared"
+  },
+  "rumble_chat": null,
+  "live_status": {
+    "schema_version": "v1",
+    "generated_at": "2026-03-28T03:44:35.739070Z",
+    "provider_priority": [
+      "twitch",
+      "youtube",
+      "rumble"
+    ],
+    "providers": [
+      {
+        "provider": "rumble",
+        "cadence_seconds": 60,
+        "stale_after_seconds": 180,
+        "batch_size": 25,
+        "creators_configured": 1,
+        "last_refresh_started_at": "2026-03-28T03:44:20.222747Z",
+        "last_refresh_completed_at": "2026-03-28T03:44:20.222747Z",
+        "last_error": null
+      },
+      {
+        "provider": "twitch",
+        "cadence_seconds": 45,
+        "stale_after_seconds": 90,
+        "batch_size": 100,
+        "creators_configured": 1,
+        "last_refresh_started_at": "2026-03-28T03:44:35.739070Z",
+        "last_refresh_completed_at": "2026-03-28T03:44:35.739070Z",
+        "last_error": null
+      },
+      {
+        "provider": "youtube",
+        "cadence_seconds": 75,
+        "stale_after_seconds": 150,
+        "batch_size": 50,
+        "creators_configured": 1,
+        "last_refresh_started_at": "2026-03-28T03:43:35.742269Z",
+        "last_refresh_completed_at": "2026-03-28T03:43:35.911829Z",
+        "last_error": null
+      }
+    ],
+    "creators": [
+      {
+        "creator_id": "As5TyU",
+        "display_name": "Daniel Clancy",
+        "is_live": false,
+        "active_provider": null,
+        "active_status": null,
+        "last_checked_at": "2026-03-28T03:44:35.739070Z",
+        "freshness": "fresh",
+        "stale": false,
+        "checked_provider_count": 3,
+        "statuses": [
+          {
+            "creator_id": "As5TyU",
+            "provider": "twitch",
+            "is_live": false,
+            "provider_account_id": null,
+            "provider_account_login": null,
+            "live_title": null,
+            "live_url": null,
+            "thumbnail_url": null,
+            "viewer_count": null,
+            "game_name": null,
+            "started_at": null,
+            "last_checked_at": "2026-03-28T03:44:35.739070Z",
+            "stale": false,
+            "freshness": "fresh",
+            "error": null
+          },
+          {
+            "creator_id": "As5TyU",
+            "provider": "youtube",
+            "is_live": false,
+            "provider_account_id": null,
+            "provider_account_login": null,
+            "live_title": null,
+            "live_url": null,
+            "thumbnail_url": null,
+            "viewer_count": null,
+            "game_name": null,
+            "started_at": null,
+            "last_checked_at": "2026-03-28T03:43:35.742269Z",
+            "stale": false,
+            "freshness": "fresh",
+            "error": null
+          },
+          {
+            "creator_id": "As5TyU",
+            "provider": "rumble",
+            "is_live": false,
+            "provider_account_id": null,
+            "provider_account_login": null,
+            "live_title": null,
+            "live_url": "https://rumble.com/c/StreamSuites",
+            "thumbnail_url": null,
+            "viewer_count": null,
+            "game_name": null,
+            "started_at": null,
+            "last_checked_at": "2026-03-28T03:44:20.222747Z",
+            "stale": false,
+            "freshness": "fresh",
+            "error": "Rumble live-status polling scaffolded; authenticated/provider-specific implementation pending private creator settings wiring"
+          }
+        ]
+      }
+    ]
+  },
+  "replay": {
+    "available": false,
+    "platforms": [],
+    "event_count": 0,
+    "last_event_timestamp": null,
+    "overlay_safe": false
+  },
+  "restart_intent": {
+    "required": false,
+    "pending": {
+      "system": false,
+      "creators": false,
+      "triggers": false,
+      "platforms": false
+    }
+  }
+}

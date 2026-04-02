@@ -137,6 +137,13 @@ StreamSuites-Creator/
 │   ├── jobs.json
 │   ├── platforms.json
 │   └── runtime_snapshot.json
+├── shared/
+│   └── state/
+│       ├── live_status.json
+│       ├── quotas.json
+│       ├── runtime_snapshot.json
+│       └── discord/
+│           └── runtime.json
 ├── js/
 │   ├── account-settings.js
 │   ├── app.js

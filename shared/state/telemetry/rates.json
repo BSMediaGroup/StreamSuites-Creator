@@ -1,0 +1,88 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-03-28T03:44:47.484772Z",
+  "windows": [
+    {
+      "window": "60s",
+      "metrics": {
+        "messages": {
+          "discord": 0,
+          "kick": 0,
+          "pilled": 0,
+          "rumble": 0,
+          "twitch": 0,
+          "twitter": 0,
+          "youtube": 0
+        },
+        "triggers": {
+          "discord": 0,
+          "kick": 0,
+          "pilled": 0,
+          "rumble": 0,
+          "twitch": 0,
+          "twitter": 0,
+          "youtube": 0
+        },
+        "actions": {
+          "discord": 0,
+          "kick": 0,
+          "pilled": 0,
+          "rumble": 0,
+          "twitch": 0,
+          "twitter": 0,
+          "youtube": 0
+        },
+        "actions_failed": {
+          "discord": 0,
+          "kick": 0,
+          "pilled": 0,
+          "rumble": 0,
+          "twitch": 0,
+          "twitter": 0,
+          "youtube": 0
+        }
+      }
+    },
+    {
+      "window": "5m",
+      "metrics": {
+        "messages": {
+          "discord": 0,
+          "kick": 0,
+          "pilled": 0,
+          "rumble": 0,
+          "twitch": 0,
+          "twitter": 0,
+          "youtube": 0
+        },
+        "triggers": {
+          "discord": 0,
+          "kick": 0,
+          "pilled": 0,
+          "rumble": 0,
+          "twitch": 0,
+          "twitter": 0,
+          "youtube": 0
+        },
+        "actions": {
+          "discord": 0,
+          "kick": 0,
+          "pilled": 0,
+          "rumble": 0,
+          "twitch": 0,
+          "twitter": 0,
+          "youtube": 0
+        },
+        "actions_failed": {
+          "discord": 0,
+          "kick": 0,
+          "pilled": 0,
+          "rumble": 0,
+          "twitch": 0,
+          "twitter": 0,
+          "youtube": 0
+        }
+      }
+    }
+  ]
+}
