@@ -7,3 +7,4 @@ assets/illustrations/Thumbs.db
 node_modules/.mf/cf.json
 tmp-wrangler.err.log
 tmp-wrangler.out.log
+/.wrangler/tmp

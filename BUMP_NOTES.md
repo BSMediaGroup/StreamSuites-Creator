@@ -4,6 +4,28 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Cloudflare Route Inventory Repair - 2026-04-02
+
+### Technical Notes
+
+- Root-caused the remaining Creator deep-link failures to the repo-root `_redirects` manifest itself: Cloudflare/Wrangler was discarding the wildcard shell rewrites (`/integrations/*`, `/modules/*`, `/platforms/*`) as invalid infinite-loop candidates, which meant valid nested Creator shell URLs still fell through to `404` whenever the Pages Function rescue path was absent or bypassed.
+- Replaced those invalid wildcard shell rules with the real current Creator route inventory already reflected in `js/routes.js`: exact `/home`, `/integrations/{provider}`, `/modules/{module}`, and legacy compatibility `/platforms/{provider}` paths now rewrite directly to `/index.html` without depending on loop-prone splats.
+- Tightened `functions/[[path]].js` to the same explicit known-route inventory instead of broad prefix matching, so real misses under `/integrations/`, `/modules/`, or `/platforms/` now remain true platform-level `404`s while valid shell routes still recover into the SPA entrypoint.
+- Added `scripts/validate-pages-routing.ps1` as a repo-local Pages regression check. It starts `wrangler pages dev`, verifies representative Creator deep links resolve to the shell, verifies a true bad path still returns `404`, and verifies a JS asset is not rewritten to HTML.
+
+### Human-Readable Notes
+
+- Creator deep links like `/integrations/discord`, `/platforms/youtube`, and `/modules/clips` now use Cloudflare-valid routing rules instead of depending on ignored wildcard rewrites.
+- Fake nested Creator routes no longer quietly fall into the app shell; they stay real 404s.
+
+### Files / Areas Touched
+
+- `_redirects`
+- `functions/[[path]].js`
+- `scripts/validate-pages-routing.ps1`
+- `README.md`
+- `BUMP_NOTES.md`
+
 ## Creator Live Tier Pill Refresh Fix - 2026-03-29
 
 ### Technical Notes

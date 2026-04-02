@@ -7,6 +7,7 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 - README state prepared for `v0.4.2-alpha`.
 - Runtime-displayed version/build labels are consumed from `https://admin.streamsuites.app/runtime/exports/version.json`.
 - This repo is a static frontend that hydrates from authoritative runtime and Auth API services and does not own backend state.
+- Cloudflare deep-link handling now uses only valid exact route rewrites for Creator shell paths, plus a route-scoped Pages Function fallback for the same known paths, so nested Creator URLs no longer depend on invalid wildcard rewrites being honored.
 
 ## Scope & Authority
 
@@ -48,6 +49,7 @@ flowchart TD
 ## Current Surface Model
 
 - Clean path-based creator routes are the primary navigation model, with Cloudflare Pages deep-link handling anchored in the root `_redirects` and a route-scoped `functions/[[path]].js` fallback for valid shell routes that would otherwise 404 on direct entry or refresh.
+- The Creator repo no longer uses `*_splat -> /index.html*` SPA rewrites for shell routing because Cloudflare/Wrangler treats those wildcard-to-shell rules as invalid loop candidates. Known Creator shell entry points are now enumerated explicitly in `_redirects`, while real misses still fall through to the branded `404.html`.
 - Legacy hash-fragment and older `/platforms/*` compatibility remains in the client router, but canonical creator links now use path routes such as `/overview`, `/account`, `/statistics`, `/notifications`, `/integrations/...`, and `/modules/...`.
 - The `/account` route is the authoritative creator-facing profile control surface for supported fields exposed by the public profile API.
 - The `/settings` route is now the creator-facing Preferences surface for moderator assignment and future community controls that remain grounded in runtime-owned contracts.
@@ -101,6 +103,8 @@ StreamSuites-Creator/
 ├── index.html
 ├── changelog/
 │   └── v0.4.2-alpha.md
+├── scripts/
+│   └── validate-pages-routing.ps1
 ├── login/
 │   └── index.html
 ├── login-success/

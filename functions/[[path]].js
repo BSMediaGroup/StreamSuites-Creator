@@ -16,10 +16,24 @@ const EXACT_CREATOR_ROUTES = new Set([
   "/jobs",
   "/scoreboards",
   "/tallies",
-  "/design"
+  "/design",
+  "/integrations/rumble",
+  "/integrations/youtube",
+  "/integrations/twitch",
+  "/integrations/kick",
+  "/integrations/discord",
+  "/integrations/pilled",
+  "/modules/clips",
+  "/modules/polls",
+  "/modules/overlays",
+  "/modules/livechat",
+  "/platforms/rumble",
+  "/platforms/youtube",
+  "/platforms/twitch",
+  "/platforms/kick",
+  "/platforms/discord",
+  "/platforms/pilled"
 ]);
-
-const PREFIX_CREATOR_ROUTES = ["/integrations/", "/modules/", "/platforms/"];
 
 function normalizePathname(pathname) {
   let normalized = typeof pathname === "string" && pathname.trim() ? pathname.trim() : "/";
@@ -35,11 +49,7 @@ function normalizePathname(pathname) {
 
 function isCreatorSpaRoute(pathname) {
   const normalized = normalizePathname(pathname);
-  if (EXACT_CREATOR_ROUTES.has(normalized)) {
-    return true;
-  }
-
-  return PREFIX_CREATOR_ROUTES.some((prefix) => normalized.startsWith(prefix));
+  return EXACT_CREATOR_ROUTES.has(normalized);
 }
 
 function buildFallbackResponse(shellResponse, requestMethod) {
