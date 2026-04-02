@@ -1586,10 +1586,27 @@
     );
   }
 
+  function normalizeAllowedCreatorRoute(routeLike) {
+    const raw = coerceText(routeLike).toLowerCase();
+    if (!raw) return "";
+
+    const routeHelper = window.StreamSuitesCreatorRoutes;
+    if (routeHelper?.resolveRoute) {
+      const resolved = routeHelper.resolveRoute(raw);
+      if (resolved) return resolved;
+    }
+    if (routeHelper?.normalizeRouteValue) {
+      return routeHelper.normalizeRouteValue(raw);
+    }
+    return raw.replace(/^\/+/, "");
+  }
+
   function getAllowedCreatorRoutes(session = sessionState.value) {
     const routes = session?.creatorWorkspaceAccess?.allowedRoutes;
     if (Array.isArray(routes) && routes.length) {
-      return routes.map((item) => coerceText(item).toLowerCase()).filter(Boolean);
+      return Array.from(
+        new Set(routes.map((item) => normalizeAllowedCreatorRoute(item)).filter(Boolean))
+      );
     }
     return [];
   }

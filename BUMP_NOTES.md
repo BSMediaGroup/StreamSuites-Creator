@@ -4,6 +4,29 @@
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
 
+## Creator Shell Startup Route Preservation + Guard Normalization - 2026-04-03
+
+### Technical Notes
+
+- Root-caused the remaining Creator shell-side deep-link drift to two client behaviors in the startup/router path rather than the edge rewrite layer: `js/render.js` still treated any unresolved first-load or `popstate` URL as an automatic `overview` redirect, and `js/auth.js` compared authoritative `creator_workspace_access.allowed_routes` entries verbatim instead of normalizing slash-prefixed or alias paths through the same route helper used by the shell.
+- Updated `js/auth.js` so allowed route tokens now normalize through `window.StreamSuitesCreatorRoutes` before access checks run. That keeps `/integrations/discord`, `/platforms/youtube`, and the rest of the clean-route inventory aligned with the same canonical route ids the shell actually loads.
+- Updated `js/render.js` so invalid or unresolved direct-entry routes no longer rewrite the browser location back to `/overview`, and so disallowed navigation no longer silently swaps the requested URL out for `overview` before the route guard can render its distinct restricted-state UI.
+- Hardened `scripts/validate-pages-routing.ps1` twice: it now uses a compatibility date that stays valid around day-boundary clock skew, and it also runs a route-helper regression pass that proves representative direct-entry paths still resolve to the intended internal Creator views while a true bad path stays unresolved.
+- No files were removed or replaced in this repo. The touched files are slightly longer because the old implicit route fallback behavior was replaced with explicit preserve-or-render handling.
+
+### Human-Readable Notes
+
+- Creator deep links now honor the URL that was opened instead of quietly snapping back to Overview when the shell cannot resolve the route immediately.
+- Canonical creator routes and legacy compatibility paths now pass through the same access guard logic, so route permissions and route loading stop disagreeing about which page should open.
+- Real bad creator routes now stay visibly bad inside the shell instead of pretending they were Overview.
+
+### Files / Areas Touched
+
+- `js/auth.js`
+- `js/render.js`
+- `scripts/validate-pages-routing.ps1`
+- `BUMP_NOTES.md`
+
 ## Creator Cloudflare Route Inventory Repair - 2026-04-02
 
 ### Technical Notes

@@ -16,7 +16,7 @@ if (Test-Path -LiteralPath $stderrLog) {
   Remove-Item -LiteralPath $stderrLog -Force
 }
 
-$compatibilityDate = Get-Date -Format "yyyy-MM-dd"
+$compatibilityDate = (Get-Date).AddDays(-1).ToString("yyyy-MM-dd")
 $process = $null
 
 function Invoke-RouteCheck {
@@ -76,6 +76,44 @@ try {
   Invoke-RouteCheck -Path "/modules/clips" -ExpectedStatus 200
   Invoke-RouteCheck -Path "/definitely-invalid-route" -ExpectedStatus 404
   Invoke-RouteCheck -Path "/js/app.js" -ExpectedStatus 200 -RejectHtml
+
+  $routeAudit = @'
+const fs = require('fs');
+const vm = require('vm');
+
+const sandbox = {
+  console,
+  URL,
+  window: {
+    location: new URL('http://127.0.0.1:__PORT__/overview')
+  }
+};
+sandbox.window.window = sandbox.window;
+
+vm.createContext(sandbox);
+vm.runInContext(fs.readFileSync('js/routes.js', 'utf8'), sandbox);
+
+const routes = sandbox.window.StreamSuitesCreatorRoutes;
+const cases = [
+  ['/integrations/discord', 'integrations/discord'],
+  ['/platforms/youtube', 'integrations/youtube'],
+  ['/modules/clips', 'modules/clips'],
+  ['/definitely-invalid-route', '']
+];
+
+for (const [pathname, expected] of cases) {
+  const actual = routes.resolveRouteFromUrlLike(new URL(`http://127.0.0.1:__PORT__${pathname}`));
+  if (actual !== expected) {
+    throw new Error(`Creator route resolver mismatch for ${pathname}: expected "${expected}", got "${actual}"`);
+  }
+}
+'@
+  $routeAudit = $routeAudit.Replace("__PORT__", [string]$Port)
+
+  $routeAudit | node -
+  if ($LASTEXITCODE -ne 0) {
+    throw "Creator route resolver validation failed."
+  }
 
   Write-Host "Creator Pages routing validation passed on port $Port."
 } finally {
