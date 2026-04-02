@@ -62,6 +62,24 @@ function buildFallbackResponse(shellResponse, requestMethod) {
   });
 }
 
+async function fetchSpaShellResponse(context) {
+  const { env, request } = context;
+  const assetUrl = new URL(request.url);
+  assetUrl.pathname = SPA_SHELL_PATH;
+  assetUrl.search = "";
+  assetUrl.hash = "";
+
+  if (typeof env?.ASSETS?.fetch === "function") {
+    const assetRequest = new Request(assetUrl.toString(), {
+      method: request.method,
+      headers: request.headers
+    });
+    return env.ASSETS.fetch(assetRequest);
+  }
+
+  return context.next(SPA_SHELL_PATH);
+}
+
 export async function onRequest(context) {
   const response = await context.next();
   if (response.status !== 404) {
@@ -78,7 +96,7 @@ export async function onRequest(context) {
     return response;
   }
 
-  const shellResponse = await context.next(SPA_SHELL_PATH);
+  const shellResponse = await fetchSpaShellResponse(context);
   if (!shellResponse.ok) {
     return response;
   }

@@ -604,6 +604,32 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into the released `0.4.2-alpha` section above.
 
+### Creator Direct-Entry Route Preservation Repair - 2026-04-03
+
+### Technical Notes
+
+- Root-caused the remaining Creator deep-link collapse to a project-level bootstrap chain split across the Pages entry layer and the shell router. The repo `_redirects` rules were still rewriting valid dashboard paths to `/index.html`, and under the current Pages/Wrangler behavior those rewrites surfaced as `308 -> /` redirects. That stripped `/account`, `/integrations/discord`, `/platforms/youtube`, and the rest of the requested path before `js/render.js` ever ran, so the shell could only resolve the root bootstrap markup back to `overview`.
+- Replaced that old redirect-first bootstrap path by removing the Creator SPA rewrite inventory from `_redirects` and letting `functions/[[path]].js` own valid dashboard deep-link recovery. The function now fetches `/index.html` directly from the Pages asset binding when a known Creator route misses statically, which serves the shell body with `200` while preserving the requested browser URL.
+- Updated `js/render.js` so startup and `popstate` resolution no longer canonicalize valid alias paths such as `/platforms/youtube` on first load or history navigation. The router still resolves those URLs through the same authoritative route helper, but the current pathname now remains intact unless the URL is using legacy `#...` or `?view=...` routing.
+- Replaced the old response-code-only `scripts/validate-pages-routing.ps1` flow with a browser-backed validation pass. It now proves direct entry to `/account`, `/overview`, `/integrations/discord`, and `/platforms/youtube` lands on the expected mounted view and expected pathname under an authenticated Creator session stub, and it also proves `/definitely-invalid-route` stays a real `404` instead of silently becoming Overview.
+- Removed/replaced:
+- Replaced the Creator SPA `_redirects` route inventory that pointed valid dashboard paths at `/index.html`. It is safe to remove because the route-scoped Pages Function now owns the same known-route inventory without mutating the request URL, and the file is expected to be shorter because that duplicated redirect list no longer exists there.
+- Replaced the old `context.next('/index.html')` shell fallback with an asset-binding fetch path in `functions/[[path]].js`. It is safe because the function still only serves known Creator routes and still falls through for real misses or non-GET/HEAD requests.
+
+### Human-Readable Notes
+
+- Opening or refreshing a real Creator route now keeps that route in the address bar and loads the correct page instead of bouncing back to Overview.
+- Legacy compatibility paths such as `/platforms/youtube` still resolve to the correct Creator page, but the shell no longer rewrites them on first load just because a canonical `/integrations/...` path exists.
+- Fake Creator routes still fail as fake routes; they no longer masquerade as Overview.
+
+### Files / Areas Touched
+
+- `_redirects`
+- `functions/[[path]].js`
+- `js/render.js`
+- `scripts/validate-pages-routing.ps1`
+- `BUMP_NOTES.md`
+
 ### Creator Debug Mode UX Alignment - 2026-03-28
 
 ### Technical Notes

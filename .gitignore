@@ -8,3 +8,9 @@ node_modules/.mf/cf.json
 tmp-wrangler.err.log
 tmp-wrangler.out.log
 /.wrangler/tmp
+/.playwright-cli
+.tmp-route-audit.pid
+tmp-route-audit.err.log
+tmp-route-audit.out.log
+tmp-wrangler-validate.err.log
+tmp-wrangler-validate.out.log

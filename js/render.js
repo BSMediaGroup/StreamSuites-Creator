@@ -144,7 +144,11 @@
     return `/${normalized}`;
   }
 
-  function shouldCanonicalizeCurrentUrl(route) {
+  function shouldCanonicalizeCurrentUrl(route, options = {}) {
+    const preserveResolvedPath = options.preserveResolvedPath === true;
+    if (preserveResolvedPath) {
+      return Boolean(window.location.hash) || new URLSearchParams(window.location.search).has("view");
+    }
     const routeHelper = window.StreamSuitesCreatorRoutes;
     if (!routeHelper?.isLegacyUrl) {
       return window.location.pathname !== getCanonicalPath(route) || Boolean(window.location.hash);
@@ -492,7 +496,7 @@
       showNotFound(getCurrentLocationRouteLike() || window.location.pathname || "");
       return;
     }
-    if (shouldCanonicalizeCurrentUrl(route)) {
+    if (shouldCanonicalizeCurrentUrl(route, { preserveResolvedPath: true })) {
       syncBrowserUrl(route, { replace: true, force: true });
     }
     void loadRoute(route);
@@ -618,7 +622,7 @@
       showNotFound(getCurrentLocationRouteLike() || window.location.pathname || "");
       return;
     }
-    if (shouldCanonicalizeCurrentUrl(initial)) {
+    if (shouldCanonicalizeCurrentUrl(initial, { preserveResolvedPath: true })) {
       syncBrowserUrl(initial, { replace: true, force: true });
     }
     void loadRoute(initial);
