@@ -6,6 +6,7 @@
   const CREATOR_ORIGIN = "https://creator.streamsuites.app";
   const AUTH_ENDPOINTS = Object.freeze({
     accessState: `${AUTH_BASE_URL}/auth/access-state`,
+    turnstileConfig: `${AUTH_BASE_URL}/auth/turnstile/config`,
     debugUnlock: `${AUTH_BASE_URL}/auth/debug/unlock`,
     creatorDebugMode: `${AUTH_BASE_URL}/auth/creator/debug-mode`,
     session: `${AUTH_BASE_URL}/auth/session`,
@@ -81,6 +82,7 @@
   const LOCAL_SESSION_UPDATED_AT_KEY = "streamsuites.creator.session.updatedAt";
   const AUTH_ACCESS_UNLOCK_STATE_KEY = "streamsuites.creator.authAccessGate";
   const AUTH_ACCESS_CACHE_MS = 30000;
+  const TURNSTILE_SCRIPT_URL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
   const AUTH_ACCESS_FALLBACK_MESSAGES = Object.freeze({
     normal: "Authentication is operating normally.",
     maintenance: "Authentication is temporarily unavailable while maintenance is in progress.",
@@ -149,6 +151,15 @@
     loadedAt: 0,
     refreshPromise: null,
     formOpen: false
+  };
+  const authTurnstile = {
+    enabled: false,
+    sitekey: "",
+    token: "",
+    widgetId: null,
+    configLoaded: false,
+    configPromise: null,
+    scriptPromise: null
   };
   let accountMenuWired = false;
   let isAccountMenuOpen = false;
@@ -480,12 +491,155 @@
     }
   }
 
+  function getTurnstileElements() {
+    const modal = document.querySelector("[data-auth-modal]");
+    if (!modal) return null;
+    return {
+      panel: modal.querySelector("[data-auth-turnstile-panel]"),
+      slot: modal.querySelector("[data-auth-turnstile-slot]"),
+      status: modal.querySelector("[data-auth-turnstile-status]")
+    };
+  }
+
+  function setTurnstileStatus(message, tone = "") {
+    const ui = getTurnstileElements();
+    if (!ui?.status) return;
+    ui.status.textContent = typeof message === "string" ? message : "";
+    ui.status.dataset.tone = tone;
+  }
+
+  function isTurnstileBlocked() {
+    return authTurnstile.enabled && !authTurnstile.token;
+  }
+
+  async function loadTurnstileConfig() {
+    if (authTurnstile.configLoaded) return authTurnstile;
+    if (authTurnstile.configPromise) return authTurnstile.configPromise;
+
+    authTurnstile.configPromise = fetchJson(
+      AUTH_ENDPOINTS.turnstileConfig,
+      {
+        method: "GET",
+        cache: "no-store"
+      },
+      5000
+    )
+      .then((payload) => {
+        authTurnstile.enabled =
+          payload?.enabled === true && typeof payload?.sitekey === "string" && payload.sitekey.trim();
+        authTurnstile.sitekey = authTurnstile.enabled ? payload.sitekey.trim() : "";
+        authTurnstile.configLoaded = true;
+        const ui = getTurnstileElements();
+        if (ui?.panel) {
+          ui.panel.hidden = !authTurnstile.enabled;
+        }
+        if (authTurnstile.enabled) {
+          setTurnstileStatus("Complete the security check to continue.");
+        }
+        return authTurnstile;
+      })
+      .catch(() => {
+        authTurnstile.enabled = false;
+        authTurnstile.sitekey = "";
+        authTurnstile.configLoaded = true;
+        const ui = getTurnstileElements();
+        if (ui?.panel) {
+          ui.panel.hidden = true;
+        }
+        return authTurnstile;
+      })
+      .finally(() => {
+        authTurnstile.configPromise = null;
+      });
+
+    return authTurnstile.configPromise;
+  }
+
+  async function loadTurnstileScript() {
+    if (window.turnstile?.render) return window.turnstile;
+    if (authTurnstile.scriptPromise) return authTurnstile.scriptPromise;
+
+    authTurnstile.scriptPromise = new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[src="${TURNSTILE_SCRIPT_URL}"]`);
+      if (existing) {
+        existing.addEventListener("load", () => resolve(window.turnstile), { once: true });
+        existing.addEventListener("error", () => reject(new Error("turnstile-script-load-failed")), { once: true });
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = TURNSTILE_SCRIPT_URL;
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve(window.turnstile);
+      script.onerror = () => reject(new Error("turnstile-script-load-failed"));
+      document.head.appendChild(script);
+    }).finally(() => {
+      authTurnstile.scriptPromise = null;
+    });
+
+    return authTurnstile.scriptPromise;
+  }
+
+  async function ensureTurnstileRendered() {
+    if (!isPublicPath(getPathname())) return false;
+    await loadTurnstileConfig();
+    const ui = getTurnstileElements();
+    if (!authTurnstile.enabled || !ui?.slot) {
+      syncAuthAccessUi();
+      return false;
+    }
+    if (authTurnstile.widgetId !== null) return true;
+
+    const turnstile = await loadTurnstileScript();
+    authTurnstile.widgetId = turnstile.render(ui.slot, {
+      sitekey: authTurnstile.sitekey,
+      theme: "auto",
+      callback(token) {
+        authTurnstile.token = String(token || "").trim();
+        setTurnstileStatus("Security check ready.", "success");
+        syncAuthAccessUi();
+      },
+      "expired-callback"() {
+        authTurnstile.token = "";
+        setTurnstileStatus("The security check expired. Complete it again.", "error");
+        syncAuthAccessUi();
+      },
+      "error-callback"() {
+        authTurnstile.token = "";
+        setTurnstileStatus("Security check failed to load. Refresh and try again.", "error");
+        syncAuthAccessUi();
+      }
+    });
+    syncAuthAccessUi();
+    return true;
+  }
+
+  function resetTurnstile() {
+    if (!authTurnstile.enabled || authTurnstile.widgetId === null || !window.turnstile?.reset) return;
+    authTurnstile.token = "";
+    window.turnstile.reset(authTurnstile.widgetId);
+    setTurnstileStatus("Complete the security check to continue.");
+    syncAuthAccessUi();
+  }
+
+  async function ensureTurnstileToken() {
+    await ensureTurnstileRendered();
+    if (!authTurnstile.enabled) return "";
+    if (authTurnstile.token) return authTurnstile.token;
+    setTurnstileStatus("Complete the security check to continue.", "error");
+    return "";
+  }
+
   function buildCreatorOauthUrl(provider) {
     const raw = AUTH_ENDPOINTS.oauth[provider];
     const endpoint = parseCreatorUrl(raw, CREATOR_ORIGIN);
     if (!endpoint) return "";
     endpoint.searchParams.set("surface", "creator");
     endpoint.searchParams.set("return_to", buildCreatorLoginSuccessUrl());
+    if (authTurnstile.token) {
+      endpoint.searchParams.set("turnstile_token", authTurnstile.token);
+    }
     return endpoint.toString();
   }
 
@@ -2867,7 +3021,8 @@
       },
       body: JSON.stringify({
         email,
-        surface: "creator"
+        surface: "creator",
+        turnstile_token: authTurnstile.token || undefined
       })
     });
 
@@ -3023,7 +3178,7 @@
       ui.form.hidden = !authAccess.formOpen;
     }
 
-    const blocked = isAuthAccessBlocked();
+    const blocked = isAuthAccessBlocked() || isTurnstileBlocked();
     document.querySelectorAll("[data-auth-oauth]").forEach((button) => {
       button.classList.toggle("is-disabled", blocked);
       button.setAttribute("aria-disabled", blocked ? "true" : "false");
@@ -3243,6 +3398,14 @@
       if (!(button instanceof HTMLButtonElement)) return;
       button.addEventListener("click", async (event) => {
         event.preventDefault();
+        const turnstileToken = await ensureTurnstileToken();
+        if (authTurnstile.enabled && !turnstileToken) {
+          setResendState(form, {
+            visible: true,
+            message: "Complete the security check to resend the verification link."
+          });
+          return;
+        }
         const email = getResendEmail(form);
         if (!isValidEmail(email)) {
           setResendState(form, {
@@ -3290,6 +3453,10 @@
             message: "Unable to resend verification email.",
             disabled: false
           });
+        } finally {
+          if (authTurnstile.enabled) {
+            resetTurnstile();
+          }
         }
       });
     }
@@ -3350,6 +3517,14 @@
 
         const email = emailInput.value.trim();
         const password = passwordInput.value;
+        const turnstileToken = await ensureTurnstileToken();
+        if (authTurnstile.enabled && !turnstileToken) {
+          setFormState(loginForm, {
+            state: "error",
+            errorMessage: "Complete the security check to continue."
+          });
+          return;
+        }
 
         if (!isValidEmail(email)) {
           setFormState(loginForm, { state: "error", errorMessage: "Enter a valid email address." });
@@ -3363,7 +3538,7 @@
         setFormState(loginForm, { state: "loading", message: "Signing in…" });
 
         try {
-          const payload = await requestPasswordLogin({ email, password });
+          const payload = await requestPasswordLogin({ email, password, turnstile_token: turnstileToken });
           await routeAfterAuth(payload);
         } catch (err) {
           const message =
@@ -3381,6 +3556,10 @@
             setResendState(loginForm, { visible: true, message: "Need a new link? Resend below." });
           } else {
             setResendState(loginForm, { visible: false });
+          }
+        } finally {
+          if (authTurnstile.enabled) {
+            resetTurnstile();
           }
         }
       });
@@ -3423,6 +3602,14 @@
         const email = emailInput.value.trim();
         const password = passwordInput.value;
         const confirmPassword = confirmInput.value;
+        const turnstileToken = await ensureTurnstileToken();
+        if (authTurnstile.enabled && !turnstileToken) {
+          setFormState(signupForm, {
+            state: "error",
+            errorMessage: "Complete the security check to continue."
+          });
+          return;
+        }
 
         if (!isValidEmail(email)) {
           setFormState(signupForm, { state: "error", errorMessage: "Enter a valid email address." });
@@ -3443,7 +3630,7 @@
         setFormState(signupForm, { state: "loading", message: "Creating account…" });
 
         try {
-          const payload = await requestSignup({ email, password });
+          const payload = await requestSignup({ email, password, turnstile_token: turnstileToken });
           if (payload?.authenticated) {
             await routeAfterAuth(payload);
             return;
@@ -3471,6 +3658,10 @@
                 : "Unable to create account. Try again or use OAuth.";
           setFormState(signupForm, { state: "error", errorMessage: message });
           setResendState(signupForm, { visible: false });
+        } finally {
+          if (authTurnstile.enabled) {
+            resetTurnstile();
+          }
         }
       });
       wireResendButton(signupForm);
@@ -3483,16 +3674,22 @@
       const provider = button.getAttribute("data-auth-oauth");
       if (!provider) return;
       const normalizedProvider = normalizeProvider(provider);
-      const url = buildCreatorOauthUrl(provider);
-      if (!url) return;
+      const initialUrl = buildCreatorOauthUrl(provider);
+      if (!initialUrl) return;
       if (button instanceof HTMLAnchorElement) {
-        button.href = url;
+        button.href = initialUrl;
         button.addEventListener("click", async (event) => {
           event.preventDefault();
           const accessState = await ensureAuthAccessReady({ reveal: true });
           if (isAuthAccessBlocked(accessState)) {
             return;
           }
+          const turnstileToken = await ensureTurnstileToken();
+          if (authTurnstile.enabled && !turnstileToken) {
+            return;
+          }
+          const url = buildCreatorOauthUrl(provider);
+          if (!url) return;
           persistLastOauthProvider(normalizedProvider);
           logCreatorLoginTarget(normalizedProvider, url);
           window.location.assign(url);
@@ -3505,6 +3702,12 @@
         if (isAuthAccessBlocked(accessState)) {
           return;
         }
+        const turnstileToken = await ensureTurnstileToken();
+        if (authTurnstile.enabled && !turnstileToken) {
+          return;
+        }
+        const url = buildCreatorOauthUrl(provider);
+        if (!url) return;
         persistLastOauthProvider(normalizedProvider);
         logCreatorLoginTarget(normalizedProvider, url);
         window.location.assign(url);
@@ -3996,6 +4199,9 @@
     syncCreatorDebugModeState(sessionState.value);
     if (isPublic) {
       void loadAuthAccessState(true);
+      void ensureTurnstileRendered().catch(() => {
+        setTurnstileStatus("Security check failed to load. Refresh and try again.", "error");
+      });
     }
 
     if (shouldSkipSessionFetch(isPublic)) {
