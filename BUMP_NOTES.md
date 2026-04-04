@@ -817,3 +817,22 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 ### Risks / Follow-Ups
 
 - The creator badge matrix currently writes through the existing profile endpoint additively; if that self-serve contract is split later, this section should move with it rather than reintroducing local badge state.
+
+## Task 3X - Turnstile Auth Rollout Verification - 2026-04-04
+
+### Technical Notes
+
+- Verified the creator login surface consumes `/auth/turnstile/config`, renders the inline widget explicitly inside the existing login form, and forwards tokens to the authoritative runtime/Auth endpoints for email-password and OAuth auth starts.
+- Recorded the auth-hardening milestone explicitly in the repo bump notes after the interrupted rollout had shipped code without a matching root-note update.
+
+### Human-Readable Notes
+
+- Creator sign-in now keeps the existing login UX while adding the inline security check before password or OAuth login starts.
+
+### Files / Areas Touched
+
+- `BUMP_NOTES.md`
+
+### Risks / Follow-Ups
+
+- Creator auth still depends on the runtime's same-origin auth proxy and access-gate responses; any stale Pages deploy paired with a newer runtime contract can still produce UI drift until both sides are deployed together.
