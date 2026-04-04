@@ -823,6 +823,15 @@ Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into t
 ### Technical Notes
 
 - Verified the creator login surface consumes `/auth/turnstile/config`, renders the inline widget explicitly inside the existing login form, and forwards tokens to the authoritative runtime/Auth endpoints for email-password and OAuth auth starts.
+
+## Task 3Z - Auth Surface Login Repair Follow-up - 2026-04-05
+
+### Technical
+- Kept the working Creator Turnstile/login flow intact while replacing the old alternate-surface selector text on `login/index.html` with the collapsed `Login to other surfaces` treatment.
+- Added the supporting `ss-public.svg`, `ss-creator.svg`, `ss-admin.svg`, and `ss-developer.svg` assets under `assets/icons/ui/`, updated `css/overrides.css` for the compact collapsed link treatment, and added a lightweight source-audit test at `tests/auth-surface-links.test.mjs`.
+
+### Human
+- Creator login keeps the existing auth behavior, but the alternate destination links now read like a quiet secondary option instead of an awkward inline label list.
 - Recorded the auth-hardening milestone explicitly in the repo bump notes after the interrupted rollout had shipped code without a matching root-note update.
 
 ### Human-Readable Notes

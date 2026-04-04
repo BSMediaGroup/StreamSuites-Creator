@@ -122,7 +122,7 @@ StreamSuites-Creator/
 │   │   └── ss-profile-hovercard.css
 │   ├── js/
 │   │   └── ss-profile-hovercard.js
-│   └── [backgrounds, fonts, icons, illustrations, logos, placeholders]
+│   └── [backgrounds, fonts, icons, illustrations, logos, placeholders, including icons/ui/ss-admin.svg, ss-creator.svg, ss-developer.svg, ss-public.svg]
 ├── css/
 │   ├── base.css
 │   ├── components.css
@@ -166,6 +166,8 @@ StreamSuites-Creator/
 │       ├── stats-svg-charts.js
 │       ├── version-stamp.js
 │       └── versioning.js
+├── tests/
+│   └── auth-surface-links.test.mjs
 └── views/
     ├── account.html
     ├── integrations.html

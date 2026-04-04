@@ -69,12 +69,26 @@
               <div class="ss-turnstile-slot" data-auth-turnstile-slot></div>
               <p class="ss-turnstile-status" data-auth-turnstile-status></p>
             </section>
-            <nav class="ss-auth-surface-links" aria-label="Alternate login surfaces">
-              <span class="ss-auth-surface-links__label">Elsewhere</span>
-              <a href="https://streamsuites.app/public-login.html">Public</a>
-              <a href="https://admin.streamsuites.app/auth/login.html">Admin</a>
-              <a href="https://console.streamsuites.app/login/">Developer</a>
-            </nav>
+            <details class="ss-auth-surface-links" aria-label="Login to other surfaces">
+              <summary class="ss-auth-surface-links__summary">
+                <span class="ss-auth-surface-links__summary-label">Login to other surfaces</span>
+                <span class="ss-auth-surface-links__chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="ss-auth-surface-links__list">
+                <a class="ss-auth-surface-links__link" href="https://streamsuites.app/public-login.html">
+                  <span class="ss-auth-surface-links__icon ss-auth-surface-links__icon--public" aria-hidden="true"></span>
+                  <span>Public</span>
+                </a>
+                <a class="ss-auth-surface-links__link" href="https://admin.streamsuites.app/auth/login.html">
+                  <span class="ss-auth-surface-links__icon ss-auth-surface-links__icon--admin" aria-hidden="true"></span>
+                  <span>Admin Dashboard</span>
+                </a>
+                <a class="ss-auth-surface-links__link" href="https://console.streamsuites.app/login/">
+                  <span class="ss-auth-surface-links__icon ss-auth-surface-links__icon--developer" aria-hidden="true"></span>
+                  <span>Developer Console</span>
+                </a>
+              </div>
+            </details>
           </div>
         </header>
 

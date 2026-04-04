@@ -303,30 +303,117 @@
 }
 
 .ss-auth-surface-links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 12px;
   margin-top: 10px;
   font-size: 12px;
   color: rgba(225, 235, 248, 0.68);
 }
 
-.ss-auth-surface-links__label {
+.ss-auth-surface-links[open] {
+  padding-bottom: 2px;
+}
+
+.ss-auth-surface-links__summary {
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: inherit;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ss-auth-surface-links__summary::-webkit-details-marker {
+  display: none;
+}
+
+.ss-auth-surface-links__summary-label {
   letter-spacing: 0.08em;
-  opacity: 0.68;
+  opacity: 0.88;
   text-transform: uppercase;
 }
 
-.ss-auth-surface-links a {
+.ss-auth-surface-links__chevron {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask-image: url("/assets/icons/ui/plus.svg");
+  mask-image: url("/assets/icons/ui/plus.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  opacity: 0.74;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.ss-auth-surface-links[open] .ss-auth-surface-links__chevron {
+  transform: rotate(45deg);
+  opacity: 1;
+}
+
+.ss-auth-surface-links__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ss-auth-surface-links__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 31px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(162, 183, 255, 0.14);
+  background: rgba(11, 16, 28, 0.4);
   color: rgba(201, 221, 245, 0.84);
   text-decoration: none;
 }
 
-.ss-auth-surface-links a:hover,
-.ss-auth-surface-links a:focus-visible {
+.ss-auth-surface-links__link:hover,
+.ss-auth-surface-links__link:focus-visible {
   color: #ffffff;
-  text-decoration: underline;
+  border-color: rgba(162, 183, 255, 0.3);
+  background: rgba(11, 16, 28, 0.62);
+  outline: none;
+}
+
+.ss-auth-surface-links__icon {
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  flex: 0 0 auto;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.ss-auth-surface-links__icon--public {
+  -webkit-mask-image: url("/assets/icons/ui/ss-public.svg");
+  mask-image: url("/assets/icons/ui/ss-public.svg");
+}
+
+.ss-auth-surface-links__icon--creator {
+  -webkit-mask-image: url("/assets/icons/ui/ss-creator.svg");
+  mask-image: url("/assets/icons/ui/ss-creator.svg");
+}
+
+.ss-auth-surface-links__icon--admin {
+  -webkit-mask-image: url("/assets/icons/ui/ss-admin.svg");
+  mask-image: url("/assets/icons/ui/ss-admin.svg");
+}
+
+.ss-auth-surface-links__icon--developer {
+  -webkit-mask-image: url("/assets/icons/ui/ss-developer.svg");
+  mask-image: url("/assets/icons/ui/ss-developer.svg");
 }
 
 .auth-title {
