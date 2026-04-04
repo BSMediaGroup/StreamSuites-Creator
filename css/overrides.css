@@ -276,12 +276,12 @@
 
 .ss-turnstile-panel {
   display: grid;
-  gap: 8px;
-  margin-top: 12px;
-  padding: 11px 12px;
-  border: 1px solid rgba(162, 183, 255, 0.18);
+  gap: 6px;
+  margin-top: 10px;
+  padding: 9px 11px;
+  border: 1px solid rgba(162, 183, 255, 0.14);
   border-radius: 12px;
-  background: rgba(11, 16, 28, 0.72);
+  background: rgba(11, 16, 28, 0.52);
 }
 
 .ss-turnstile-slot {
@@ -300,6 +300,33 @@
 
 .ss-turnstile-status[data-tone="success"] {
   color: #d2f5c6;
+}
+
+.ss-auth-surface-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(225, 235, 248, 0.68);
+}
+
+.ss-auth-surface-links__label {
+  letter-spacing: 0.08em;
+  opacity: 0.68;
+  text-transform: uppercase;
+}
+
+.ss-auth-surface-links a {
+  color: rgba(201, 221, 245, 0.84);
+  text-decoration: none;
+}
+
+.ss-auth-surface-links a:hover,
+.ss-auth-surface-links a:focus-visible {
+  color: #ffffff;
+  text-decoration: underline;
 }
 
 .auth-title {
