@@ -19,3 +19,15 @@ test("creator login uses the collapsed alternate surface section", () => {
   assert.match(html, /Developer Console/);
   assert.match(css, /ss-auth-surface-links__icon--public/);
 });
+
+test("creator dropdown keeps the compact overview card and role-gated debug control", () => {
+  const html = read("index.html");
+  const authJs = read("js/auth.js");
+
+  assert.match(html, /data-account-details-panel/);
+  assert.match(html, /data-account-detail-name/);
+  assert.match(html, /data-account-detail-email/);
+  assert.match(html, /data-account-detail-tier/);
+  assert.match(authJs, /session\?\.creatorDebug\?\.adminCapable === true/);
+  assert.match(authJs, /session\?\.creatorDebug\?\.developerCapable === true/);
+});

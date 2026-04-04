@@ -1,5 +1,17 @@
 # Bump Notes
 
+## Creator Dropdown Visibility Contract Reconfirmed - 2026-04-05
+
+### Technical Notes
+
+- Re-verified the Creator dropdown’s compact overview card as the reference pattern for the shared parity pass and added a focused regression in `tests/auth-surface-links.test.mjs` covering the existing detail-card markup plus the admin/developer-only debug visibility gate in `js/auth.js`.
+- No Creator dropdown redesign or runtime contract change was required in this pass because the current debug action already gates on the backend-owned `creatorDebug.adminCapable` / `creatorDebug.developerCapable` fields.
+
+### Human-Readable Notes
+
+- Creator remains the reference dropdown.
+- The Debug Mode action stays hidden from ordinary creator accounts and only appears for admin or developer-authorized sessions.
+
 ## RELEASED / PACKAGED: 0.4.2-alpha
 
 Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.4.8-alpha` section below.
