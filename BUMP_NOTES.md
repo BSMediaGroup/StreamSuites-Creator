@@ -1,5 +1,17 @@
 # Bump Notes
 
+## Emergency Login Turnstile Placement Hotfix - 2026-04-06
+
+### Technical Notes
+
+- Reordered `login/index.html` so the Creator login surface keeps its existing inline Turnstile controller path but now places the alternate-surface selector and Turnstile block at the bottom of the auth card instead of up in the header stack.
+- No Creator auth endpoint or validation contract changed in this pass; the fix was limited to placement parity with the other StreamSuites login surfaces.
+
+### Human-Readable Notes
+
+- Creator keeps the same working Turnstile behavior.
+- The widget now sits lower in the login card and matches the emergency parity pass across Public, Admin, and Developer.
+
 ## Creator Dropdown Visibility Contract Reconfirmed - 2026-04-05
 
 ### Technical Notes
