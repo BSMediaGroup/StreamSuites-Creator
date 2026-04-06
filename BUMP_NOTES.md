@@ -668,6 +668,38 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 Open bucket for future work only. Do not add new `0.4.8-alpha` prep notes into the released `0.4.2-alpha` section above.
 
+### Creator Notifications Page Visual Rebuild - 2026-04-07
+
+### Technical Notes
+
+- Rebuilt the routed `/notifications` partial in `views/notifications.html` around the current Creator dashboard composition instead of the older notification-only slab: the page now uses the standard Creator section header, a tighter hero treatment, a modern feed card, and a deliberate right-side rail for posture plus signal controls while preserving all existing notification DOM IDs and behavior hooks.
+- Replaced the older notifications-page-specific CSS block in `css/creator-dashboard.css` with a new page-scoped layout system that aligns to the stronger Creator surfaces: tighter typography, disciplined metric pills, a cleaner filter/search row, denser notification cards, a more polished empty state, and responsive handling that keeps the page coherent down to common mobile widths.
+- Removed the old notifications route topbar title override in `js/render.js`, so the shell now inherits the actual page heading and stays consistent with the rest of the Creator routes instead of forcing the older `NOTIFICATIONS CENTER` special case.
+- Tightened the page empty-state copy in `js/notifications.js` to match the rebuilt surface while leaving notification hydration, mark-read/unread, mark-all, filtering, search, mute controls, and dropdown synchronization on the existing working path.
+- Removed/replaced:
+- Replaced the older `creator-notifications-hero`, `creator-notifications-layout`, `creator-notifications-panel`, `creator-notifications-sidebar`, and related summary-card/stat-card page shell with the current Creator `creator-section` plus `card` composition. This is expected to be cleaner because the routed page no longer carries a one-off notifications-only information architecture.
+- Replaced the page-level notifications CSS selectors tied to that legacy shell in place inside `css/creator-dashboard.css` instead of stacking more overrides on top. The CSS file did not become shorter overall, but the notifications block is now organized around the current shared page language rather than the previous bespoke slab structure.
+- `js/render.js` is slightly shorter because the obsolete notifications title special case was removed.
+
+### Human-Readable Notes
+
+- Notifications now looks like a current Creator dashboard page instead of an older leftover surface.
+- The typography is smaller and more controlled, the layout feels less blocky, and the inbox, filters, posture, and signal controls are grouped more intentionally.
+- Existing notification actions still work on the same hydrated runtime-backed flow.
+
+### Files / Areas Touched
+
+- `views/notifications.html`
+- `css/creator-dashboard.css`
+- `js/notifications.js`
+- `js/render.js`
+- `BUMP_NOTES.md`
+
+### Risks / Follow-Ups
+
+- The visual pass keeps using the existing notification card/button data contract, so any future backend payload expansion may still justify a deeper item-row redesign rather than just page-shell changes.
+- The Creator notifications surface remains sensitive to the deployed runtime/Auth notification contract; stale backend or proxy deployments can still degrade the page into truthful empty/error states.
+
 ### Creator Direct-Entry Route Preservation Repair - 2026-04-03
 
 ### Technical Notes

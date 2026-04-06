@@ -2,121 +2,154 @@
 <!-- StreamSuites - Notifications (VIEW PARTIAL) -->
 <!-- ========================================================= -->
 
-<header class="ss-header creator-notifications-hero">
-  <div class="ss-header-left creator-notifications-hero-main">
-    <span class="creator-notifications-eyebrow">Creator Inbox</span>
-    <h1 class="ss-title">Notifications</h1>
-    <span class="ss-subtitle">
-      Authoritative StreamSuites alerts for this creator account, with synced read state and cleaner signal control.
-    </span>
+<header class="ss-header creator-notifications-page-header">
+  <div class="ss-header-left">
+    <h1 class="ss-title">StreamSuites</h1>
+    <span class="ss-subtitle">Notifications</span>
   </div>
-  <div class="ss-header-right creator-notifications-hero-metrics">
-    <span id="creator-notifications-center-count" class="ss-chip">0 total</span>
-    <span id="creator-notifications-center-unread" class="ss-chip">0 unread</span>
-    <span id="creator-notifications-center-source" class="ss-chip">Awaiting sync</span>
+  <div class="ss-header-right">
+    <span class="muted">Authoritative creator inbox with synced read state and local signal controls.</span>
   </div>
 </header>
 
-<main class="ss-main creator-notifications-layout" id="creator-notifications-center-root">
-  <section class="ss-panel creator-notifications-panel creator-notifications-inbox-panel">
-    <header class="ss-panel-header">
-      <div class="ss-panel-header-main">
-        <h2>Inbox</h2>
-        <p class="muted">Hydrated from the authoritative creator notifications feed in StreamSuites.</p>
+<main class="ss-main">
+  <section class="creator-section creator-notifications-page" id="creator-notifications-center-root">
+    <div class="section-header">
+      <div>
+        <span class="section-kicker">Creator inbox</span>
+        <h2>Notifications</h2>
+        <p class="section-subtext">
+          Review runtime-backed alerts, clear low-signal noise, and move through updates without the older oversized inbox framing.
+        </p>
       </div>
-      <div class="creator-notifications-panel-actions">
+      <div class="section-actions creator-notifications-header-metrics">
+        <span id="creator-notifications-center-count" class="status-pill subtle creator-notifications-header-pill">0 total</span>
+        <span id="creator-notifications-center-unread" class="status-pill subtle creator-notifications-header-pill">0 unread</span>
+        <span id="creator-notifications-center-source" class="status-pill subtle creator-notifications-header-pill">Awaiting sync</span>
+      </div>
+    </div>
+
+    <div class="creator-hero creator-notifications-hero">
+      <div class="creator-notifications-hero-copy">
+        <h3>Stay on top of creator-critical changes without letting the inbox dominate the page.</h3>
+        <p>
+          Search, filter, and tune notification visibility here while StreamSuites runtime remains the authority for the feed and read-state contract.
+        </p>
+      </div>
+      <div class="creator-hero-actions creator-notifications-hero-actions">
         <button
           type="button"
           id="creator-notifications-center-refresh"
-          class="ss-btn ss-btn-secondary"
+          class="creator-button secondary"
         >
-          Refresh
+          Refresh feed
         </button>
         <button
           type="button"
           id="creator-notifications-center-mark-all"
-          class="ss-btn ss-btn-secondary"
+          class="creator-button secondary"
         >
           Mark all read
         </button>
       </div>
-    </header>
+    </div>
 
-    <div class="ss-panel-body">
-      <div class="creator-notifications-toolbar" role="group" aria-label="Notification controls">
-        <label class="creator-notifications-field">
-          <span>Status</span>
-          <select id="creator-notifications-filter-status" class="ss-input">
-            <option value="all">All</option>
-            <option value="unread">Unread</option>
-            <option value="read">Read</option>
-          </select>
-        </label>
+    <div class="creator-notifications-shell">
+      <article class="card creator-notifications-feed-card" aria-labelledby="creator-notifications-feed-title">
+        <div class="card-top creator-notifications-feed-head">
+          <div>
+            <h3 id="creator-notifications-feed-title">Inbox feed</h3>
+            <p>Hydrated from the authoritative creator notifications feed in StreamSuites.</p>
+          </div>
+          <span class="status-pill subtle">
+            <span class="status-dot"></span>
+            Read state synced
+          </span>
+        </div>
 
-        <label class="creator-notifications-field creator-notifications-field-search">
-          <span>Search</span>
-          <input
-            id="creator-notifications-filter-search"
-            class="ss-input"
-            type="search"
-            placeholder="Search title or snippet"
-            autocomplete="off"
-          />
-        </label>
-      </div>
+        <div class="creator-notifications-toolbar" role="group" aria-label="Notification controls">
+          <label class="creator-notifications-field">
+            <span>Status</span>
+            <select id="creator-notifications-filter-status">
+              <option value="all">All</option>
+              <option value="unread">Unread</option>
+              <option value="read">Read</option>
+            </select>
+          </label>
 
-      <div id="creator-notifications-center-list" class="creator-notifications-center-list" aria-live="polite"></div>
+          <label class="creator-notifications-field creator-notifications-field-search">
+            <span>Search</span>
+            <input
+              id="creator-notifications-filter-search"
+              type="search"
+              placeholder="Search title or snippet"
+              autocomplete="off"
+            />
+          </label>
+        </div>
 
-      <div id="creator-notifications-center-empty" class="creator-notifications-empty hidden">
-        <h3>Nothing to show right now</h3>
-        <p class="muted">
-          Try a different filter or search phrase, or unmute notification types in preferences.
-        </p>
-        <p id="creator-notifications-center-note" class="muted hidden"></p>
-      </div>
+        <div id="creator-notifications-center-list" class="creator-notifications-center-list" aria-live="polite"></div>
+
+        <div id="creator-notifications-center-empty" class="creator-notifications-empty hidden">
+          <span class="creator-notifications-empty-icon" aria-hidden="true"></span>
+          <h3>Inbox is clear</h3>
+          <p class="muted">
+            Try another filter or search phrase, or adjust muted types if you expected a different slice of the feed.
+          </p>
+          <p id="creator-notifications-center-note" class="muted hidden"></p>
+        </div>
+      </article>
+
+      <aside class="creator-notifications-side-column">
+        <article class="card highlight creator-notifications-posture-card" aria-labelledby="creator-notifications-summary-title">
+          <div class="card-top">
+            <div>
+              <h3 id="creator-notifications-summary-title">Inbox posture</h3>
+              <p>Quick context for the view you are working through right now.</p>
+            </div>
+            <span class="status-pill subtle">
+              <span class="status-dot"></span>
+              Local controls
+            </span>
+          </div>
+          <div class="creator-notifications-posture-grid">
+            <article class="creator-notifications-posture-metric">
+              <span class="creator-notifications-posture-label">Unread now</span>
+              <strong id="creator-notifications-summary-unread">0</strong>
+            </article>
+            <article class="creator-notifications-posture-metric">
+              <span class="creator-notifications-posture-label">Visible now</span>
+              <strong id="creator-notifications-summary-visible">0</strong>
+            </article>
+          </div>
+          <ul class="creator-notifications-posture-list">
+            <li>Read state stays synchronized between the bell dropdown and this full-route inbox.</li>
+            <li>Muted notification types change presentation only and never replace runtime authority.</li>
+          </ul>
+        </article>
+
+        <article class="card creator-notifications-settings-card" aria-labelledby="creator-notifications-settings-title">
+          <div class="card-top">
+            <div>
+              <h3 id="creator-notifications-settings-title">Signal controls</h3>
+              <p>Local presentation controls only. Notification authority stays in StreamSuites.</p>
+            </div>
+          </div>
+
+          <div class="creator-notifications-settings-body">
+            <label class="creator-notifications-setting-toggle ss-checkbox-wrapper">
+              <input type="checkbox" id="creator-notifications-mute-all" />
+              <div class="ss-checkbox"></div>
+              <span class="ss-checkbox-text">Mute notifications</span>
+            </label>
+
+            <section class="creator-notifications-setting-group" aria-labelledby="creator-notifications-mute-types-title">
+              <h4 id="creator-notifications-mute-types-title">Mute by type</h4>
+              <div id="creator-notifications-mute-types" class="creator-notifications-checkbox-list"></div>
+            </section>
+          </div>
+        </article>
+      </aside>
     </div>
   </section>
-
-  <aside class="creator-notifications-sidebar">
-    <section class="ss-panel creator-notifications-summary-card" aria-labelledby="creator-notifications-summary-title">
-      <header class="ss-panel-header">
-        <div class="ss-panel-header-main">
-          <h2 id="creator-notifications-summary-title">Feed posture</h2>
-          <p class="muted">Quick context for what the inbox is showing.</p>
-        </div>
-      </header>
-      <div class="ss-panel-body creator-notifications-summary-grid">
-        <article class="creator-notifications-stat-card">
-          <span class="creator-notifications-stat-label">Unread</span>
-          <strong id="creator-notifications-summary-unread">0</strong>
-        </article>
-        <article class="creator-notifications-stat-card">
-          <span class="creator-notifications-stat-label">Visible</span>
-          <strong id="creator-notifications-summary-visible">0</strong>
-        </article>
-      </div>
-    </section>
-
-    <section class="ss-panel creator-notifications-settings" aria-labelledby="creator-notifications-settings-title">
-    <header class="ss-panel-header">
-      <div class="ss-panel-header-main">
-        <h2 id="creator-notifications-settings-title">Preferences</h2>
-        <p class="muted">Local presentation controls only. Notification authority stays in StreamSuites.</p>
-      </div>
-    </header>
-
-    <div class="ss-panel-body">
-      <label class="creator-notifications-setting-toggle ss-checkbox-wrapper">
-        <input type="checkbox" id="creator-notifications-mute-all" />
-        <div class="ss-checkbox"></div>
-        <span class="ss-checkbox-text">Mute notifications</span>
-      </label>
-
-      <section class="creator-notifications-setting-group" aria-labelledby="creator-notifications-mute-types-title">
-        <h3 id="creator-notifications-mute-types-title">Mute by type</h3>
-        <div id="creator-notifications-mute-types" class="creator-notifications-checkbox-list"></div>
-      </section>
-    </div>
-    </section>
-  </aside>
 </main>

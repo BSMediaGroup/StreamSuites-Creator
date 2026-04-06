@@ -361,10 +361,10 @@
       const notesText = notes.length ? notes.join(" ") : "";
 
       if (!allItems.length) {
-        if (emptyTitle) emptyTitle.textContent = "No notifications";
+        if (emptyTitle) emptyTitle.textContent = "Inbox is clear";
         if (emptyText) emptyText.textContent = "There are no creator notifications for this account yet.";
       } else {
-        if (emptyTitle) emptyTitle.textContent = "Nothing matches your current view";
+        if (emptyTitle) emptyTitle.textContent = "Nothing matches this view";
         if (emptyText) emptyText.textContent = "Try a different filter or search phrase, or unmute notification types in preferences.";
       }
 
