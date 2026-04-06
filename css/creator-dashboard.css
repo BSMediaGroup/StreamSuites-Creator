@@ -275,6 +275,10 @@ h3 {
   -webkit-backdrop-filter: blur(18px);
   overflow: hidden;
   z-index: 210;
+  color: var(--creator-text);
+  font-family: var(--creator-font);
+  font-size: var(--creator-body-size);
+  line-height: 1.45;
 }
 
 .creator-notifications-dropdown-header {
@@ -297,16 +301,21 @@ h3 {
 
 .creator-notifications-title {
   margin: 0;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: #eef3ff;
+  font-family: var(--creator-font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .creator-notifications-dropdown-caption {
   margin: 4px 0 0;
-  color: rgba(220, 232, 255, 0.62);
-  font-size: 12px;
+  color: rgba(220, 232, 255, 0.68);
+  font-family: var(--creator-font);
+  font-size: var(--creator-body-size-sm);
+  letter-spacing: 0.01em;
 }
 
 .creator-notifications-dropdown-count {
@@ -319,43 +328,15 @@ h3 {
   border: 1px solid rgba(106, 214, 255, 0.22);
   background: rgba(106, 214, 255, 0.08);
   color: #9ad1ff;
-  font-size: 11px;
+  font-family: var(--creator-font);
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.creator-notifications-action {
-  appearance: none;
-  border: 1px solid rgba(120, 164, 255, 0.2);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #dce8ff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  min-height: 32px;
-  padding: 0 12px;
-  transition:
-    border-color 0.14s ease,
-    background 0.14s ease,
-    color 0.14s ease;
-}
-
-.creator-notifications-action:hover,
-.creator-notifications-action:focus-visible {
-  border-color: rgba(106, 214, 255, 0.44);
-  background: rgba(106, 214, 255, 0.12);
-  color: #ffffff;
-  outline: none;
-}
-
-.creator-notifications-action:disabled {
-  color: var(--creator-muted);
-  border-color: rgba(120, 164, 255, 0.12);
-  background: rgba(255, 255, 255, 0.02);
-  cursor: default;
+.creator-notifications-header-action {
+  flex: 0 0 auto;
 }
 
 .creator-notifications-list {
@@ -369,10 +350,12 @@ h3 {
 
 .creator-notification-item {
   width: 100%;
+  appearance: none;
   border: 1px solid rgba(120, 164, 255, 0.14);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
   border-radius: 16px;
   color: inherit;
+  font-family: var(--creator-font);
   text-align: left;
   padding: 14px;
   display: flex;
@@ -414,8 +397,10 @@ h3 {
 .creator-notification-title {
   flex: 1 1 auto;
   min-width: 0;
-  font-size: 13px;
+  font-family: var(--creator-font);
+  font-size: var(--creator-body-size);
   font-weight: 700;
+  letter-spacing: 0.01em;
   color: #f1f5ff;
   line-height: 1.4;
 }
@@ -427,9 +412,10 @@ h3 {
   min-height: 24px;
   padding: 0 8px;
   border-radius: 999px;
-  font-size: 10px;
+  font-family: var(--creator-font);
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -461,7 +447,8 @@ h3 {
 .creator-notification-snippet {
   margin: 0;
   color: rgba(220, 232, 255, 0.76);
-  font-size: 12px;
+  font-family: var(--creator-font);
+  font-size: var(--creator-body-size-sm);
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -470,8 +457,11 @@ h3 {
 }
 
 .creator-notification-time {
-  font-size: 11px;
   color: rgba(214, 226, 255, 0.56);
+  font-family: var(--creator-font);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .creator-notifications-dropdown .creator-notifications-empty {
@@ -480,7 +470,9 @@ h3 {
   padding: 24px 16px;
   text-align: center;
   color: var(--creator-muted);
-  font-size: 12px;
+  font-family: var(--creator-font);
+  font-size: var(--creator-body-size-sm);
+  line-height: 1.5;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01));
 }
 
@@ -492,9 +484,13 @@ h3 {
   display: block;
   border-top: 1px solid rgba(120, 164, 255, 0.16);
   padding: 12px 16px 14px;
-  font-size: 12px;
   color: #cce0ff;
+  font-family: var(--creator-font);
+  font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
 .creator-notifications-footer:hover,
@@ -757,7 +753,7 @@ h3 {
   flex-wrap: wrap;
 }
 
-.creator-notifications-center-actions .ss-btn {
+.creator-notifications-center-actions .creator-button {
   min-width: 0;
 }
 
@@ -7272,7 +7268,7 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
     width: 100%;
   }
 
-  .creator-notifications-center-actions .ss-btn {
+  .creator-notifications-center-actions .creator-button {
     flex: 1 1 auto;
   }
 

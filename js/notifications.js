@@ -421,7 +421,7 @@
               <div class="creator-notifications-center-actions">
                 <button
                   type="button"
-                  class="ss-btn ss-btn-secondary ss-btn-small"
+                  class="creator-button secondary"
                   data-action="${read ? "mark-unread" : "mark-read"}"
                   data-notification-id="${escapeHtml(item.id)}"
                 >
@@ -431,7 +431,7 @@
                   hasLink
                     ? `<button
                         type="button"
-                        class="ss-btn ss-btn-primary ss-btn-small"
+                        class="creator-button primary"
                         data-action="open"
                         data-notification-id="${escapeHtml(item.id)}"
                         data-link="${escapeHtml(item.link)}"

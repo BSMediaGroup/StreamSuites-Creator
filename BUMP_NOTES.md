@@ -1,5 +1,19 @@
 # Bump Notes
 
+## 2026-04-07 - Creator Notifications Surface Cleanup
+
+### Technical Notes
+
+- Replaced the remaining notification-page action buttons in `js/notifications.js` with the shared dashboard `creator-button` primitives, so notification row actions now inherit the same hover, focus, active, and disabled treatment used across the rest of Creator instead of the older `ss-btn` path.
+- Replaced the bell dropdown `Mark all read` control in `index.html` with the same shared Creator button family and removed the old bespoke `.creator-notifications-action` rules from `css/creator-dashboard.css`, eliminating the leftover notification-only button styling instead of preserving it behind extra overrides.
+- Retuned the bell dropdown typography in `css/creator-dashboard.css` so the header label, subtitle, unread count pill, notification row text, meta text, empty state, and footer link all explicitly use the Creator dashboard font stack and spacing hierarchy rather than relying on the older mixed notification-specific declarations.
+
+### Human-Readable Notes
+
+- Notifications page action buttons now match the rest of the current Creator dashboard.
+- The bell dropdown no longer uses the older notification-specific typography treatment and now reads like the rest of Creator.
+- This was a targeted cleanup pass only; no unrelated Creator routes were redesigned.
+
 ## 2026-04-07 - Creator Notifications Hydration + UI Overhaul
 
 ### Technical Notes
