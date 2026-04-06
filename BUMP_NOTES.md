@@ -1,5 +1,20 @@
 # Bump Notes
 
+## 2026-04-07 - Creator Notifications Hydration + UI Overhaul
+
+### Technical Notes
+
+- Reworked `js/utils/notifications-store.js` so Creator notifications now hydrate from the authoritative `GET /api/creator/notifications` contract and use the new runtime-owned `PATCH /api/creator/notifications` mutation for mark-read, mark-unread, and mark-all-read flows instead of persisting browser-only read IDs.
+- Rebuilt `js/notifications.js` around that shared authority contract so the bell dropdown, unread badge, and `/notifications` page stay synchronized after reads, mark-all actions, background refreshes, and deep-link opens.
+- Replaced the older notification-specific page markup and styling in `views/notifications.html`, `index.html`, and `css/creator-dashboard.css` with a scoped Creator-surface redesign: stronger page hierarchy, refreshed dropdown framing, richer notification cards, clearer unread/read affordances, truthful loading and empty states, and a more current sidebar/preferences treatment.
+- Removed/replaced scaffolded notification behavior in the Creator repo by deleting the browser-only read-state layer and the stale visual treatment tied to that local model. The store file changed shape rather than simply growing, and the old legacy notification-only styling block was replaced in place with the redesigned surface styles.
+
+### Human-Readable Notes
+
+- Creator notifications now show the real StreamSuites inbox in both the bell dropdown and the full Notifications page.
+- Reading a notification in one place updates the other place and the unread badge automatically.
+- The Creator notifications surface now looks like the rest of the newer Creator dashboard instead of the older placeholder treatment.
+
 ## Emergency Login Turnstile Placement Hotfix - 2026-04-06
 
 ### Technical Notes

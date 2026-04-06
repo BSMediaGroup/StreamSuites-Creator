@@ -6,14 +6,12 @@
   const DEFAULT_REFRESH_LIMIT = 25;
   const DEFAULT_REFRESH_TIMEOUT_MS = 8000;
 
-  const READ_STORAGE_KEY = "ss_creator_notifications_read";
   const MUTED_STORAGE_KEY = "ss_creator_notifications_muted";
   const UPDATE_EVENT = "streamsuites:notifications-updated";
   const LEGACY_UPDATE_EVENT = "ss:creator-notifications-updated";
 
   const state = {
     notifications: [],
-    readIds: new Set(),
     muted: {
       all: false,
       types: new Set()
@@ -22,6 +20,7 @@
     notes: [],
     nextCursor: "",
     isRefreshing: false,
+    isMutating: false,
     lastRefreshAt: 0,
     lastError: null,
     lastReason: ""
@@ -71,37 +70,28 @@
     const when = normalizeTimestamp(
       item.timestamp || item.time || item.created_at || item.createdAt || item.updated_at || item.updatedAt
     );
-    const title = normalizeText(item.title, "Untitled notification");
-    const snippet = normalizeText(item.snippet || item.message || item.summary || item.body, "");
-    const type = normalizeType(item.type);
-    const link = normalizeText(item.link || item.href || item.url || "", "");
-    const severity = normalizeText(item.severity || item.level || "", "");
-    const meta = normalizeMeta(item.meta);
+    const readAt = normalizeTimestamp(item.read_at || item.readAt || "");
 
     return {
       id,
-      type,
-      title,
-      snippet,
+      type: normalizeType(item.type),
+      title: normalizeText(item.title, "Untitled notification"),
+      snippet: normalizeText(item.snippet || item.message || item.summary || item.body, ""),
       timestamp: when.iso,
       timestampMs: when.ms,
-      link,
-      severity,
-      meta
+      readAt: readAt.iso,
+      isRead: item.is_read === true || item.isRead === true || Boolean(readAt.iso),
+      link: normalizeText(item.link || item.href || item.url || "", ""),
+      severity: normalizeText(item.severity || item.level || "", ""),
+      meta: normalizeMeta(item.meta)
     };
   }
 
   function sortNotifications(list) {
-    return list.slice().sort((left, right) => right.timestampMs - left.timestampMs);
-  }
-
-  function persistReadIds() {
-    if (typeof localStorage === "undefined") return;
-    try {
-      localStorage.setItem(READ_STORAGE_KEY, JSON.stringify(Array.from(state.readIds)));
-    } catch (err) {
-      // Ignore persistence failures.
-    }
+    return list.slice().sort((left, right) => {
+      if (right.timestampMs !== left.timestampMs) return right.timestampMs - left.timestampMs;
+      return String(right.id).localeCompare(String(left.id));
+    });
   }
 
   function persistMuted() {
@@ -119,17 +109,6 @@
     }
   }
 
-  function loadReadIds() {
-    if (typeof localStorage === "undefined") return;
-    const parsed = safeParse(localStorage.getItem(READ_STORAGE_KEY));
-    if (!Array.isArray(parsed)) return;
-    state.readIds = new Set(
-      parsed
-        .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
-        .filter(Boolean)
-    );
-  }
-
   function loadMuted() {
     if (typeof localStorage === "undefined") return;
     const parsed = safeParse(localStorage.getItem(MUTED_STORAGE_KEY));
@@ -144,32 +123,33 @@
     }
   }
 
+  function getUnreadCount() {
+    return state.notifications.reduce((count, item) => {
+      if (item.isRead) return count;
+      if (isMuted(item)) return count;
+      return count + 1;
+    }, 0);
+  }
+
   function emitUpdate() {
     const detail = {
       total: state.notifications.length,
       unread: getUnreadCount(),
       source: state.source,
       refreshing: state.isRefreshing,
+      mutating: state.isMutating,
       lastRefreshAt: state.lastRefreshAt,
       lastError: state.lastError
     };
 
     try {
-      window.dispatchEvent(
-        new CustomEvent(UPDATE_EVENT, {
-          detail
-        })
-      );
+      window.dispatchEvent(new CustomEvent(UPDATE_EVENT, { detail }));
     } catch (err) {
       // Ignore event dispatch failures.
     }
 
     try {
-      window.dispatchEvent(
-        new CustomEvent(LEGACY_UPDATE_EVENT, {
-          detail
-        })
-      );
+      window.dispatchEvent(new CustomEvent(LEGACY_UPDATE_EVENT, { detail }));
     } catch (err) {
       // Ignore legacy event dispatch failures.
     }
@@ -189,27 +169,15 @@
   }
 
   function isRead(itemOrId) {
-    const id =
-      typeof itemOrId === "string"
-        ? itemOrId.trim()
-        : typeof itemOrId?.id === "string"
-          ? itemOrId.id.trim()
-          : "";
-    return Boolean(id && state.readIds.has(id));
+    const item =
+      typeof itemOrId === "string" ? getNotificationById(itemOrId) : itemOrId && typeof itemOrId === "object" ? itemOrId : null;
+    return Boolean(item && item.isRead === true);
   }
 
   function isMuted(item) {
     if (!item || typeof item !== "object") return state.muted.all;
     const itemType = normalizeType(item.type);
     return state.muted.all || state.muted.types.has(itemType);
-  }
-
-  function getUnreadCount() {
-    return state.notifications.reduce((count, item) => {
-      if (isRead(item)) return count;
-      if (isMuted(item)) return count;
-      return count + 1;
-    }, 0);
   }
 
   function getSource() {
@@ -225,6 +193,7 @@
       source: state.source,
       lastRefreshAt: state.lastRefreshAt,
       isRefreshing: state.isRefreshing,
+      isMutating: state.isMutating,
       lastError: state.lastError ? { ...state.lastError } : null,
       notes: state.notes.slice(),
       nextCursor: state.nextCursor
@@ -235,32 +204,21 @@
     return state.isRefreshing;
   }
 
-  function markRead(id) {
-    if (typeof id !== "string" || !id.trim()) return;
-    state.readIds.add(id.trim());
-    persistReadIds();
-    emitUpdate();
-  }
-
-  function markUnread(id) {
-    if (typeof id !== "string" || !id.trim()) return;
-    state.readIds.delete(id.trim());
-    persistReadIds();
-    emitUpdate();
-  }
-
-  function toggleRead(id) {
-    if (isRead(id)) {
-      markUnread(id);
-      return;
-    }
-    markRead(id);
-  }
-
-  function markAllRead() {
-    state.notifications.forEach((item) => state.readIds.add(item.id));
-    persistReadIds();
-    emitUpdate();
+  function updateLocalReadState(ids, read, readAt = "") {
+    const normalizedIds = new Set(
+      (Array.isArray(ids) ? ids : [])
+        .map((id) => (typeof id === "string" ? id.trim() : ""))
+        .filter(Boolean)
+    );
+    if (!normalizedIds.size) return;
+    state.notifications = state.notifications.map((item) => {
+      if (!normalizedIds.has(item.id)) return item;
+      return {
+        ...item,
+        isRead: Boolean(read),
+        readAt: read ? readAt || item.readAt || new Date().toISOString() : ""
+      };
+    });
   }
 
   function setMuted(target, muted = true) {
@@ -361,6 +319,112 @@
     state.notes = Array.isArray(notes) ? notes.slice() : [];
   }
 
+  async function requestMutation(payload) {
+    const fetchWithTimeout = getFetchWithTimeout();
+
+    try {
+      state.isMutating = true;
+      emitUpdate();
+
+      const response = await fetchWithTimeout(
+        resolveNotificationsEndpoint(),
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            ...buildCreatorContextHeaders()
+          },
+          body: JSON.stringify(payload || {})
+        },
+        DEFAULT_REFRESH_TIMEOUT_MS
+      );
+      const raw = await response.text();
+      const data = safeParse(raw);
+
+      if (!response.ok) {
+        const error = new Error(`Notifications update failed with status ${response.status}.`);
+        error.status = response.status;
+        throw error;
+      }
+      if (!data || data.success !== true) {
+        throw new Error("Notifications update failed.");
+      }
+
+      const items = Array.isArray(data.items) ? data.items : [];
+      if (payload?.mark_all === true || payload?.markAll === true) {
+        const normalizedItems = items
+          .map((item, index) => normalizeNotification(item, index, "live"))
+          .filter(Boolean);
+        if (normalizedItems.length) {
+          const byId = new Map(normalizedItems.map((item) => [item.id, item]));
+          state.notifications = sortNotifications(
+            state.notifications.map((item) => (byId.has(item.id) ? byId.get(item.id) : item))
+          );
+        }
+      } else if (items.length) {
+        const normalizedItems = items
+          .map((item, index) => normalizeNotification(item, index, "live"))
+          .filter(Boolean);
+        const byId = new Map(normalizedItems.map((item) => [item.id, item]));
+        state.notifications = sortNotifications(
+          state.notifications.map((item) => (byId.has(item.id) ? byId.get(item.id) : item))
+        );
+      } else {
+        updateLocalReadState(data.updated_ids, payload?.read === true, payload?.read === true ? new Date().toISOString() : "");
+      }
+
+      state.lastError = null;
+      emitUpdate();
+      return data;
+    } catch (err) {
+      state.lastError = normalizeRefreshError(err);
+      if (state.lastError?.status === 401 || state.lastError?.status === 403) {
+        window.StreamSuitesAuth?.reportProtectedDataFailure?.({
+          status: state.lastError.status,
+          message: "Creator notifications are no longer authorized.",
+          source: "notifications"
+        });
+      }
+      throw err;
+    } finally {
+      state.isMutating = false;
+      emitUpdate();
+    }
+  }
+
+  async function markRead(id) {
+    if (typeof id !== "string" || !id.trim()) return;
+    await requestMutation({
+      notification_ids: [id.trim()],
+      read: true
+    });
+  }
+
+  async function markUnread(id) {
+    if (typeof id !== "string" || !id.trim()) return;
+    await requestMutation({
+      notification_ids: [id.trim()],
+      read: false
+    });
+  }
+
+  async function toggleRead(id) {
+    if (isRead(id)) {
+      await markUnread(id);
+      return;
+    }
+    await markRead(id);
+  }
+
+  async function markAllRead() {
+    await requestMutation({
+      mark_all: true,
+      read: true
+    });
+  }
+
   async function refresh(options = {}) {
     const force = options?.force === true;
     const reason = normalizeText(options?.reason, "manual");
@@ -396,7 +460,7 @@
             credentials: "include",
             headers: {
               Accept: "application/json",
-              ...buildCreatorContextHeaders(),
+              ...buildCreatorContextHeaders()
             }
           },
           DEFAULT_REFRESH_TIMEOUT_MS
@@ -416,8 +480,7 @@
         }
 
         if (payload.success !== true) {
-          const failureError = new Error("Notifications API returned success:false.");
-          throw failureError;
+          throw new Error("Notifications API returned success:false.");
         }
 
         const items = Array.isArray(payload.items) ? payload.items : [];
@@ -462,7 +525,6 @@
   }
 
   function init() {
-    loadReadIds();
     loadMuted();
     applyEmptyState();
     state.lastError = null;
@@ -471,7 +533,6 @@
   init();
 
   window.StreamSuitesCreatorNotificationsStore = {
-    READ_STORAGE_KEY,
     MUTED_STORAGE_KEY,
     UPDATE_EVENT,
     refresh,

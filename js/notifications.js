@@ -12,6 +12,7 @@
     toggle: null,
     badge: null,
     dropdown: null,
+    dropdownCount: null,
     list: null,
     markAll: null,
     viewAll: null
@@ -21,8 +22,12 @@
     root: null,
     count: null,
     unread: null,
+    source: null,
+    summaryUnread: null,
+    summaryVisible: null,
     filterStatus: null,
     filterSearch: null,
+    refresh: null,
     markAll: null,
     list: null,
     empty: null,
@@ -116,6 +121,25 @@
     }
   }
 
+  function formatSourceLabel(store) {
+    const source = typeof store?.getSource === "function" ? store.getSource() : "";
+    if (source === "live") return "Live sync";
+    if (source === "empty") return "No feed data";
+    return "Awaiting sync";
+  }
+
+  function formatSeverityLabel(value) {
+    const normalized = typeof value === "string" ? value.trim().toLowerCase() : "";
+    if (normalized === "critical") return "Critical";
+    if (normalized === "warning") return "Warning";
+    return "Info";
+  }
+
+  function formatTypeLabel(value) {
+    const safe = typeof value === "string" && value.trim() ? value.trim() : "system";
+    return safe.charAt(0).toUpperCase() + safe.slice(1);
+  }
+
   function navigateToTarget(target) {
     const normalized = typeof target === "string" ? target.trim() : "";
     if (!normalized) {
@@ -148,6 +172,7 @@
     topbar.toggle = document.getElementById("creator-notifications-toggle");
     topbar.badge = document.getElementById("creator-notifications-badge");
     topbar.dropdown = document.getElementById("creator-notifications-dropdown");
+    topbar.dropdownCount = document.getElementById("creator-notifications-dropdown-count");
     topbar.list = document.getElementById("creator-notifications-list");
     topbar.markAll = document.getElementById("creator-notifications-mark-all");
     topbar.viewAll = document.getElementById("creator-notifications-view-all");
@@ -156,6 +181,7 @@
         topbar.toggle &&
         topbar.badge &&
         topbar.dropdown &&
+        topbar.dropdownCount &&
         topbar.list &&
         topbar.markAll &&
         topbar.viewAll
@@ -183,11 +209,12 @@
 
   function renderTopbarBadge() {
     const store = getStore();
-    if (!store || !topbar.badge || !topbar.toggle) return;
+    if (!store || !topbar.badge || !topbar.toggle || !topbar.markAll || !topbar.dropdownCount) return;
     const unread = store.getUnreadCount();
     const visible = unread > 0;
     topbar.badge.classList.toggle("hidden", !visible);
     topbar.badge.textContent = visible ? formatBadgeCount(unread) : "";
+    topbar.dropdownCount.textContent = unread === 1 ? "1 unread" : `${unread} unread`;
     topbar.toggle.setAttribute(
       "aria-label",
       visible ? `Open notifications (${unread} unread)` : "Open notifications"
@@ -205,7 +232,7 @@
       const notes = typeof store.getNotes === "function" ? store.getNotes() : [];
       const notesText = notes.length ? escapeHtml(notes.join(" ")) : "";
       topbar.list.innerHTML = refreshing
-        ? '<div class="creator-notifications-empty muted">Refreshing...</div>'
+        ? '<div class="creator-notifications-empty muted">Refreshing authoritative feed...</div>'
         : `
           <div class="creator-notifications-empty">No notifications.</div>
           ${notesText ? `<div class="creator-notifications-empty muted">${notesText}</div>` : ""}
@@ -216,24 +243,25 @@
     topbar.list.innerHTML = previewItems
       .map((item) => {
         const read = store.isRead(item);
-        const title = escapeHtml(item.title);
-        const snippet = escapeHtml(item.snippet || "");
-        const timestamp = escapeHtml(formatTimeLabel(item.timestamp, item.timestampMs));
-        const statusClass = read ? "is-read" : "is-unread";
-
+        const severity = escapeHtml(String(item.severity || "info").toLowerCase());
         return `
           <button
             type="button"
-            class="creator-notification-item ${statusClass}"
+            class="creator-notification-item ${read ? "is-read" : "is-unread"}"
             data-notification-id="${escapeHtml(item.id)}"
             data-notification-link="${escapeHtml(item.link || "")}"
           >
             <div class="creator-notification-topline">
-              <span class="creator-notification-title">${title}</span>
+              <span class="creator-notification-title">${escapeHtml(item.title)}</span>
+              <span class="creator-notification-pill severity-${severity}">${escapeHtml(
+                formatSeverityLabel(item.severity)
+              )}</span>
               <span class="creator-notification-unread-dot ${read ? "hidden" : ""}" aria-hidden="true"></span>
             </div>
-            <p class="creator-notification-snippet">${snippet}</p>
-            <span class="creator-notification-time">${timestamp}</span>
+            <p class="creator-notification-snippet">${escapeHtml(item.snippet || "No summary available.")}</p>
+            <span class="creator-notification-time">${escapeHtml(
+              formatTimeLabel(item.timestamp, item.timestampMs)
+            )}</span>
           </button>
         `;
       })
@@ -250,8 +278,12 @@
     center.root = document.getElementById("creator-notifications-center-root");
     center.count = document.getElementById("creator-notifications-center-count");
     center.unread = document.getElementById("creator-notifications-center-unread");
+    center.source = document.getElementById("creator-notifications-center-source");
+    center.summaryUnread = document.getElementById("creator-notifications-summary-unread");
+    center.summaryVisible = document.getElementById("creator-notifications-summary-visible");
     center.filterStatus = document.getElementById("creator-notifications-filter-status");
     center.filterSearch = document.getElementById("creator-notifications-filter-search");
+    center.refresh = document.getElementById("creator-notifications-center-refresh");
     center.markAll = document.getElementById("creator-notifications-center-mark-all");
     center.list = document.getElementById("creator-notifications-center-list");
     center.empty = document.getElementById("creator-notifications-center-empty");
@@ -262,8 +294,12 @@
       center.root &&
         center.count &&
         center.unread &&
+        center.source &&
+        center.summaryUnread &&
+        center.summaryVisible &&
         center.filterStatus &&
         center.filterSearch &&
+        center.refresh &&
         center.markAll &&
         center.list &&
         center.empty &&
@@ -280,8 +316,9 @@
       const read = store.isRead(item);
       if (state.centerFilters.status === "unread" && read) return false;
       if (state.centerFilters.status === "read" && !read) return false;
+      if (store.isMuted(item)) return false;
       if (!query) return true;
-      const haystack = `${item.title} ${item.snippet}`.toLowerCase();
+      const haystack = `${item.title} ${item.snippet} ${item.type} ${item.severity}`.toLowerCase();
       return haystack.includes(query);
     });
   }
@@ -298,12 +335,11 @@
     center.muteTypes.innerHTML = types
       .map((type) => {
         const checked = muted.has(type) ? "checked" : "";
-        const label = `${type.charAt(0).toUpperCase()}${type.slice(1)}`;
         return `
           <label class="creator-notifications-setting-toggle small ss-checkbox-wrapper">
             <input type="checkbox" data-mute-type="${escapeHtml(type)}" ${checked} />
             <div class="ss-checkbox"></div>
-            <span class="ss-checkbox-text">${escapeHtml(label)}</span>
+            <span class="ss-checkbox-text">${escapeHtml(formatTypeLabel(type))}</span>
           </label>
         `;
       })
@@ -326,15 +362,10 @@
 
       if (!allItems.length) {
         if (emptyTitle) emptyTitle.textContent = "No notifications";
-        if (emptyText) {
-          emptyText.textContent = "You're all caught up.";
-        }
+        if (emptyText) emptyText.textContent = "There are no creator notifications for this account yet.";
       } else {
-        if (emptyTitle) emptyTitle.textContent = "Nothing to show right now";
-        if (emptyText) {
-          emptyText.textContent =
-            "Try a different filter or search phrase, or unmute notification types in settings.";
-        }
+        if (emptyTitle) emptyTitle.textContent = "Nothing matches your current view";
+        if (emptyText) emptyText.textContent = "Try a different filter or search phrase, or unmute notification types in preferences.";
       }
 
       let notesElement = document.getElementById("creator-notifications-center-note");
@@ -359,42 +390,57 @@
       .map((item) => {
         const read = store.isRead(item);
         const muted = store.isMuted(item);
-        const classes = ["creator-notifications-center-item"];
-        classes.push(read ? "is-read" : "is-unread");
-        if (muted) classes.push("is-muted");
-
-        const typeLabel = `${item.type.charAt(0).toUpperCase()}${item.type.slice(1)}`;
-        const timestamp = escapeHtml(formatTimeLabel(item.timestamp, item.timestampMs));
-        const linkAction = item.link
-          ? `<button type="button" class="ss-btn ss-btn-secondary ss-btn-small" data-action="open" data-link="${escapeHtml(
-              item.link
-            )}" data-notification-id="${escapeHtml(item.id)}">Open</button>`
-          : "";
-
+        const hasLink = Boolean(item.link);
         return `
-          <article class="${classes.join(" ")}" data-notification-id="${escapeHtml(item.id)}">
+          <article class="creator-notifications-center-item ${read ? "is-read" : "is-unread"} ${
+            muted ? "is-muted" : ""
+          }" data-notification-id="${escapeHtml(item.id)}">
             <div class="creator-notifications-center-indicator" aria-hidden="true"></div>
-            <div class="creator-notifications-center-content">
-              <div class="creator-notifications-center-title-row">
-                <h3>${escapeHtml(item.title)}</h3>
-                <div class="creator-notifications-center-chips">
-                  <span class="ss-chip creator-notifications-type-chip">${escapeHtml(typeLabel)}</span>
-                  ${muted ? '<span class="ss-chip creator-notifications-muted-chip">Muted</span>' : ""}
+            <div class="creator-notifications-center-body">
+              <div class="creator-notifications-center-content">
+                <div class="creator-notifications-center-topline">
+                  <div class="creator-notifications-center-title-row">
+                    <h3>${escapeHtml(item.title)}</h3>
+                    <div class="creator-notifications-center-chips">
+                      <span class="ss-chip creator-notifications-type-chip">${escapeHtml(
+                        formatTypeLabel(item.type)
+                      )}</span>
+                      <span class="ss-chip creator-notification-pill severity-${escapeHtml(
+                        String(item.severity || "info").toLowerCase()
+                      )}">${escapeHtml(formatSeverityLabel(item.severity))}</span>
+                      ${read ? '<span class="ss-chip creator-notifications-read-chip">Read</span>' : ""}
+                      ${muted ? '<span class="ss-chip creator-notifications-muted-chip">Muted</span>' : ""}
+                    </div>
+                  </div>
+                  <div class="creator-notifications-center-meta">
+                    <span>${escapeHtml(formatTimeLabel(item.timestamp, item.timestampMs))}</span>
+                  </div>
                 </div>
+                <p>${escapeHtml(item.snippet || "No summary available.")}</p>
               </div>
-              <p>${escapeHtml(item.snippet || "No summary available.")}</p>
-              <span class="creator-notifications-center-meta">${timestamp}</span>
-            </div>
-            <div class="creator-notifications-center-actions">
-              <button
-                type="button"
-                class="ss-btn ss-btn-secondary ss-btn-small"
-                data-action="toggle-read"
-                data-notification-id="${escapeHtml(item.id)}"
-              >
-                ${read ? "Mark unread" : "Mark read"}
-              </button>
-              ${linkAction}
+              <div class="creator-notifications-center-actions">
+                <button
+                  type="button"
+                  class="ss-btn ss-btn-secondary ss-btn-small"
+                  data-action="${read ? "mark-unread" : "mark-read"}"
+                  data-notification-id="${escapeHtml(item.id)}"
+                >
+                  ${read ? "Mark unread" : "Mark read"}
+                </button>
+                ${
+                  hasLink
+                    ? `<button
+                        type="button"
+                        class="ss-btn ss-btn-primary ss-btn-small"
+                        data-action="open"
+                        data-notification-id="${escapeHtml(item.id)}"
+                        data-link="${escapeHtml(item.link)}"
+                      >
+                        Open destination
+                      </button>`
+                    : ""
+                }
+              </div>
             </div>
           </article>
         `;
@@ -407,8 +453,12 @@
     if (!store || !cacheCenterElements()) return;
 
     const unread = store.getUnreadCount();
+    const visible = getFilteredCenterItems().length;
     center.count.textContent = `${getStoreItems(store).length} total`;
     center.unread.textContent = `${unread} unread`;
+    center.source.textContent = formatSourceLabel(store);
+    center.summaryUnread.textContent = String(unread);
+    center.summaryVisible.textContent = String(visible);
     center.markAll.disabled = unread <= 0;
     center.filterStatus.value = state.centerFilters.status;
     center.filterSearch.value = state.centerFilters.query;
@@ -423,7 +473,7 @@
     renderCenter();
   }
 
-  function handleTopbarClick(event) {
+  async function handleTopbarClick(event) {
     const store = getStore();
     if (!store) return;
 
@@ -432,7 +482,13 @@
 
     const id = notificationButton.dataset.notificationId || "";
     const link = notificationButton.dataset.notificationLink || "";
-    if (id) store.markRead(id);
+    if (id && !store.isRead(id)) {
+      try {
+        await store.markRead(id);
+      } catch (err) {
+        return;
+      }
+    }
     setDropdownOpen(false);
     navigateToTarget(link || "/notifications");
   }
@@ -458,10 +514,12 @@
       }
     });
 
-    topbar.list.addEventListener("click", handleTopbarClick);
+    topbar.list.addEventListener("click", (event) => {
+      void handleTopbarClick(event);
+    });
 
     topbar.markAll.addEventListener("click", () => {
-      store.markAllRead();
+      void store.markAllRead().catch(() => {});
     });
 
     topbar.viewAll.addEventListener("click", () => {
@@ -485,33 +543,32 @@
 
     window.addEventListener("hashchange", closeDropdown);
     window.addEventListener("popstate", closeDropdown);
-
     window.addEventListener(store.UPDATE_EVENT, renderAll);
   }
 
-  function handleCenterListClick(event) {
+  async function handleCenterListClick(event) {
     const store = getStore();
     if (!store) return;
 
     const actionButton = event.target.closest("[data-action]");
-    if (actionButton instanceof HTMLElement) {
-      const action = actionButton.dataset.action || "";
-      const id = actionButton.dataset.notificationId || "";
-      if (action === "toggle-read") {
-        store.toggleRead(id);
-        return;
-      }
-      if (action === "open") {
-        if (id) store.markRead(id);
-        navigateToTarget(actionButton.dataset.link || "");
-      }
+    if (!(actionButton instanceof HTMLElement)) return;
+
+    const action = actionButton.dataset.action || "";
+    const id = actionButton.dataset.notificationId || "";
+    if (action === "mark-read") {
+      await store.markRead(id).catch(() => {});
       return;
     }
-
-    const row = event.target.closest(".creator-notifications-center-item");
-    if (!(row instanceof HTMLElement)) return;
-    const id = row.dataset.notificationId || "";
-    if (id) store.toggleRead(id);
+    if (action === "mark-unread") {
+      await store.markUnread(id).catch(() => {});
+      return;
+    }
+    if (action === "open") {
+      if (id && !store.isRead(id)) {
+        await store.markRead(id).catch(() => {});
+      }
+      navigateToTarget(actionButton.dataset.link || "");
+    }
   }
 
   function bindCenterEvents() {
@@ -529,8 +586,12 @@
       renderCenter();
     });
 
+    center.refresh.addEventListener("click", () => {
+      void requestRefresh({ reason: "notifications-refresh-click", force: true });
+    });
+
     center.markAll.addEventListener("click", () => {
-      store.markAllRead();
+      void store.markAllRead().catch(() => {});
     });
 
     center.muteAll.addEventListener("change", () => {
@@ -546,7 +607,9 @@
       }
     });
 
-    center.list.addEventListener("click", handleCenterListClick);
+    center.list.addEventListener("click", (event) => {
+      void handleCenterListClick(event);
+    });
   }
 
   function destroyCenter() {
@@ -554,8 +617,12 @@
     center.root = null;
     center.count = null;
     center.unread = null;
+    center.source = null;
+    center.summaryUnread = null;
+    center.summaryVisible = null;
     center.filterStatus = null;
     center.filterSearch = null;
+    center.refresh = null;
     center.markAll = null;
     center.list = null;
     center.empty = null;
