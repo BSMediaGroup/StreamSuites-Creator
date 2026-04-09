@@ -1,5 +1,15 @@
 # Bump Notes
 
+## 2026-04-09 - Runtime Turnstile Kill-Switch Coverage
+
+### Technical Notes
+
+- Added focused source coverage in `tests/auth-surface-links.test.mjs` so the Creator login Turnstile block remains keyed to the authoritative runtime `/auth/turnstile/config` response and preserves the hidden-panel collapse path when the runtime `enabled` flag is false.
+
+### Human-Readable Notes
+
+- Creator login still follows the runtime-owned Turnstile state instead of drifting into a local override.
+
 ## 2026-04-07 - Creator Notifications Surface Cleanup
 
 ### Technical Notes

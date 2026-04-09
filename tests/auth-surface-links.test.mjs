@@ -31,3 +31,12 @@ test("creator dropdown keeps the compact overview card and role-gated debug cont
   assert.match(authJs, /session\?\.creatorDebug\?\.adminCapable === true/);
   assert.match(authJs, /session\?\.creatorDebug\?\.developerCapable === true/);
 });
+
+test("creator auth uses the runtime turnstile config as the single widget visibility gate", () => {
+  const authJs = read("js/auth.js");
+
+  assert.match(authJs, /payload\?\.enabled === true/);
+  assert.match(authJs, /ui\.panel\.hidden = !authTurnstile\.enabled/);
+  assert.match(authJs, /if \(!authTurnstile\.enabled \|\| !ui\?\.slot\)/);
+  assert.match(authJs, /if \(!authTurnstile\.enabled\) return "";/);
+});
