@@ -167,7 +167,8 @@ StreamSuites-Creator/
 │       ├── version-stamp.js
 │       └── versioning.js
 ├── tests/
-│   └── auth-surface-links.test.mjs
+│   ├── auth-surface-links.test.mjs
+│   └── notifications-authority.test.mjs
 └── views/
     ├── account.html
     ├── integrations.html

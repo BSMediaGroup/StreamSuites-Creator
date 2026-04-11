@@ -1,5 +1,18 @@
 # Bump Notes
 
+## 2026-04-12 - Creator Notification Runtime Authority Cleanup
+
+### Technical Notes
+
+- Tightened `js/utils/notifications-store.js` so the Creator notifications consumer no longer carries the older seed-oriented source branch, and so unread totals now follow the runtime/Auth contract instead of being recomputed from locally muted presentation state.
+- No Creator layout redesign was introduced for this pass. The existing dropdown and `/notifications` page continue using the same DOM, styling, and runtime hydration flow, but they now stop legitimizing legacy placeholder seed semantics in client code.
+- Added `tests/notifications-authority.test.mjs` and updated `README.md` so this repo now covers the specific regression that the Creator notifications store must stay on the runtime `/api/creator/notifications` authority path without reintroducing seed hydration logic.
+
+### Human-Readable Notes
+
+- Creator keeps the same notifications UI, but it now trusts the runtime unread counts and no longer carries seed-style fallback logic in the browser.
+- This repo did not remove page structure or styling; the change was a data-authority hardening pass only.
+
 ## 2026-04-09 - Runtime Turnstile Kill-Switch Coverage
 
 ### Technical Notes

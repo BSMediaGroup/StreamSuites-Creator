@@ -12,6 +12,8 @@
 
   const state = {
     notifications: [],
+    totalCount: 0,
+    unreadCount: 0,
     muted: {
       all: false,
       types: new Set()
@@ -61,7 +63,7 @@
     };
   }
 
-  function normalizeNotification(item, index, origin = "seed") {
+  function normalizeNotification(item, index, origin = "live") {
     if (!item || typeof item !== "object") return null;
     const id =
       typeof item.id === "string" && item.id.trim()
@@ -124,16 +126,13 @@
   }
 
   function getUnreadCount() {
-    return state.notifications.reduce((count, item) => {
-      if (item.isRead) return count;
-      if (isMuted(item)) return count;
-      return count + 1;
-    }, 0);
+    return Math.max(0, Number(state.unreadCount) || 0);
   }
 
   function emitUpdate() {
     const detail = {
       total: state.notifications.length,
+      totalCount: state.totalCount,
       unread: getUnreadCount(),
       source: state.source,
       refreshing: state.isRefreshing,
@@ -254,13 +253,17 @@
     const nextItems = Array.isArray(items) ? items : [];
     const requestedSource =
       typeof options.source === "string" && options.source.trim() ? options.source.trim().toLowerCase() : "";
-    const source = requestedSource === "live" || requestedSource === "seed" ? requestedSource : state.source;
+    const source = requestedSource === "live" ? requestedSource : state.source;
     state.notifications = sortNotifications(
       nextItems
         .map((item, index) => normalizeNotification(item, index, source))
         .filter(Boolean)
     );
     state.source = source;
+    state.totalCount = Number.isFinite(options.totalCount) ? Math.max(0, Number(options.totalCount)) : state.notifications.length;
+    state.unreadCount = Number.isFinite(options.unreadCount)
+      ? Math.max(0, Number(options.unreadCount))
+      : state.notifications.reduce((count, item) => count + (item.isRead ? 0 : 1), 0);
     emitUpdate();
   }
 
@@ -314,6 +317,8 @@
 
   function applyEmptyState(notes = []) {
     state.notifications = [];
+    state.totalCount = 0;
+    state.unreadCount = 0;
     state.source = "empty";
     state.nextCursor = "";
     state.notes = Array.isArray(notes) ? notes.slice() : [];
@@ -375,6 +380,12 @@
         updateLocalReadState(data.updated_ids, payload?.read === true, payload?.read === true ? new Date().toISOString() : "");
       }
 
+      if (Number.isFinite(data.total_count)) {
+        state.totalCount = Math.max(0, Number(data.total_count));
+      }
+      if (Number.isFinite(data.unread_count)) {
+        state.unreadCount = Math.max(0, Number(data.unread_count));
+      }
       state.lastError = null;
       emitUpdate();
       return data;
@@ -490,6 +501,12 @@
             .filter(Boolean)
         );
         state.source = "live";
+        state.totalCount = Number.isFinite(payload.total_count)
+          ? Math.max(0, Number(payload.total_count))
+          : state.notifications.length;
+        state.unreadCount = Number.isFinite(payload.unread_count)
+          ? Math.max(0, Number(payload.unread_count))
+          : state.notifications.reduce((count, item) => count + (item.isRead ? 0 : 1), 0);
         state.nextCursor = normalizeText(payload.next_cursor, "");
         state.notes = normalizeNotes(payload.notes);
         state.lastError = null;
@@ -527,6 +544,8 @@
   function init() {
     loadMuted();
     applyEmptyState();
+    state.totalCount = 0;
+    state.unreadCount = 0;
     state.lastError = null;
   }
 
