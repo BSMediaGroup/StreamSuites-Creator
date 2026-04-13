@@ -1,5 +1,29 @@
 # Bump Notes
 
+## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.8-alpha
+
+## 2026-04-13 - Creator Rumble Bot Auto-Deploy Authority Surface
+
+### Technical Notes
+
+- Extended `views/platforms/rumble.html` with an additive Rumble bot auto-deploy card that exposes a creator toggle plus the runtime-owned decision output for enabled state, connection posture, live state, resolved target data, and blocking reason without redesigning the broader page.
+- Extended `js/platform-integration-detail.js` so the Creator dashboard now reads the authoritative `integration.bot_auto_deploy_enabled` and `integration.bot_auto_deploy` fields from the runtime integration payload, renders the decision locally, and persists preference changes only through `POST /api/creator/integrations/rumble/bot-auto-deploy`.
+- The Creator repo does not persist canonical bot or live state locally in this flow. The new client logic is a narrow adapter around the runtime/Auth response and gracefully reports missing or blocked runtime data instead of fabricating ready state.
+- Added focused source-level regression coverage in `tests/notifications-authority.test.mjs` so the Rumble page must keep its decision card hooks and the Creator controller must continue using the runtime bot auto-deploy endpoint and payload keys.
+
+### Human-Readable Notes
+
+- Creators can now turn Rumble bot auto-deploy on or off from the existing Rumble integration page.
+- The page now shows whether runtime considers the creator merely enabled, currently live, actually eligible, or blocked, along with the resolved watch target when one exists.
+- Creator remains a control and visibility surface only. Runtime/Auth stays the single authority.
+
+### Files / Areas Touched
+
+- `views/platforms/rumble.html`
+- `js/platform-integration-detail.js`
+- `tests/notifications-authority.test.mjs`
+- `BUMP_NOTES.md`
+
 ## 2026-04-12 - Creator Notification Runtime Authority Cleanup
 
 ### Technical Notes

@@ -336,6 +336,40 @@
             </article>
 
             <article class="card platform-detail-card-wide">
+              <div class="card-top">
+                <h3>Bot auto-deploy decision</h3>
+                <span class="status-pill subtle" data-rumble-bot-decision-pill="true"><span class="status-dot"></span>Loading</span>
+              </div>
+              <label class="platform-workspace-toggle">
+                <span class="platform-workspace-toggle-copy">Enable Rumble bot auto-deploy when runtime/Auth says this creator is ready</span>
+                <span class="switch-button">
+                  <span class="switch-scale">
+                    <span class="switch-outer">
+                      <input type="checkbox" aria-label="Enable Rumble bot auto-deploy" data-rumble-bot-autodeploy-toggle="true" />
+                      <span class="ss-switch-inner">
+                        <span class="ss-switch-toggle"></span>
+                        <span class="ss-switch-indicator"></span>
+                      </span>
+                    </span>
+                  </span>
+                </span>
+              </label>
+              <p class="integration-health-title" data-rumble-bot-decision-summary="true">
+                Loading authoritative Rumble bot auto-deploy status...
+              </p>
+              <div class="platform-badge-row" data-rumble-bot-decision-badges="true"></div>
+              <ul data-rumble-bot-decision-checks="true">
+                <li>Loading decision checks...</li>
+              </ul>
+              <p class="account-note" data-rumble-bot-decision-note="true">
+                The creator surface does not invent bot readiness locally. This state is computed by runtime/Auth.
+              </p>
+              <p class="account-note" data-rumble-bot-decision-target="true">
+                Waiting for a resolved Rumble target...
+              </p>
+            </article>
+
+            <article class="card platform-detail-card-wide">
               <h3>Readiness and next steps</h3>
               <div class="stat-grid">
                 <div>

@@ -246,6 +246,167 @@
     }
   }
 
+  function humanizeBooleanState(value, truthyLabel, falsyLabel) {
+    return value ? truthyLabel : falsyLabel;
+  }
+
+  function humanizeRumbleBotBlockingReason(reason) {
+    switch (String(reason || "").trim().toLowerCase()) {
+      case "creator_disabled":
+        return "Auto-deploy is disabled for this creator.";
+      case "rumble_not_connected":
+        return "No backend-owned Rumble credential is currently connected.";
+      case "creator_identity_missing":
+        return "Runtime does not yet have enough Rumble identity for this creator.";
+      case "live_status_unavailable":
+        return "Runtime live status is not currently available.";
+      case "creator_offline":
+        return "The creator is not currently live on Rumble.";
+      case "watch_url_unresolved":
+        return "A live session exists but the watch target is not resolved yet.";
+      case "attach_identity_unresolved":
+        return "A live session exists but runtime has not resolved enough stream or chat identity for future bot attachment.";
+      default:
+        return "No blocking reason is currently reported.";
+    }
+  }
+
+  function rumbleBotDecision(integration) {
+    return integration?.bot_auto_deploy && typeof integration.bot_auto_deploy === "object"
+      ? integration.bot_auto_deploy
+      : null;
+  }
+
+  function rumbleBotDecisionPill(decision) {
+    if (!decision) {
+      return { label: "Decision unavailable", tone: "warning" };
+    }
+    if (!decision.enabled) {
+      return { label: "Disabled", tone: "subtle" };
+    }
+    if (decision.eligible) {
+      return { label: "Eligible now", tone: "success" };
+    }
+    if (String(decision.live_status || "").trim().toLowerCase() === "live") {
+      return { label: "Live but blocked", tone: "warning" };
+    }
+    return { label: "Enabled but blocked", tone: "warning" };
+  }
+
+  function renderRumbleBotDecision(integration) {
+    const decision = rumbleBotDecision(integration);
+    const pillEl = query("[data-rumble-bot-decision-pill=\"true\"]");
+    const toggleEl = query("[data-rumble-bot-autodeploy-toggle=\"true\"]");
+    const summaryEl = query("[data-rumble-bot-decision-summary=\"true\"]");
+    const badgesEl = query("[data-rumble-bot-decision-badges=\"true\"]");
+    const checksEl = query("[data-rumble-bot-decision-checks=\"true\"]");
+    const noteEl = query("[data-rumble-bot-decision-note=\"true\"]");
+    const targetEl = query("[data-rumble-bot-decision-target=\"true\"]");
+
+    if (toggleEl instanceof HTMLInputElement) {
+      toggleEl.checked = Boolean(integration?.bot_auto_deploy_enabled);
+    }
+    if (!(pillEl instanceof HTMLElement)) return;
+
+    const decisionPill = rumbleBotDecisionPill(decision);
+    setStatusPill(pillEl, decisionPill.label, decisionPill.tone);
+
+    if (summaryEl instanceof HTMLElement) {
+      if (!decision) {
+        summaryEl.textContent = "Runtime has not exported a Rumble bot auto-deploy decision yet.";
+      } else if (!decision.enabled) {
+        summaryEl.textContent = "Auto-deploy is off. Runtime will not consider this creator eligible until you enable the setting.";
+      } else if (decision.eligible) {
+        summaryEl.textContent =
+          "Auto-deploy is enabled and runtime currently resolves enough live target identity for a future Rumble bot runner.";
+      } else if (String(decision.live_status || "").trim().toLowerCase() === "live") {
+        summaryEl.textContent =
+          "Auto-deploy is enabled and the creator appears live, but runtime is still blocking deployment until the missing target identity resolves.";
+      } else {
+        summaryEl.textContent =
+          "Auto-deploy is enabled, but runtime is not currently reporting an eligible Rumble deployment target.";
+      }
+    }
+
+    if (badgesEl instanceof HTMLElement) {
+      const badges = decision
+        ? [
+            {
+              label: humanizeBooleanState(decision.enabled, "Setting enabled", "Setting disabled"),
+              tone: decision.enabled ? "success" : "subtle"
+            },
+            {
+              label: humanizeBooleanState(decision.connected, "Rumble connected", "Rumble not connected"),
+              tone: decision.connected ? "success" : "warning"
+            },
+            {
+              label:
+                String(decision.live_status || "").trim().toLowerCase() === "live"
+                  ? "Currently live"
+                  : String(decision.live_status || "").trim().toLowerCase() === "offline"
+                    ? "Currently offline"
+                    : "Live state unknown",
+              tone: String(decision.live_status || "").trim().toLowerCase() === "live" ? "success" : "subtle"
+            },
+            {
+              label: humanizeBooleanState(
+                decision.attach_identity_ready,
+                "Attach identity resolved",
+                "Attach identity incomplete"
+              ),
+              tone: decision.attach_identity_ready ? "success" : "warning"
+            }
+          ]
+        : [{ label: "Decision unavailable", tone: "warning" }];
+      renderPills(badgesEl, badges);
+    }
+
+    if (checksEl instanceof HTMLElement) {
+      const lines = decision
+        ? [
+            `Rumble connection: ${humanizeBooleanState(decision.connected, "present", "missing")}`,
+            `Creator identity: ${humanizeBooleanState(decision.creator_identifiable, "resolved", "missing")}`,
+            `Creator match status: ${decision.creator_match_status || "unknown"}`,
+            `Live status: ${decision.live_status || "unknown"}`,
+            `Watch target: ${decision.resolved_watch_url || "Not resolved"}`,
+            `Attach identity ready: ${humanizeBooleanState(decision.attach_identity_ready, "yes", "no")}`,
+            `Last evaluated: ${formatTimestamp(decision.last_evaluated_at)}`,
+            `Last live check: ${formatTimestamp(decision.last_live_status_checked_at)}`
+          ]
+        : ["No runtime decision payload is available yet."];
+      renderList(checksEl, lines);
+    }
+
+    if (noteEl instanceof HTMLElement) {
+      noteEl.textContent = decision
+        ? humanizeRumbleBotBlockingReason(decision.blocking_reason)
+        : "The Rumble bot auto-deploy decision is unavailable right now.";
+    }
+
+    if (targetEl instanceof HTMLElement) {
+      if (!decision) {
+        targetEl.innerHTML = "";
+        return;
+      }
+      const bits = [];
+      if (decision.resolved_watch_url) {
+        bits.push(
+          `Resolved watch target: <a href="${escapeHtml(decision.resolved_watch_url)}" target="_blank" rel="noreferrer">Open live target</a>`
+        );
+      }
+      if (decision.resolved_channel_handle) {
+        bits.push(`Channel handle: ${escapeHtml(decision.resolved_channel_handle)}`);
+      }
+      if (decision.resolved_video_id) {
+        bits.push(`Video id: ${escapeHtml(decision.resolved_video_id)}`);
+      }
+      if (decision.resolved_chat_id) {
+        bits.push(`Chat id: ${escapeHtml(decision.resolved_chat_id)}`);
+      }
+      targetEl.innerHTML = bits.join("<br />");
+    }
+  }
+
   function formatTimestamp(value) {
     if (!value) return "Pending";
     const date = new Date(value);
@@ -378,8 +539,11 @@
         }
       });
     });
-    queryAll("[data-platform-connect-provider], [data-platform-refresh-detail], [data-platform-remove-workspace], [data-rumble-secret-open=\"true\"], [data-rumble-secret-remove-inline=\"true\"]").forEach((button) => {
+    queryAll("[data-platform-connect-provider], [data-platform-refresh-detail], [data-platform-remove-workspace], [data-rumble-secret-open=\"true\"], [data-rumble-secret-remove-inline=\"true\"], [data-rumble-bot-autodeploy-toggle=\"true\"]").forEach((button) => {
       if (button instanceof HTMLButtonElement) {
+        button.disabled = state.busy;
+      }
+      if (button instanceof HTMLInputElement) {
         button.disabled = state.busy;
       }
     });
@@ -839,6 +1003,7 @@
       );
       return;
     }
+    renderRumbleBotDecision(integration);
     setRumbleStatus(
       integration?.secret_present
         ? "Secure credential state is stored as masked metadata only."
@@ -1013,6 +1178,28 @@
     }
   }
 
+  async function updateRumbleBotAutoDeploy(enabled) {
+    const toggle = query("[data-rumble-bot-autodeploy-toggle=\"true\"]");
+    const previousValue = Boolean(state.integration?.bot_auto_deploy_enabled);
+    if (!(toggle instanceof HTMLInputElement)) return;
+    setBusy(true);
+    setRumbleStatus("Saving Rumble bot auto-deploy preference...", "neutral");
+    try {
+      const payload = await requestJson(`${API_BASE}/api/creator/integrations/rumble/bot-auto-deploy`, {
+        method: "POST",
+        timeoutMs: SAVE_TIMEOUT_MS,
+        body: JSON.stringify({ enabled: Boolean(enabled) })
+      });
+      renderIntegration(payload?.integration || state.integration);
+      setRumbleStatus("Rumble bot auto-deploy preference saved from the runtime authority path.", "success");
+    } catch (err) {
+      toggle.checked = previousValue;
+      setRumbleStatus(err?.message || "Unable to save the Rumble bot auto-deploy preference.", "danger");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   function handleRootClick(event) {
     const target = event.target instanceof Element ? event.target : null;
     if (!target) return;
@@ -1074,9 +1261,17 @@
     }
   }
 
+  function handleRootChange(event) {
+    const target = event.target;
+    if (target instanceof HTMLInputElement && target.matches("[data-rumble-bot-autodeploy-toggle=\"true\"]")) {
+      void updateRumbleBotAutoDeploy(target.checked);
+    }
+  }
+
   function bindEvents() {
     on(state.root, "click", handleRootClick);
     on(state.root, "submit", handleRootSubmit);
+    on(state.root, "change", handleRootChange);
     const dialog = rumbleDialog();
     if (dialog instanceof HTMLDialogElement) {
       on(dialog, "cancel", (event) => {
