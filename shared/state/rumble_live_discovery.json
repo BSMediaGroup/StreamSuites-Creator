@@ -1,7 +1,7 @@
 {
   "schema_version": "v1",
   "provider": "rumble",
-  "generated_at": "2026-04-13T10:00:00Z",
+  "generated_at": "2026-04-14T10:00:00Z",
   "scan": {},
   "streams": [],
   "creators": [
@@ -9,10 +9,10 @@
       "creator_id": "creator-one",
       "match_reason": "provider_channel_url",
       "matched_value": "/c/creator",
-      "live_url": "https://rumble.com/v999-live.html",
-      "last_checked_at": "2026-04-13T10:00:00Z",
-      "stream_key": "rumble:video:999",
-      "numeric_video_id": "999",
+      "live_url": "https://rumble.com/v123-live.html",
+      "last_checked_at": "2026-04-14T10:00:00Z",
+      "stream_key": "rumble:video:123",
+      "numeric_video_id": "123",
       "chat_id": "456",
       "channel_slug": "creator"
     }

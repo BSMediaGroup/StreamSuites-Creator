@@ -1,0 +1,48 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-04-13T22:59:15.926937Z",
+  "provider": "rumble",
+  "count": 1,
+  "summary": {
+    "queued_count": 0,
+    "sending_count": 0,
+    "sent_count": 1,
+    "blocked_count": 0,
+    "failed_count": 0,
+    "by_status": {
+      "sent": 1
+    }
+  },
+  "dispatches": [
+    {
+      "request_id": "f47ea09577b14df7a718c4cddd83b24c",
+      "platform": "rumble",
+      "session_id": "rumble-auto-1dd220353e0ec52f",
+      "creator_account_id": "acct-1",
+      "creator_user_code": "creator-one",
+      "creator_display_name": "Creator One",
+      "request_source": "admin_runtime",
+      "actor_type": "admin",
+      "actor_id": "admin-1",
+      "reason": "operator_test",
+      "status": "sent",
+      "message_preview": "This is an explicit managed runtime dispatch message that should be truncated in exports after a while.",
+      "message_length": 103,
+      "requested_at": "2026-04-13T22:59:15.861349Z",
+      "last_attempt_at": "2026-04-13T22:59:15.892374Z",
+      "completed_at": "2026-04-13T22:59:15.926937Z",
+      "failure_reason": null,
+      "error_code": null,
+      "attempts": 1,
+      "send_capability": true,
+      "transport_status_snapshot": "listening",
+      "lifecycle_state_snapshot": "listening",
+      "attempt_transport_status": "listening",
+      "provider_result": {
+        "request_id": "f47ea09577b14df7a718c4cddd83b24c",
+        "chat_id": "456",
+        "accepted": true
+      }
+    }
+  ]
+}

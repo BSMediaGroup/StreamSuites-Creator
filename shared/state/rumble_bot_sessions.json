@@ -1,45 +1,40 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-04-13T21:52:01.773410Z",
+  "generated_at": "2026-04-13T22:59:15.806135Z",
   "provider": "rumble",
   "count": 1,
   "summary": {
     "desired_count": 1,
-    "active_count": 0,
+    "active_count": 1,
     "blocked_count": 0,
     "error_count": 0,
     "by_state": {
-      "awaiting_transport": 1
+      "listening": 1
     }
   },
   "sessions": [
     {
-      "session_id": "rumble-auto-1520bbde85b83267",
+      "session_id": "rumble-auto-1dd220353e0ec52f",
       "platform": "rumble",
       "session_kind": "auto",
       "creator_account_id": "acct-1",
       "creator_user_code": "creator-one",
       "creator_display_name": "Creator One",
-      "lifecycle_state": "awaiting_transport",
+      "lifecycle_state": "listening",
       "desired": true,
       "enabled": true,
       "eligible": true,
       "blocking_reason": null,
-      "runner_kind": "placeholder",
-      "runner_state": "attach_not_implemented",
-      "transport_status": "awaiting_transport",
-      "status_reason": "Rumble runtime transport is not attached yet.",
+      "runner_kind": "managed_transport",
+      "runner_state": "listening",
+      "transport_status": "listening",
+      "status_reason": "Listening to creator Rumble live chat.",
       "error": null,
-      "last_transport_error": {
-        "code": "attach_not_implemented",
-        "message": "Rumble runtime transport is not attached yet.",
-        "retryable": false,
-        "at": "2026-04-13T21:52:01.773410Z"
-      },
+      "last_transport_error": null,
       "resolved_target": {
-        "watch_url": "https://rumble.com/v999-live.html",
-        "stream_identity": "rumble:video:999",
-        "video_id": "999",
+        "watch_url": "https://rumble.com/v123-live.html",
+        "stream_identity": "rumble:video:123",
+        "video_id": "123",
         "chat_id": "456",
         "channel_handle": "@creator",
         "channel_url": "https://rumble.com/c/creator",
@@ -54,16 +49,16 @@
         "creator_identifiable": true,
         "creator_match_status": "matched",
         "live_status": "live",
-        "resolved_watch_url": "https://rumble.com/v999-live.html",
-        "resolved_stream_identity": "rumble:video:999",
-        "resolved_video_id": "999",
+        "resolved_watch_url": "https://rumble.com/v123-live.html",
+        "resolved_stream_identity": "rumble:video:123",
+        "resolved_video_id": "123",
         "resolved_chat_id": "456",
         "resolved_channel_handle": "@creator",
         "resolved_channel_url": "https://rumble.com/c/creator",
         "resolved_channel_slug": "creator",
         "attach_identity_ready": true,
-        "last_live_status_checked_at": "2026-04-13T10:00:00Z",
-        "last_evaluated_at": "2026-04-13T21:52:01.777276Z",
+        "last_live_status_checked_at": "2026-04-14T10:00:00Z",
+        "last_evaluated_at": "2026-04-13T22:59:15.810277Z",
         "live_snapshot": {
           "is_live": true,
           "freshness": "fresh",
@@ -75,23 +70,23 @@
         }
       },
       "transport_capabilities": {
-        "can_listen": false,
-        "can_send": false
+        "can_listen": true,
+        "can_send": true
       },
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-13T21:52:01.773410Z",
-      "last_attach_attempt_at": "2026-04-13T21:52:01.773410Z",
-      "last_attach_success_at": null,
-      "last_transport_heartbeat_at": "2026-04-13T21:52:01.773410Z",
-      "last_heartbeat_at": "2026-04-13T21:52:01.773410Z",
-      "last_transition_at": "2026-04-13T21:52:01.773410Z",
-      "desired_since": "2026-04-13T21:52:01.658267Z",
-      "started_at": null,
+      "last_evaluated_at": "2026-04-13T22:59:15.806135Z",
+      "last_attach_attempt_at": "2026-04-13T22:59:15.810277Z",
+      "last_attach_success_at": "2026-04-13T22:59:15.810277Z",
+      "last_transport_heartbeat_at": "2026-04-13T22:59:15.806135Z",
+      "last_heartbeat_at": "2026-04-13T22:59:15.806135Z",
+      "last_transition_at": "2026-04-13T22:59:15.806135Z",
+      "desired_since": "2026-04-13T22:59:15.806135Z",
+      "started_at": "2026-04-13T22:59:15.806135Z",
       "stopped_at": null,
       "last_event": {
-        "type": "awaiting_transport",
-        "at": "2026-04-13T21:52:01.773410Z",
-        "message": "Session remains desired while transport attachment is not implemented."
+        "type": "transport_attached",
+        "at": "2026-04-13T22:59:15.810277Z",
+        "message": "Managed Rumble transport attached to the live chat stream."
       }
     }
   ]
