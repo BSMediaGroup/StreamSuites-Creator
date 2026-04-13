@@ -1,11 +1,11 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-04-09T11:14:48.191567Z",
-  "heartbeat": "2026-04-09T11:14:48.191567Z",
+  "generated_at": "2026-04-13T13:11:29.796787Z",
+  "heartbeat": "2026-04-13T13:11:29.796787Z",
   "runtime": {
     "project": "StreamSuites\u2122 Runtime",
     "version": "0.4.2-alpha",
-    "build": "2026.04.09+004"
+    "build": "2026.04.12+002"
   },
   "system": {
     "platform_polling_enabled": {
@@ -152,7 +152,7 @@
       "state": "paused",
       "status": "paused",
       "paused_reason": "Platform ingestion paused",
-      "last_heartbeat": "2026-04-09T11:14:47.706027Z",
+      "last_heartbeat": "2026-04-13T13:11:29.796787Z",
       "last_success_ts": null,
       "last_event_ts": null,
       "error": null,
@@ -245,7 +245,7 @@
         "twitter": true,
         "discord": true
       },
-      "last_heartbeat": "2026-04-09T11:14:47.706027Z",
+      "last_heartbeat": "2026-04-13T13:11:29.796787Z",
       "error": null,
       "live_status": {
         "creator_id": "As5TyU",
@@ -253,7 +253,7 @@
         "is_live": false,
         "active_provider": null,
         "active_status": null,
-        "last_checked_at": "2026-04-09T11:14:38.577905Z",
+        "last_checked_at": "2026-04-13T13:11:20.557676Z",
         "freshness": "fresh",
         "stale": false,
         "checked_provider_count": 3,
@@ -270,7 +270,7 @@
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-09T11:14:38.577905Z",
+            "last_checked_at": "2026-04-13T13:11:20.557676Z",
             "stale": false,
             "freshness": "fresh",
             "error": null
@@ -287,7 +287,7 @@
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-09T11:13:39.043798Z",
+            "last_checked_at": "2026-04-13T13:10:43.072058Z",
             "stale": false,
             "freshness": "fresh",
             "error": null
@@ -304,7 +304,7 @@
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-09T11:14:34.601168Z",
+            "last_checked_at": "2026-04-13T13:10:58.969830Z",
             "stale": false,
             "freshness": "fresh",
             "error": "Rumble live-status polling scaffolded; authenticated/provider-specific implementation pending private creator settings wiring"
@@ -319,7 +319,7 @@
   "rumble_chat": null,
   "live_status": {
     "schema_version": "v1",
-    "generated_at": "2026-04-09T11:14:38.577905Z",
+    "generated_at": "2026-04-13T13:11:20.557676Z",
     "provider_priority": [
       "twitch",
       "youtube",
@@ -332,8 +332,8 @@
         "stale_after_seconds": 180,
         "batch_size": 25,
         "creators_configured": 1,
-        "last_refresh_started_at": "2026-04-09T11:14:34.601168Z",
-        "last_refresh_completed_at": "2026-04-09T11:14:34.601168Z",
+        "last_refresh_started_at": "2026-04-13T13:10:58.969830Z",
+        "last_refresh_completed_at": "2026-04-13T13:10:58.969830Z",
         "last_error": null
       },
       {
@@ -342,8 +342,8 @@
         "stale_after_seconds": 90,
         "batch_size": 100,
         "creators_configured": 1,
-        "last_refresh_started_at": "2026-04-09T11:14:38.577905Z",
-        "last_refresh_completed_at": "2026-04-09T11:14:38.577905Z",
+        "last_refresh_started_at": "2026-04-13T13:11:20.557676Z",
+        "last_refresh_completed_at": "2026-04-13T13:11:20.557676Z",
         "last_error": null
       },
       {
@@ -352,8 +352,8 @@
         "stale_after_seconds": 150,
         "batch_size": 50,
         "creators_configured": 1,
-        "last_refresh_started_at": "2026-04-09T11:13:39.043798Z",
-        "last_refresh_completed_at": "2026-04-09T11:13:39.353063Z",
+        "last_refresh_started_at": "2026-04-13T13:10:43.072058Z",
+        "last_refresh_completed_at": "2026-04-13T13:10:43.234019Z",
         "last_error": null
       }
     ],
@@ -364,7 +364,7 @@
         "is_live": false,
         "active_provider": null,
         "active_status": null,
-        "last_checked_at": "2026-04-09T11:14:38.577905Z",
+        "last_checked_at": "2026-04-13T13:11:20.557676Z",
         "freshness": "fresh",
         "stale": false,
         "checked_provider_count": 3,
@@ -381,7 +381,7 @@
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-09T11:14:38.577905Z",
+            "last_checked_at": "2026-04-13T13:11:20.557676Z",
             "stale": false,
             "freshness": "fresh",
             "error": null
@@ -398,7 +398,7 @@
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-09T11:13:39.043798Z",
+            "last_checked_at": "2026-04-13T13:10:43.072058Z",
             "stale": false,
             "freshness": "fresh",
             "error": null
@@ -415,7 +415,7 @@
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-09T11:14:34.601168Z",
+            "last_checked_at": "2026-04-13T13:10:58.969830Z",
             "stale": false,
             "freshness": "fresh",
             "error": "Rumble live-status polling scaffolded; authenticated/provider-specific implementation pending private creator settings wiring"
