@@ -1,67 +1,18 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-04-13T10:39:46.776409Z",
-  "provider_priority": [
-    "twitch",
-    "youtube",
-    "rumble"
-  ],
-  "providers": [
-    {
-      "provider": "twitch",
-      "cadence_seconds": 30,
-      "stale_after_seconds": 90,
-      "batch_size": 100,
-      "creators_configured": 1,
-      "last_refresh_started_at": "2026-04-13T10:39:46.776409Z",
-      "last_refresh_completed_at": "2026-04-13T10:39:46.776409Z",
-      "last_error": null
-    }
-  ],
+  "generated_at": "2026-04-13T10:00:00Z",
+  "providers": [],
   "creators": [
     {
-      "creator_id": "creator-1",
-      "display_name": "Creator One",
-      "is_live": true,
-      "active_provider": "twitch",
-      "active_status": {
-        "creator_id": "creator-1",
-        "provider": "twitch",
-        "is_live": true,
-        "provider_account_id": "100",
-        "provider_account_login": null,
-        "live_title": "Going live",
-        "live_url": null,
-        "thumbnail_url": null,
-        "viewer_count": null,
-        "game_name": null,
-        "started_at": null,
-        "last_checked_at": "2026-04-13T10:39:46.764127Z",
-        "stale": false,
-        "freshness": "fresh",
-        "error": null
-      },
-      "last_checked_at": "2026-04-13T10:39:46.764127Z",
-      "freshness": "fresh",
-      "stale": false,
-      "checked_provider_count": 1,
+      "creator_id": "creator-one",
       "statuses": [
         {
-          "creator_id": "creator-1",
-          "provider": "twitch",
+          "provider": "rumble",
           "is_live": true,
-          "provider_account_id": "100",
-          "provider_account_login": null,
-          "live_title": "Going live",
-          "live_url": null,
-          "thumbnail_url": null,
-          "viewer_count": null,
-          "game_name": null,
-          "started_at": null,
-          "last_checked_at": "2026-04-13T10:39:46.764127Z",
-          "stale": false,
+          "live_url": "https://rumble.com/v999-live.html",
+          "last_checked_at": "2026-04-13T10:00:00Z",
           "freshness": "fresh",
-          "error": null
+          "stale": false
         }
       ]
     }

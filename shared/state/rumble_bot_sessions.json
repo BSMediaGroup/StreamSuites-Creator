@@ -1,0 +1,84 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-04-13T12:04:54.859927Z",
+  "provider": "rumble",
+  "count": 1,
+  "summary": {
+    "desired_count": 1,
+    "active_count": 1,
+    "blocked_count": 0,
+    "error_count": 0,
+    "by_state": {
+      "awaiting_transport": 1
+    }
+  },
+  "sessions": [
+    {
+      "session_id": "rumble-auto-1520bbde85b83267",
+      "platform": "rumble",
+      "session_kind": "auto",
+      "creator_account_id": "acct-1",
+      "creator_user_code": "creator-one",
+      "creator_display_name": "Creator One",
+      "lifecycle_state": "awaiting_transport",
+      "desired": true,
+      "enabled": true,
+      "eligible": true,
+      "blocking_reason": null,
+      "runner_kind": "placeholder",
+      "runner_state": "attach_not_implemented",
+      "status_reason": "Rumble runtime transport is not attached yet.",
+      "error": null,
+      "resolved_target": {
+        "watch_url": "https://rumble.com/v999-live.html",
+        "stream_identity": "rumble:video:999",
+        "video_id": "999",
+        "chat_id": "456",
+        "channel_handle": "@creator",
+        "channel_url": "https://rumble.com/c/creator",
+        "channel_slug": "creator"
+      },
+      "decision": {
+        "platform": "rumble",
+        "enabled": true,
+        "eligible": true,
+        "blocking_reason": null,
+        "connected": true,
+        "creator_identifiable": true,
+        "creator_match_status": "matched",
+        "live_status": "live",
+        "resolved_watch_url": "https://rumble.com/v999-live.html",
+        "resolved_stream_identity": "rumble:video:999",
+        "resolved_video_id": "999",
+        "resolved_chat_id": "456",
+        "resolved_channel_handle": "@creator",
+        "resolved_channel_url": "https://rumble.com/c/creator",
+        "resolved_channel_slug": "creator",
+        "attach_identity_ready": true,
+        "last_live_status_checked_at": "2026-04-13T10:00:00Z",
+        "last_evaluated_at": "2026-04-13T12:04:54.863429Z",
+        "live_snapshot": {
+          "is_live": true,
+          "freshness": "fresh",
+          "stale": false
+        },
+        "discovery": {
+          "match_reason": "provider_channel_url",
+          "matched_value": "/c/creator"
+        }
+      },
+      "manual_override_active": false,
+      "last_evaluated_at": "2026-04-13T12:04:54.859927Z",
+      "last_heartbeat_at": "2026-04-13T12:04:54.859927Z",
+      "last_transition_at": "2026-04-13T12:04:54.752140Z",
+      "desired_since": "2026-04-13T12:04:54.752140Z",
+      "started_at": null,
+      "stopped_at": null,
+      "last_event": {
+        "type": "awaiting_transport",
+        "at": "2026-04-13T12:04:54.859927Z",
+        "message": "Session remains desired while transport attachment is not implemented."
+      }
+    }
+  ]
+}
