@@ -1,0 +1,102 @@
+{
+  "schema_version": "v1",
+  "provider": "rumble",
+  "generated_at": "2026-04-13T10:40:40.355730Z",
+  "scan": {
+    "started_at": "2026-04-13T00:00:00Z",
+    "completed_at": "2026-04-13T10:40:40.355730Z",
+    "duration_ms": 38440355,
+    "pages_requested": 2,
+    "pages_succeeded": 2,
+    "browse_entries_found": 1,
+    "streams_resolved": 1,
+    "matched_creators_count": 1,
+    "viewer_metrics_resolved": 1,
+    "chat_metrics_resolved": 0,
+    "partial_failures": [],
+    "scanner": {
+      "max_pages": 2,
+      "browse_page_concurrency": 4,
+      "stream_resolution_concurrency": 6,
+      "chat_metric_concurrency": 4
+    }
+  },
+  "streams": [
+    {
+      "stream_key": "rumble:video:370097401",
+      "numeric_video_id": "370097401",
+      "permalink_id": "66kw07",
+      "embed_id": "64cgzd",
+      "watch_url": "https://rumble.com/v66kw07-infowars-network-feed-live-247.html",
+      "title": "Discovery Test Live",
+      "channel_name": "StreamSuites",
+      "channel": {
+        "kind": "c",
+        "slug": "StreamSuites",
+        "slug_normalized": "streamsuites",
+        "path": "/c/StreamSuites",
+        "path_normalized": "/c/streamsuites",
+        "canonical_url": "https://rumble.com/c/StreamSuites"
+      },
+      "viewer_count": 1590,
+      "started_at": "2025-01-06T21:59:09Z",
+      "thumbnail_url": "https://img.example/thumb.jpg",
+      "livestream_status": 2,
+      "is_live": true,
+      "matched_creator": {
+        "creator_id": "creator-1",
+        "display_name": "Creator One",
+        "match_reason": "provider_channel_url",
+        "matched_value": "/c/streamsuites"
+      },
+      "chat_metrics": {
+        "status": "unresolved",
+        "endpoint": "https://web7.rumble.com/chat/api",
+        "chat_id": null,
+        "message_count": null,
+        "unique_chatter_count": null,
+        "checked_at": "2026-04-13T10:40:40.355730Z",
+        "error": "chat_id_not_resolved_from_watch_bootstrap"
+      },
+      "raw": {
+        "browse_channel_url": "https://rumble.com/c/StreamSuites",
+        "resolve_errors": [],
+        "autoplay": {
+          "watching_now_endpoint": "https://wn0.rumble.com",
+          "chat_endpoint": "https://web7.rumble.com/chat/api",
+          "live_meta_endpoint": "https://rumble.com"
+        },
+        "embed": {
+          "live_placeholder": false,
+          "livestream_has_dvr": true,
+          "share_url": "https://rumble.com/share/v66kw07"
+        },
+        "watch_identity": {
+          "canonical_watch_url": "https://rumble.com/v66kw07-infowars-network-feed-live-247.html",
+          "permalink_id": "66kw07",
+          "embed_id": "64cgzd",
+          "chat_id": null
+        }
+      }
+    }
+  ],
+  "creators": [
+    {
+      "creator_id": "creator-1",
+      "display_name": "Creator One",
+      "is_live": true,
+      "match_reason": "provider_channel_url",
+      "matched_value": "/c/streamsuites",
+      "live_title": "Discovery Test Live",
+      "live_url": "https://rumble.com/v66kw07-infowars-network-feed-live-247.html",
+      "viewer_count": 1590,
+      "started_at": "2025-01-06T21:59:09Z",
+      "last_checked_at": "2026-04-13T00:00:00Z",
+      "stream_key": "rumble:video:370097401",
+      "numeric_video_id": "370097401",
+      "channel_url": "https://rumble.com/c/StreamSuites",
+      "channel_slug": "StreamSuites",
+      "chat_id": null
+    }
+  ]
+}
