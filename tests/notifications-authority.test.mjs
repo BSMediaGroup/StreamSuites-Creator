@@ -25,7 +25,16 @@ test("creator rumble integration detail uses the runtime bot auto-deploy authori
   assert.match(rumbleView, /data-rumble-bot-autodeploy-toggle="true"/);
   assert.match(rumbleView, /data-rumble-bot-decision-summary="true"/);
   assert.match(rumbleView, /data-rumble-bot-decision-target="true"/);
+  assert.match(rumbleView, /data-rumble-managed-session-pill="true"/);
+  assert.match(rumbleView, /data-rumble-managed-session-alert="true"/);
+  assert.match(rumbleView, /data-rumble-managed-session-timestamps="true"/);
   assert.match(detailJs, /\/api\/creator\/integrations\/rumble\/bot-auto-deploy/);
   assert.match(detailJs, /integration\?\.bot_auto_deploy/);
   assert.match(detailJs, /integration\?\.bot_auto_deploy_enabled/);
+  assert.match(detailJs, /integration\?\.managed_session/);
+  assert.match(detailJs, /auth_material_insufficient/);
+  assert.match(detailJs, /last_attach_attempt_at/);
+  assert.match(detailJs, /last_attach_success_at/);
+  assert.match(detailJs, /last_transport_heartbeat_at/);
+  assert.match(detailJs, /Only a stored `stream_key` exists/);
 });

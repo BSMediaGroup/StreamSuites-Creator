@@ -271,6 +271,204 @@
     }
   }
 
+  function humanizeRumbleManagedLifecycle(value) {
+    switch (String(value || "").trim().toLowerCase()) {
+      case "desired":
+        return "Desired";
+      case "starting":
+        return "Starting";
+      case "attaching":
+        return "Attaching";
+      case "attached":
+        return "Attached";
+      case "listening":
+        return "Listening";
+      case "running":
+        return "Running";
+      case "awaiting_transport":
+        return "Awaiting transport";
+      case "blocked":
+        return "Blocked";
+      case "auth_failed":
+        return "Auth failed";
+      case "target_unresolved":
+        return "Target unresolved";
+      case "transport_error":
+        return "Transport error";
+      case "disabled":
+        return "Disabled";
+      case "stopping":
+        return "Stopping";
+      case "stopped":
+        return "Stopped";
+      case "stale":
+        return "Stale";
+      default:
+        return "Not created";
+    }
+  }
+
+  function humanizeRumbleTransportStatus(value) {
+    switch (String(value || "").trim().toLowerCase()) {
+      case "awaiting_transport":
+        return "Awaiting transport";
+      case "starting":
+        return "Starting";
+      case "attaching":
+        return "Attaching";
+      case "attached":
+        return "Attached";
+      case "listening":
+        return "Listening";
+      case "running":
+        return "Running";
+      case "suppressed":
+        return "Suppressed";
+      case "disabled":
+        return "Disabled";
+      case "blocked":
+        return "Blocked";
+      case "auth_failed":
+        return "Auth failed";
+      case "target_unresolved":
+        return "Target unresolved";
+      case "transport_error":
+        return "Transport error";
+      case "stopped":
+        return "Stopped";
+      default:
+        return "Not attached";
+    }
+  }
+
+  function rumbleManagedSession(integration) {
+    return integration?.managed_session && typeof integration.managed_session === "object"
+      ? integration.managed_session
+      : null;
+  }
+
+  function rumbleManagedTransportError(session) {
+    return session?.last_transport_error && typeof session.last_transport_error === "object"
+      ? session.last_transport_error
+      : null;
+  }
+
+  function rumbleManagedAuthState(session) {
+    const transportError = rumbleManagedTransportError(session);
+    const code = String(transportError?.code || session?.blocking_reason || "").trim().toLowerCase();
+    if (code === "auth_material_insufficient") {
+      return {
+        label: "Stream key only",
+        tone: "warning",
+        detail: "Only a stored `stream_key` exists. Rumble chat transport needs cookie-based chat auth, so the runtime is truthfully blocked."
+      };
+    }
+    if (code === "auth_material_missing") {
+      return {
+        label: "Chat auth missing",
+        tone: "warning",
+        detail: "No chat-capable Rumble auth material is stored for this creator."
+      };
+    }
+    if (code === "auth_material_invalid") {
+      return {
+        label: "Chat auth invalid",
+        tone: "warning",
+        detail: "Stored Rumble cookie auth exists but the runtime rejected it as invalid."
+      };
+    }
+    if (code === "auth_material_unrecognized") {
+      return {
+        label: "Chat auth unrecognized",
+        tone: "warning",
+        detail: "Stored Rumble auth material exists, but it is not usable for chat transport."
+      };
+    }
+    if (session?.transport_capabilities?.can_listen) {
+      return {
+        label: "Chat auth ready",
+        tone: "success",
+        detail: "Runtime reports chat-capable Rumble auth material for this creator."
+      };
+    }
+    if (!session) {
+      return {
+        label: "Not evaluated",
+        tone: "subtle",
+        detail: "No managed Rumble session has been exported for this creator yet."
+      };
+    }
+    return {
+      label: "Auth pending",
+      tone: "subtle",
+      detail: "Managed transport auth posture has not reached a chat-capable state yet."
+    };
+  }
+
+  function humanizeRumbleManagedBlockingReason(session) {
+    const transportError = rumbleManagedTransportError(session);
+    const code = String(transportError?.code || session?.blocking_reason || "").trim().toLowerCase();
+    switch (code) {
+      case "manual_override_active":
+        return "A manual Rumble bot session is active, so the managed auto session is suppressed.";
+      case "auth_material_insufficient":
+        return "The runtime found only a stored `stream_key`. That is enough for ingest metadata but not enough for chat transport attachment.";
+      case "auth_material_missing":
+        return "The runtime cannot attach chat transport because no cookie-based Rumble chat auth is stored.";
+      case "auth_material_invalid":
+        return "The stored Rumble chat-auth payload is present but invalid, so the transport cannot attach.";
+      case "auth_material_unrecognized":
+        return "Stored Rumble auth keys are present but not usable for chat transport attachment.";
+      case "target_unresolved":
+        return "The creator appears live, but the runtime does not yet have a usable watch/chat target for transport attachment.";
+      case "transport_error":
+        return transportError?.message || "The managed Rumble transport encountered an attachment or listening error.";
+      case "creator_disabled":
+        return "Auto-deploy is disabled for this creator, so no managed session should attach.";
+      default:
+        return transportError?.message || session?.status_reason || "No managed-session blocking reason is currently reported.";
+    }
+  }
+
+  function rumbleManagedSessionPill(integration, session) {
+    if (!session) {
+      if (integration?.bot_auto_deploy_enabled) {
+        return { label: "No session exported", tone: "warning" };
+      }
+      return { label: "Auto-deploy off", tone: "subtle" };
+    }
+    const transportStatus = String(session.transport_status || "").trim().toLowerCase();
+    const lifecycleState = String(session.lifecycle_state || "").trim().toLowerCase();
+    if (transportStatus === "listening" || lifecycleState === "listening" || lifecycleState === "running") {
+      return { label: "Listening", tone: "success" };
+    }
+    if (transportStatus === "attached" || lifecycleState === "attached") {
+      return { label: "Attached", tone: "success" };
+    }
+    if (transportStatus === "attaching" || lifecycleState === "attaching") {
+      return { label: "Attaching", tone: "warning" };
+    }
+    if (transportStatus === "transport_error" || lifecycleState === "transport_error") {
+      return { label: "Transport error", tone: "warning" };
+    }
+    if (transportStatus === "target_unresolved" || lifecycleState === "target_unresolved") {
+      return { label: "Target unresolved", tone: "warning" };
+    }
+    if (transportStatus === "auth_failed" || lifecycleState === "auth_failed") {
+      return { label: "Auth failed", tone: "warning" };
+    }
+    if (transportStatus === "blocked" || lifecycleState === "blocked") {
+      return { label: "Blocked", tone: "warning" };
+    }
+    if (transportStatus === "awaiting_transport" || lifecycleState === "awaiting_transport") {
+      return { label: "Awaiting transport", tone: "warning" };
+    }
+    if (transportStatus === "disabled" || lifecycleState === "disabled") {
+      return { label: "Disabled", tone: "subtle" };
+    }
+    return { label: humanizeRumbleManagedLifecycle(session.lifecycle_state), tone: "subtle" };
+  }
+
   function rumbleBotDecision(integration) {
     return integration?.bot_auto_deploy && typeof integration.bot_auto_deploy === "object"
       ? integration.bot_auto_deploy
@@ -295,6 +493,7 @@
 
   function renderRumbleBotDecision(integration) {
     const decision = rumbleBotDecision(integration);
+    const session = rumbleManagedSession(integration);
     const pillEl = query("[data-rumble-bot-decision-pill=\"true\"]");
     const toggleEl = query("[data-rumble-bot-autodeploy-toggle=\"true\"]");
     const summaryEl = query("[data-rumble-bot-decision-summary=\"true\"]");
@@ -355,6 +554,10 @@
                 "Attach identity incomplete"
               ),
               tone: decision.attach_identity_ready ? "success" : "warning"
+            },
+            {
+              label: session ? `Managed session: ${humanizeRumbleManagedLifecycle(session.lifecycle_state)}` : "Managed session absent",
+              tone: session ? "success" : "warning"
             }
           ]
         : [{ label: "Decision unavailable", tone: "warning" }];
@@ -404,6 +607,131 @@
         bits.push(`Chat id: ${escapeHtml(decision.resolved_chat_id)}`);
       }
       targetEl.innerHTML = bits.join("<br />");
+    }
+  }
+
+  function renderRumbleManagedSession(integration) {
+    const session = rumbleManagedSession(integration);
+    const decision = rumbleBotDecision(integration);
+    const pillEl = query("[data-rumble-managed-session-pill=\"true\"]");
+    const badgesEl = query("[data-rumble-managed-session-badges=\"true\"]");
+    const summaryEl = query("[data-rumble-managed-session-summary=\"true\"]");
+    const alertEl = query("[data-rumble-managed-session-alert=\"true\"]");
+    const targetEl = query("[data-rumble-managed-session-target=\"true\"]");
+    const timestampsEl = query("[data-rumble-managed-session-timestamps=\"true\"]");
+    const authState = rumbleManagedAuthState(session);
+
+    if (pillEl instanceof HTMLElement) {
+      const pill = rumbleManagedSessionPill(integration, session);
+      setStatusPill(pillEl, pill.label, pill.tone);
+    }
+
+    if (badgesEl instanceof HTMLElement) {
+      renderPills(badgesEl, [
+        {
+          label: decision?.connected ? "Integration connected" : "Integration not connected",
+          tone: decision?.connected ? "success" : "warning"
+        },
+        {
+          label: integration?.bot_auto_deploy_enabled ? "Auto-deploy enabled" : "Auto-deploy disabled",
+          tone: integration?.bot_auto_deploy_enabled ? "success" : "subtle"
+        },
+        {
+          label:
+            String(decision?.live_status || "").trim().toLowerCase() === "live"
+              ? "Creator live now"
+              : String(decision?.live_status || "").trim().toLowerCase() === "offline"
+                ? "Creator offline"
+                : "Live posture unknown",
+          tone: String(decision?.live_status || "").trim().toLowerCase() === "live" ? "success" : "subtle"
+        },
+        {
+          label: session ? `Managed session: ${humanizeRumbleManagedLifecycle(session.lifecycle_state)}` : "Managed session missing",
+          tone: session ? "success" : "warning"
+        },
+        {
+          label: session ? `Transport: ${humanizeRumbleTransportStatus(session.transport_status)}` : "Transport not created",
+          tone:
+            session && ["attached", "listening", "running"].includes(String(session.transport_status || "").trim().toLowerCase())
+              ? "success"
+              : session
+                ? "warning"
+                : "subtle"
+        },
+        {
+          label: authState.label,
+          tone: authState.tone
+        }
+      ]);
+    }
+
+    if (summaryEl instanceof HTMLElement) {
+      if (!session && !integration?.bot_auto_deploy_enabled) {
+        summaryEl.textContent = "Managed Rumble session creation is not desired because auto-deploy is disabled.";
+      } else if (!session) {
+        summaryEl.textContent = "Runtime has not exported a managed Rumble session for this creator yet.";
+      } else {
+        summaryEl.textContent = session.status_reason || "Runtime-managed Rumble session state is available.";
+      }
+    }
+
+    const stats = {
+      session: session ? humanizeRumbleManagedLifecycle(session.lifecycle_state) : "Not created",
+      transport: session ? humanizeRumbleTransportStatus(session.transport_status) : "Not attached",
+      live:
+        String(decision?.live_status || "").trim().toLowerCase() === "live"
+          ? "Live"
+          : String(decision?.live_status || "").trim().toLowerCase() === "offline"
+            ? "Offline"
+            : "Unknown",
+      auth: authState.label
+    };
+    Object.entries(stats).forEach(([key, value]) => {
+      const element = query(`[data-rumble-managed-stat="${key}"]`);
+      if (element instanceof HTMLElement) {
+        element.textContent = value;
+      }
+    });
+
+    if (alertEl instanceof HTMLElement) {
+      alertEl.textContent = authState.tone === "warning" ? authState.detail : humanizeRumbleManagedBlockingReason(session);
+    }
+
+    if (targetEl instanceof HTMLElement) {
+      const target = session?.resolved_target && typeof session.resolved_target === "object"
+        ? session.resolved_target
+        : {};
+      const lines = [];
+      if (target.watch_url || decision?.resolved_watch_url) {
+        lines.push(`Resolved watch target: ${target.watch_url || decision.resolved_watch_url}`);
+      }
+      if (target.channel_handle || decision?.resolved_channel_handle) {
+        lines.push(`Channel handle: ${target.channel_handle || decision.resolved_channel_handle}`);
+      }
+      if (target.channel_url || decision?.resolved_channel_url) {
+        lines.push(`Channel URL: ${target.channel_url || decision.resolved_channel_url}`);
+      }
+      if (target.video_id || decision?.resolved_video_id) {
+        lines.push(`Video id: ${target.video_id || decision.resolved_video_id}`);
+      }
+      if (target.chat_id || decision?.resolved_chat_id) {
+        lines.push(`Chat id: ${target.chat_id || decision.resolved_chat_id}`);
+      }
+      if (target.stream_identity || decision?.resolved_stream_identity) {
+        lines.push(`Stream identity: ${target.stream_identity || decision.resolved_stream_identity}`);
+      }
+      renderList(targetEl, lines.length ? lines : ["No resolved managed-session target is currently exported."]);
+    }
+
+    if (timestampsEl instanceof HTMLElement) {
+      renderList(timestampsEl, [
+        `Last evaluated: ${formatTimestamp(session?.last_evaluated_at || decision?.last_evaluated_at)}`,
+        `Last attach attempt: ${formatTimestamp(session?.last_attach_attempt_at)}`,
+        `Last attach success: ${formatTimestamp(session?.last_attach_success_at)}`,
+        `Last transport heartbeat: ${formatTimestamp(session?.last_transport_heartbeat_at)}`,
+        `Last session heartbeat: ${formatTimestamp(session?.last_heartbeat_at)}`,
+        `Last live check: ${formatTimestamp(decision?.last_live_status_checked_at)}`
+      ]);
     }
   }
 
@@ -1004,6 +1332,7 @@
       return;
     }
     renderRumbleBotDecision(integration);
+    renderRumbleManagedSession(integration);
     setRumbleStatus(
       integration?.secret_present
         ? "Secure credential state is stored as masked metadata only."

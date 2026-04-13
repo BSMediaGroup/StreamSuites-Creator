@@ -2,6 +2,27 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.8-alpha
 
+## 2026-04-14 - Creator Rumble Managed Session And Transport Visibility Pass
+
+### Technical Notes
+
+- Extended `views/platforms/rumble.html` with an additive `Managed bot runtime status` card instead of a new disconnected route so the existing creator Rumble integration surface now has first-class room for runtime-owned managed-session lifecycle, transport posture, auth blocking, target, and timestamp visibility.
+- Expanded `js/platform-integration-detail.js` so the Creator page now consumes both `integration.bot_auto_deploy` and the new runtime-authored `integration.managed_session` payload, distinguishes connected vs enabled vs live vs managed-session-created vs transport-attached states with existing pill styling, and explicitly calls out chat-auth blockers such as `auth_material_insufficient` when only a stored `stream_key` exists.
+- The older creator Rumble bot area was not deleted, but it was corrected: the previous card only surfaced auto-deploy decision state and implicitly hid managed transport truth. That omission was replaced by direct managed-session rendering. The file is longer because the page now projects the already-shipped runtime contract instead of collapsing it into one summary paragraph.
+- Expanded `tests/notifications-authority.test.mjs` in the same lightweight source-assertion style already used by this repo so the creator Rumble page must keep the new managed-session DOM hooks plus the transport/auth-blocking rendering logic.
+
+### Human-Readable Notes
+
+- Creators can now see whether Rumble is merely connected, whether auto-deploy is enabled, whether they are live, whether a managed session exists, whether transport is attached/listening, and whether chat auth is blocked.
+- When the runtime reports that only stream-key material exists, the page now says that plainly instead of implying the bot is ready.
+
+### Files / Areas Touched
+
+- `views/platforms/rumble.html`
+- `js/platform-integration-detail.js`
+- `tests/notifications-authority.test.mjs`
+- `BUMP_NOTES.md`
+
 ## 2026-04-13 - Creator Rumble Bot Auto-Deploy Authority Surface
 
 ### Technical Notes
