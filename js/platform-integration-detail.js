@@ -261,14 +261,29 @@
       case "live_status_unavailable":
         return "Runtime live status is not currently available.";
       case "creator_offline":
-        return "The creator is not currently live on Rumble.";
+        return "This creator is matched, but runtime is waiting for a real live stream target.";
       case "watch_url_unresolved":
-        return "A live session exists but the watch target is not resolved yet.";
+        return "The creator appears live, but the concrete live stream target is not resolved yet.";
       case "attach_identity_unresolved":
-        return "A live session exists but runtime has not resolved enough stream or chat identity for future bot attachment.";
+        return "The creator appears live, but runtime has not resolved enough stream or chat identity for bot attachment yet.";
       default:
         return "No blocking reason is currently reported.";
     }
+  }
+
+  function rumbleDecisionWaitingForLive(decision) {
+    return Boolean(decision?.awaiting_live_stream || String(decision?.decision_state || "").trim().toLowerCase() === "awaiting_live_stream");
+  }
+
+  function rumbleDecisionLiveTargetPending(decision) {
+    return Boolean(decision?.live_target_unresolved || String(decision?.decision_state || "").trim().toLowerCase() === "live_target_unresolved");
+  }
+
+  function rumbleDecisionAttachIncomplete(decision) {
+    return Boolean(
+      decision?.attach_identity_incomplete ||
+      String(decision?.decision_state || "").trim().toLowerCase() === "attach_identity_incomplete"
+    );
   }
 
   function humanizeRumbleManagedLifecycle(value) {
@@ -431,9 +446,16 @@
   }
 
   function rumbleManagedSessionPill(integration, session) {
+    const decision = rumbleBotDecision(integration);
     if (!session) {
+      if (integration?.bot_auto_deploy_enabled && rumbleDecisionWaitingForLive(decision)) {
+        return { label: "Waiting for live stream", tone: "subtle" };
+      }
+      if (integration?.bot_auto_deploy_enabled && rumbleDecisionLiveTargetPending(decision)) {
+        return { label: "Live target pending", tone: "warning" };
+      }
       if (integration?.bot_auto_deploy_enabled) {
-        return { label: "No session exported", tone: "warning" };
+        return { label: "Session not created yet", tone: "warning" };
       }
       return { label: "Auto-deploy off", tone: "subtle" };
     }
@@ -482,8 +504,17 @@
     if (!decision.enabled) {
       return { label: "Disabled", tone: "subtle" };
     }
+    if (rumbleDecisionWaitingForLive(decision)) {
+      return { label: "Waiting for live stream", tone: "subtle" };
+    }
+    if (rumbleDecisionLiveTargetPending(decision)) {
+      return { label: "Live target pending", tone: "warning" };
+    }
+    if (rumbleDecisionAttachIncomplete(decision)) {
+      return { label: "Live attach blocked", tone: "warning" };
+    }
     if (decision.eligible) {
-      return { label: "Eligible now", tone: "success" };
+      return { label: "Attach-ready", tone: "success" };
     }
     if (String(decision.live_status || "").trim().toLowerCase() === "live") {
       return { label: "Live but blocked", tone: "warning" };
@@ -515,9 +546,15 @@
         summaryEl.textContent = "Runtime has not exported a Rumble bot auto-deploy decision yet.";
       } else if (!decision.enabled) {
         summaryEl.textContent = "Auto-deploy is off. Runtime will not consider this creator eligible until you enable the setting.";
+      } else if (rumbleDecisionWaitingForLive(decision)) {
+        summaryEl.textContent = "Auto-deploy is enabled. Runtime is waiting for this creator to produce a real live stream target.";
+      } else if (rumbleDecisionLiveTargetPending(decision)) {
+        summaryEl.textContent = "Auto-deploy is enabled and the creator appears live, but runtime is still resolving the concrete live target.";
+      } else if (rumbleDecisionAttachIncomplete(decision)) {
+        summaryEl.textContent = "Auto-deploy is enabled and the creator appears live, but stream identity is still incomplete for transport attachment.";
       } else if (decision.eligible) {
         summaryEl.textContent =
-          "Auto-deploy is enabled and runtime currently resolves enough live target identity for a future Rumble bot runner.";
+          "Auto-deploy is enabled and runtime currently resolves enough live target identity for the managed Rumble session.";
       } else if (String(decision.live_status || "").trim().toLowerCase() === "live") {
         summaryEl.textContent =
           "Auto-deploy is enabled and the creator appears live, but runtime is still blocking deployment until the missing target identity resolves.";
@@ -540,24 +577,49 @@
             },
             {
               label:
-                String(decision.live_status || "").trim().toLowerCase() === "live"
+                rumbleDecisionWaitingForLive(decision)
+                  ? "Waiting for live stream"
+                  : String(decision.live_status || "").trim().toLowerCase() === "live"
                   ? "Currently live"
                   : String(decision.live_status || "").trim().toLowerCase() === "offline"
                     ? "Currently offline"
                     : "Live state unknown",
-              tone: String(decision.live_status || "").trim().toLowerCase() === "live" ? "success" : "subtle"
+              tone:
+                rumbleDecisionWaitingForLive(decision)
+                  ? "subtle"
+                  : String(decision.live_status || "").trim().toLowerCase() === "live"
+                    ? "success"
+                    : "subtle"
             },
             {
-              label: humanizeBooleanState(
-                decision.attach_identity_ready,
-                "Attach identity resolved",
-                "Attach identity incomplete"
-              ),
-              tone: decision.attach_identity_ready ? "success" : "warning"
+              label: decision.attach_identity_ready
+                ? "Attach identity ready"
+                : rumbleDecisionWaitingForLive(decision)
+                  ? "Awaiting live stream target"
+                  : rumbleDecisionLiveTargetPending(decision)
+                    ? "Live target not resolved yet"
+                    : "Attach identity incomplete",
+              tone:
+                decision.attach_identity_ready
+                  ? "success"
+                  : rumbleDecisionWaitingForLive(decision)
+                    ? "subtle"
+                    : "warning"
             },
             {
-              label: session ? `Managed session: ${humanizeRumbleManagedLifecycle(session.lifecycle_state)}` : "Managed session absent",
-              tone: session ? "success" : "warning"
+              label: session
+                ? `Managed session: ${humanizeRumbleManagedLifecycle(session.lifecycle_state)}`
+                : rumbleDecisionWaitingForLive(decision)
+                  ? "Managed session waits for live"
+                  : rumbleDecisionLiveTargetPending(decision)
+                    ? "Managed session waiting on target"
+                    : "Managed session absent",
+              tone:
+                session
+                  ? "success"
+                  : rumbleDecisionWaitingForLive(decision)
+                    ? "subtle"
+                    : "warning"
             }
           ]
         : [{ label: "Decision unavailable", tone: "warning" }];
@@ -571,7 +633,8 @@
             `Creator identity: ${humanizeBooleanState(decision.creator_identifiable, "resolved", "missing")}`,
             `Creator match status: ${decision.creator_match_status || "unknown"}`,
             `Live status: ${decision.live_status || "unknown"}`,
-            `Watch target: ${decision.resolved_watch_url || "Not resolved"}`,
+            `Live target: ${decision.resolved_live_target_url || decision.resolved_watch_url || "Not resolved"}`,
+            `Watch home: ${decision.resolved_watch_home_url || decision.resolved_channel_url || "Not resolved"}`,
             `Attach identity ready: ${humanizeBooleanState(decision.attach_identity_ready, "yes", "no")}`,
             `Last evaluated: ${formatTimestamp(decision.last_evaluated_at)}`,
             `Last live check: ${formatTimestamp(decision.last_live_status_checked_at)}`
@@ -592,9 +655,14 @@
         return;
       }
       const bits = [];
-      if (decision.resolved_watch_url) {
+      if (decision.resolved_live_target_url || decision.resolved_watch_url) {
         bits.push(
-          `Resolved watch target: <a href="${escapeHtml(decision.resolved_watch_url)}" target="_blank" rel="noreferrer">Open live target</a>`
+          `Resolved live target: <a href="${escapeHtml(decision.resolved_live_target_url || decision.resolved_watch_url)}" target="_blank" rel="noreferrer">Open live target</a>`
+        );
+      }
+      if (decision.resolved_watch_home_url || decision.resolved_channel_url) {
+        bits.push(
+          `Watch home: <a href="${escapeHtml(decision.resolved_watch_home_url || decision.resolved_channel_url)}" target="_blank" rel="noreferrer">Open channel</a>`
         );
       }
       if (decision.resolved_channel_handle) {
@@ -638,16 +706,34 @@
         },
         {
           label:
-            String(decision?.live_status || "").trim().toLowerCase() === "live"
+            rumbleDecisionWaitingForLive(decision)
+              ? "Waiting for live stream"
+              : String(decision?.live_status || "").trim().toLowerCase() === "live"
               ? "Creator live now"
               : String(decision?.live_status || "").trim().toLowerCase() === "offline"
                 ? "Creator offline"
                 : "Live posture unknown",
-          tone: String(decision?.live_status || "").trim().toLowerCase() === "live" ? "success" : "subtle"
+          tone:
+            rumbleDecisionWaitingForLive(decision)
+              ? "subtle"
+              : String(decision?.live_status || "").trim().toLowerCase() === "live"
+                ? "success"
+                : "subtle"
         },
         {
-          label: session ? `Managed session: ${humanizeRumbleManagedLifecycle(session.lifecycle_state)}` : "Managed session missing",
-          tone: session ? "success" : "warning"
+          label: session
+            ? `Managed session: ${humanizeRumbleManagedLifecycle(session.lifecycle_state)}`
+            : rumbleDecisionWaitingForLive(decision)
+              ? "Managed session will appear when live"
+              : rumbleDecisionLiveTargetPending(decision)
+                ? "Managed session waiting on target"
+                : "Managed session missing",
+          tone:
+            session
+              ? "success"
+              : rumbleDecisionWaitingForLive(decision)
+                ? "subtle"
+                : "warning"
         },
         {
           label: session ? `Transport: ${humanizeRumbleTransportStatus(session.transport_status)}` : "Transport not created",
@@ -668,6 +754,10 @@
     if (summaryEl instanceof HTMLElement) {
       if (!session && !integration?.bot_auto_deploy_enabled) {
         summaryEl.textContent = "Managed Rumble session creation is not desired because auto-deploy is disabled.";
+      } else if (!session && rumbleDecisionWaitingForLive(decision)) {
+        summaryEl.textContent = "Managed session will appear when this creator goes live and a real live target is detected.";
+      } else if (!session && rumbleDecisionLiveTargetPending(decision)) {
+        summaryEl.textContent = "Creator appears live, but runtime is still resolving the live target before creating the managed session.";
       } else if (!session) {
         summaryEl.textContent = "Runtime has not exported a managed Rumble session for this creator yet.";
       } else {
@@ -694,7 +784,13 @@
     });
 
     if (alertEl instanceof HTMLElement) {
-      alertEl.textContent = authState.tone === "warning" ? authState.detail : humanizeRumbleManagedBlockingReason(session);
+      if (!session && rumbleDecisionWaitingForLive(decision)) {
+        alertEl.textContent = "Managed session is absent because the creator is currently offline and no live stream target exists yet.";
+      } else if (!session && rumbleDecisionLiveTargetPending(decision)) {
+        alertEl.textContent = "Managed session is absent because runtime has not resolved the concrete live target yet.";
+      } else {
+        alertEl.textContent = authState.tone === "warning" ? authState.detail : humanizeRumbleManagedBlockingReason(session);
+      }
     }
 
     if (targetEl instanceof HTMLElement) {

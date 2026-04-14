@@ -2,6 +2,9 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Refined the Creator Rumble posture copy in `js/platform-integration-detail.js` so a matched creator who is currently offline now renders as `Waiting for live stream` / `Awaiting live stream target` instead of looking like a hard attach failure. The page still uses the runtime-owned `bot_auto_deploy` and `managed_session` payloads; it now distinguishes offline waiting, live-target pending, attach-identity incomplete, and attach-ready/session-present states without inventing fake live or session data.
+- Updated `tests/notifications-authority.test.mjs` additively so the Creator route must keep the calmer awaiting-live posture wording and the managed-session copy that explains a session will appear once a real live target exists. No files were removed or replaced in this pass.
+
 - Finished the creator-side recovery for the blocked Rumble/Auth regression. `js/integrations-hub.js` now treats `/api/creator/integrations` as the required authority and degrades cleanly when profile or trigger side payloads are temporarily unavailable, so `/integrations` can still hydrate instead of dropping into a full-page load failure.
 - `js/platform-integration-detail.js` now keeps `/integrations/rumble` alive when optional runtime-owned Rumble fragments are missing or temporarily broken. The base integration contract remains authoritative, while optional bot-decision, managed-session, and managed-dispatch issues are surfaced as warning status through `optional_fragment_errors` instead of crashing the page.
 - Expanded `tests/notifications-authority.test.mjs` additively so both creator routes stay pinned to the new partial-payload hydration path. No files were removed or replaced in this completion pass.

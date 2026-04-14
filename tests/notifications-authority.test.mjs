@@ -37,6 +37,9 @@ test("creator rumble integration detail uses the runtime bot auto-deploy authori
   assert.match(detailJs, /last_attach_success_at/);
   assert.match(detailJs, /last_transport_heartbeat_at/);
   assert.match(detailJs, /Only a stored `stream_key` exists/);
+  assert.match(detailJs, /Waiting for live stream/);
+  assert.match(detailJs, /Awaiting live stream target/);
+  assert.match(detailJs, /Managed session will appear when this creator goes live/);
   assert.match(detailJs, /function renderRumbleOptionalSection/);
   assert.match(detailJs, /Optional managed-session posture detail is temporarily unavailable/);
   assert.match(detailJs, /Optional managed-dispatch detail is temporarily unavailable/);
