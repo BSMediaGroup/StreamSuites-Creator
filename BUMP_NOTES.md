@@ -2,6 +2,9 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Repaired `js/platform-integration-detail.js` so the Creator Rumble route no longer turns optional runtime-owned Rumble subpayload failures into a full-page `Load failed` state. The page still treats the base `/api/creator/integrations/rumble` contract as authoritative, but the bot-decision, managed-session, and managed-dispatch cards now degrade independently when one optional fragment is absent or malformed.
+- Expanded `tests/notifications-authority.test.mjs` additively so the Creator surface must keep the new graceful-degradation wrapper and the partial-payload fallback messaging. No files were removed; `js/platform-integration-detail.js` was hardened in place and is expected to stay roughly the same size because the route still renders the same current layout.
+
 - Tightened the Creator integrations hub hydration in `js/integrations-hub.js` so the route still renders the authoritative `/api/creator/integrations` and `/api/creator/triggers` contract when `/api/public/profile/me` is temporarily unavailable. This does not invent local state; it keeps the integration and trigger authority path primary while treating the profile summary as non-blocking.
 - Added a focused source-level regression check in `tests/notifications-authority.test.mjs` to keep the integrations hub on the new `Promise.allSettled(...)` hydration path instead of failing the entire route on the non-critical profile summary request.
 

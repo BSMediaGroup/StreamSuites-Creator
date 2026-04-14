@@ -786,6 +786,14 @@
     );
   }
 
+  function renderRumbleOptionalSection(renderFn, fallbackMessage) {
+    try {
+      renderFn();
+    } catch (_err) {
+      setActionStatus(fallbackMessage, "warning");
+    }
+  }
+
   function formatTimestamp(value) {
     if (!value) return "Pending";
     const date = new Date(value);
@@ -1382,9 +1390,18 @@
       );
       return;
     }
-    renderRumbleBotDecision(integration);
-    renderRumbleManagedSession(integration);
-    renderRumbleManualSend(integration);
+    renderRumbleOptionalSection(
+      () => renderRumbleBotDecision(integration),
+      "Optional Rumble bot decision detail is temporarily unavailable, but the base integration contract still loaded."
+    );
+    renderRumbleOptionalSection(
+      () => renderRumbleManagedSession(integration),
+      "Optional managed-session posture detail is temporarily unavailable, but the base integration contract still loaded."
+    );
+    renderRumbleOptionalSection(
+      () => renderRumbleManualSend(integration),
+      "Optional managed-dispatch detail is temporarily unavailable, but the base integration contract still loaded."
+    );
     setRumbleStatus(
       integration?.secret_present
         ? "Secure credential state is stored as masked metadata only."

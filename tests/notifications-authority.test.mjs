@@ -37,6 +37,9 @@ test("creator rumble integration detail uses the runtime bot auto-deploy authori
   assert.match(detailJs, /last_attach_success_at/);
   assert.match(detailJs, /last_transport_heartbeat_at/);
   assert.match(detailJs, /Only a stored `stream_key` exists/);
+  assert.match(detailJs, /function renderRumbleOptionalSection/);
+  assert.match(detailJs, /Optional managed-session posture detail is temporarily unavailable/);
+  assert.match(detailJs, /Optional managed-dispatch detail is temporarily unavailable/);
 });
 
 test("creator integrations hub keeps runtime integration hydration authoritative even if profile-me is temporarily unavailable", () => {
