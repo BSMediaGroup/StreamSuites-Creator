@@ -408,6 +408,31 @@
             </article>
 
             <article class="card platform-detail-card-wide">
+              <div class="card-top">
+                <h3>Controlled manual send</h3>
+                <span class="status-pill subtle" data-rumble-manual-send-pill="true"><span class="status-dot"></span>Waiting</span>
+              </div>
+              <p class="integration-health-title" data-rumble-manual-send-summary="true">
+                Manual send uses the managed Rumble dispatch path and stays separate from automatic trigger execution.
+              </p>
+              <form class="platform-workspace-form" data-rumble-manual-send-form="true">
+                <label class="account-field">
+                  <span class="account-field-label">Test message</span>
+                  <textarea class="account-field-input" name="message_text" rows="3" maxlength="500" placeholder="Manual creator test via managed Rumble dispatch." required></textarea>
+                </label>
+                <div class="platform-actions">
+                  <button class="creator-button primary" type="submit">Send controlled test</button>
+                </div>
+              </form>
+              <p class="account-note" data-rumble-manual-send-status="true">
+                Waiting for runtime-managed Rumble session posture...
+              </p>
+              <ul data-rumble-manual-send-history="true">
+                <li>No recent managed dispatch rows are currently exported.</li>
+              </ul>
+            </article>
+
+            <article class="card platform-detail-card-wide">
               <h3>Readiness and next steps</h3>
               <div class="stat-grid">
                 <div>

@@ -75,7 +75,8 @@ flowchart TD
 - The account/settings route now summarizes authoritative platform linkage state instead of inventing local platform truth.
 - Dedicated platform routes consume per-platform integration detail from runtime/Auth and use safe messaging for providers that are still planned or unavailable.
 - Rumble is the only creator-managed credential path in this phase, and it uses a backend-owned secret save/remove flow that returns masked presence state only.
-- The triggers route now consumes the central runtime/Auth trigger registry foundation, seeded with minimal built-ins and only low-risk enabled-state management.
+- The triggers route now consumes the central runtime/Auth trigger registry foundation, supports creator-scoped Rumble text trigger CRUD for the first operational phase, and keeps that config authoritative in runtime/Auth.
+- The Rumble integration route now includes a creator-scoped controlled manual send surface that uses the same managed dispatch path as automatic trigger replies.
 
 The flowchart above keeps the creator repo grounded in its current contract-consumer role. It expands the earlier foundation diagram without implying local ownership of readiness, trigger execution, or profile authority.
 
@@ -168,7 +169,8 @@ StreamSuites-Creator/
 │       └── versioning.js
 ├── tests/
 │   ├── auth-surface-links.test.mjs
-│   └── notifications-authority.test.mjs
+│   ├── notifications-authority.test.mjs
+│   └── triggers-runtime-authority.test.mjs
 └── views/
     ├── account.html
     ├── integrations.html

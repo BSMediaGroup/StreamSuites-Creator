@@ -735,6 +735,57 @@
     }
   }
 
+  function renderRumbleManualSend(integration) {
+    const dispatch = integration?.managed_dispatch && typeof integration.managed_dispatch === "object"
+      ? integration.managed_dispatch
+      : null;
+    const summary = dispatch?.summary && typeof dispatch.summary === "object" ? dispatch.summary : {};
+    const items = Array.isArray(dispatch?.items) ? dispatch.items : [];
+    const pillEl = query("[data-rumble-manual-send-pill=\"true\"]");
+    const summaryEl = query("[data-rumble-manual-send-summary=\"true\"]");
+    const statusEl = query("[data-rumble-manual-send-status=\"true\"]");
+    const historyEl = query("[data-rumble-manual-send-history=\"true\"]");
+    const session = rumbleManagedSession(integration);
+    const transportReady = ["attached", "listening", "running"].includes(String(session?.transport_status || "").trim().toLowerCase());
+
+    setStatusPill(
+      pillEl,
+      transportReady ? "Managed send path ready" : "Managed send path blocked",
+      transportReady ? "success" : "warning",
+    );
+    if (summaryEl instanceof HTMLElement) {
+      summaryEl.textContent = transportReady
+        ? "Creator-controlled manual sends route through the same managed dispatch path used by automatic trigger replies."
+        : "Manual send stays blocked until the managed Rumble session is attached and chat-capable.";
+    }
+    if (statusEl instanceof HTMLElement) {
+      if (!session) {
+        statusEl.textContent = "No managed Rumble session is currently exported for this creator.";
+      } else if (!transportReady) {
+        statusEl.textContent = session?.status_reason || session?.blocking_reason || "Managed Rumble send is currently blocked.";
+      } else if (summary?.latest_status) {
+        statusEl.textContent = `Latest dispatch: ${summary.latest_status} via ${summary.latest_request_source || "runtime"}.`;
+      } else {
+        statusEl.textContent = "No recent managed dispatch rows are exported for this creator yet.";
+      }
+    }
+    renderList(
+      historyEl,
+      items.length
+        ? items.slice(0, 5).map((item) => {
+            const source = String(item?.request_source || "").trim().toLowerCase();
+            const label = source === "trigger_runtime"
+              ? "Automatic trigger reply"
+              : source === "admin_dashboard"
+                ? "Manual admin send"
+                : "Manual creator send";
+            const blocking = item?.error_code ? ` (${item.error_code})` : "";
+            return `${label}: ${item?.status || "unknown"} · ${item?.message_preview || "No preview"} · ${item?.requested_at || "Pending"}${blocking}`;
+          })
+        : ["No recent managed dispatch rows are currently exported."],
+    );
+  }
+
   function formatTimestamp(value) {
     if (!value) return "Pending";
     const date = new Date(value);
@@ -1333,6 +1384,7 @@
     }
     renderRumbleBotDecision(integration);
     renderRumbleManagedSession(integration);
+    renderRumbleManualSend(integration);
     setRumbleStatus(
       integration?.secret_present
         ? "Secure credential state is stored as masked metadata only."
@@ -1529,6 +1581,33 @@
     }
   }
 
+  async function submitRumbleManualSend(form) {
+    const session = rumbleManagedSession(state.integration);
+    setBusy(true);
+    setActionStatus("Submitting controlled managed Rumble send...", "neutral");
+    try {
+      const payload = await requestJson(`${API_BASE}/api/creator/runtime/rumble-dispatch`, {
+        method: "POST",
+        timeoutMs: SAVE_TIMEOUT_MS,
+        body: JSON.stringify({
+          session_id: session?.session_id || null,
+          message_text: String(form.elements.namedItem("message_text")?.value || "").trim(),
+          reason: "creator_manual_send"
+        })
+      });
+      form.reset();
+      await loadIntegration();
+      setActionStatus(
+        `Controlled Rumble send queued with status ${payload?.result?.status || "unknown"}.`,
+        "success",
+      );
+    } catch (err) {
+      setActionStatus(err?.message || "Unable to send the controlled Rumble test message.", "danger");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   function handleRootClick(event) {
     const target = event.target instanceof Element ? event.target : null;
     if (!target) return;
@@ -1587,6 +1666,11 @@
     if (target instanceof HTMLFormElement && target.matches("[data-rumble-secret-form=\"true\"]")) {
       event.preventDefault();
       void submitRumbleSecret(target);
+      return;
+    }
+    if (target instanceof HTMLFormElement && target.matches("[data-rumble-manual-send-form=\"true\"]")) {
+      event.preventDefault();
+      void submitRumbleManualSend(target);
     }
   }
 

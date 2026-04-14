@@ -1,6 +1,6 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-04-13T22:59:15.806135Z",
+  "generated_at": "2026-04-13T23:18:52.265382Z",
   "provider": "rumble",
   "count": 1,
   "summary": {
@@ -58,7 +58,7 @@
         "resolved_channel_slug": "creator",
         "attach_identity_ready": true,
         "last_live_status_checked_at": "2026-04-14T10:00:00Z",
-        "last_evaluated_at": "2026-04-13T22:59:15.810277Z",
+        "last_evaluated_at": "2026-04-13T23:18:52.269472Z",
         "live_snapshot": {
           "is_live": true,
           "freshness": "fresh",
@@ -74,18 +74,18 @@
         "can_send": true
       },
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-13T22:59:15.806135Z",
-      "last_attach_attempt_at": "2026-04-13T22:59:15.810277Z",
-      "last_attach_success_at": "2026-04-13T22:59:15.810277Z",
-      "last_transport_heartbeat_at": "2026-04-13T22:59:15.806135Z",
-      "last_heartbeat_at": "2026-04-13T22:59:15.806135Z",
-      "last_transition_at": "2026-04-13T22:59:15.806135Z",
-      "desired_since": "2026-04-13T22:59:15.806135Z",
-      "started_at": "2026-04-13T22:59:15.806135Z",
+      "last_evaluated_at": "2026-04-13T23:18:52.265382Z",
+      "last_attach_attempt_at": "2026-04-13T23:18:52.269472Z",
+      "last_attach_success_at": "2026-04-13T23:18:52.269472Z",
+      "last_transport_heartbeat_at": "2026-04-13T23:18:52.265382Z",
+      "last_heartbeat_at": "2026-04-13T23:18:52.265382Z",
+      "last_transition_at": "2026-04-13T23:18:52.265382Z",
+      "desired_since": "2026-04-13T23:18:52.265382Z",
+      "started_at": "2026-04-13T23:18:52.265382Z",
       "stopped_at": null,
       "last_event": {
         "type": "transport_attached",
-        "at": "2026-04-13T22:59:15.810277Z",
+        "at": "2026-04-13T23:18:52.269472Z",
         "message": "Managed Rumble transport attached to the live chat stream."
       }
     }

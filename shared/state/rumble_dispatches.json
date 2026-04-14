@@ -1,6 +1,6 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-04-13T22:59:15.926937Z",
+  "generated_at": "2026-04-13T23:18:50.580961Z",
   "provider": "rumble",
   "count": 1,
   "summary": {
@@ -15,7 +15,7 @@
   },
   "dispatches": [
     {
-      "request_id": "f47ea09577b14df7a718c4cddd83b24c",
+      "request_id": "04c146b34ed4439f978ab837791c00b0",
       "platform": "rumble",
       "session_id": "rumble-auto-1dd220353e0ec52f",
       "creator_account_id": "acct-1",
@@ -28,9 +28,9 @@
       "status": "sent",
       "message_preview": "This is an explicit managed runtime dispatch message that should be truncated in exports after a while.",
       "message_length": 103,
-      "requested_at": "2026-04-13T22:59:15.861349Z",
-      "last_attempt_at": "2026-04-13T22:59:15.892374Z",
-      "completed_at": "2026-04-13T22:59:15.926937Z",
+      "requested_at": "2026-04-13T23:18:50.512832Z",
+      "last_attempt_at": "2026-04-13T23:18:50.545053Z",
+      "completed_at": "2026-04-13T23:18:50.580961Z",
       "failure_reason": null,
       "error_code": null,
       "attempts": 1,
@@ -39,7 +39,7 @@
       "lifecycle_state_snapshot": "listening",
       "attempt_transport_status": "listening",
       "provider_result": {
-        "request_id": "f47ea09577b14df7a718c4cddd83b24c",
+        "request_id": "04c146b34ed4439f978ab837791c00b0",
         "chat_id": "456",
         "accepted": true
       }

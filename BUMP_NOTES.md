@@ -2,6 +2,19 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.8-alpha
 
+## 2026-04-14 - Creator Trigger Phase Repair Completion
+
+### Technical Notes
+
+- Repaired the creator trigger route so `js/triggers.js` now exposes the controller lifecycle that the Creator shell actually loads (`window.TriggersView.init/destroy`) instead of depending on a one-shot `DOMContentLoaded` boot path that could miss SPA route navigations.
+- Preserved the creator trigger CRUD/manual-send work already present, but tightened the first-phase truthfulness by keeping trigger CRUD on `/triggers`, manual send on `/integrations/rumble`, and labeling managed dispatch history rows distinctly for creator-manual, admin-manual, and automatic trigger-generated replies.
+- Added `tests/triggers-runtime-authority.test.mjs` and updated `README.md` additively so the repo tree and contract notes now match the repaired trigger/runtime-authority surface. No files were removed in this repair pass; `js/triggers.js` was replaced in place and is expected to stay roughly similar in scope while using the correct controller boot model.
+
+### Human-Readable Notes
+
+- The Creator trigger page now hydrates reliably after real route navigation instead of only when the document first loads.
+- Creator-facing Rumble dispatch history now makes it clear whether a message came from the creator, an operator, or the automatic trigger engine.
+
 ## 2026-04-14 - Creator Rumble Managed Session And Transport Visibility Pass
 
 ### Technical Notes

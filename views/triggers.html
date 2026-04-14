@@ -265,6 +265,9 @@
             </div>
 
             <div class="creator-hero-actions">
+              <button class="creator-button primary" type="button" data-trigger-add>
+                Add Rumble text trigger
+              </button>
               <button class="creator-button secondary" type="button" data-trigger-reset>
                 Reload registry
               </button>
@@ -304,12 +307,12 @@
             <article class="card trigger-summary-card">
               <div class="card-top">
                 <h3>How this phase works</h3>
-                <span class="status-pill warning"><span class="status-dot"></span>Foundation only</span>
+                <span class="status-pill warning"><span class="status-dot"></span>Rumble text phase</span>
               </div>
               <ul class="integration-readiness-list">
-                <li>Commands and enabled state come from the authoritative backend registry.</li>
-                <li>This surface does not invent create, delete, alias-edit, or response-edit controls.</li>
-                <li>Current built-ins establish deployment foundations while later phases expand creator tooling.</li>
+                <li>Command rows and edits are stored in the authoritative backend registry.</li>
+                <li>Only simple text-response triggers are operational for Rumble in this phase.</li>
+                <li>Clip-style or non-Rumble trigger types remain visible only as later-phase work.</li>
               </ul>
             </article>
 
@@ -337,6 +340,49 @@
 
           </div>
 
+          <article class="card platform-detail-card-wide" data-trigger-editor-panel hidden>
+            <div class="card-top">
+              <h3 data-trigger-editor-title>Add Rumble text trigger</h3>
+              <span class="status-pill subtle" data-trigger-editor-pill="true"><span class="status-dot"></span>Editor idle</span>
+            </div>
+            <p class="account-note" data-trigger-editor-note="true">
+              Supported here: simple creator-configured Rumble text replies routed through runtime/Auth.
+            </p>
+            <form class="platform-workspace-form" data-trigger-form>
+              <label class="account-field">
+                <span class="account-field-label">Command text</span>
+                <input class="account-field-input" type="text" name="command_text" maxlength="80" placeholder="!ping" required />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Response text</span>
+                <textarea class="account-field-input" name="response_template" rows="4" maxlength="500" placeholder="Pong. StreamSuites is listening." required></textarea>
+              </label>
+              <label class="platform-workspace-toggle">
+                <span class="platform-workspace-toggle-copy">Enabled for Rumble trigger evaluation</span>
+                <span class="switch-button">
+                  <span class="switch-scale">
+                    <span class="switch-outer">
+                      <input type="checkbox" name="enabled" checked />
+                      <span class="ss-switch-inner">
+                        <span class="ss-switch-toggle"></span>
+                        <span class="ss-switch-indicator"></span>
+                      </span>
+                    </span>
+                  </span>
+                </span>
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Cooldown seconds</span>
+                <input class="account-field-input" type="number" name="cooldown_seconds" min="0" max="300" step="1" value="5" />
+              </label>
+              <input type="hidden" name="trigger_id" value="" />
+              <div class="platform-actions">
+                <button class="creator-button primary" type="submit">Save trigger</button>
+                <button class="creator-button secondary" type="button" data-trigger-editor-cancel>Cancel</button>
+              </div>
+            </form>
+          </article>
+
 
 
           <div class="triggers-grid" data-trigger-list>
@@ -353,8 +399,8 @@
 
             <p>
 
-              Only low-risk enabled-state changes are exposed in this phase. Creating, deleting, or
-              deeply editing trigger definitions remains planned for a later pass.
+              This page is authoritative for creator-managed Rumble text trigger config in phase one.
+              Manual send testing remains separate on the <a href="/integrations/rumble">Rumble integration page</a>.
 
             </p>
 
