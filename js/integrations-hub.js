@@ -75,6 +75,7 @@
     integrations: [],
     profile: null,
     triggers: [],
+    warnings: [],
   };
 
   function escapeHtml(value) {
@@ -236,9 +237,12 @@
 
     const heroSummary = document.querySelector("[data-hub-hero-summary=\"true\"]");
     if (heroSummary instanceof HTMLElement) {
-      heroSummary.textContent = creatorCapable
+      const baseSummary = creatorCapable
         ? `Runtime/Auth marks this account creator-capable. ${linked.length} platform link${linked.length === 1 ? "" : "s"} and ${deployable.length} deployable path${deployable.length === 1 ? "" : "s"} are currently exported.`
         : "Runtime/Auth currently blocks full creator readiness on this account, so platform rollout remains limited until posture changes.";
+      heroSummary.textContent = state.warnings.length
+        ? `${baseSummary} ${state.warnings[0]}`
+        : baseSummary;
     }
 
     const postureKpi = document.querySelector("[data-hub-kpi=\"posture\"]");
@@ -369,16 +373,23 @@
     if (integrationsResult.status !== "fulfilled") {
       throw integrationsResult.reason;
     }
-    if (triggersResult.status !== "fulfilled") {
-      throw triggersResult.reason;
-    }
 
+    state.warnings = [];
     state.profile =
       profileResult.status === "fulfilled"
         ? profileResult.value?.profile || profileResult.value || null
         : null;
     state.integrations = Array.isArray(integrationsResult.value?.items) ? integrationsResult.value.items : [];
-    state.triggers = Array.isArray(triggersResult.value?.items) ? triggersResult.value.items : [];
+    state.triggers =
+      triggersResult.status === "fulfilled" && Array.isArray(triggersResult.value?.items)
+        ? triggersResult.value.items
+        : [];
+    if (profileResult.status !== "fulfilled") {
+      state.warnings.push("Profile posture is temporarily unavailable, so account-capability messaging is partially degraded.");
+    }
+    if (triggersResult.status !== "fulfilled") {
+      state.warnings.push("Trigger footing is temporarily unavailable, so deployability counts are shown without trigger detail.");
+    }
     renderSummary();
     renderPlatformGrid();
   }
@@ -399,6 +410,7 @@
     state.integrations = [];
     state.profile = null;
     state.triggers = [];
+    state.warnings = [];
   }
 
   window.IntegrationsHubView = {

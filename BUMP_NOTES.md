@@ -2,6 +2,10 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Finished the creator-side recovery for the blocked Rumble/Auth regression. `js/integrations-hub.js` now treats `/api/creator/integrations` as the required authority and degrades cleanly when profile or trigger side payloads are temporarily unavailable, so `/integrations` can still hydrate instead of dropping into a full-page load failure.
+- `js/platform-integration-detail.js` now keeps `/integrations/rumble` alive when optional runtime-owned Rumble fragments are missing or temporarily broken. The base integration contract remains authoritative, while optional bot-decision, managed-session, and managed-dispatch issues are surfaced as warning status through `optional_fragment_errors` instead of crashing the page.
+- Expanded `tests/notifications-authority.test.mjs` additively so both creator routes stay pinned to the new partial-payload hydration path. No files were removed or replaced in this completion pass.
+
 - Repaired `js/platform-integration-detail.js` so the Creator Rumble route no longer turns optional runtime-owned Rumble subpayload failures into a full-page `Load failed` state. The page still treats the base `/api/creator/integrations/rumble` contract as authoritative, but the bot-decision, managed-session, and managed-dispatch cards now degrade independently when one optional fragment is absent or malformed.
 - Expanded `tests/notifications-authority.test.mjs` additively so the Creator surface must keep the new graceful-degradation wrapper and the partial-payload fallback messaging. No files were removed; `js/platform-integration-detail.js` was hardened in place and is expected to stay roughly the same size because the route still renders the same current layout.
 

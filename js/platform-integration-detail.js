@@ -1315,6 +1315,9 @@
 
   function renderIntegration(integration) {
     state.integration = integration;
+    const optionalErrors = Array.isArray(integration?.optional_fragment_errors)
+      ? integration.optional_fragment_errors.filter((item) => item && typeof item === "object")
+      : [];
     setStatusPill(query("[data-platform-status-pill=\"true\"]"), humanizeStatus(integration?.status), statusTone(integration?.status));
     setStatusPill(query("[data-platform-readiness-pill=\"true\"]"), deploymentReadinessLabel(integration), deploymentReadinessTone(integration));
     setStatusPill(
@@ -1402,6 +1405,15 @@
       () => renderRumbleManualSend(integration),
       "Optional managed-dispatch detail is temporarily unavailable, but the base integration contract still loaded."
     );
+    if (optionalErrors.length) {
+      setActionStatus(
+        optionalErrors
+          .map((item) => String(item.message || item.fragment || "Optional fragment unavailable").trim())
+          .filter(Boolean)
+          .join(" "),
+        "warning"
+      );
+    }
     setRumbleStatus(
       integration?.secret_present
         ? "Secure credential state is stored as masked metadata only."

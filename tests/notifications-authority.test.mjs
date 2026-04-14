@@ -40,12 +40,15 @@ test("creator rumble integration detail uses the runtime bot auto-deploy authori
   assert.match(detailJs, /function renderRumbleOptionalSection/);
   assert.match(detailJs, /Optional managed-session posture detail is temporarily unavailable/);
   assert.match(detailJs, /Optional managed-dispatch detail is temporarily unavailable/);
+  assert.match(detailJs, /optional_fragment_errors/);
 });
 
-test("creator integrations hub keeps runtime integration hydration authoritative even if profile-me is temporarily unavailable", () => {
+test("creator integrations hub keeps runtime integration hydration authoritative even when profile or triggers are temporarily unavailable", () => {
   const hubJs = read("js/integrations-hub.js");
 
   assert.match(hubJs, /Promise\.allSettled/);
   assert.match(hubJs, /if \(integrationsResult\.status !== "fulfilled"\)/);
-  assert.match(hubJs, /if \(triggersResult\.status !== "fulfilled"\)/);
+  assert.match(hubJs, /if \(triggersResult\.status !== "fulfilled"\) \{/);
+  assert.match(hubJs, /state\.warnings\.push\("Trigger footing is temporarily unavailable/);
+  assert.doesNotMatch(hubJs, /throw triggersResult\.reason/);
 });
