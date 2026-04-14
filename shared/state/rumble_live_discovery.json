@@ -1,20 +1,55 @@
 {
   "schema_version": "v1",
   "provider": "rumble",
-  "generated_at": "2026-04-14T10:00:00Z",
-  "scan": {},
+  "generated_at": "2026-04-14T11:14:55.559143Z",
+  "scan": {
+    "started_at": "2026-04-14T11:14:39.259837Z",
+    "completed_at": "2026-04-14T11:14:55.559143Z",
+    "duration_ms": 16299,
+    "pages_requested": 10,
+    "pages_succeeded": 0,
+    "browse_entries_found": 0,
+    "streams_resolved": 0,
+    "matched_creators_count": 0,
+    "viewer_metrics_resolved": 0,
+    "chat_metrics_resolved": 0,
+    "partial_failures": [
+      "browse_page_1: HTTP 403 for https://rumble.com/browse/live?page=1",
+      "browse_page_2: HTTP 403 for https://rumble.com/browse/live?page=2",
+      "browse_page_3: HTTP 403 for https://rumble.com/browse/live?page=3",
+      "browse_page_4: HTTP 403 for https://rumble.com/browse/live?page=4",
+      "browse_page_5: HTTP 403 for https://rumble.com/browse/live?page=5",
+      "browse_page_6: HTTP 403 for https://rumble.com/browse/live?page=6",
+      "browse_page_7: HTTP 403 for https://rumble.com/browse/live?page=7",
+      "browse_page_8: HTTP 403 for https://rumble.com/browse/live?page=8",
+      "browse_page_9: HTTP 403 for https://rumble.com/browse/live?page=9",
+      "browse_page_10: HTTP 403 for https://rumble.com/browse/live?page=10"
+    ],
+    "scanner": {
+      "max_pages": 10,
+      "browse_page_concurrency": 4,
+      "stream_resolution_concurrency": 6,
+      "chat_metric_concurrency": 4
+    }
+  },
   "streams": [],
   "creators": [
     {
-      "creator_id": "creator-one",
-      "match_reason": "provider_channel_url",
-      "matched_value": "/c/creator",
-      "live_url": "https://rumble.com/v123-live.html",
-      "last_checked_at": "2026-04-14T10:00:00Z",
-      "stream_key": "rumble:video:123",
-      "numeric_video_id": "123",
-      "chat_id": "456",
-      "channel_slug": "creator"
+      "creator_id": "As5TyU",
+      "display_name": "Daniel Clancy",
+      "is_live": false,
+      "match_reason": null,
+      "matched_value": null,
+      "live_title": null,
+      "live_url": null,
+      "viewer_count": null,
+      "started_at": null,
+      "last_checked_at": "2026-04-14T11:14:39.259837Z",
+      "stream_key": null,
+      "numeric_video_id": null,
+      "channel_url": "https://rumble.com/c/StreamSuites",
+      "channel_slug": "StreamSuites",
+      "chat_id": null
     }
   ]
 }
