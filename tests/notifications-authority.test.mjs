@@ -38,3 +38,11 @@ test("creator rumble integration detail uses the runtime bot auto-deploy authori
   assert.match(detailJs, /last_transport_heartbeat_at/);
   assert.match(detailJs, /Only a stored `stream_key` exists/);
 });
+
+test("creator integrations hub keeps runtime integration hydration authoritative even if profile-me is temporarily unavailable", () => {
+  const hubJs = read("js/integrations-hub.js");
+
+  assert.match(hubJs, /Promise\.allSettled/);
+  assert.match(hubJs, /if \(integrationsResult\.status !== "fulfilled"\)/);
+  assert.match(hubJs, /if \(triggersResult\.status !== "fulfilled"\)/);
+});

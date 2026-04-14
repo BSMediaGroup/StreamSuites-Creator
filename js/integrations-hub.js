@@ -360,14 +360,25 @@
   }
 
   async function loadHub() {
-    const [profileResult, integrationsResult, triggersResult] = await Promise.all([
+    const [profileResult, integrationsResult, triggersResult] = await Promise.allSettled([
       requestJson(PROFILE_ENDPOINT, { method: "GET" }),
       requestJson(INTEGRATIONS_ENDPOINT, { method: "GET" }),
       requestJson(TRIGGERS_ENDPOINT, { method: "GET" }),
     ]);
-    state.profile = profileResult?.profile || profileResult || null;
-    state.integrations = Array.isArray(integrationsResult?.items) ? integrationsResult.items : [];
-    state.triggers = Array.isArray(triggersResult?.items) ? triggersResult.items : [];
+
+    if (integrationsResult.status !== "fulfilled") {
+      throw integrationsResult.reason;
+    }
+    if (triggersResult.status !== "fulfilled") {
+      throw triggersResult.reason;
+    }
+
+    state.profile =
+      profileResult.status === "fulfilled"
+        ? profileResult.value?.profile || profileResult.value || null
+        : null;
+    state.integrations = Array.isArray(integrationsResult.value?.items) ? integrationsResult.value.items : [];
+    state.triggers = Array.isArray(triggersResult.value?.items) ? triggersResult.value.items : [];
     renderSummary();
     renderPlatformGrid();
   }
