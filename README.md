@@ -159,6 +159,7 @@ StreamSuites-Creator/
 │   ├── platform-integration-detail.js
 │   ├── routes.js
 │   ├── settings.js
+│   ├── social-platforms.js
 │   ├── state.js
 │   ├── triggers.js
 │   └── utils/
@@ -168,6 +169,7 @@ StreamSuites-Creator/
 │       ├── version-stamp.js
 │       └── versioning.js
 ├── tests/
+│   ├── account-social-editor.test.mjs
 │   ├── auth-surface-links.test.mjs
 │   ├── notifications-authority.test.mjs
 │   └── triggers-runtime-authority.test.mjs

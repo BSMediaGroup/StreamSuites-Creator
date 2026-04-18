@@ -374,42 +374,83 @@
                     ></textarea>
                     <span class="account-field-note">Saved to the authoritative public profile payload.</span>
                   </div>
-                  <div class="account-field-grid account-paired-fields">
-                    <div class="account-field">
-                      <span class="account-field-label">Website</span>
-                      <input class="account-field-input" type="url" placeholder="https://example.com" data-profile-field="true" data-profile-link="website" />
+                  <section class="account-inline-subsection social-links-editor" data-social-links-editor="true">
+                    <div class="account-inline-subsection-top social-links-editor-top">
+                      <div>
+                        <h4>Social links</h4>
+                        <p>Canonical platform links for StreamSuites, hovercards, and FindMeHere.</p>
+                      </div>
+                      <div class="account-inline-subsection-actions social-links-summary-strip">
+                        <span class="status-pill subtle">
+                          <span class="status-dot"></span>Canonical platform registry
+                        </span>
+                        <span class="social-links-summary-copy" data-social-links-summary="true">Loading link summary...</span>
+                      </div>
                     </div>
-                    <div class="account-field">
-                      <span class="account-field-label">X</span>
-                      <input class="account-field-input" type="url" placeholder="https://x.com/yourhandle" data-profile-field="true" data-profile-link="x" />
+                    <div class="social-links-toolbar">
+                      <label class="social-links-search" for="account-social-links-search">
+                        <span class="sr-only">Search social platforms</span>
+                        <input
+                          id="account-social-links-search"
+                          class="account-field-input social-links-search-input"
+                          type="search"
+                          placeholder="Search platforms or aliases"
+                          autocomplete="off"
+                          spellcheck="false"
+                          data-social-links-search="true"
+                        />
+                      </label>
+                      <div class="social-links-filter-row" data-social-links-filters="true">
+                        <button class="social-links-filter-chip is-active" type="button" data-social-links-filter="all">All</button>
+                        <button class="social-links-filter-chip" type="button" data-social-links-filter="configured">Configured</button>
+                        <button class="social-links-filter-chip" type="button" data-social-links-filter="first-class">First-class</button>
+                        <button class="social-links-filter-chip" type="button" data-social-links-filter="extended">Extended</button>
+                      </div>
                     </div>
-                  </div>
-                  <div class="account-field-grid account-paired-fields">
-                    <div class="account-field">
-                      <span class="account-field-label">YouTube</span>
-                      <input class="account-field-input" type="url" placeholder="https://youtube.com/@yourhandle" data-profile-field="true" data-profile-link="youtube" />
+                    <div class="social-links-active-strip" data-social-links-active-strip="true">
+                      <div class="social-links-active-header">
+                        <span class="social-links-active-title">Configured links</span>
+                        <span class="social-links-active-note" data-social-links-active-note="true">No saved social links yet.</span>
+                      </div>
+                      <div class="social-links-active-list" data-social-links-active-list="true"></div>
                     </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Twitch</span>
-                      <input class="account-field-input" type="url" placeholder="https://twitch.tv/yourhandle" data-profile-field="true" data-profile-link="twitch" />
+                    <div class="social-links-layout">
+                      <section class="social-links-group social-links-group-priority">
+                        <div class="social-links-group-head">
+                          <div>
+                            <h5>First-class platforms</h5>
+                            <p>Priority platforms stay visible by default in canonical order.</p>
+                          </div>
+                          <span class="social-links-group-count" data-social-links-first-class-count="true">0 shown</span>
+                        </div>
+                        <div class="social-links-grid" data-social-links-first-class-list="true"></div>
+                      </section>
+                      <section class="social-links-group social-links-group-secondary">
+                        <button
+                          class="social-links-group-toggle"
+                          type="button"
+                          data-social-links-extended-toggle="true"
+                          aria-expanded="false"
+                          aria-controls="account-social-links-extended"
+                        >
+                          <span>
+                            <strong>Extended platforms</strong>
+                            <span class="social-links-group-toggle-note" data-social-links-extended-note="true">Open the secondary registry when you need more destinations.</span>
+                          </span>
+                          <span class="social-links-group-toggle-meta" data-social-links-extended-count="true">0 platforms</span>
+                        </button>
+                        <div
+                          id="account-social-links-extended"
+                          class="social-links-extended-panels"
+                          data-social-links-extended-panels="true"
+                          hidden
+                        ></div>
+                      </section>
                     </div>
-                  </div>
-                  <div class="account-field-grid account-paired-fields">
-                    <div class="account-field">
-                      <span class="account-field-label">Discord</span>
-                      <input class="account-field-input" type="url" placeholder="https://discord.gg/yourserver" data-profile-field="true" data-profile-link="discord" />
-                    </div>
-                    <div class="account-field">
-                      <span class="account-field-label">Instagram</span>
-                      <input class="account-field-input" type="url" placeholder="https://instagram.com/yourhandle" data-profile-field="true" data-profile-link="instagram" />
-                    </div>
-                  </div>
-                  <div class="account-field-grid account-paired-fields">
-                    <div class="account-field">
-                      <span class="account-field-label">TikTok</span>
-                      <input class="account-field-input" type="url" placeholder="https://tiktok.com/@yourhandle" data-profile-field="true" data-profile-link="tiktok" />
-                    </div>
-                  </div>
+                    <p class="account-field-note" data-social-links-preserved-note="true">
+                      Existing unknown social-link keys stay preserved unless you replace them with a canonical platform field here.
+                    </p>
+                  </section>
                 </div>
                 <div class="share-preview-list">
                   <div class="share-preview-card">
@@ -1287,6 +1328,7 @@
   <script src="/js/app.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/creator-moderators.js"></script>
+  <script src="/js/social-platforms.js"></script>
   <script src="/js/account-settings.js"></script>
   <script src="/assets/js/ss-profile-hovercard.js"></script>
   <script src="/js/status-widget.js" defer></script>

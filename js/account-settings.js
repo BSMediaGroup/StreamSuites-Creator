@@ -30,15 +30,12 @@
   const BACKGROUND_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
   const LOGO_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
   const INTEGRATION_KEYS = Object.freeze(["youtube", "rumble", "twitch", "kick", "pilled"]);
-  const KNOWN_SOCIAL_KEYS = Object.freeze([
-    "website",
-    "x",
-    "youtube",
-    "twitch",
-    "discord",
-    "instagram",
-    "tiktok",
-  ]);
+  const SOCIAL_PLATFORMS = window.StreamSuitesSocialPlatforms || null;
+  const KNOWN_SOCIAL_KEYS = Object.freeze(
+    Array.isArray(SOCIAL_PLATFORMS?.ORDER)
+      ? SOCIAL_PLATFORMS.ORDER.slice()
+      : ["website", "x", "youtube", "twitch", "discord", "instagram", "tiktok"]
+  );
   const CUSTOM_LINK_MAX_ITEMS = 8;
   const CUSTOM_LINK_LABEL_MAX_LENGTH = 80;
   const CUSTOM_LINK_ICON_MAX_BYTES = 256 * 1024;
@@ -149,6 +146,9 @@
     accountTabsOverflowQueued: false,
     previewMode: "streamsuites",
     customLinks: [],
+    socialEditorFilter: "all",
+    socialEditorQuery: "",
+    socialEditorExtendedOpen: false,
   };
 
   function showToast(message, tone = "info", options = {}) {
@@ -566,6 +566,19 @@
       findmeThemeCustomCssInput: document.querySelector("[data-findme-theme-custom-css]"),
       bioInput: document.querySelector("[data-profile-bio]"),
       linkInputs: Array.from(document.querySelectorAll("[data-profile-link]")),
+      socialLinksEditor: document.querySelector("[data-social-links-editor]"),
+      socialLinksSummary: document.querySelector("[data-social-links-summary]"),
+      socialLinksSearchInput: document.querySelector("[data-social-links-search]"),
+      socialLinksFilters: document.querySelector("[data-social-links-filters]"),
+      socialLinksActiveList: document.querySelector("[data-social-links-active-list]"),
+      socialLinksActiveNote: document.querySelector("[data-social-links-active-note]"),
+      socialLinksFirstClassCount: document.querySelector("[data-social-links-first-class-count]"),
+      socialLinksFirstClassList: document.querySelector("[data-social-links-first-class-list]"),
+      socialLinksExtendedToggle: document.querySelector("[data-social-links-extended-toggle]"),
+      socialLinksExtendedNote: document.querySelector("[data-social-links-extended-note]"),
+      socialLinksExtendedCount: document.querySelector("[data-social-links-extended-count]"),
+      socialLinksExtendedPanels: document.querySelector("[data-social-links-extended-panels]"),
+      socialLinksPreservedNote: document.querySelector("[data-social-links-preserved-note]"),
       customLinksList: document.querySelector("[data-custom-links-list]"),
       customLinksSummary: document.querySelector("[data-custom-links-summary]"),
       customLinkAddButton: document.querySelector("[data-custom-link-add]"),
@@ -1595,6 +1608,304 @@
     return JSON.parse(JSON.stringify(profile || {}));
   }
 
+  function normalizeSocialPlatformKey(value) {
+    if (SOCIAL_PLATFORMS?.normalizeKey) return SOCIAL_PLATFORMS.normalizeKey(value);
+    return coerceText(value).toLowerCase().replace(/[\s_-]+/g, "");
+  }
+
+  function normalizeSocialLinksForUi(value) {
+    if (SOCIAL_PLATFORMS?.normalizeLinks) return SOCIAL_PLATFORMS.normalizeLinks(value);
+    if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+    return Object.entries(value).reduce((acc, [rawKey, rawValue]) => {
+      const key = normalizeSocialPlatformKey(rawKey);
+      const text = coerceText(rawValue);
+      if (!key || !text || acc[key]) return acc;
+      acc[key] = text;
+      return acc;
+    }, {});
+  }
+
+  function getSocialPlatformMeta(key) {
+    return SOCIAL_PLATFORMS?.getMeta?.(key) || null;
+  }
+
+  function getSocialPlatformLabel(key) {
+    return SOCIAL_PLATFORMS?.getLabel?.(key) || coerceText(key) || "Custom";
+  }
+
+  function getSocialPlatformIcon(key) {
+    return SOCIAL_PLATFORMS?.getIcon?.(key) || "/assets/icons/link.svg";
+  }
+
+  function getSocialPlatformPlaceholder(key) {
+    return coerceText(getSocialPlatformMeta(key)?.placeholder) || "https://example.com/yourhandle";
+  }
+
+  function matchSocialPlatformQuery(meta, query) {
+    if (SOCIAL_PLATFORMS?.matchesQuery) return SOCIAL_PLATFORMS.matchesQuery(meta, query);
+    return true;
+  }
+
+  function getSocialPlatformGroupKeys(group) {
+    const registry = Array.isArray(SOCIAL_PLATFORMS?.REGISTRY)
+      ? SOCIAL_PLATFORMS.REGISTRY
+      : KNOWN_SOCIAL_KEYS.map((key) => ({ key, group: "first-class", category: "primary" }));
+    return registry.filter((entry) => entry.group === group).map((entry) => entry.key);
+  }
+
+  function getSocialPlatformDraftMap() {
+    const values = {};
+    document.querySelectorAll("[data-profile-link]").forEach((input) => {
+      if (!(input instanceof HTMLInputElement)) return;
+      const key = coerceText(input.getAttribute("data-profile-link"));
+      if (!key) return;
+      values[key] = coerceText(input.value);
+    });
+    if (Object.keys(values).length) {
+      return values;
+    }
+    return normalizeSocialLinksForUi(state.profile?.social_links);
+  }
+
+  function countActiveSocialLinks(links) {
+    return Object.values(links || {}).filter((value) => coerceText(value)).length;
+  }
+
+  function getPreservedUnknownSocialLinks(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+    return Object.entries(value).reduce((acc, [rawKey, rawValue]) => {
+      const normalizedKey = normalizeSocialPlatformKey(rawKey);
+      const text = coerceText(rawValue);
+      if (!text || KNOWN_SOCIAL_KEYS.includes(normalizedKey)) return acc;
+      acc[rawKey] = text;
+      return acc;
+    }, {});
+  }
+
+  function getComparableSocialLinks(value) {
+    const normalizedKnown = normalizeSocialLinksForUi(value);
+    const preservedUnknown = getPreservedUnknownSocialLinks(value);
+    const comparable = {};
+    Object.keys(preservedUnknown)
+      .sort()
+      .forEach((key) => {
+        comparable[key] = preservedUnknown[key];
+      });
+    KNOWN_SOCIAL_KEYS.forEach((key) => {
+      const text = coerceText(normalizedKnown[key]);
+      if (text) comparable[key] = text;
+    });
+    return comparable;
+  }
+
+  function buildSocialEditorRowMarkup(key, value) {
+    const meta = getSocialPlatformMeta(key);
+    const aliases = Array.isArray(meta?.aliases)
+      ? meta.aliases.filter((alias) => normalizeSocialPlatformKey(alias) !== key)
+      : [];
+    const aliasText = aliases.length ? `Also matches ${aliases.join(", ")}.` : "Saved to the authoritative public profile payload.";
+    const inputId = `account-social-link-${key}`;
+    const hasValue = !!coerceText(value);
+    const disabledAttr = state.savingProfile || !state.profile ? "disabled" : "";
+    return `
+      <article class="social-link-card${hasValue ? " is-active" : ""}" data-social-link-card="${escapeHtml(key)}">
+        <div class="social-link-card-top">
+          <label class="social-link-card-label" for="${escapeHtml(inputId)}">
+            <span class="social-link-card-brand">
+              <img class="social-link-card-icon" src="${escapeHtml(getSocialPlatformIcon(key))}" alt="" aria-hidden="true" />
+              <span>${escapeHtml(getSocialPlatformLabel(key))}</span>
+            </span>
+            <span class="social-link-card-status${hasValue ? " is-active" : ""}">${hasValue ? "Configured" : "Empty"}</span>
+          </label>
+          <button
+            class="creator-button secondary social-link-clear-button"
+            type="button"
+            data-social-link-clear="${escapeHtml(key)}"
+            ${hasValue ? disabledAttr : "disabled"}
+            aria-label="Clear ${escapeHtml(getSocialPlatformLabel(key))}"
+          >
+            Clear
+          </button>
+        </div>
+        <input
+          id="${escapeHtml(inputId)}"
+          class="account-field-input social-link-input"
+          type="url"
+          placeholder="${escapeHtml(getSocialPlatformPlaceholder(key))}"
+          value="${escapeHtml(coerceText(value))}"
+          autocomplete="url"
+          spellcheck="false"
+          data-profile-field="true"
+          data-profile-link="${escapeHtml(key)}"
+          ${disabledAttr}
+        />
+        <span class="account-field-note">${escapeHtml(aliasText)}</span>
+      </article>
+    `;
+  }
+
+  function buildSocialEditorPanels() {
+    const query = coerceText(state.socialEditorQuery);
+    const filter = state.socialEditorFilter || "all";
+    const values = getSocialPlatformDraftMap();
+    const firstClassKeys = getSocialPlatformGroupKeys("first-class");
+    const extendedKeys = getSocialPlatformGroupKeys("extended");
+    const shouldShowConfiguredOnly = filter === "configured";
+    const shouldShowFirstClassOnly = filter === "first-class";
+    const shouldShowExtendedOnly = filter === "extended";
+
+    const matches = (key) => {
+      const meta = getSocialPlatformMeta(key) || { key, label: getSocialPlatformLabel(key), aliases: [] };
+      const hasValue = !!coerceText(values[key]);
+      if (shouldShowConfiguredOnly && !hasValue) return false;
+      if (shouldShowFirstClassOnly && !firstClassKeys.includes(key)) return false;
+      if (shouldShowExtendedOnly && !extendedKeys.includes(key)) return false;
+      if (!matchSocialPlatformQuery(meta, query)) return false;
+      return true;
+    };
+
+    const firstClassVisible = firstClassKeys.filter(matches);
+    const extendedVisible = extendedKeys.filter(matches);
+    const activeEntries = (SOCIAL_PLATFORMS?.getOrderedEntries?.(values) || Object.entries(values).map(([key, url]) => ({ key, url })))
+      .filter((entry) => coerceText(entry.url));
+    const preservedUnknown = getPreservedUnknownSocialLinks(state.profile?.social_links);
+
+    return {
+      values,
+      firstClassKeys,
+      extendedKeys,
+      firstClassVisible,
+      extendedVisible,
+      activeEntries,
+      preservedUnknown,
+    };
+  }
+
+  function renderSocialLinksEditor(options = {}) {
+    const els = getProfileElements();
+    if (!(els.socialLinksEditor instanceof HTMLElement)) return;
+    const panels = buildSocialEditorPanels();
+    const forceKeepFocus = options.keepFocus === true;
+
+    if (els.socialLinksSummary instanceof HTMLElement) {
+      const firstClassActive = panels.firstClassKeys.filter((key) => coerceText(panels.values[key])).length;
+      const extendedActive = panels.extendedKeys.filter((key) => coerceText(panels.values[key])).length;
+      const activeCount = panels.activeEntries.length;
+      const preservedCount = Object.keys(panels.preservedUnknown).length;
+      const summaryBits = [`${activeCount} active`, `${firstClassActive} first-class`, `${extendedActive} extended`];
+      if (preservedCount) summaryBits.push(`${preservedCount} preserved extra`);
+      els.socialLinksSummary.textContent = summaryBits.join(" · ");
+    }
+
+    if (els.socialLinksSearchInput instanceof HTMLInputElement && !forceKeepFocus) {
+      els.socialLinksSearchInput.value = state.socialEditorQuery;
+    }
+    if (els.socialLinksSearchInput instanceof HTMLInputElement) {
+      els.socialLinksSearchInput.disabled = state.savingProfile || !state.profile;
+    }
+
+    if (els.socialLinksFilters instanceof HTMLElement) {
+      els.socialLinksFilters.querySelectorAll("[data-social-links-filter]").forEach((button) => {
+        if (!(button instanceof HTMLButtonElement)) return;
+        button.classList.toggle("is-active", button.getAttribute("data-social-links-filter") === state.socialEditorFilter);
+        button.disabled = state.savingProfile || !state.profile;
+      });
+    }
+
+    if (els.socialLinksActiveList instanceof HTMLElement) {
+      if (!panels.activeEntries.length) {
+        els.socialLinksActiveList.innerHTML = '<span class="social-links-active-empty">No configured links yet.</span>';
+      } else {
+        els.socialLinksActiveList.innerHTML = panels.activeEntries
+          .map((entry) => `
+            <button class="social-links-active-chip" type="button" data-social-links-jump="${escapeHtml(entry.key)}">
+              <img src="${escapeHtml(getSocialPlatformIcon(entry.key))}" alt="" aria-hidden="true" />
+              <span>${escapeHtml(getSocialPlatformLabel(entry.key))}</span>
+            </button>
+          `)
+          .join("");
+      }
+    }
+
+    if (els.socialLinksActiveNote instanceof HTMLElement) {
+      els.socialLinksActiveNote.textContent = panels.activeEntries.length
+        ? "Jump straight to populated rows."
+        : "No saved social links yet.";
+    }
+
+    if (els.socialLinksFirstClassCount instanceof HTMLElement) {
+      els.socialLinksFirstClassCount.textContent = `${panels.firstClassVisible.length} shown`;
+    }
+
+    if (els.socialLinksFirstClassList instanceof HTMLElement) {
+      els.socialLinksFirstClassList.innerHTML = panels.firstClassVisible.length
+        ? panels.firstClassVisible.map((key) => buildSocialEditorRowMarkup(key, panels.values[key])).join("")
+        : '<div class="social-links-empty-state">No first-class platforms match the current filter.</div>';
+    }
+
+    const extendedGroups = [
+      { id: "video-audio", label: "Video & audio", keys: ["spotify", "vimeo", "dailymotion", "odysee", "trovo"] },
+      { id: "community-support", label: "Community & support", keys: ["locals", "snapchat", "pinterest", "kofi", "minds"] },
+      { id: "other", label: "Other", keys: ["bluesky", "github", "custom"] },
+    ];
+    const forceExtendedOpen = !!coerceText(state.socialEditorQuery) || state.socialEditorFilter === "extended";
+    const shouldOpenExtended = forceExtendedOpen || state.socialEditorExtendedOpen;
+    if (els.socialLinksExtendedToggle instanceof HTMLButtonElement) {
+      els.socialLinksExtendedToggle.setAttribute("aria-expanded", shouldOpenExtended ? "true" : "false");
+      els.socialLinksExtendedToggle.disabled = state.savingProfile || !state.profile;
+    }
+    if (els.socialLinksExtendedCount instanceof HTMLElement) {
+      els.socialLinksExtendedCount.textContent = `${panels.extendedKeys.length} platforms`;
+    }
+    if (els.socialLinksExtendedNote instanceof HTMLElement) {
+      const activeExtended = panels.extendedKeys.filter((key) => coerceText(panels.values[key])).length;
+      els.socialLinksExtendedNote.textContent = activeExtended
+        ? `${activeExtended} extended platform${activeExtended === 1 ? "" : "s"} configured.`
+        : "Open the secondary registry when you need more destinations.";
+    }
+    if (els.socialLinksExtendedPanels instanceof HTMLElement) {
+      els.socialLinksExtendedPanels.hidden = !shouldOpenExtended;
+      els.socialLinksExtendedPanels.innerHTML = panels.extendedVisible.length
+        ? extendedGroups
+            .map((group) => {
+              const visibleKeys = group.keys.filter((key) => panels.extendedVisible.includes(key));
+              if (!visibleKeys.length) return "";
+              return `
+                <section class="social-links-subgroup">
+                  <div class="social-links-subgroup-head">
+                    <h6>${escapeHtml(group.label)}</h6>
+                    <span>${visibleKeys.length} shown</span>
+                  </div>
+                  <div class="social-links-grid">
+                    ${visibleKeys.map((key) => buildSocialEditorRowMarkup(key, panels.values[key])).join("")}
+                  </div>
+                </section>
+              `;
+            })
+            .join("")
+        : '<div class="social-links-empty-state">No extended platforms match the current filter.</div>';
+    }
+
+    if (els.socialLinksPreservedNote instanceof HTMLElement) {
+      const preservedKeys = Object.keys(panels.preservedUnknown);
+      els.socialLinksPreservedNote.textContent = preservedKeys.length
+        ? `Existing non-canonical keys stay preserved on save: ${preservedKeys.join(", ")}.`
+        : "Only canonical platform fields are shown here. No extra saved social-link keys need preserving right now.";
+    }
+  }
+
+  function focusSocialPlatformInput(key) {
+    const selector = `[data-profile-link="${key}"]`;
+    const input = document.querySelector(selector);
+    if (!(input instanceof HTMLInputElement)) return;
+    state.socialEditorExtendedOpen = state.socialEditorExtendedOpen || getSocialPlatformMeta(key)?.group === "extended";
+    renderSocialLinksEditor({ keepFocus: true });
+    const resolved = document.querySelector(selector);
+    if (!(resolved instanceof HTMLInputElement)) return;
+    resolved.focus();
+    resolved.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+
   function normalizeProfilePayload(payload) {
     const profile = payload?.profile && typeof payload.profile === "object" ? payload.profile : payload;
     return {
@@ -1699,6 +2010,7 @@
     if (els.findmeThemeButtonColorPickerInput instanceof HTMLInputElement) {
       els.findmeThemeButtonColorPickerInput.disabled = busy || !state.profile;
     }
+    renderSocialLinksEditor();
     renderCustomLinksEditor();
   }
 
@@ -2623,13 +2935,13 @@
     const accentColor = theme.page_accent_color || DEFAULT_ACCENT_COLOR;
     const buttonColor = theme.button_color || theme.page_accent_color || DEFAULT_BUTTON_COLOR;
     const bio = draft.bio || coerceText(state.profile?.bio) || "No public bio saved yet.";
-    const socialEntries = Object.entries(draft.social_links || {})
-      .filter(([, value]) => coerceText(value))
+    const socialEntries = (SOCIAL_PLATFORMS?.getOrderedEntries?.(draft.social_links) || Object.entries(draft.social_links || {}).map(([key, url]) => ({ key, url })))
+      .filter((entry) => coerceText(entry.url))
       .slice(0, 6)
-      .map(([key, value]) => ({
-        key,
-        label: key.replace(/[_-]+/g, " "),
-        value: coerceText(value),
+      .map((entry) => ({
+        key: entry.key,
+        label: getSocialPlatformLabel(entry.key),
+        value: coerceText(entry.url),
       }));
     const customLinks = getSanitizedCustomLinks().map((item) => ({
       label: item.label,
@@ -2920,7 +3232,7 @@
     const profile = state.profile || normalizeProfilePayload({});
     const unknownLinks = {};
     Object.entries(profile.social_links || {}).forEach(([key, value]) => {
-      if (!KNOWN_SOCIAL_KEYS.includes(String(key))) {
+      if (!KNOWN_SOCIAL_KEYS.includes(normalizeSocialPlatformKey(key))) {
         const text = coerceText(value);
         if (text) {
           unknownLinks[key] = text;
@@ -2930,7 +3242,7 @@
 
     const socialLinks = { ...unknownLinks };
     els.linkInputs.forEach((input) => {
-      const key = input.getAttribute("data-profile-link") || "";
+      const key = normalizeSocialPlatformKey(input.getAttribute("data-profile-link") || "");
       const value = coerceText(input.value);
       if (key && value) {
         socialLinks[key] = value;
@@ -2990,7 +3302,7 @@
       background_image_url: coerceText(draft.background_image_url),
       findmehere_theme: normalizeFindmeTheme(draft.findmehere_theme),
       bio: coerceText(draft.bio),
-      social_links: { ...(draft.social_links || {}) },
+      social_links: getComparableSocialLinks(draft.social_links),
       custom_links: (draft.custom_links || []).map((item) => ({ ...item })),
     };
   }
@@ -3016,7 +3328,7 @@
       background_image_url: coerceText(profile?.background_image_url),
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme),
       bio: coerceText(profile?.bio),
-      social_links: { ...(profile?.social_links || {}) },
+      social_links: getComparableSocialLinks(profile?.social_links),
       custom_links: normalizeCustomLinks(profile?.custom_links).map(({ staged_icon, ...item }) => ({ ...item })),
     };
   }
@@ -3250,10 +3562,12 @@
     if (els.bioInput instanceof HTMLTextAreaElement) {
       els.bioInput.value = normalized.bio;
     }
+    const normalizedSocialLinks = normalizeSocialLinksForUi(normalized.social_links);
     els.linkInputs.forEach((input) => {
-      const key = input.getAttribute("data-profile-link") || "";
-      input.value = coerceText(normalized.social_links[key]);
+      const key = normalizeSocialPlatformKey(input.getAttribute("data-profile-link") || "");
+      input.value = coerceText(normalizedSocialLinks[key]);
     });
+    renderSocialLinksEditor();
 
     renderSlugAliases(normalized);
     renderSlugFeedback();
@@ -3670,6 +3984,61 @@
     if (els.slugInput instanceof HTMLInputElement) {
       els.slugInput.addEventListener("input", renderSlugFeedback);
     }
+    if (els.socialLinksSearchInput instanceof HTMLInputElement) {
+      els.socialLinksSearchInput.addEventListener("input", () => {
+        state.socialEditorQuery = coerceText(els.socialLinksSearchInput.value);
+        renderSocialLinksEditor({ keepFocus: true });
+      });
+    }
+    if (els.socialLinksFilters instanceof HTMLElement) {
+      els.socialLinksFilters.addEventListener("click", (event) => {
+        const button = event.target instanceof HTMLElement ? event.target.closest("[data-social-links-filter]") : null;
+        if (!(button instanceof HTMLButtonElement)) return;
+        state.socialEditorFilter = button.getAttribute("data-social-links-filter") || "all";
+        if (state.socialEditorFilter === "extended") {
+          state.socialEditorExtendedOpen = true;
+        }
+        renderSocialLinksEditor();
+      });
+    }
+    if (els.socialLinksExtendedToggle instanceof HTMLButtonElement) {
+      els.socialLinksExtendedToggle.addEventListener("click", () => {
+        state.socialEditorExtendedOpen = !state.socialEditorExtendedOpen;
+        renderSocialLinksEditor();
+      });
+    }
+    if (els.socialLinksEditor instanceof HTMLElement) {
+      els.socialLinksEditor.addEventListener("click", (event) => {
+        const target = event.target instanceof HTMLElement ? event.target : null;
+        const clearButton = target?.closest("[data-social-link-clear]");
+        if (clearButton instanceof HTMLButtonElement) {
+          const key = clearButton.getAttribute("data-social-link-clear") || "";
+          const input = document.querySelector(`[data-profile-link="${key}"]`);
+          if (input instanceof HTMLInputElement) {
+            input.value = "";
+          }
+          renderSocialLinksEditor();
+          renderPreviewSurface();
+          return;
+        }
+        const jumpButton = target?.closest("[data-social-links-jump]");
+        if (jumpButton instanceof HTMLButtonElement) {
+          const key = jumpButton.getAttribute("data-social-links-jump") || "";
+          focusSocialPlatformInput(key);
+        }
+      });
+      els.socialLinksEditor.addEventListener("input", (event) => {
+        if (!(event.target instanceof HTMLInputElement)) return;
+        if (!event.target.matches("[data-profile-link]")) return;
+        renderPreviewSurface();
+      });
+      els.socialLinksEditor.addEventListener("change", (event) => {
+        if (!(event.target instanceof HTMLInputElement)) return;
+        if (!event.target.matches("[data-profile-link]")) return;
+        renderSocialLinksEditor({ keepFocus: true });
+        renderPreviewSurface();
+      });
+    }
     if (els.customLinkAddButton instanceof HTMLButtonElement) {
       els.customLinkAddButton.addEventListener("click", () => {
         if (state.customLinks.length >= CUSTOM_LINK_MAX_ITEMS) {
@@ -3816,6 +4185,7 @@
 
   async function init() {
     if (!hasAccountSettingsSurface()) return;
+    renderSocialLinksEditor();
     wireProviderButtons();
     wireEmailChange();
     wirePublicProfileControls();

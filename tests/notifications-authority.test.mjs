@@ -57,18 +57,20 @@ test("creator integrations hub keeps runtime integration hydration authoritative
 });
 
 test("creator hovercards use the canonical compact social registry and max-8 overflow rule", () => {
+  const socialPlatformsJs = read("js/social-platforms.js");
   const hovercardJs = read("assets/js/ss-profile-hovercard.js");
   const hovercardCss = read("assets/css/ss-profile-hovercard.css");
 
   assert.doesNotMatch(hovercardJs, /Creator surfaces intentionally do not mount profile hovercards/);
   assert.match(hovercardJs, /const TRIGGER_SELECTOR = "\.ss-profile-hover";/);
-  assert.match(hovercardJs, /whatsappchannels/);
-  assert.match(hovercardJs, /icon: "\/assets\/icons\/whatsapp\.svg"/);
-  assert.match(hovercardJs, /applepodcasts/);
-  assert.match(hovercardJs, /aliases: \["x", "twitter"\]/);
-  assert.match(hovercardJs, /aliases: \["website", "site", "web", "url", "homepage"\]/);
+  assert.match(hovercardJs, /window\.StreamSuitesSocialPlatforms/);
+  assert.match(socialPlatformsJs, /whatsappchannels/);
+  assert.match(socialPlatformsJs, /icon: "\/assets\/icons\/whatsapp\.svg"/);
+  assert.match(socialPlatformsJs, /applepodcasts/);
+  assert.match(socialPlatformsJs, /aliases: \["x", "twitter"\]/);
+  assert.match(socialPlatformsJs, /aliases: \["website", "site", "web", "url", "homepage"\]/);
   assert.match(hovercardJs, /links\.slice\(0, 8\)/);
   assert.match(hovercardJs, /overflow\.textContent = `\+\$\{links\.length - 8\}`;/);
-  assert.doesNotMatch(hovercardJs, /dlive/i);
+  assert.doesNotMatch(socialPlatformsJs, /dlive/i);
   assert.match(hovercardCss, /\.social-overflow-indicator/);
 });

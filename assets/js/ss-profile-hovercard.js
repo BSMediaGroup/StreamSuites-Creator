@@ -14,65 +14,7 @@
     pro: "/assets/icons/tierbadge-pro.svg",
     developer: "/assets/icons/dev-green.svg"
   });
-  const SOCIAL_PLATFORM_REGISTRY = Object.freeze([
-    { key: "rumble", label: "Rumble", icon: "/assets/icons/rumble.svg", aliases: ["rumble"] },
-    { key: "youtube", label: "YouTube", icon: "/assets/icons/youtube.svg", aliases: ["youtube", "yt"] },
-    { key: "twitch", label: "Twitch", icon: "/assets/icons/twitch.svg", aliases: ["twitch"] },
-    { key: "kick", label: "Kick", icon: "/assets/icons/kick.svg", aliases: ["kick"] },
-    { key: "pilled", label: "Pilled", icon: "/assets/icons/pilled.svg", aliases: ["pilled"] },
-    { key: "discord", label: "Discord", icon: "/assets/icons/discord.svg", aliases: ["discord"] },
-    { key: "x", label: "X", icon: "/assets/icons/x.svg", aliases: ["x", "twitter"] },
-    { key: "instagram", label: "Instagram", icon: "/assets/icons/instagram.svg", aliases: ["instagram", "insta"] },
-    { key: "tiktok", label: "TikTok", icon: "/assets/icons/tiktok.svg", aliases: ["tiktok", "tik_tok"] },
-    { key: "facebook", label: "Facebook", icon: "/assets/icons/facebook.svg", aliases: ["facebook", "fb"] },
-    { key: "threads", label: "Threads", icon: "/assets/icons/threads.svg", aliases: ["threads"] },
-    { key: "reddit", label: "Reddit", icon: "/assets/icons/reddit.svg", aliases: ["reddit"] },
-    { key: "telegram", label: "Telegram", icon: "/assets/icons/telegram.svg", aliases: ["telegram"] },
-    {
-      key: "whatsappchannels",
-      label: "WhatsApp Channels",
-      icon: "/assets/icons/whatsapp.svg",
-      aliases: ["whatsappchannels", "whatsappchannel", "whatsapp_channels", "whatsapp_channel", "whatsapp"]
-    },
-    { key: "patreon", label: "Patreon", icon: "/assets/icons/patreon.svg", aliases: ["patreon"] },
-    { key: "substack", label: "Substack", icon: "/assets/icons/substack.svg", aliases: ["substack"] },
-    { key: "soundcloud", label: "SoundCloud", icon: "/assets/icons/soundcloud.svg", aliases: ["soundcloud", "sound_cloud"] },
-    {
-      key: "applepodcasts",
-      label: "Apple Podcasts",
-      icon: "/assets/icons/applepodcasts.svg",
-      aliases: ["applepodcasts", "apple_podcasts", "applepodcast", "apple_podcast"]
-    },
-    { key: "website", label: "Website", icon: "/assets/icons/website.svg", aliases: ["website", "site", "web", "url", "homepage"] },
-    { key: "bluesky", label: "Bluesky", icon: "/assets/icons/bluesky.svg", aliases: ["bluesky", "bsky"] },
-    { key: "locals", label: "Locals", icon: "/assets/icons/locals.svg", aliases: ["locals"] },
-    { key: "spotify", label: "Spotify", icon: "/assets/icons/spotify.svg", aliases: ["spotify"] },
-    { key: "vimeo", label: "Vimeo", icon: "/assets/icons/vimeo.svg", aliases: ["vimeo"] },
-    { key: "dailymotion", label: "Dailymotion", icon: "/assets/icons/dailymotion.svg", aliases: ["dailymotion"] },
-    { key: "odysee", label: "Odysee", icon: "/assets/icons/odysee.svg", aliases: ["odysee"] },
-    { key: "trovo", label: "Trovo", icon: "/assets/icons/trovo.svg", aliases: ["trovo"] },
-    { key: "snapchat", label: "Snapchat", icon: "/assets/icons/snapchat.svg", aliases: ["snapchat"] },
-    { key: "pinterest", label: "Pinterest", icon: "/assets/icons/pinterest.svg", aliases: ["pinterest"] },
-    { key: "kofi", label: "Ko-fi", icon: "/assets/icons/kofi.svg", aliases: ["kofi", "ko-fi", "ko_fi"] },
-    { key: "github", label: "GitHub", icon: "/assets/icons/github.svg", aliases: ["github"] },
-    { key: "minds", label: "Minds", icon: "/assets/icons/minds.svg", aliases: ["minds"] },
-    { key: "custom", label: "Custom", icon: "/assets/icons/link.svg", aliases: ["custom", "link"] }
-  ]);
-  const SOCIAL_PLATFORM_METADATA = Object.freeze(
-    SOCIAL_PLATFORM_REGISTRY.reduce((acc, entry, index) => {
-      acc[entry.key] = Object.freeze({ ...entry, order: index });
-      return acc;
-    }, {})
-  );
-  const SOCIAL_PLATFORM_ALIAS_MAP = Object.freeze(
-    SOCIAL_PLATFORM_REGISTRY.reduce((acc, entry) => {
-      entry.aliases.forEach((alias) => {
-        acc[alias.replace(/[\s_-]+/g, "").toLowerCase()] = entry.key;
-      });
-      return acc;
-    }, {})
-  );
-  const SOCIAL_PLATFORM_ORDER = Object.freeze(SOCIAL_PLATFORM_REGISTRY.map((entry) => entry.key));
+  const SOCIAL_PLATFORMS = window.StreamSuitesSocialPlatforms || null;
 
   let card = null;
   let activeTrigger = null;
@@ -120,11 +62,9 @@
   }
 
   function normalizeSocialNetworkKey(value) {
-    const normalized = safeText(value)
-      .toLowerCase()
-      .replace(/[\s_-]+/g, "");
-    if (!normalized) return "";
-    return SOCIAL_PLATFORM_ALIAS_MAP[normalized] || normalized;
+    if (SOCIAL_PLATFORMS?.normalizeKey) return SOCIAL_PLATFORMS.normalizeKey(value);
+    const normalized = safeText(value).toLowerCase().replace(/[\s_-]+/g, "");
+    return normalized || "";
   }
 
   function normalizeSocialLinks(value) {
@@ -148,37 +88,38 @@
   }
 
   function socialPlatformMeta(key) {
-    return SOCIAL_PLATFORM_METADATA[normalizeSocialNetworkKey(key)] || null;
+    if (SOCIAL_PLATFORMS?.getMeta) return SOCIAL_PLATFORMS.getMeta(key);
+    return null;
   }
 
   function socialIconPath(key) {
-    return socialPlatformMeta(key)?.icon || "/assets/icons/link.svg";
+    return SOCIAL_PLATFORMS?.getIcon?.(key) || socialPlatformMeta(key)?.icon || "/assets/icons/link.svg";
   }
 
   function socialLabel(key) {
-    const meta = socialPlatformMeta(key);
-    if (meta?.label) return meta.label;
-    const raw = safeText(key).replace(/[_-]+/g, " ");
-    return raw ? raw.replace(/\b\w/g, (char) => char.toUpperCase()) : "Custom";
+    return SOCIAL_PLATFORMS?.getLabel?.(key) || socialPlatformMeta(key)?.label || "Custom";
   }
 
   function collectOrderedSocialEntries(value) {
+    if (SOCIAL_PLATFORMS?.getOrderedEntries) {
+      return SOCIAL_PLATFORMS.getOrderedEntries(value)
+        .map(({ key, url, label, icon }) => ({
+          network: key,
+          url: normalizeExternalUrl(url),
+          label,
+          iconPath: icon
+        }))
+        .filter((entry) => entry.url);
+    }
     const normalized = normalizeSocialLinks(value);
-    const entries = [];
-    const seen = new Set();
-    SOCIAL_PLATFORM_ORDER.forEach((network) => {
-      const url = normalizeExternalUrl(normalized[network]);
-      if (!url) return;
-      entries.push({ network, url, label: socialLabel(network), iconPath: socialIconPath(network) });
-      seen.add(network);
-    });
-    Object.entries(normalized).forEach(([network, rawUrl]) => {
-      if (seen.has(network)) return;
-      const url = normalizeExternalUrl(rawUrl);
-      if (!url) return;
-      entries.push({ network, url, label: socialLabel(network), iconPath: socialIconPath(network) });
-    });
-    return entries;
+    return Object.entries(normalized)
+      .map(([network, rawUrl]) => ({
+        network,
+        url: normalizeExternalUrl(rawUrl),
+        label: socialLabel(network),
+        iconPath: socialIconPath(network)
+      }))
+      .filter((entry) => entry.url);
   }
 
   function buildBadgesFromRole(role, tier = "core") {

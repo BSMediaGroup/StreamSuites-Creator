@@ -22,6 +22,24 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.8-alpha
 
+## 2026-04-19 - Creator Account Social Links Editor Scale Pass
+
+### Technical Notes
+
+- Replaced the old flat hard-coded social input stack inside `views/account.html` with a grouped social-links editor shell that now renders a compact summary strip, configured-links jump chips, a slim local search/filter row, a first-class platform block, and a secondary extended-platform reveal area without changing the existing `POST /api/public/profile/me` save path or `social_links` payload contract.
+- Added `js/social-platforms.js` as the shared canonical Creator-side social registry so account settings and compact hovercards now read the same platform order, labels, alias normalization, placeholders, and full-color SVG icon paths. `whatsappchannels` explicitly resolves to `/assets/icons/whatsapp.svg`, and no `dlive` entry exists in the editable/rendered registry.
+- Updated `js/account-settings.js` to render the new social editor from the shared registry, hydrate alias-backed saved values into canonical inputs, preserve unknown non-canonical keys during save, keep the existing dirty/save/reset flow, and reuse the same payload shape while making the preview/social summary ordering consistent with the canonical registry.
+- Updated `assets/js/ss-profile-hovercard.js` to consume the new shared registry instead of owning a second embedded platform list. That embedded mapping block was removed and replaced because keeping two registries in sync would keep drifting; this file is expected to be shorter now.
+- Extended `css/creator-dashboard.css` additively with compact social-editor layout, chip, grouped-panel, and responsive rules so the account section no longer collapses into one long vertical wall at normal dashboard widths or narrow widths.
+- Added `tests/account-social-editor.test.mjs` and expanded `tests/notifications-authority.test.mjs` so the repo now guards the shared registry, the new account editor shell, the WhatsApp Channels mapping, and the continued absence of `dlive`.
+- Updated `README.md` tree entries for the new shared helper and the new focused test file.
+
+### Human-Readable Notes
+
+- Account settings now makes social links much easier to browse: major platforms stay visible first, configured links are easy to spot, and the rest of the registry stays available without taking over the page.
+- Search and filter controls are light and local, so creators can jump to one platform quickly instead of scrolling through a long input wall.
+- Existing saved profiles should continue to load and save normally, including older alias-based platform keys, while the editor now presents them through the cleaner canonical platform names and icons.
+
 ## 2026-04-14 - Creator Trigger Phase Repair Completion
 
 ### Technical Notes
