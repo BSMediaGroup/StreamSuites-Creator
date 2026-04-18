@@ -2,6 +2,11 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Restored the Creator-side compact profile hovercard renderer in `assets/js/ss-profile-hovercard.js` so existing `.ss-profile-hover` triggers now hydrate again and use the same canonical social-platform ordering and alias normalization already established on Public/Members. The hovercard social row now prefers the full-color SVG set, resolves `twitter` to `x`, `site`/`web` to `website`, `whatsappchannels`/`whatsapp_channels` to the existing `whatsapp.svg`, and explicitly excludes any `dlive` mapping.
+- Replaced the previous no-op hovercard stub with the canonical compact social path because the stub meant Creator compact identity previews could not render any social hovers at all. That file is expected to be much longer now: the old placeholder was removed, and the real hovercard logic now owns normalization, ordering, fetching, and max-8 plus-overflow rendering in one place.
+- Updated `assets/css/ss-profile-hovercard.css` additively with the small `+N` overflow pill styling so dense social rows stay balanced instead of wrapping into a bulky second line.
+- Expanded `tests/notifications-authority.test.mjs` additively so the Creator repo must keep the canonical hovercard registry, the WhatsApp Channels correction, the compact max-8 limit, and the explicit absence of `dlive`.
+
 - Refined the Creator Rumble posture copy in `js/platform-integration-detail.js` so a matched creator who is currently offline now renders as `Waiting for live stream` / `Awaiting live stream target` instead of looking like a hard attach failure. The page still uses the runtime-owned `bot_auto_deploy` and `managed_session` payloads; it now distinguishes offline waiting, live-target pending, attach-identity incomplete, and attach-ready/session-present states without inventing fake live or session data.
 - Updated `tests/notifications-authority.test.mjs` additively so the Creator route must keep the calmer awaiting-live posture wording and the managed-session copy that explains a session will appear once a real live target exists. No files were removed or replaced in this pass.
 

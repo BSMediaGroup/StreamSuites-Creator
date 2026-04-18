@@ -55,3 +55,20 @@ test("creator integrations hub keeps runtime integration hydration authoritative
   assert.match(hubJs, /state\.warnings\.push\("Trigger footing is temporarily unavailable/);
   assert.doesNotMatch(hubJs, /throw triggersResult\.reason/);
 });
+
+test("creator hovercards use the canonical compact social registry and max-8 overflow rule", () => {
+  const hovercardJs = read("assets/js/ss-profile-hovercard.js");
+  const hovercardCss = read("assets/css/ss-profile-hovercard.css");
+
+  assert.doesNotMatch(hovercardJs, /Creator surfaces intentionally do not mount profile hovercards/);
+  assert.match(hovercardJs, /const TRIGGER_SELECTOR = "\.ss-profile-hover";/);
+  assert.match(hovercardJs, /whatsappchannels/);
+  assert.match(hovercardJs, /icon: "\/assets\/icons\/whatsapp\.svg"/);
+  assert.match(hovercardJs, /applepodcasts/);
+  assert.match(hovercardJs, /aliases: \["x", "twitter"\]/);
+  assert.match(hovercardJs, /aliases: \["website", "site", "web", "url", "homepage"\]/);
+  assert.match(hovercardJs, /links\.slice\(0, 8\)/);
+  assert.match(hovercardJs, /overflow\.textContent = `\+\$\{links\.length - 8\}`;/);
+  assert.doesNotMatch(hovercardJs, /dlive/i);
+  assert.match(hovercardCss, /\.social-overflow-indicator/);
+});
