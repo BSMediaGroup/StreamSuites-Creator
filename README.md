@@ -53,6 +53,7 @@ flowchart TD
 - Legacy hash-fragment and older `/platforms/*` compatibility remains in the client router, but canonical creator links now use path routes such as `/overview`, `/account`, `/statistics`, `/notifications`, `/integrations/...`, and `/modules/...`.
 - The `/account` route is the authoritative creator-facing profile control surface for supported fields exposed by the public profile API.
 - The `/settings` route is now the creator-facing Preferences surface for moderator assignment and future community controls that remain grounded in runtime-owned contracts.
+- The `/wheels` route is now a real creator-owned wheel artifact manager that lists, creates, imports, edits, exports, and saves wheel artifacts only through the authoritative runtime/Auth wheel API.
 - The account route now keeps integrations as a compact snapshot and link-out surface rather than the primary control center.
 - A dedicated `/integrations` hub now acts as the full-page creator readiness surface, while per-platform routes carry the actionable setup and management workflows.
 - Creator media editing now prefers upload-from-device for avatar and cover updates while preserving manual URL inputs as secondary paths.
@@ -162,6 +163,7 @@ StreamSuites-Creator/
 │   ├── social-platforms.js
 │   ├── state.js
 │   ├── triggers.js
+│   ├── wheels.js
 │   └── utils/
 │       ├── notifications-store.js
 │       ├── stats-formatting.js
@@ -172,7 +174,8 @@ StreamSuites-Creator/
 │   ├── account-social-editor.test.mjs
 │   ├── auth-surface-links.test.mjs
 │   ├── notifications-authority.test.mjs
-│   └── triggers-runtime-authority.test.mjs
+│   ├── triggers-runtime-authority.test.mjs
+│   └── wheels-authority.test.mjs
 └── views/
     ├── account.html
     ├── integrations.html
@@ -185,6 +188,7 @@ StreamSuites-Creator/
     ├── statistics.html
     ├── triggers.html
     ├── updates.html
+    ├── wheels.html
     ├── modules/
     │   ├── clips.html
     │   ├── livechat.html

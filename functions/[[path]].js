@@ -14,6 +14,7 @@ const EXACT_CREATOR_ROUTES = new Set([
   "/updates",
   "/creators",
   "/jobs",
+  "/wheels",
   "/scoreboards",
   "/tallies",
   "/design",

@@ -18,7 +18,7 @@
     { route: "updates", templatePath: "updates" },
     { route: "creators", templatePath: "creators" },
     { route: "jobs", templatePath: "jobs" },
-    { route: "scoreboards", templatePath: "scoreboards" },
+    { route: "wheels", templatePath: "wheels", aliases: ["scoreboards"] },
     { route: "tallies", templatePath: "tallies" },
     { route: "design", templatePath: "design" },
     {

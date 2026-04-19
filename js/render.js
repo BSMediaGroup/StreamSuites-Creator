@@ -43,6 +43,7 @@
     settings: ["/js/creator-moderators.js"],
     creators: ["/js/creators.js"],
     jobs: ["/js/jobs.js"],
+    wheels: ["/js/wheels.js"],
     discordPlatform: ["/js/discord-bot-integration.js"]
   });
 
@@ -548,7 +549,7 @@
     registerView("updates");
     registerView("creators", { scripts: ViewScripts.creators, controllerName: "CreatorsView" });
     registerView("jobs", { scripts: ViewScripts.jobs, controllerName: "JobsView" });
-    registerView("scoreboards");
+    registerView("wheels", { scripts: ViewScripts.wheels, controllerName: "WheelsView" });
     registerView("tallies");
     registerView("design");
     registerView("integrations/rumble", {

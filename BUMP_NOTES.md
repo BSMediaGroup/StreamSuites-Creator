@@ -2,6 +2,20 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+## 2026-04-20 - Creator Wheel Artifact Manager
+
+### Technical Notes
+
+- Added a real `/wheels` creator route by wiring `index.html`, `functions/[[path]].js`, `js/routes.js`, and `js/render.js` into the existing Creator shell instead of leaving wheel work in the older placeholder area or inventing a disconnected mini-app.
+- Added `views/wheels.html`, `js/wheels.js`, and the matching `css/creator-dashboard.css` wheel-editor styles so creators can list their wheel artifacts, create new ones, edit title/notes, manage entries and palette, persist default wheel-vs-scoreboard display mode, import compatible wheel payloads, export portable `.sswheel` JSON, and save only through the authoritative `GET/POST/PATCH /api/creator/wheels*` runtime/Auth contracts.
+- Added `tests/wheels-authority.test.mjs` to pin the route wiring, runtime/Auth-only endpoint usage, manual-authority milestone copy, and the presence of the dedicated wheel-manager UI shell. No unrelated Creator routes were redesigned in this pass; the new styles were added under wheel-specific selectors to keep the rest of the dashboard stable.
+
+### Human-Readable Notes
+
+- Creator now has a real wheel editor instead of a reserved placeholder route.
+- New wheels start in wheel view by default, but creators can persist scoreboard mode per artifact when they want Public to open there first.
+- Import/export is now real, and unsupported imported fields are called out as metadata instead of being misrepresented as working settings.
+
 - Restored the Creator-side compact profile hovercard renderer in `assets/js/ss-profile-hovercard.js` so existing `.ss-profile-hover` triggers now hydrate again and use the same canonical social-platform ordering and alias normalization already established on Public/Members. The hovercard social row now prefers the full-color SVG set, resolves `twitter` to `x`, `site`/`web` to `website`, `whatsappchannels`/`whatsapp_channels` to the existing `whatsapp.svg`, and explicitly excludes any `dlive` mapping.
 - Replaced the previous no-op hovercard stub with the canonical compact social path because the stub meant Creator compact identity previews could not render any social hovers at all. That file is expected to be much longer now: the old placeholder was removed, and the real hovercard logic now owns normalization, ordering, fetching, and max-8 plus-overflow rendering in one place.
 - Updated `assets/css/ss-profile-hovercard.css` additively with the small `+N` overflow pill styling so dense social rows stay balanced instead of wrapping into a bulky second line.
