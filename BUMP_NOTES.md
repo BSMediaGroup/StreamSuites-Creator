@@ -2,6 +2,14 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+## 2026-04-20 - Creator Wheel Public-Link Repair
+
+### Technical Notes
+
+- Extended `js/wheels.js` so each saved wheel card now resolves and surfaces the authoritative public destination from the runtime/Auth payload instead of showing only an internal slug line. Saved rows remain selectable/editable, but they now also expose a clear `View public wheel` link and the exact `/wheels/<slug>` path the public site will resolve.
+- Added wheel-row footer styles in `css/creator-dashboard.css` for the narrow public-path/link affordance without redesigning the existing wheel manager layout or regressing the previously-fixed wheels nav icon.
+- Expanded `tests/wheels-authority.test.mjs` to pin the new public destination resolver and the wheel-card footer link styling. No files were removed or replaced; the touched JS/CSS/test files are slightly longer because of the added public-view affordance.
+
 ## 2026-04-20 - Creator Wheels Nav Icon Repair
 
 ### Technical Notes

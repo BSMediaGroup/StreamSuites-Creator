@@ -31,11 +31,14 @@ test("creator wheels editor talks only to the authoritative runtime/Auth wheel e
   assert.match(js, /const WHEELS_ENDPOINT = `\$\{API_BASE\}\/api\/creator\/wheels`;/);
   assert.match(js, /\/api\/creator\/wheels\/import/);
   assert.match(js, /\$\{WHEELS_ENDPOINT\}\/\$\{encodeURIComponent\(state\.selectedCode\)\}\/export/);
+  assert.match(js, /function resolvePublicWheelDestination\(item\)/);
+  assert.match(js, /View public wheel/);
   assert.match(js, /Manual editing is the authority path/);
   assert.match(js, /Unsupported fields are preserved as import metadata only/);
   assert.match(js, /default_display_mode: "wheel"/);
   assert.match(view, /data-wheel-manager="true"/);
   assert.match(css, /\.wheel-manager-shell/);
   assert.match(css, /\.wheel-list-card/);
+  assert.match(css, /\.wheel-list-card__footer/);
   assert.match(appShell, /wheels: "\/assets\/icons\/ui\/wheelpie\.svg"/);
 });

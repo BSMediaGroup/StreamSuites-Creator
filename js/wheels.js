@@ -20,6 +20,7 @@
   const API_BASE = resolveApiBase();
   const WHEELS_ENDPOINT = `${API_BASE}/api/creator/wheels`;
   const WHEELS_IMPORT_ENDPOINT = `${API_BASE}/api/creator/wheels/import`;
+  const DEFAULT_PUBLIC_BASE = "https://streamsuites.app";
   const DEFAULT_COLORS = ["#ff6b6b", "#ffd166", "#06d6a0", "#118ab2", "#9b5de5", "#f15bb5"];
   const state = {
     root: null,
@@ -200,6 +201,16 @@
 
   function currentSelection() {
     return state.items.find((item) => item.artifact_code === state.selectedCode) || null;
+  }
+
+  function resolvePublicWheelDestination(item) {
+    const publicPath =
+      String(item?.public_path || "").trim() ||
+      (String(item?.slug || "").trim() ? `/wheels/${encodeURIComponent(String(item.slug).trim())}` : "");
+    const publicUrl =
+      String(item?.public_url || "").trim() ||
+      (publicPath ? `${DEFAULT_PUBLIC_BASE}${publicPath}` : "");
+    return { publicPath, publicUrl };
   }
 
   async function loadWheels({ selectCode = "" } = {}) {
@@ -383,12 +394,23 @@
     return state.items
       .map((item) => {
         const selected = item.artifact_code === state.selectedCode;
+        const destination = resolvePublicWheelDestination(item);
         return `
-          <button class="wheel-list-card${selected ? " is-selected" : ""}" type="button" data-action="select-wheel" data-artifact-code="${escapeHtml(item.artifact_code)}">
-            <span class="wheel-list-card__title">${escapeHtml(item.title || "Untitled wheel")}</span>
-            <span class="wheel-list-card__meta">${escapeHtml(item.default_display_mode || "wheel")} default · ${escapeHtml(String((item.entries || []).length))} entries</span>
-            <span class="wheel-list-card__subtle">${escapeHtml(item.slug || item.artifact_code || "")}</span>
-          </button>
+          <article class="wheel-list-card-shell${selected ? " is-selected" : ""}">
+            <button class="wheel-list-card" type="button" data-action="select-wheel" data-artifact-code="${escapeHtml(item.artifact_code)}">
+              <span class="wheel-list-card__title">${escapeHtml(item.title || "Untitled wheel")}</span>
+              <span class="wheel-list-card__meta">${escapeHtml(item.default_display_mode || "wheel")} default · ${escapeHtml(String((item.entries || []).length))} entries</span>
+              <span class="wheel-list-card__subtle">${escapeHtml(item.slug || item.artifact_code || "")}</span>
+            </button>
+            <div class="wheel-list-card__footer">
+              <span class="wheel-list-card__path">${escapeHtml(destination.publicPath || "Public route pending")}</span>
+              ${
+                destination.publicUrl
+                  ? `<a class="wheel-list-card__link" href="${escapeHtml(destination.publicUrl)}" target="_blank" rel="noopener noreferrer">View public wheel</a>`
+                  : `<span class="wheel-list-card__link is-disabled">Public route pending</span>`
+              }
+            </div>
+          </article>
         `;
       })
       .join("");
