@@ -1,0 +1,46 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-04-20T05:00:28Z",
+  "counts": {
+    "total": 2,
+    "assigned": 2,
+    "unassigned": 0,
+    "suppressed": 0
+  },
+  "identities": [
+    {
+      "identity_code": "public-user001",
+      "identity_kind": "assigned",
+      "account_user_code": "UGHW8WQ",
+      "display_name": "SStestAcc",
+      "listing_state": "listed",
+      "source_platform": null,
+      "source_display_name": null,
+      "source_channel_scope": null,
+      "has_source_user_id": false,
+      "has_evidence_key": false,
+      "source_confidence": null,
+      "created_at": "2026-04-20T03:59:03Z",
+      "updated_at": "2026-04-20T03:59:03Z",
+      "last_seen_at": "2026-04-20T03:59:03Z",
+      "assigned_at": "2026-04-20T03:59:03Z"
+    },
+    {
+      "identity_code": "public-user002",
+      "identity_kind": "assigned",
+      "account_user_code": "4TiOlvS",
+      "display_name": "Daniel Clancy",
+      "listing_state": "listed",
+      "source_platform": null,
+      "source_display_name": null,
+      "source_channel_scope": null,
+      "has_source_user_id": false,
+      "has_evidence_key": false,
+      "source_confidence": null,
+      "created_at": "2026-04-20T04:59:14Z",
+      "updated_at": "2026-04-20T04:59:14Z",
+      "last_seen_at": "2026-04-20T04:59:14Z",
+      "assigned_at": "2026-04-20T04:59:14Z"
+    }
+  ]
+}

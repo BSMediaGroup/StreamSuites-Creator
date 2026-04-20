@@ -1,0 +1,97 @@
+{
+  "schema_version": "streamsuites.public-wheels.v1",
+  "generated_at": "2026-04-20T05:00:29Z",
+  "meta": {
+    "source": "StreamSuites runtime",
+    "visibility": "public",
+    "scope": "wheels"
+  },
+  "counts": {
+    "total": 1,
+    "wheel_default": 1,
+    "scoreboard_default": 0
+  },
+  "wheels": [
+    {
+      "id": "artifact-f86dba051ec249f1b739fb9d0be60cd3",
+      "artifact_code": "artifact-f86dba051ec249f1b739fb9d0be60cd3",
+      "artifact_type": "wheel",
+      "slug": "test-wheel",
+      "title": "Test Wheel",
+      "summary": "test",
+      "description": "test",
+      "notes": "test",
+      "default_display_mode": "wheel",
+      "allow_duplicates": true,
+      "auto_remove_winner": true,
+      "entries": [
+        {
+          "color": "#ff6b6b",
+          "entry_id": "entry-1",
+          "label": "Daniel",
+          "notes": "",
+          "weight": 3.0
+        },
+        {
+          "color": "#ffd166",
+          "entry_id": "entry-2",
+          "label": "Big Balloon",
+          "notes": "",
+          "weight": 1.0
+        },
+        {
+          "color": "#9147ff",
+          "entry_id": "entry-3",
+          "label": "Tully",
+          "notes": "",
+          "weight": 1.0
+        }
+      ],
+      "entry_count": 3,
+      "palette": {
+        "accent_color": "#38bdf8",
+        "background_color": "#0f172a",
+        "segment_colors": [
+          "#ff6b6b",
+          "#ffd166",
+          "#06d6a0",
+          "#118ab2",
+          "#9b5de5",
+          "#f15bb5"
+        ],
+        "text_color": "#f8fafc"
+      },
+      "presentation": {
+        "animation_enabled": true,
+        "confetti_enabled": true,
+        "scoreboard_max_rows": 24,
+        "show_entry_labels": true,
+        "sound_enabled": true,
+        "spin_duration_ms": 8500
+      },
+      "creator": {
+        "account_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+        "user_code": "4TiOlvS",
+        "public_slug": "danielclancy",
+        "display_name": "Daniel Clancy",
+        "avatar_url": "https://cdn.streamsuites.app/u/4TiOlvS/avatar/v1.webp"
+      },
+      "visibility": "listed",
+      "state": "active",
+      "status": "active",
+      "provenance": "imported",
+      "source_platform": "sswheel",
+      "import_provenance": {
+        "source_format": "sswheel",
+        "source_name": "test-wheel.sswheel",
+        "imported_at": null,
+        "exact_source_available": true,
+        "unsupported_fields": [],
+        "notes": ""
+      },
+      "unsupported_import_fields": [],
+      "created_at": "2026-04-20T04:59:14Z",
+      "updated_at": "2026-04-20T05:00:28Z"
+    }
+  ]
+}

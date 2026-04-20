@@ -1,0 +1,12 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-04-20T05:00:28Z",
+  "counts": {
+    "total": 0,
+    "pending": 0,
+    "approved": 0,
+    "rejected": 0,
+    "cancelled": 0
+  },
+  "requests": []
+}

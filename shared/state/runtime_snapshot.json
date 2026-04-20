@@ -1,11 +1,11 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-04-14T15:31:06.128674Z",
-  "heartbeat": "2026-04-14T15:31:06.128674Z",
+  "generated_at": "2026-04-20T05:05:05.397011Z",
+  "heartbeat": "2026-04-20T05:05:05.397011Z",
   "runtime": {
     "project": "StreamSuites\u2122 Runtime",
     "version": "0.4.2-alpha",
-    "build": "2026.04.14+005"
+    "build": "2026.04.20+003"
   },
   "system": {
     "platform_polling_enabled": {
@@ -245,7 +245,7 @@
         "twitter": true,
         "discord": true
       },
-      "last_heartbeat": "2026-04-14T15:31:02.874930Z",
+      "last_heartbeat": "2026-04-20T05:05:05.149754Z",
       "error": null,
       "live_status": {
         "creator_id": "As5TyU",
@@ -253,7 +253,7 @@
         "is_live": false,
         "active_provider": null,
         "active_status": null,
-        "last_checked_at": "2026-04-14T15:30:47.329450Z",
+        "last_checked_at": "2026-04-20T05:04:26.160740Z",
         "freshness": "fresh",
         "stale": false,
         "checked_provider_count": 3,
@@ -264,16 +264,20 @@
             "is_live": false,
             "provider_account_id": null,
             "provider_account_login": null,
+            "provider_channel_url": null,
+            "provider_channel_slug": null,
             "live_title": null,
             "live_url": null,
             "thumbnail_url": null,
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-14T15:30:47.329450Z",
+            "last_checked_at": "2026-04-20T05:04:26.160740Z",
             "stale": false,
             "freshness": "fresh",
-            "error": null
+            "error": null,
+            "match_reason": null,
+            "matched_value": null
           },
           {
             "creator_id": "As5TyU",
@@ -281,33 +285,41 @@
             "is_live": false,
             "provider_account_id": null,
             "provider_account_login": null,
+            "provider_channel_url": null,
+            "provider_channel_slug": null,
             "live_title": null,
             "live_url": null,
             "thumbnail_url": null,
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-14T15:30:13.436862Z",
+            "last_checked_at": "2026-04-20T05:03:58.272251Z",
             "stale": false,
             "freshness": "fresh",
-            "error": null
+            "error": null,
+            "match_reason": null,
+            "matched_value": null
           },
           {
             "creator_id": "As5TyU",
             "provider": "rumble",
             "is_live": false,
             "provider_account_id": null,
-            "provider_account_login": "StreamSuites",
+            "provider_account_login": "danielclancy",
+            "provider_channel_url": "https://rumble.com/user/danielclancy",
+            "provider_channel_slug": "danielclancy",
             "live_title": null,
-            "live_url": "https://rumble.com/c/StreamSuites",
+            "live_url": null,
             "thumbnail_url": null,
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-14T15:30:43.728698Z",
+            "last_checked_at": "2026-04-20T05:03:25.321707Z",
             "stale": false,
             "freshness": "fresh",
-            "error": null
+            "error": "browse_live_request_failed",
+            "match_reason": null,
+            "matched_value": null
           }
         ]
       }
@@ -319,7 +331,7 @@
   "rumble_chat": null,
   "live_status": {
     "schema_version": "v1",
-    "generated_at": "2026-04-14T15:31:03.310025Z",
+    "generated_at": "2026-04-20T05:04:26.160740Z",
     "provider_priority": [
       "twitch",
       "youtube",
@@ -332,8 +344,8 @@
         "stale_after_seconds": 180,
         "batch_size": 25,
         "creators_configured": 1,
-        "last_refresh_started_at": "2026-04-14T15:30:43.728698Z",
-        "last_refresh_completed_at": "2026-04-14T15:31:03.310025Z",
+        "last_refresh_started_at": "2026-04-20T05:03:25.321707Z",
+        "last_refresh_completed_at": "2026-04-20T05:03:47.981860Z",
         "last_error": null
       },
       {
@@ -342,8 +354,8 @@
         "stale_after_seconds": 90,
         "batch_size": 100,
         "creators_configured": 1,
-        "last_refresh_started_at": "2026-04-14T15:30:47.329450Z",
-        "last_refresh_completed_at": "2026-04-14T15:30:47.329450Z",
+        "last_refresh_started_at": "2026-04-20T05:04:26.160740Z",
+        "last_refresh_completed_at": "2026-04-20T05:04:26.160740Z",
         "last_error": null
       },
       {
@@ -352,8 +364,8 @@
         "stale_after_seconds": 150,
         "batch_size": 50,
         "creators_configured": 1,
-        "last_refresh_started_at": "2026-04-14T15:30:13.436862Z",
-        "last_refresh_completed_at": "2026-04-14T15:30:13.605149Z",
+        "last_refresh_started_at": "2026-04-20T05:03:58.272251Z",
+        "last_refresh_completed_at": "2026-04-20T05:03:58.588046Z",
         "last_error": null
       }
     ],
@@ -364,7 +376,7 @@
         "is_live": false,
         "active_provider": null,
         "active_status": null,
-        "last_checked_at": "2026-04-14T15:30:47.329450Z",
+        "last_checked_at": "2026-04-20T05:04:26.160740Z",
         "freshness": "fresh",
         "stale": false,
         "checked_provider_count": 3,
@@ -375,16 +387,20 @@
             "is_live": false,
             "provider_account_id": null,
             "provider_account_login": null,
+            "provider_channel_url": null,
+            "provider_channel_slug": null,
             "live_title": null,
             "live_url": null,
             "thumbnail_url": null,
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-14T15:30:47.329450Z",
+            "last_checked_at": "2026-04-20T05:04:26.160740Z",
             "stale": false,
             "freshness": "fresh",
-            "error": null
+            "error": null,
+            "match_reason": null,
+            "matched_value": null
           },
           {
             "creator_id": "As5TyU",
@@ -392,33 +408,41 @@
             "is_live": false,
             "provider_account_id": null,
             "provider_account_login": null,
+            "provider_channel_url": null,
+            "provider_channel_slug": null,
             "live_title": null,
             "live_url": null,
             "thumbnail_url": null,
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-14T15:30:13.436862Z",
+            "last_checked_at": "2026-04-20T05:03:58.272251Z",
             "stale": false,
             "freshness": "fresh",
-            "error": null
+            "error": null,
+            "match_reason": null,
+            "matched_value": null
           },
           {
             "creator_id": "As5TyU",
             "provider": "rumble",
             "is_live": false,
             "provider_account_id": null,
-            "provider_account_login": "StreamSuites",
+            "provider_account_login": "danielclancy",
+            "provider_channel_url": "https://rumble.com/user/danielclancy",
+            "provider_channel_slug": "danielclancy",
             "live_title": null,
-            "live_url": "https://rumble.com/c/StreamSuites",
+            "live_url": null,
             "thumbnail_url": null,
             "viewer_count": null,
             "game_name": null,
             "started_at": null,
-            "last_checked_at": "2026-04-14T15:30:43.728698Z",
+            "last_checked_at": "2026-04-20T05:03:25.321707Z",
             "stale": false,
             "freshness": "fresh",
-            "error": null
+            "error": "browse_live_request_failed",
+            "match_reason": null,
+            "matched_value": null
           }
         ]
       }

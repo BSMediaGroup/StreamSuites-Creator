@@ -1,0 +1,43 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-04-20T05:00:28Z",
+  "counts": {
+    "total": 1,
+    "listed": 1,
+    "suppressed": 0
+  },
+  "artifacts": [
+    {
+      "artifact_code": "artifact-f86dba051ec249f1b739fb9d0be60cd3",
+      "artifact_type": "wheel",
+      "owner_identity_code": "public-user002",
+      "linked_account_user_code": "4TiOlvS",
+      "title": "Test Wheel",
+      "display_label": "Test Wheel",
+      "visibility_state": "listed",
+      "lifecycle_state": "active",
+      "provenance": "imported",
+      "source_platform": "sswheel",
+      "source_context": {
+        "exact_source_available": true,
+        "source_format": "sswheel",
+        "source_name": "test-wheel.sswheel"
+      },
+      "metadata": {
+        "allow_duplicates": true,
+        "auto_remove_winner": true,
+        "default_display_mode": "wheel",
+        "entry_count": 3,
+        "palette_color_count": 6,
+        "slug": "test-wheel",
+        "source_format": "sswheel",
+        "unsupported_import_fields": [],
+        "wheel_schema_version": "streamsuites.wheel.v1"
+      },
+      "created_at": "2026-04-20T04:59:14Z",
+      "updated_at": "2026-04-20T05:00:28Z",
+      "suppressed_at": null,
+      "suppression_reason": null
+    }
+  ]
+}

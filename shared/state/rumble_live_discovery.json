@@ -1,12 +1,12 @@
 {
   "schema_version": "v1",
   "provider": "rumble",
-  "generated_at": "2026-04-20T04:20:27.656116Z",
+  "generated_at": "2026-04-20T05:03:47.600719Z",
   "scan": {
-    "started_at": "2026-04-20T04:20:24.658313Z",
-    "completed_at": "2026-04-20T04:20:27.656116Z",
-    "duration_ms": 2997,
-    "pages_requested": 1,
+    "started_at": "2026-04-20T05:03:25.321707Z",
+    "completed_at": "2026-04-20T05:03:47.600719Z",
+    "duration_ms": 22279,
+    "pages_requested": 10,
     "pages_succeeded": 0,
     "browse_entries_found": 0,
     "streams_resolved": 0,
@@ -14,10 +14,20 @@
     "viewer_metrics_resolved": 0,
     "chat_metrics_resolved": 0,
     "partial_failures": [
-      "browse_page_1: cloudflare_challenge"
+      "browse_page_1: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "browse_page_2: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "browse_page_3: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "browse_page_4: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "browse_page_5: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "browse_page_6: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "browse_page_7: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "browse_page_8: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "browse_page_9: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "browse_page_10: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+      "creator_probe_As5TyU: AsyncClient.get() got an unexpected keyword argument 'allow_redirects'"
     ],
     "scanner": {
-      "max_pages": 1,
+      "max_pages": 10,
       "browse_page_concurrency": 4,
       "stream_resolution_concurrency": 6,
       "chat_metric_concurrency": 4,
@@ -29,7 +39,7 @@
   "streams": [],
   "creators": [
     {
-      "creator_id": "4TiOlvS",
+      "creator_id": "As5TyU",
       "display_name": "Daniel Clancy",
       "is_live": false,
       "match_reason": null,
@@ -38,24 +48,24 @@
       "live_url": null,
       "viewer_count": null,
       "started_at": null,
-      "last_checked_at": "2026-04-20T04:20:24.658313Z",
+      "last_checked_at": "2026-04-20T05:03:25.321707Z",
       "stream_key": null,
       "numeric_video_id": null,
       "channel_url": "https://rumble.com/user/danielclancy",
       "channel_slug": "danielclancy",
       "chat_id": null,
-      "stop_stage": "creator_page_probe",
-      "stop_reason": "creator_page_probe_failed",
-      "stop_detail": "blocked_http_403",
+      "stop_stage": "browse_live",
+      "stop_reason": "browse_live_request_failed",
+      "stop_detail": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
       "diagnostics": {
         "authoritative_identity": {
-          "creator_id": "4TiOlvS",
+          "creator_id": "As5TyU",
           "display_name": "Daniel Clancy",
           "provider_channel_url": "https://rumble.com/user/danielclancy",
           "public_url": "https://rumble.com/user/danielclancy",
           "provider_channel_slug": "danielclancy",
           "provider_channel_id": null,
-          "future_secret_ref_present": false
+          "future_secret_ref_present": true
         },
         "browse_live": {
           "requests": [
@@ -63,14 +73,111 @@
               "stage": "browse_live_request",
               "url": "https://rumble.com/browse/live?page=1",
               "final_url": "https://rumble.com/browse/live?page=1",
-              "status_code": 403,
-              "response_size": 5105,
-              "http_version": "HTTP/2",
-              "blocked": true,
-              "error": null,
-              "parse_markers": {
-                "videostream_nodes_found": 0
-              }
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=2",
+              "final_url": "https://rumble.com/browse/live?page=2",
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=3",
+              "final_url": "https://rumble.com/browse/live?page=3",
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=4",
+              "final_url": "https://rumble.com/browse/live?page=4",
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=5",
+              "final_url": "https://rumble.com/browse/live?page=5",
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=6",
+              "final_url": "https://rumble.com/browse/live?page=6",
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=7",
+              "final_url": "https://rumble.com/browse/live?page=7",
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=8",
+              "final_url": "https://rumble.com/browse/live?page=8",
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=9",
+              "final_url": "https://rumble.com/browse/live?page=9",
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=10",
+              "final_url": "https://rumble.com/browse/live?page=10",
+              "status_code": null,
+              "response_size": null,
+              "http_version": null,
+              "blocked": false,
+              "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+              "parse_markers": {}
             }
           ],
           "matched_live_row_found": false,
@@ -91,73 +198,45 @@
                 "stage": "creator_page_probe_request",
                 "url": "https://rumble.com/user/danielclancy/livestreams",
                 "final_url": "https://rumble.com/user/danielclancy/livestreams",
-                "status_code": 403,
-                "response_size": 5180,
-                "http_version": "HTTP/2",
-                "blocked": true,
-                "error": null,
-                "parse_markers": {
-                  "videostream_nodes_found": 0,
-                  "parsed_entries": 0,
-                  "matching_video_rows_found": 0,
-                  "live_markers_found": false,
-                  "sample_equivalent_card_parse_used": true
-                },
-                "sample_equivalent_request": true
+                "status_code": null,
+                "response_size": null,
+                "http_version": null,
+                "blocked": false,
+                "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+                "parse_markers": {}
               },
               {
                 "stage": "creator_page_probe_request",
                 "url": "https://rumble.com/c/danielclancy/livestreams",
                 "final_url": "https://rumble.com/c/danielclancy/livestreams",
-                "status_code": 403,
-                "response_size": 5171,
-                "http_version": "HTTP/2",
-                "blocked": true,
-                "error": null,
-                "parse_markers": {
-                  "videostream_nodes_found": 0,
-                  "parsed_entries": 0,
-                  "matching_video_rows_found": 0,
-                  "live_markers_found": false,
-                  "sample_equivalent_card_parse_used": true
-                },
-                "sample_equivalent_request": true
+                "status_code": null,
+                "response_size": null,
+                "http_version": null,
+                "blocked": false,
+                "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+                "parse_markers": {}
               },
               {
                 "stage": "creator_page_probe_request",
                 "url": "https://rumble.com/user/danielclancy",
                 "final_url": "https://rumble.com/user/danielclancy",
-                "status_code": 403,
-                "response_size": 5123,
-                "http_version": "HTTP/2",
-                "blocked": true,
-                "error": null,
-                "parse_markers": {
-                  "videostream_nodes_found": 0,
-                  "parsed_entries": 0,
-                  "matching_video_rows_found": 0,
-                  "live_markers_found": false,
-                  "sample_equivalent_card_parse_used": true
-                },
-                "sample_equivalent_request": true
+                "status_code": null,
+                "response_size": null,
+                "http_version": null,
+                "blocked": false,
+                "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+                "parse_markers": {}
               },
               {
                 "stage": "creator_page_probe_request",
                 "url": "https://rumble.com/c/danielclancy",
                 "final_url": "https://rumble.com/c/danielclancy",
-                "status_code": 403,
-                "response_size": 5114,
-                "http_version": "HTTP/2",
-                "blocked": true,
-                "error": null,
-                "parse_markers": {
-                  "videostream_nodes_found": 0,
-                  "parsed_entries": 0,
-                  "matching_video_rows_found": 0,
-                  "live_markers_found": false,
-                  "sample_equivalent_card_parse_used": true
-                },
-                "sample_equivalent_request": true
+                "status_code": null,
+                "response_size": null,
+                "http_version": null,
+                "blocked": false,
+                "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+                "parse_markers": {}
               }
             ],
             "parsed_rows": [],
@@ -174,35 +253,35 @@
               {
                 "stage": "creator_page_probe_request",
                 "url": "https://rumble.com/user/danielclancy/livestreams",
-                "status_code": 403,
+                "status_code": null,
                 "final_url": "https://rumble.com/user/danielclancy/livestreams",
-                "response_size": 5180
+                "response_size": null
               },
               {
                 "stage": "creator_page_probe_request",
                 "url": "https://rumble.com/c/danielclancy/livestreams",
-                "status_code": 403,
+                "status_code": null,
                 "final_url": "https://rumble.com/c/danielclancy/livestreams",
-                "response_size": 5171
+                "response_size": null
               },
               {
                 "stage": "creator_page_probe_request",
                 "url": "https://rumble.com/user/danielclancy",
-                "status_code": 403,
+                "status_code": null,
                 "final_url": "https://rumble.com/user/danielclancy",
-                "response_size": 5123
+                "response_size": null
               },
               {
                 "stage": "creator_page_probe_request",
                 "url": "https://rumble.com/c/danielclancy",
-                "status_code": 403,
+                "status_code": null,
                 "final_url": "https://rumble.com/c/danielclancy",
-                "response_size": 5114
+                "response_size": null
               }
             ],
             "stop_stage": "creator_page_probe",
             "stop_reason": "creator_page_probe_failed",
-            "stop_detail": "blocked_http_403"
+            "stop_detail": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'"
           },
           "resolved_watch_url": null,
           "resolved_numeric_video_id": null,
@@ -216,43 +295,38 @@
               "resolved_numeric_video_id": null,
               "stop_stage": "creator_page_probe",
               "stop_reason": "creator_page_probe_failed",
-              "stop_detail": "blocked_http_403"
+              "stop_detail": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'"
             },
             "livestream_api_path": {
               "request_attempted": true,
               "live_row_found": false,
               "resolved_watch_url": null,
               "resolved_numeric_video_id": null,
-              "stop_stage": null,
-              "stop_reason": null,
-              "stop_detail": null
+              "stop_stage": "creator_channel_probe",
+              "stop_reason": "creator_channel_probe_failed",
+              "stop_detail": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'"
             }
           },
           "request": {
             "stage": "creator_channel_probe_request",
             "url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
             "final_url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
-            "status_code": 200,
-            "response_size": 10457,
-            "http_version": "HTTP/2",
+            "status_code": null,
+            "response_size": null,
+            "http_version": null,
             "blocked": false,
-            "error": null,
-            "parse_markers": {
-              "livestreams_key_found": true,
-              "username_found": true,
-              "channel_name_found": true,
-              "livestream_count": 0
-            }
+            "error": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'",
+            "parse_markers": {}
           },
-          "livestream_count": 0,
+          "livestream_count": null,
           "live_markers_found": false,
           "watch_url_extracted": false,
           "video_id_extracted": false,
           "chat_id_extracted": false,
           "channel_url_rejected_as_live_target": false,
-          "stop_stage": "creator_page_probe",
-          "stop_reason": "creator_page_probe_failed",
-          "stop_detail": "blocked_http_403"
+          "stop_stage": "creator_channel_probe",
+          "stop_reason": "creator_channel_probe_failed",
+          "stop_detail": "AsyncClient.get() got an unexpected keyword argument 'allow_redirects'"
         },
         "watch_resolution": null
       }

@@ -1,18 +1,117 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-04-13T10:00:00Z",
-  "providers": [],
+  "generated_at": "2026-04-20T05:04:26.160740Z",
+  "provider_priority": [
+    "twitch",
+    "youtube",
+    "rumble"
+  ],
+  "providers": [
+    {
+      "provider": "rumble",
+      "cadence_seconds": 60,
+      "stale_after_seconds": 180,
+      "batch_size": 25,
+      "creators_configured": 1,
+      "last_refresh_started_at": "2026-04-20T05:03:25.321707Z",
+      "last_refresh_completed_at": "2026-04-20T05:03:47.981860Z",
+      "last_error": null
+    },
+    {
+      "provider": "twitch",
+      "cadence_seconds": 45,
+      "stale_after_seconds": 90,
+      "batch_size": 100,
+      "creators_configured": 1,
+      "last_refresh_started_at": "2026-04-20T05:04:26.160740Z",
+      "last_refresh_completed_at": "2026-04-20T05:04:26.160740Z",
+      "last_error": null
+    },
+    {
+      "provider": "youtube",
+      "cadence_seconds": 75,
+      "stale_after_seconds": 150,
+      "batch_size": 50,
+      "creators_configured": 1,
+      "last_refresh_started_at": "2026-04-20T05:03:58.272251Z",
+      "last_refresh_completed_at": "2026-04-20T05:03:58.588046Z",
+      "last_error": null
+    }
+  ],
   "creators": [
     {
-      "creator_id": "someone-else",
+      "creator_id": "As5TyU",
+      "display_name": "Daniel Clancy",
+      "is_live": false,
+      "active_provider": null,
+      "active_status": null,
+      "last_checked_at": "2026-04-20T05:04:26.160740Z",
+      "freshness": "fresh",
+      "stale": false,
+      "checked_provider_count": 3,
       "statuses": [
         {
-          "provider": "rumble",
-          "is_live": true,
-          "provider_channel_url": "https://rumble.com/c/someone-else",
-          "last_checked_at": "2026-04-13T10:00:00Z",
+          "creator_id": "As5TyU",
+          "provider": "twitch",
+          "is_live": false,
+          "provider_account_id": null,
+          "provider_account_login": null,
+          "provider_channel_url": null,
+          "provider_channel_slug": null,
+          "live_title": null,
+          "live_url": null,
+          "thumbnail_url": null,
+          "viewer_count": null,
+          "game_name": null,
+          "started_at": null,
+          "last_checked_at": "2026-04-20T05:04:26.160740Z",
+          "stale": false,
           "freshness": "fresh",
-          "stale": false
+          "error": null,
+          "match_reason": null,
+          "matched_value": null
+        },
+        {
+          "creator_id": "As5TyU",
+          "provider": "youtube",
+          "is_live": false,
+          "provider_account_id": null,
+          "provider_account_login": null,
+          "provider_channel_url": null,
+          "provider_channel_slug": null,
+          "live_title": null,
+          "live_url": null,
+          "thumbnail_url": null,
+          "viewer_count": null,
+          "game_name": null,
+          "started_at": null,
+          "last_checked_at": "2026-04-20T05:03:58.272251Z",
+          "stale": false,
+          "freshness": "fresh",
+          "error": null,
+          "match_reason": null,
+          "matched_value": null
+        },
+        {
+          "creator_id": "As5TyU",
+          "provider": "rumble",
+          "is_live": false,
+          "provider_account_id": null,
+          "provider_account_login": "danielclancy",
+          "provider_channel_url": "https://rumble.com/user/danielclancy",
+          "provider_channel_slug": "danielclancy",
+          "live_title": null,
+          "live_url": null,
+          "thumbnail_url": null,
+          "viewer_count": null,
+          "game_name": null,
+          "started_at": null,
+          "last_checked_at": "2026-04-20T05:03:25.321707Z",
+          "stale": false,
+          "freshness": "fresh",
+          "error": "browse_live_request_failed",
+          "match_reason": null,
+          "matched_value": null
         }
       ]
     }
