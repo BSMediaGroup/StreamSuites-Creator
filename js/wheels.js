@@ -20,8 +20,12 @@
   const API_BASE = resolveApiBase();
   const WHEELS_ENDPOINT = `${API_BASE}/api/creator/wheels`;
   const WHEELS_IMPORT_ENDPOINT = `${API_BASE}/api/creator/wheels/import`;
+  const WHEELS_EVENTS_ENDPOINT = `${API_BASE}/api/creator/wheels/events`;
   const DEFAULT_PUBLIC_BASE = "https://streamsuites.app";
   const DEFAULT_COLORS = ["#ff6b6b", "#ffd166", "#06d6a0", "#118ab2", "#9b5de5", "#f15bb5"];
+  let wheelEvents = null;
+  let wheelRefreshPromise = null;
+  let wheelRefreshQueued = false;
   const state = {
     root: null,
     loading: false,
@@ -201,6 +205,43 @@
 
   function currentSelection() {
     return state.items.find((item) => item.artifact_code === state.selectedCode) || null;
+  }
+
+  function closeWheelEvents() {
+    if (!wheelEvents) return;
+    wheelEvents.close();
+    wheelEvents = null;
+  }
+
+  async function refreshFromLiveAuthority() {
+    if (wheelRefreshPromise) {
+      wheelRefreshQueued = true;
+      return wheelRefreshPromise;
+    }
+    wheelRefreshPromise = (async () => {
+      do {
+        wheelRefreshQueued = false;
+        await loadWheels({ selectCode: state.selectedCode });
+      } while (wheelRefreshQueued);
+    })();
+    try {
+      return await wheelRefreshPromise;
+    } finally {
+      wheelRefreshPromise = null;
+    }
+  }
+
+  function ensureWheelEvents() {
+    if (wheelEvents || typeof EventSource !== "function") return;
+    wheelEvents = new EventSource(WHEELS_EVENTS_ENDPOINT, { withCredentials: true });
+    wheelEvents.addEventListener("wheel.changed", () => {
+      refreshFromLiveAuthority().catch(() => {});
+    });
+    wheelEvents.addEventListener("error", () => {
+      if (wheelEvents?.readyState === EventSource.CLOSED) {
+        closeWheelEvents();
+      }
+    });
   }
 
   function resolvePublicWheelDestination(item) {
@@ -798,6 +839,8 @@
   async function init() {
     state.root = document.querySelector("[data-wheel-manager='true']");
     if (!(state.root instanceof HTMLElement)) return;
+    ensureWheelEvents();
+    window.addEventListener("beforeunload", closeWheelEvents);
     bindEvents();
     setDraft(createBlankDraft());
     render();
@@ -805,6 +848,7 @@
   }
 
   function destroy() {
+    closeWheelEvents();
     state.root = null;
     state.items = [];
     state.selectedCode = "";

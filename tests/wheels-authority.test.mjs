@@ -30,6 +30,11 @@ test("creator wheels editor talks only to the authoritative runtime/Auth wheel e
 
   assert.match(js, /const WHEELS_ENDPOINT = `\$\{API_BASE\}\/api\/creator\/wheels`;/);
   assert.match(js, /\/api\/creator\/wheels\/import/);
+  assert.match(js, /const WHEELS_EVENTS_ENDPOINT = `\$\{API_BASE\}\/api\/creator\/wheels\/events`;/);
+  assert.match(js, /function ensureWheelEvents\(\)/);
+  assert.match(js, /wheelEvents = new EventSource\(WHEELS_EVENTS_ENDPOINT, \{ withCredentials: true \}\);/);
+  assert.match(js, /wheelEvents\.addEventListener\("wheel\.changed"/);
+  assert.match(js, /await loadWheels\(\{ selectCode: state\.selectedCode \}\);/);
   assert.match(js, /\$\{WHEELS_ENDPOINT\}\/\$\{encodeURIComponent\(state\.selectedCode\)\}\/export/);
   assert.match(js, /function resolvePublicWheelDestination\(item\)/);
   assert.match(js, /View public wheel/);

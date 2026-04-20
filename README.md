@@ -54,6 +54,7 @@ flowchart TD
 - The `/account` route is the authoritative creator-facing profile control surface for supported fields exposed by the public profile API.
 - The `/settings` route is now the creator-facing Preferences surface for moderator assignment and future community controls that remain grounded in runtime-owned contracts.
 - The `/wheels` route is now a real creator-owned wheel artifact manager that lists, creates, imports, edits, exports, and saves wheel artifacts only through the authoritative runtime/Auth wheel API.
+- The creator wheel manager now stays API-first and live via the runtime/Auth wheel SSE stream, so open `/wheels` tabs refresh saved list/editor state after create, import, and update events instead of waiting for stale mirrored exports or manual reloads.
 - The account route now keeps integrations as a compact snapshot and link-out surface rather than the primary control center.
 - A dedicated `/integrations` hub now acts as the full-page creator readiness surface, while per-platform routes carry the actionable setup and management workflows.
 - Creator media editing now prefers upload-from-device for avatar and cover updates while preserving manual URL inputs as secondary paths.

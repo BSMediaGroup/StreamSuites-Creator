@@ -2,6 +2,9 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Extended `js/wheels.js` so the creator wheel manager now opens an authoritative `EventSource` connection to `/api/creator/wheels/events`, reloads the live wheel list/editor state from the runtime/Auth API when a wheel change lands, and preserves the current selected artifact instead of depending on stale mirrored exports or manual refreshes.
+- Expanded `tests/wheels-authority.test.mjs` additively to pin the creator wheel SSE endpoint wiring and live-refresh loader path alongside the existing runtime/Auth-only wheel authority assertions. No files were removed or replaced in this pass; the touched JS/test files are slightly longer because of the additive live-sync behavior and regression coverage.
+
 ## 2026-04-20 - Creator Wheel Public-Link Repair
 
 ### Technical Notes
