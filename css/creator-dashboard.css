@@ -8110,6 +8110,17 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
   border: 1px solid rgba(122, 153, 199, 0.12);
 }
 
+.wheel-sound-row__controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.wheel-sound-preview-button {
+  min-width: 92px;
+}
+
 .wheel-entry-assignment {
   display: grid;
   gap: 0.75rem;
@@ -8292,6 +8303,10 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
   .wheel-color-grid--wide,
   .wheel-entry-grid,
   .wheel-sound-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wheel-sound-row__controls {
     grid-template-columns: 1fr;
   }
 

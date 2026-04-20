@@ -1,7 +1,15 @@
 (() => {
   "use strict";
 
-  const API_BASE_URL = "https://api.streamsuites.app";
+  function resolveApiBaseUrl() {
+    const host = (window.location.hostname || "").toLowerCase();
+    if (host === "localhost" || host === "127.0.0.1") {
+      return "http://127.0.0.1:18087";
+    }
+    return "https://api.streamsuites.app";
+  }
+
+  const API_BASE_URL = resolveApiBaseUrl();
   const AUTH_BASE_URL = "";
   const CREATOR_ORIGIN = "https://creator.streamsuites.app";
   const AUTH_ENDPOINTS = Object.freeze({

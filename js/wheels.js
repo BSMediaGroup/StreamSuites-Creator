@@ -24,6 +24,7 @@
   const WHEEL_ACCOUNT_LOOKUP_ENDPOINT = `${API_BASE}/api/creator/wheels/account-lookup`;
   const DEFAULT_PUBLIC_BASE = "https://streamsuites.app";
   const DEFAULT_COLORS = ["#ff6b6b", "#ffd166", "#06d6a0", "#118ab2", "#9b5de5", "#f15bb5"];
+  const WHEEL_SOUND_BASE = "/assets/sounds/wheels";
   const SLICE_LABEL_MODES = [
     { value: "full_name", label: "Full name" },
     { value: "initials", label: "Initials" },
@@ -70,7 +71,9 @@
     importFile: null,
     lookupState: Object.create(null),
     lookupDebounce: new Map(),
-    lookupAborters: new Map()
+    lookupAborters: new Map(),
+    previewAudio: null,
+    previewCategory: ""
   };
 
   function escapeHtml(value) {
@@ -92,6 +95,56 @@
       enabled: true,
       asset_id: assetIds[0] || ""
     };
+  }
+
+  function buildWheelSoundUrl(category, assetId) {
+    if (!category || !assetId) return "";
+    return `${WHEEL_SOUND_BASE}/${category}/${assetId}`;
+  }
+
+  function stopPreviewAudio() {
+    if (!state.previewAudio) return;
+    try {
+      state.previewAudio.pause();
+      state.previewAudio.currentTime = 0;
+    } catch (_error) {
+      // Ignore preview stop failures.
+    }
+    state.previewAudio = null;
+    state.previewCategory = "";
+  }
+
+  async function playPreviewAudio(category) {
+    const sound = state.draft?.presentation?.sound?.[category];
+    const assetId = String(sound?.asset_id || "").trim();
+    if (!category || !assetId) return;
+    if (state.previewCategory === category && state.previewAudio) {
+      stopPreviewAudio();
+      render();
+      return;
+    }
+    stopPreviewAudio();
+    const audio = new Audio(buildWheelSoundUrl(category, assetId));
+    audio.volume = category === "music" ? 0.36 : 0.78;
+    state.previewAudio = audio;
+    state.previewCategory = category;
+    audio.addEventListener(
+      "ended",
+      () => {
+        if (state.previewAudio === audio) {
+          state.previewAudio = null;
+          state.previewCategory = "";
+          render();
+        }
+      },
+      { once: true }
+    );
+    try {
+      await audio.play();
+    } catch (_error) {
+      stopPreviewAudio();
+    }
+    render();
   }
 
   function createEntry(index) {
@@ -877,11 +930,14 @@
               <input type="checkbox" data-field="presentation.sound.${category}.enabled" ${sound.enabled ? "checked" : ""} />
               <span>${escapeHtml(SOUND_CATEGORY_LABELS[category] || category)}</span>
             </label>
-            <select class="account-field-input" data-field="presentation.sound.${category}.asset_id">
-              ${(SOUND_LIBRARY[category] || [])
-                .map((assetId) => `<option value="${escapeHtml(assetId)}" ${sound.asset_id === assetId ? "selected" : ""}>${escapeHtml(assetId)}</option>`)
-                .join("")}
-            </select>
+            <div class="wheel-sound-row__controls">
+              <select class="account-field-input" data-field="presentation.sound.${category}.asset_id">
+                ${(SOUND_LIBRARY[category] || [])
+                  .map((assetId) => `<option value="${escapeHtml(assetId)}" ${sound.asset_id === assetId ? "selected" : ""}>${escapeHtml(assetId)}</option>`)
+                  .join("")}
+              </select>
+              <button class="creator-button secondary wheel-sound-preview-button" type="button" data-action="preview-sound" data-sound-category="${escapeHtml(category)}">${state.previewCategory === category ? "Stop" : "Preview"}</button>
+            </div>
           </div>
         `;
       })
@@ -1398,6 +1454,10 @@
       }
       if (action === "clear-entry-assignment") {
         clearAssignment(String(trigger.dataset.entryId || ""));
+        return;
+      }
+      if (action === "preview-sound") {
+        void playPreviewAudio(String(trigger.dataset.soundCategory || ""));
       }
     });
 
@@ -1484,6 +1544,7 @@
   function destroy() {
     clearLookupTimers();
     closeWheelEvents();
+    stopPreviewAudio();
     state.root = null;
     state.items = [];
     state.selectedCode = "";
@@ -1494,6 +1555,7 @@
     state.importText = "";
     state.importFile = null;
     state.lookupState = Object.create(null);
+    state.previewCategory = "";
   }
 
   window.WheelsView = { init, destroy };

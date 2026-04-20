@@ -14,12 +14,22 @@ test("creator shell wires the new wheels route through the existing SPA shell", 
   const render = read("js/render.js");
   const index = read("index.html");
   const fallback = read("functions/[[path]].js");
+  const authProxy = read("functions/_shared/auth-api-proxy.js");
+  const authJs = read("js/auth.js");
 
-  assert.match(routes, /\{ route: "wheels", templatePath: "wheels", aliases: \["scoreboards"\] \}/);
+  assert.match(routes, /\{ route: "wheels", templatePath: "wheels" \}/);
+  assert.match(routes, /\{ route: "leaderboards", templatePath: "leaderboards", aliases: \["scoreboards"\] \}/);
   assert.match(render, /wheels: \["\/js\/wheels\.js"\]/);
   assert.match(render, /registerView\("wheels", \{ scripts: ViewScripts\.wheels, controllerName: "WheelsView" \}\)/);
+  assert.match(render, /registerView\("leaderboards"\)/);
   assert.match(index, /<a href="\/wheels" data-route="wheels">Wheels<\/a>/);
+  assert.match(index, /<a href="\/leaderboards" data-route="leaderboards">Leaderboards<\/a>/);
   assert.match(fallback, /"\/wheels"/);
+  assert.match(fallback, /"\/leaderboards"/);
+  assert.match(authProxy, /DEFAULT_LOCAL_AUTH_API_ORIGIN = "http:\/\/127\.0\.0\.1:18087"/);
+  assert.match(authProxy, /requestHost === "127\.0\.0\.1" \|\| requestHost === "localhost"/);
+  assert.match(authJs, /function resolveApiBaseUrl\(\)/);
+  assert.match(authJs, /return "http:\/\/127\.0\.0\.1:18087";/);
 });
 
 test("creator wheels editor talks only to the authoritative runtime/Auth wheel endpoints", () => {
@@ -42,6 +52,8 @@ test("creator wheels editor talks only to the authoritative runtime/Auth wheel e
   assert.match(js, /trim_color/);
   assert.match(js, /glow_color/);
   assert.match(js, /presentation\.sound\.\$\{category\}\.asset_id|presentation\.sound\./);
+  assert.match(js, /function buildWheelSoundUrl\(category, assetId\)/);
+  assert.match(js, /data-action="preview-sound"/);
   assert.match(js, /Search existing StreamSuites accounts/);
   assert.match(js, /function resolvePublicWheelDestination\(item\)/);
   assert.match(js, /View public wheel/);
@@ -55,6 +67,8 @@ test("creator wheels editor talks only to the authoritative runtime/Auth wheel e
   assert.match(css, /\.wheel-list-card__footer/);
   assert.match(css, /\.wheel-entry-card/);
   assert.match(css, /\.wheel-sound-grid/);
+  assert.match(css, /\.wheel-sound-row__controls/);
   assert.match(css, /\.wheel-assignment-results/);
   assert.match(appShell, /wheels: "\/assets\/icons\/ui\/wheelpie\.svg"/);
+  assert.match(appShell, /leaderboards: "\/assets\/icons\/ui\/tablechart\.svg"/);
 });

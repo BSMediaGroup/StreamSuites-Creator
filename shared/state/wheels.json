@@ -1,6 +1,6 @@
 {
   "schema_version": "streamsuites.public-wheels.v1",
-  "generated_at": "2026-04-20T05:00:29Z",
+  "generated_at": "2026-04-20T15:36:36Z",
   "meta": {
     "source": "StreamSuites runtime",
     "visibility": "public",
@@ -22,6 +22,7 @@
       "description": "test",
       "notes": "test",
       "default_display_mode": "wheel",
+      "winner_limit": 1,
       "allow_duplicates": true,
       "auto_remove_winner": true,
       "entries": [

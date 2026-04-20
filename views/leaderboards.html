@@ -1,0 +1,71 @@
+<!-- ========================================================= -->
+<!-- StreamSuites — Leaderboards (SCAFFOLD VIEW PARTIAL) -->
+<!-- Separate future leaderboard artifact surface              -->
+<!-- ========================================================= -->
+
+<header class="ss-header">
+  <div class="ss-header-left">
+    <h1 class="ss-title">StreamSuites</h1>
+    <span class="ss-subtitle">Leaderboards</span>
+  </div>
+</header>
+
+<main class="ss-main">
+
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <div class="ss-panel-header-main">
+        <h2>Leaderboards scaffold</h2>
+        <p class="muted">Separate from wheel list views and preserved honestly as a future artifact surface.</p>
+      </div>
+      <div class="ss-panel-header-actions">
+        <a class="ss-btn ss-btn-primary" href="https://streamsuites.app/leaderboards" target="_blank" rel="noopener">
+          Public leaderboards scaffold
+        </a>
+      </div>
+    </header>
+    <div class="ss-panel-body">
+      <p class="muted">
+        The old standalone List Views destination is retired in favor of this truthful
+        Leaderboards scaffold. Wheel-specific list view remains attached to each wheel
+        detail route; this page is reserved for the later standalone leaderboard artifact
+        type instead of pretending wheel scoreboards are their own backend authority.
+      </p>
+      <div class="ss-grid two-cols" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;align-items:start;">
+        <div class="ss-tile">
+          <h3>Current state</h3>
+          <p class="muted">Scaffold only. No XP, rank, or standalone leaderboard authority is active here yet.</p>
+        </div>
+        <div class="ss-tile">
+          <h3>Wheel list view</h3>
+          <p class="muted">Per-wheel List View remains available from the wheel detail experience instead of living as a duplicate navigation destination.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ss-panel">
+    <header class="ss-panel-header">
+      <h2>Future contract area</h2>
+    </header>
+    <div class="ss-panel-body">
+      <p class="muted">
+        When leaderboard artifacts become real, this route is where creator-facing visibility,
+        configuration review, and public-link handoff will live. Until then, this page stays
+        intentionally narrow and does not fake rank or scoring controls.
+      </p>
+      <ul class="ss-list muted">
+        <li>Separate destination reserved for future leaderboard artifacts.</li>
+        <li>No duplicate List Views page in the main creator navigation.</li>
+        <li>Legacy `/scoreboards` path should land here for compatibility.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ss-footer">
+  <span class="muted">
+    Leaderboards is a scaffold route only. Wheel list views remain part of wheel detail, and runtime still owns any future scoring authority.
+  </span>
+</footer>

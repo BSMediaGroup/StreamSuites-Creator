@@ -1,8 +1,14 @@
 const DEFAULT_AUTH_API_ORIGIN = "https://api.streamsuites.app";
+const DEFAULT_LOCAL_AUTH_API_ORIGIN = "http://127.0.0.1:18087";
 const PROXY_TIMEOUT_MS = 15000;
 
-function resolveUpstreamOrigin(env) {
-  const raw = String(env?.STREAMSUITES_API_ORIGIN || DEFAULT_AUTH_API_ORIGIN).trim();
+function resolveUpstreamOrigin(env, requestUrl) {
+  const requestHost = String(requestUrl?.hostname || "").trim().toLowerCase();
+  const fallbackOrigin =
+    requestHost === "127.0.0.1" || requestHost === "localhost"
+      ? DEFAULT_LOCAL_AUTH_API_ORIGIN
+      : DEFAULT_AUTH_API_ORIGIN;
+  const raw = String(env?.STREAMSUITES_API_ORIGIN || fallbackOrigin).trim();
   try {
     const parsed = new URL(raw);
     if (!/^https?:$/.test(parsed.protocol)) {
@@ -13,7 +19,7 @@ function resolveUpstreamOrigin(env) {
     parsed.hash = "";
     return parsed;
   } catch (_error) {
-    return new URL(DEFAULT_AUTH_API_ORIGIN);
+    return new URL(fallbackOrigin);
   }
 }
 
@@ -109,7 +115,7 @@ export async function proxyAuthApiRequest(context, allowedMatchers) {
     return buildProxyErrorResponse(request, 404, "Not Found");
   }
 
-  const upstreamOrigin = resolveUpstreamOrigin(context.env);
+  const upstreamOrigin = resolveUpstreamOrigin(context.env, requestUrl);
   const upstreamUrl = new URL(requestUrl.pathname + requestUrl.search, upstreamOrigin);
   const headers = new Headers(request.headers);
   headers.delete("host");

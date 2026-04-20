@@ -550,6 +550,7 @@
     registerView("creators", { scripts: ViewScripts.creators, controllerName: "CreatorsView" });
     registerView("jobs", { scripts: ViewScripts.jobs, controllerName: "JobsView" });
     registerView("wheels", { scripts: ViewScripts.wheels, controllerName: "WheelsView" });
+    registerView("leaderboards");
     registerView("tallies");
     registerView("design");
     registerView("integrations/rumble", {
