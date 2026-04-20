@@ -26,6 +26,7 @@ test("creator wheels editor talks only to the authoritative runtime/Auth wheel e
   const js = read("js/wheels.js");
   const view = read("views/wheels.html");
   const css = read("css/creator-dashboard.css");
+  const appShell = read("js/app.js");
 
   assert.match(js, /const WHEELS_ENDPOINT = `\$\{API_BASE\}\/api\/creator\/wheels`;/);
   assert.match(js, /\/api\/creator\/wheels\/import/);
@@ -36,4 +37,5 @@ test("creator wheels editor talks only to the authoritative runtime/Auth wheel e
   assert.match(view, /data-wheel-manager="true"/);
   assert.match(css, /\.wheel-manager-shell/);
   assert.match(css, /\.wheel-list-card/);
+  assert.match(appShell, /wheels: "\/assets\/icons\/ui\/wheelpie\.svg"/);
 });

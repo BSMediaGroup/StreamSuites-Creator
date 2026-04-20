@@ -2,6 +2,13 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+## 2026-04-20 - Creator Wheels Nav Icon Repair
+
+### Technical Notes
+
+- Added the missing `wheels` entry to `js/app.js` `NAV_ICON_BY_SEGMENT` so the Creator sidebar now uses `/assets/icons/ui/wheelpie.svg` for the wheels route instead of falling back to the generic portal icon.
+- Expanded `tests/wheels-authority.test.mjs` additively to pin the wheels icon mapping alongside the existing route/authority assertions. No files were removed or replaced in this corrective pass; the touched files are only slightly longer because of the one real nav mapping and the matching regression assertion.
+
 ## 2026-04-20 - Creator Wheel Artifact Manager
 
 ### Technical Notes
