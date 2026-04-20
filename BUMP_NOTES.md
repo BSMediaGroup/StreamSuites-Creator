@@ -2,6 +2,9 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Rebuilt `js/wheels.js` around the richer authoritative wheel schema instead of the earlier minimal editor stub. Creator wheel editing now includes `winner_limit`, slice-label mode, trim/glow colors, slow-drift and celebration toggles, per-category real sound asset selectors, richer entrant fields (`display_name`, `avatar_url`, `share`, assignment linkage), and creator-side account lookup against `/api/creator/wheels/account-lookup`, while preserving the existing `/wheels` shell route and SSE refresh path.
+- Extended the wheel-specific section of `css/creator-dashboard.css` and refreshed `views/wheels.html` copy so the Creator editor stays compact, dark, and route-consistent while using user-facing “List view” wording for wheel artifacts instead of “Scoreboard”.
+- Expanded `tests/wheels-authority.test.mjs` additively to pin the richer wheel editor contract, real lookup endpoint wiring, list-view wording, sound config selectors, and the new wheel-editor UI blocks. No files were added or removed in this pass; `js/wheels.js` was replaced in-place and is expected to be substantially longer because it now owns the richer editor workflow.
 - Extended `js/wheels.js` so the creator wheel manager now opens an authoritative `EventSource` connection to `/api/creator/wheels/events`, reloads the live wheel list/editor state from the runtime/Auth API when a wheel change lands, and preserves the current selected artifact instead of depending on stale mirrored exports or manual refreshes.
 - Expanded `tests/wheels-authority.test.mjs` additively to pin the creator wheel SSE endpoint wiring and live-refresh loader path alongside the existing runtime/Auth-only wheel authority assertions. No files were removed or replaced in this pass; the touched JS/test files are slightly longer because of the additive live-sync behavior and regression coverage.
 

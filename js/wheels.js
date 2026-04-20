@@ -21,11 +21,39 @@
   const WHEELS_ENDPOINT = `${API_BASE}/api/creator/wheels`;
   const WHEELS_IMPORT_ENDPOINT = `${API_BASE}/api/creator/wheels/import`;
   const WHEELS_EVENTS_ENDPOINT = `${API_BASE}/api/creator/wheels/events`;
+  const WHEEL_ACCOUNT_LOOKUP_ENDPOINT = `${API_BASE}/api/creator/wheels/account-lookup`;
   const DEFAULT_PUBLIC_BASE = "https://streamsuites.app";
   const DEFAULT_COLORS = ["#ff6b6b", "#ffd166", "#06d6a0", "#118ab2", "#9b5de5", "#f15bb5"];
+  const SLICE_LABEL_MODES = [
+    { value: "full_name", label: "Full name" },
+    { value: "initials", label: "Initials" },
+    { value: "avatar", label: "Avatar" }
+  ];
+  const DISPLAY_MODE_OPTIONS = [
+    { value: "wheel", label: "Wheel" },
+    { value: "scoreboard", label: "List view" }
+  ];
+  const SOUND_CATEGORY_LABELS = Object.freeze({
+    music: "Music",
+    startspin: "Start spin",
+    respin: "Respin",
+    click: "Click",
+    winner: "Winner"
+  });
+  const SOUND_LIBRARY = Object.freeze({
+    music: ["music0.mp3", "music1.mp3", "music2.mp3", "music3.mp3", "music4.mp3", "music5.mp3", "music6.mp3"],
+    startspin: ["startspin0.mp3", "startspin1.mp3", "startspin2.mp3"],
+    respin: ["respin0.mp3", "respin1.mp3"],
+    click: ["click0.mp3", "click1.mp3", "click2.mp3", "click3.mp3", "click4.mp3", "click5.mp3", "click6.mp3"],
+    winner: ["winner0.mp3", "winner1.mp3", "winner2.mp3", "winner3.mp3", "winner4.mp3", "winner5.mp3", "winner6.mp3"]
+  });
+  const DEFAULT_ASSIGNMENT_BADGE = "/assets/icons/ui/wheeluser.svg";
+  const LOOKUP_DEBOUNCE_MS = 240;
+
   let wheelEvents = null;
   let wheelRefreshPromise = null;
   let wheelRefreshQueued = false;
+
   const state = {
     root: null,
     loading: false,
@@ -40,6 +68,9 @@
     error: "",
     importText: "",
     importFile: null,
+    lookupState: Object.create(null),
+    lookupDebounce: new Map(),
+    lookupAborters: new Map()
   };
 
   function escapeHtml(value) {
@@ -55,14 +86,119 @@
     return JSON.parse(JSON.stringify(value));
   }
 
+  function createSoundCategory(category) {
+    const assetIds = SOUND_LIBRARY[category] || [];
+    return {
+      enabled: true,
+      asset_id: assetIds[0] || ""
+    };
+  }
+
   function createEntry(index) {
+    const label = `Entry ${index + 1}`;
     return {
       entry_id: `entry-${index + 1}`,
-      label: `Entry ${index + 1}`,
+      label,
+      display_name: label,
+      avatar_url: "",
       weight: 1,
+      share: 1,
       color: DEFAULT_COLORS[index % DEFAULT_COLORS.length],
-      notes: ""
+      notes: "",
+      assignment: null,
+      role_badges: [],
+      stats_stub: {}
     };
+  }
+
+  function normalizeBadges(value) {
+    if (!Array.isArray(value)) return [];
+    return value
+      .map((badge) => {
+        if (!badge || typeof badge !== "object") return null;
+        const label = String(badge.label || badge.name || badge.code || "").trim();
+        const tone = String(badge.tone || badge.color || "").trim();
+        if (!label) return null;
+        return {
+          label,
+          tone
+        };
+      })
+      .filter(Boolean)
+      .slice(0, 6);
+  }
+
+  function normalizeStatsStub(value) {
+    if (!value || typeof value !== "object") return {};
+    const xpLabel = String(value.xp_label || value.level_label || "").trim();
+    const rankLabel = String(value.rank_label || "").trim();
+    const xpTotal = Number(value.xp_total);
+    const rankValue = Number(value.rank_value);
+    const result = {};
+    if (xpLabel) result.xp_label = xpLabel;
+    if (rankLabel) result.rank_label = rankLabel;
+    if (Number.isFinite(xpTotal)) result.xp_total = xpTotal;
+    if (Number.isFinite(rankValue)) result.rank_value = rankValue;
+    return result;
+  }
+
+  function normalizeAssignment(value, fallbackEntry = {}) {
+    if (!value || typeof value !== "object") return null;
+    const accountId = String(value.account_id || "").trim();
+    const userCode = String(value.user_code || "").trim();
+    const displayName =
+      String(
+        value.display_name ||
+          value.username ||
+          value.public_name ||
+          fallbackEntry.display_name ||
+          fallbackEntry.label ||
+          ""
+      ).trim();
+    const avatarUrl = String(value.avatar_url || value.profile_image_url || value.avatar || "").trim();
+    const role = String(value.role || "").trim();
+    const tier = String(value.tier || "").trim();
+    const publicSlug = String(value.public_slug || value.slug || "").trim();
+    const publicProfile =
+      value.public_profile && typeof value.public_profile === "object"
+        ? {
+            public_slug: String(value.public_profile.public_slug || publicSlug || "").trim(),
+            bio: String(value.public_profile.bio || "").trim(),
+            cover_image_url: String(value.public_profile.cover_image_url || "").trim(),
+            background_color: String(value.public_profile.background_color || "").trim(),
+            is_listed: value.public_profile.is_listed !== false
+          }
+        : null;
+    const badges = normalizeBadges(value.badges || value.role_badges);
+    if (!accountId && !userCode && !displayName && !avatarUrl && !publicSlug && !role && !badges.length) {
+      return null;
+    }
+    return {
+      account_id: accountId,
+      user_code: userCode,
+      display_name: displayName,
+      avatar_url: avatarUrl,
+      role,
+      tier,
+      public_slug: publicSlug,
+      badges,
+      public_profile: publicProfile
+    };
+  }
+
+  function normalizeSoundConfig(value) {
+    const source = value && typeof value === "object" ? value : {};
+    const normalized = {};
+    Object.keys(SOUND_LIBRARY).forEach((category) => {
+      const item = source[category] && typeof source[category] === "object" ? source[category] : {};
+      const supportedAssets = SOUND_LIBRARY[category];
+      const requestedAsset = String(item.asset_id || item.asset || "").trim();
+      normalized[category] = {
+        enabled: item.enabled !== false,
+        asset_id: supportedAssets.includes(requestedAsset) ? requestedAsset : supportedAssets[0]
+      };
+    });
+    return normalized;
   }
 
   function createBlankDraft() {
@@ -71,31 +207,65 @@
       description: "",
       notes: "",
       default_display_mode: "wheel",
+      winner_limit: 1,
       allow_duplicates: true,
       auto_remove_winner: false,
       entries: [createEntry(0), createEntry(1)],
       palette: {
         segment_colors: DEFAULT_COLORS.slice(0, 6),
-        background_color: "#0f172a",
-        text_color: "#f8fafc",
-        accent_color: "#38bdf8"
+        background_color: "#08111f",
+        text_color: "#f8fbff",
+        accent_color: "#6fdbff",
+        trim_color: "#7d9dff",
+        glow_color: "#3de6ff"
       },
       presentation: {
         animation_enabled: true,
         sound_enabled: true,
-        confetti_enabled: false,
+        celebration_enabled: true,
+        confetti_enabled: true,
         show_entry_labels: true,
+        show_display_names_on_slices: true,
+        slice_label_mode: "full_name",
+        slow_drift_enabled: true,
         spin_duration_ms: 8500,
-        scoreboard_max_rows: 24
+        scoreboard_max_rows: 24,
+        sound: {
+          music: createSoundCategory("music"),
+          startspin: createSoundCategory("startspin"),
+          respin: createSoundCategory("respin"),
+          click: createSoundCategory("click"),
+          winner: createSoundCategory("winner")
+        }
       },
       import_provenance: {
         source_format: "manual",
         source_name: "",
         unsupported_fields: [],
-        notes: ""
+        notes: "",
+        exact_source_available: true
       },
       raw_import_metadata: {}
     });
+  }
+
+  function normalizeEntry(entry, index) {
+    const source = entry && typeof entry === "object" ? entry : {};
+    const label = String(source.label || source.display_name || `Entry ${index + 1}`).trim() || `Entry ${index + 1}`;
+    const assignment = normalizeAssignment(source.assignment, source);
+    return {
+      entry_id: String(source.entry_id || `entry-${index + 1}`).trim() || `entry-${index + 1}`,
+      label,
+      display_name: String(source.display_name || label).trim() || label,
+      avatar_url: String(source.avatar_url || assignment?.avatar_url || "").trim(),
+      weight: Number.isFinite(Number(source.weight)) && Number(source.weight) > 0 ? Number(source.weight) : 1,
+      share: Number.isFinite(Number(source.share)) && Number(source.share) > 0 ? Number(source.share) : 1,
+      color: String(source.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length]).trim() || DEFAULT_COLORS[index % DEFAULT_COLORS.length],
+      notes: String(source.notes || "").trim(),
+      assignment,
+      role_badges: normalizeBadges(source.role_badges || assignment?.badges),
+      stats_stub: normalizeStatsStub(source.stats_stub)
+    };
   }
 
   function normalizeWheelForEditor(wheel) {
@@ -104,44 +274,54 @@
     const presentation = source.presentation && typeof source.presentation === "object" ? source.presentation : {};
     const importProvenance =
       source.import_provenance && typeof source.import_provenance === "object" ? source.import_provenance : {};
-    const entries = Array.isArray(source.entries) && source.entries.length
+    const entriesSource = Array.isArray(source.entries) && source.entries.length
       ? source.entries
-      : [createEntry(0), createEntry(1)];
-
+      : Array.isArray(source.entrants) && source.entrants.length
+        ? source.entrants
+        : [createEntry(0), createEntry(1)];
     return {
       artifact_code: String(source.artifact_code || "").trim(),
       title: String(source.title || "Untitled wheel").trim() || "Untitled wheel",
       description: String(source.description || "").trim(),
       notes: String(source.notes || "").trim(),
       default_display_mode: source.default_display_mode === "scoreboard" ? "scoreboard" : "wheel",
+      winner_limit: Number.isFinite(Number(source.winner_limit))
+        ? Math.max(1, Math.min(100, Number(source.winner_limit)))
+        : Number.isFinite(Number(source.max_winners))
+          ? Math.max(1, Math.min(100, Number(source.max_winners)))
+          : 1,
       allow_duplicates: source.allow_duplicates !== false,
       auto_remove_winner: source.auto_remove_winner === true,
-      entries: entries.map((entry, index) => ({
-        entry_id: String(entry?.entry_id || `entry-${index + 1}`).trim() || `entry-${index + 1}`,
-        label: String(entry?.label || `Entry ${index + 1}`).trim() || `Entry ${index + 1}`,
-        weight: Number.isFinite(Number(entry?.weight)) && Number(entry.weight) > 0 ? Number(entry.weight) : 1,
-        color: String(entry?.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length]).trim() || DEFAULT_COLORS[index % DEFAULT_COLORS.length],
-        notes: String(entry?.notes || "").trim()
-      })),
+      entries: entriesSource.map((entry, index) => normalizeEntry(entry, index)),
       palette: {
         segment_colors: Array.isArray(palette.segment_colors) && palette.segment_colors.length
-          ? palette.segment_colors.slice(0, 12)
+          ? palette.segment_colors.slice(0, 16).map((color, index) => String(color || DEFAULT_COLORS[index % DEFAULT_COLORS.length]).trim() || DEFAULT_COLORS[index % DEFAULT_COLORS.length])
           : DEFAULT_COLORS.slice(0, 6),
-        background_color: String(palette.background_color || "#0f172a").trim() || "#0f172a",
-        text_color: String(palette.text_color || "#f8fafc").trim() || "#f8fafc",
-        accent_color: String(palette.accent_color || "#38bdf8").trim() || "#38bdf8"
+        background_color: String(palette.background_color || "#08111f").trim() || "#08111f",
+        text_color: String(palette.text_color || "#f8fbff").trim() || "#f8fbff",
+        accent_color: String(palette.accent_color || "#6fdbff").trim() || "#6fdbff",
+        trim_color: String(palette.trim_color || palette.accent_color || "#7d9dff").trim() || "#7d9dff",
+        glow_color: String(palette.glow_color || palette.accent_color || "#3de6ff").trim() || "#3de6ff"
       },
       presentation: {
         animation_enabled: presentation.animation_enabled !== false,
         sound_enabled: presentation.sound_enabled !== false,
-        confetti_enabled: presentation.confetti_enabled === true,
+        celebration_enabled: presentation.celebration_enabled !== false,
+        confetti_enabled:
+          presentation.confetti_enabled === true || presentation.celebration_enabled === true,
         show_entry_labels: presentation.show_entry_labels !== false,
+        show_display_names_on_slices: presentation.show_display_names_on_slices !== false,
+        slice_label_mode: ["full_name", "initials", "avatar"].includes(String(presentation.slice_label_mode || "").trim())
+          ? String(presentation.slice_label_mode).trim()
+          : "full_name",
+        slow_drift_enabled: presentation.slow_drift_enabled !== false,
         spin_duration_ms: Number.isFinite(Number(presentation.spin_duration_ms))
           ? Math.max(2000, Math.min(60000, Number(presentation.spin_duration_ms)))
           : 8500,
         scoreboard_max_rows: Number.isFinite(Number(presentation.scoreboard_max_rows))
           ? Math.max(3, Math.min(100, Number(presentation.scoreboard_max_rows)))
-          : 24
+          : 24,
+        sound: normalizeSoundConfig(presentation.sound || presentation.sound_config)
       },
       import_provenance: {
         source_format: String(importProvenance.source_format || "manual").trim() || "manual",
@@ -166,6 +346,7 @@
       description: draft.description,
       notes: draft.notes,
       default_display_mode: draft.default_display_mode,
+      winner_limit: draft.winner_limit,
       allow_duplicates: draft.allow_duplicates,
       auto_remove_winner: draft.auto_remove_winner,
       entries: draft.entries,
@@ -180,6 +361,7 @@
     state.draft = normalizeWheelForEditor(nextDraft);
     state.selectedCode = state.draft.artifact_code || "";
     state.baseline = draftSnapshot(state.draft);
+    state.lookupState = Object.create(null);
   }
 
   function isDirty() {
@@ -205,6 +387,52 @@
 
   function currentSelection() {
     return state.items.find((item) => item.artifact_code === state.selectedCode) || null;
+  }
+
+  function getEntryLookupKey(entry) {
+    return String(entry?.entry_id || "").trim();
+  }
+
+  function ensureLookupState(entry) {
+    const key = getEntryLookupKey(entry);
+    if (!key) return null;
+    if (!state.lookupState[key]) {
+      state.lookupState[key] = {
+        query: "",
+        results: [],
+        loading: false,
+        error: "",
+        open: false
+      };
+    }
+    return state.lookupState[key];
+  }
+
+  function getLookupStateByKey(key) {
+    if (!key) return null;
+    if (!state.lookupState[key]) {
+      state.lookupState[key] = {
+        query: "",
+        results: [],
+        loading: false,
+        error: "",
+        open: false
+      };
+    }
+    return state.lookupState[key];
+  }
+
+  function clearLookupTimers() {
+    state.lookupDebounce.forEach((timerId) => window.clearTimeout(timerId));
+    state.lookupDebounce.clear();
+    state.lookupAborters.forEach((controller) => {
+      try {
+        controller.abort();
+      } catch (error) {
+        console.warn("[Creator] Wheel assignment lookup abort failed", error);
+      }
+    });
+    state.lookupAborters.clear();
   }
 
   function closeWheelEvents() {
@@ -285,11 +513,15 @@
       description: state.draft.description,
       notes: state.draft.notes,
       default_display_mode: state.draft.default_display_mode,
+      winner_limit: state.draft.winner_limit,
       allow_duplicates: state.draft.allow_duplicates,
       auto_remove_winner: state.draft.auto_remove_winner,
       entries: state.draft.entries,
       palette: state.draft.palette,
-      presentation: state.draft.presentation,
+      presentation: {
+        ...state.draft.presentation,
+        confetti_enabled: state.draft.presentation.celebration_enabled === true
+      },
       import_provenance: state.draft.import_provenance,
       raw_import_metadata: state.draft.raw_import_metadata
     };
@@ -403,6 +635,16 @@
     render();
   }
 
+  function setNestedField(path, value) {
+    const segments = String(path || "").split(".");
+    let cursor = state.draft;
+    segments.slice(0, -1).forEach((segment) => {
+      if (!cursor[segment] || typeof cursor[segment] !== "object") cursor[segment] = {};
+      cursor = cursor[segment];
+    });
+    cursor[segments[segments.length - 1]] = value;
+  }
+
   function updateToolbarState() {
     const dirty = isDirty();
     const dirtyBadge = state.root?.querySelector("[data-wheel-dirty]");
@@ -425,6 +667,31 @@
     }
   }
 
+  function buildWheelSummaryMarkup(item) {
+    const selected = item.artifact_code === state.selectedCode;
+    const destination = resolvePublicWheelDestination(item);
+    const entryCount = Array.isArray(item.entries) ? item.entries.length : 0;
+    const winnerLimit = Number.isFinite(Number(item.winner_limit)) ? Number(item.winner_limit) : 1;
+    const modeLabel = item.default_display_mode === "scoreboard" ? "List view" : "Wheel";
+    return `
+      <article class="wheel-list-card-shell${selected ? " is-selected" : ""}">
+        <button class="wheel-list-card" type="button" data-action="select-wheel" data-artifact-code="${escapeHtml(item.artifact_code)}">
+          <span class="wheel-list-card__title">${escapeHtml(item.title || "Untitled wheel")}</span>
+          <span class="wheel-list-card__meta">${escapeHtml(modeLabel)} default · ${entryCount} entrants · ${winnerLimit} winner${winnerLimit === 1 ? "" : "s"}</span>
+          <span class="wheel-list-card__subtle">${escapeHtml(item.slug || item.artifact_code || "")}</span>
+        </button>
+        <div class="wheel-list-card__footer">
+          <span class="wheel-list-card__path">${escapeHtml(destination.publicPath || "Public route pending")}</span>
+          ${
+            destination.publicUrl
+              ? `<a class="wheel-list-card__link" href="${escapeHtml(destination.publicUrl)}" target="_blank" rel="noopener noreferrer">View public wheel</a>`
+              : `<span class="wheel-list-card__link is-disabled">Public route pending</span>`
+          }
+        </div>
+      </article>
+    `;
+  }
+
   function renderWheelList() {
     if (state.loading) {
       return `<div class="wheel-card-list-empty">Loading wheel artifacts…</div>`;
@@ -432,59 +699,192 @@
     if (!state.items.length) {
       return `<div class="wheel-card-list-empty">No saved wheels yet. Create one or import a portable \`.sswheel\` file.</div>`;
     }
-    return state.items
-      .map((item) => {
-        const selected = item.artifact_code === state.selectedCode;
-        const destination = resolvePublicWheelDestination(item);
-        return `
-          <article class="wheel-list-card-shell${selected ? " is-selected" : ""}">
-            <button class="wheel-list-card" type="button" data-action="select-wheel" data-artifact-code="${escapeHtml(item.artifact_code)}">
-              <span class="wheel-list-card__title">${escapeHtml(item.title || "Untitled wheel")}</span>
-              <span class="wheel-list-card__meta">${escapeHtml(item.default_display_mode || "wheel")} default · ${escapeHtml(String((item.entries || []).length))} entries</span>
-              <span class="wheel-list-card__subtle">${escapeHtml(item.slug || item.artifact_code || "")}</span>
-            </button>
-            <div class="wheel-list-card__footer">
-              <span class="wheel-list-card__path">${escapeHtml(destination.publicPath || "Public route pending")}</span>
-              ${
-                destination.publicUrl
-                  ? `<a class="wheel-list-card__link" href="${escapeHtml(destination.publicUrl)}" target="_blank" rel="noopener noreferrer">View public wheel</a>`
-                  : `<span class="wheel-list-card__link is-disabled">Public route pending</span>`
-              }
-            </div>
-          </article>
-        `;
-      })
-      .join("");
-  }
-
-  function renderEntries() {
-    return state.draft.entries
-      .map((entry, index) => `
-        <div class="wheel-entry-row">
-          <div class="wheel-entry-row__inputs">
-            <input class="account-field-input" type="text" value="${escapeHtml(entry.label)}" data-entry-index="${index}" data-entry-field="label" placeholder="Entry label" />
-            <input class="account-field-input wheel-entry-row__weight" type="number" min="1" step="0.1" value="${escapeHtml(String(entry.weight))}" data-entry-index="${index}" data-entry-field="weight" />
-            <input class="wheel-color-input" type="color" value="${escapeHtml(entry.color)}" data-entry-index="${index}" data-entry-field="color" />
-          </div>
-          <div class="wheel-entry-row__actions">
-            <button class="creator-button subtle" type="button" data-action="move-entry-up" data-entry-index="${index}" ${index === 0 ? "disabled" : ""}>Up</button>
-            <button class="creator-button subtle" type="button" data-action="move-entry-down" data-entry-index="${index}" ${index === state.draft.entries.length - 1 ? "disabled" : ""}>Down</button>
-            <button class="creator-button subtle danger" type="button" data-action="remove-entry" data-entry-index="${index}" ${state.draft.entries.length <= 1 ? "disabled" : ""}>Remove</button>
-          </div>
-        </div>
-      `)
-      .join("");
+    return state.items.map((item) => buildWheelSummaryMarkup(item)).join("");
   }
 
   function renderPaletteInputs() {
     return (state.draft.palette.segment_colors || [])
       .map((color, index) => `
         <label class="wheel-palette-chip">
-          <span>Color ${index + 1}</span>
+          <span>Slice ${index + 1}</span>
           <input type="color" value="${escapeHtml(color)}" data-palette-index="${index}" />
-          <button class="creator-button subtle danger" type="button" data-action="remove-palette-color" data-palette-index="${index}" ${(state.draft.palette.segment_colors || []).length <= 2 ? "disabled" : ""}>−</button>
+          <button class="creator-button subtle danger" type="button" data-action="remove-palette-color" data-palette-index="${index}" ${(state.draft.palette.segment_colors || []).length <= 2 ? "disabled" : ""}>Remove</button>
         </label>
       `)
+      .join("");
+  }
+
+  function buildAssignmentSummary(entry) {
+    const assignment = entry.assignment;
+    if (!assignment) {
+      return `<span class="wheel-entry-assignment-empty">No StreamSuites account linked.</span>`;
+    }
+    const badges = Array.isArray(assignment.badges) && assignment.badges.length
+      ? `<div class="wheel-entry-badge-row">${assignment.badges.map((badge) => `<span class="wheel-entry-badge">${escapeHtml(badge.label)}</span>`).join("")}</div>`
+      : "";
+    const publicSlug = assignment.public_slug || assignment.public_profile?.public_slug || "";
+    const roleBits = [assignment.role, assignment.tier, publicSlug ? `@${publicSlug}` : ""].filter(Boolean);
+    return `
+      <div class="wheel-entry-assignment-summary">
+        <div class="wheel-entry-assignment-avatar">
+          <img src="${escapeHtml(assignment.avatar_url || DEFAULT_ASSIGNMENT_BADGE)}" alt="" loading="lazy" />
+        </div>
+        <div class="wheel-entry-assignment-meta">
+          <strong>${escapeHtml(assignment.display_name || entry.display_name || entry.label)}</strong>
+          <span>${escapeHtml(roleBits.join(" · ") || assignment.user_code || "Linked account")}</span>
+          ${badges}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderLookupResults(entry) {
+    const key = getEntryLookupKey(entry);
+    const lookup = getLookupStateByKey(key);
+    if (!lookup?.open) return "";
+    if (lookup.loading) {
+      return `<div class="wheel-assignment-results"><div class="wheel-assignment-result-empty">Searching accounts…</div></div>`;
+    }
+    if (lookup.error) {
+      return `<div class="wheel-assignment-results"><div class="wheel-assignment-result-empty">${escapeHtml(lookup.error)}</div></div>`;
+    }
+    if (!lookup.results.length) {
+      return `<div class="wheel-assignment-results"><div class="wheel-assignment-result-empty">No accounts matched that search.</div></div>`;
+    }
+    return `
+      <div class="wheel-assignment-results">
+        ${lookup.results
+          .map((result, resultIndex) => {
+            const badges = Array.isArray(result.badges) && result.badges.length
+              ? `<div class="wheel-entry-badge-row">${result.badges.map((badge) => `<span class="wheel-entry-badge">${escapeHtml(badge.label || badge.name || "")}</span>`).join("")}</div>`
+              : "";
+            const metaParts = [result.role, result.tier, result.public_slug ? `@${result.public_slug}` : "", result.identity_code].filter(Boolean);
+            return `
+              <button
+                class="wheel-assignment-result"
+                type="button"
+                data-action="assign-entry-account"
+                data-entry-id="${escapeHtml(key)}"
+                data-result-index="${resultIndex}"
+              >
+                <span class="wheel-assignment-result-avatar">
+                  <img src="${escapeHtml(result.avatar_url || DEFAULT_ASSIGNMENT_BADGE)}" alt="" loading="lazy" />
+                </span>
+                <span class="wheel-assignment-result-copy">
+                  <strong>${escapeHtml(result.display_name || result.user_code || "Account")}</strong>
+                  <span>${escapeHtml(metaParts.join(" · ") || result.user_code || "StreamSuites account")}</span>
+                  ${badges}
+                </span>
+              </button>
+            `;
+          })
+          .join("")}
+      </div>
+    `;
+  }
+
+  function renderEntryCard(entry, index) {
+    const assignmentState = ensureLookupState(entry);
+    const badges = Array.isArray(entry.role_badges) && entry.role_badges.length
+      ? `<div class="wheel-entry-badge-row">${entry.role_badges.map((badge) => `<span class="wheel-entry-badge">${escapeHtml(badge.label)}</span>`).join("")}</div>`
+      : "";
+    return `
+      <article class="wheel-entry-card" data-entry-card="${escapeHtml(entry.entry_id)}">
+        <header class="wheel-entry-card__header">
+          <div class="wheel-entry-card__title">
+            <span class="wheel-entry-card__eyebrow">Entrant ${index + 1}</span>
+            <h4>${escapeHtml(entry.display_name || entry.label)}</h4>
+          </div>
+          <div class="wheel-entry-card__actions">
+            <button class="creator-button subtle" type="button" data-action="move-entry-up" data-entry-index="${index}" ${index === 0 ? "disabled" : ""}>Up</button>
+            <button class="creator-button subtle" type="button" data-action="move-entry-down" data-entry-index="${index}" ${index === state.draft.entries.length - 1 ? "disabled" : ""}>Down</button>
+            <button class="creator-button subtle danger" type="button" data-action="remove-entry" data-entry-index="${index}" ${state.draft.entries.length <= 1 ? "disabled" : ""}>Remove</button>
+          </div>
+        </header>
+
+        <div class="wheel-entry-grid">
+          <label class="wheel-field">
+            <span>Internal label</span>
+            <input class="account-field-input" type="text" value="${escapeHtml(entry.label)}" data-entry-index="${index}" data-entry-field="label" placeholder="Internal label" />
+          </label>
+          <label class="wheel-field">
+            <span>Display name</span>
+            <input class="account-field-input" type="text" value="${escapeHtml(entry.display_name)}" data-entry-index="${index}" data-entry-field="display_name" placeholder="Public display name" />
+          </label>
+          <label class="wheel-field wheel-field--compact">
+            <span>Weight</span>
+            <input class="account-field-input" type="number" min="0.1" step="0.1" value="${escapeHtml(String(entry.weight))}" data-entry-index="${index}" data-entry-field="weight" />
+          </label>
+          <label class="wheel-field wheel-field--compact">
+            <span>Share</span>
+            <input class="account-field-input" type="number" min="0.1" step="0.1" value="${escapeHtml(String(entry.share))}" data-entry-index="${index}" data-entry-field="share" />
+          </label>
+          <label class="wheel-field wheel-field--compact">
+            <span>Slice color</span>
+            <input class="wheel-color-input" type="color" value="${escapeHtml(entry.color)}" data-entry-index="${index}" data-entry-field="color" />
+          </label>
+          <label class="wheel-field">
+            <span>Avatar URL</span>
+            <input class="account-field-input" type="url" value="${escapeHtml(entry.avatar_url)}" data-entry-index="${index}" data-entry-field="avatar_url" placeholder="Leave blank for default avatar" />
+          </label>
+        </div>
+
+        <label class="wheel-field">
+          <span>Notes</span>
+          <textarea class="account-field-input wheel-textarea" rows="3" data-entry-index="${index}" data-entry-field="notes" placeholder="Slim public notes or context">${escapeHtml(entry.notes)}</textarea>
+        </label>
+
+        <section class="wheel-entry-assignment">
+          <div class="wheel-entry-assignment-topline">
+            <div>
+              <span class="wheel-entry-card__eyebrow">Assigned StreamSuites account</span>
+              <p>Search by display name, user code, or public identity. Search results come from the authority runtime only.</p>
+            </div>
+            <button class="creator-button subtle" type="button" data-action="clear-entry-assignment" data-entry-id="${escapeHtml(entry.entry_id)}" ${entry.assignment ? "" : "disabled"}>Clear</button>
+          </div>
+          ${buildAssignmentSummary(entry)}
+          <div class="wheel-assignment-search">
+            <input
+              class="account-field-input"
+              type="search"
+              value="${escapeHtml(assignmentState?.query || "")}"
+              data-entry-id="${escapeHtml(entry.entry_id)}"
+              data-action-input="entry-assignment-query"
+              placeholder="Search existing StreamSuites accounts"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            ${renderLookupResults(entry)}
+          </div>
+        </section>
+
+        ${badges}
+      </article>
+    `;
+  }
+
+  function renderEntries() {
+    return state.draft.entries.map((entry, index) => renderEntryCard(entry, index)).join("");
+  }
+
+  function renderSoundSettings() {
+    return Object.keys(SOUND_LIBRARY)
+      .map((category) => {
+        const sound = state.draft.presentation.sound[category] || createSoundCategory(category);
+        return `
+          <div class="wheel-sound-row">
+            <label class="wheel-toggle-row">
+              <input type="checkbox" data-field="presentation.sound.${category}.enabled" ${sound.enabled ? "checked" : ""} />
+              <span>${escapeHtml(SOUND_CATEGORY_LABELS[category] || category)}</span>
+            </label>
+            <select class="account-field-input" data-field="presentation.sound.${category}.asset_id">
+              ${(SOUND_LIBRARY[category] || [])
+                .map((assetId) => `<option value="${escapeHtml(assetId)}" ${sound.asset_id === assetId ? "selected" : ""}>${escapeHtml(assetId)}</option>`)
+                .join("")}
+            </select>
+          </div>
+        `;
+      })
       .join("");
   }
 
@@ -520,6 +920,7 @@
     }
     const selected = currentSelection();
     const fileName = state.importFile?.name || "No file selected";
+    const activeModeLabel = state.draft.default_display_mode === "scoreboard" ? "List view" : "Wheel";
     state.root.innerHTML = `
       <div class="wheel-manager-shell">
         <aside class="wheel-manager-sidebar">
@@ -567,7 +968,7 @@
               </div>
             </header>
             <div class="ss-panel-body">
-              <p class="muted">Livechat auto-entry, automation rules, winner history, and economy behavior are intentionally not active on this route yet.</p>
+              <p class="muted">Backend winner history, automation, and XP/rank logic are intentionally not active on this route yet.</p>
             </div>
           </section>
         </aside>
@@ -577,7 +978,7 @@
             <header class="ss-panel-header">
               <div>
                 <h3>${escapeHtml(state.draft.title || "Untitled wheel")}</h3>
-                <p class="muted">${selected ? `Editing ${escapeHtml(selected.slug || selected.artifact_code || "")}` : "New unsaved wheel artifact"}</p>
+                <p class="muted">${selected ? `Editing ${escapeHtml(selected.slug || selected.artifact_code || "")}` : "New unsaved wheel artifact"} · ${escapeHtml(activeModeLabel)} default</p>
               </div>
               <div class="wheel-toolbar">
                 <span class="wheel-dirty-pill" data-wheel-dirty="true"></span>
@@ -587,7 +988,27 @@
             </header>
             <div class="ss-panel-body">
               <div class="wheel-status" data-wheel-status="true"></div>
-              <div class="wheel-editor-grid">
+
+              <div class="wheel-kpi-grid">
+                <article class="wheel-kpi-card">
+                  <span>Entrants</span>
+                  <strong>${state.draft.entries.length}</strong>
+                </article>
+                <article class="wheel-kpi-card">
+                  <span>Winner limit</span>
+                  <strong>${state.draft.winner_limit}</strong>
+                </article>
+                <article class="wheel-kpi-card">
+                  <span>Slice labels</span>
+                  <strong>${escapeHtml((SLICE_LABEL_MODES.find((item) => item.value === state.draft.presentation.slice_label_mode) || SLICE_LABEL_MODES[0]).label)}</strong>
+                </article>
+                <article class="wheel-kpi-card">
+                  <span>Sound cues</span>
+                  <strong>${state.draft.presentation.sound_enabled ? "Enabled" : "Muted"}</strong>
+                </article>
+              </div>
+
+              <div class="wheel-editor-grid wheel-editor-grid--dense">
                 <section class="wheel-form-section">
                   <h4>Basics</h4>
                   <label class="account-field-label">Title</label>
@@ -599,58 +1020,61 @@
                 </section>
 
                 <section class="wheel-form-section">
-                  <h4>Behavior</h4>
+                  <h4>Rules</h4>
                   <label class="account-field-label">Default public layout</label>
                   <select class="account-field-input" data-field="default_display_mode">
-                    <option value="wheel" ${state.draft.default_display_mode === "wheel" ? "selected" : ""}>Wheel</option>
-                    <option value="scoreboard" ${state.draft.default_display_mode === "scoreboard" ? "selected" : ""}>Scoreboard</option>
+                    ${DISPLAY_MODE_OPTIONS.map((option) => `<option value="${escapeHtml(option.value)}" ${state.draft.default_display_mode === option.value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
                   </select>
+                  <label class="account-field-label">Winner limit</label>
+                  <input class="account-field-input" type="number" min="1" max="100" step="1" value="${escapeHtml(String(state.draft.winner_limit))}" data-field="winner_limit" />
                   <label class="wheel-toggle-row">
                     <input type="checkbox" data-field="allow_duplicates" ${state.draft.allow_duplicates ? "checked" : ""} />
                     <span>Allow duplicate winners</span>
                   </label>
                   <label class="wheel-toggle-row">
                     <input type="checkbox" data-field="auto_remove_winner" ${state.draft.auto_remove_winner ? "checked" : ""} />
-                    <span>Auto-remove winner after a spin</span>
+                    <span>Auto-remove winner after a draw</span>
+                  </label>
+                </section>
+
+                <section class="wheel-form-section">
+                  <h4>Presentation</h4>
+                  <label class="account-field-label">Slice label mode</label>
+                  <select class="account-field-input" data-field="presentation.slice_label_mode">
+                    ${SLICE_LABEL_MODES.map((option) => `<option value="${escapeHtml(option.value)}" ${state.draft.presentation.slice_label_mode === option.value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
+                  </select>
+                  <label class="wheel-toggle-row">
+                    <input type="checkbox" data-field="presentation.show_display_names_on_slices" ${state.draft.presentation.show_display_names_on_slices ? "checked" : ""} />
+                    <span>Show display names on slices</span>
+                  </label>
+                  <label class="wheel-toggle-row">
+                    <input type="checkbox" data-field="presentation.slow_drift_enabled" ${state.draft.presentation.slow_drift_enabled ? "checked" : ""} />
+                    <span>Enable slow idle drift</span>
                   </label>
                   <label class="wheel-toggle-row">
                     <input type="checkbox" data-field="presentation.animation_enabled" ${state.draft.presentation.animation_enabled ? "checked" : ""} />
-                    <span>Animate spins</span>
+                    <span>Animate wheel motion</span>
                   </label>
+                  <label class="wheel-toggle-row">
+                    <input type="checkbox" data-field="presentation.celebration_enabled" ${state.draft.presentation.celebration_enabled ? "checked" : ""} />
+                    <span>Enable celebration visuals</span>
+                  </label>
+                </section>
+
+                <section class="wheel-form-section">
+                  <h4>Tuning</h4>
+                  <label class="account-field-label">Spin duration (ms)</label>
+                  <input class="account-field-input" type="number" min="2000" max="60000" step="100" value="${escapeHtml(String(state.draft.presentation.spin_duration_ms))}" data-field="presentation.spin_duration_ms" />
+                  <label class="account-field-label">List view row limit</label>
+                  <input class="account-field-input" type="number" min="3" max="100" step="1" value="${escapeHtml(String(state.draft.presentation.scoreboard_max_rows))}" data-field="presentation.scoreboard_max_rows" />
                   <label class="wheel-toggle-row">
                     <input type="checkbox" data-field="presentation.sound_enabled" ${state.draft.presentation.sound_enabled ? "checked" : ""} />
                     <span>Enable sound cues</span>
                   </label>
                   <label class="wheel-toggle-row">
-                    <input type="checkbox" data-field="presentation.confetti_enabled" ${state.draft.presentation.confetti_enabled ? "checked" : ""} />
-                    <span>Enable celebration accent</span>
-                  </label>
-                  <label class="wheel-toggle-row">
                     <input type="checkbox" data-field="presentation.show_entry_labels" ${state.draft.presentation.show_entry_labels ? "checked" : ""} />
-                    <span>Show entry labels inside the wheel</span>
+                    <span>Render label treatment inside slices</span>
                   </label>
-                </section>
-
-                <section class="wheel-form-section">
-                  <h4>Presentation tuning</h4>
-                  <label class="account-field-label">Spin duration (ms)</label>
-                  <input class="account-field-input" type="number" min="2000" max="60000" step="100" value="${escapeHtml(String(state.draft.presentation.spin_duration_ms))}" data-field="presentation.spin_duration_ms" />
-                  <label class="account-field-label">Scoreboard row limit</label>
-                  <input class="account-field-input" type="number" min="3" max="100" step="1" value="${escapeHtml(String(state.draft.presentation.scoreboard_max_rows))}" data-field="presentation.scoreboard_max_rows" />
-                  <div class="wheel-color-grid">
-                    <label>
-                      <span>Background</span>
-                      <input type="color" value="${escapeHtml(state.draft.palette.background_color)}" data-field="palette.background_color" />
-                    </label>
-                    <label>
-                      <span>Text</span>
-                      <input type="color" value="${escapeHtml(state.draft.palette.text_color)}" data-field="palette.text_color" />
-                    </label>
-                    <label>
-                      <span>Accent</span>
-                      <input type="color" value="${escapeHtml(state.draft.palette.accent_color)}" data-field="palette.accent_color" />
-                    </label>
-                  </div>
                 </section>
               </div>
             </div>
@@ -659,30 +1083,66 @@
           <section class="ss-panel wheel-editor-panel">
             <header class="ss-panel-header">
               <div>
-                <h3>Entries</h3>
-                <p class="muted">Manual labels, weights, and colors are persisted per artifact. Winner history is not stored or implied here.</p>
+                <h3>Palette + trim lighting</h3>
+                <p class="muted">These colors drive the public wheel stage, trim lighting, and hover accents.</p>
               </div>
               <div class="wheel-panel-actions">
-                <button class="creator-button secondary" type="button" data-action="add-entry">Add entry</button>
+                <button class="creator-button secondary" type="button" data-action="add-palette-color" ${(state.draft.palette.segment_colors || []).length >= 16 ? "disabled" : ""}>Add color</button>
+              </div>
+            </header>
+            <div class="ss-panel-body wheel-palette-stack">
+              <div class="wheel-color-grid wheel-color-grid--wide">
+                <label>
+                  <span>Background</span>
+                  <input type="color" value="${escapeHtml(state.draft.palette.background_color)}" data-field="palette.background_color" />
+                </label>
+                <label>
+                  <span>Text</span>
+                  <input type="color" value="${escapeHtml(state.draft.palette.text_color)}" data-field="palette.text_color" />
+                </label>
+                <label>
+                  <span>Accent</span>
+                  <input type="color" value="${escapeHtml(state.draft.palette.accent_color)}" data-field="palette.accent_color" />
+                </label>
+                <label>
+                  <span>Trim</span>
+                  <input type="color" value="${escapeHtml(state.draft.palette.trim_color)}" data-field="palette.trim_color" />
+                </label>
+                <label>
+                  <span>Glow</span>
+                  <input type="color" value="${escapeHtml(state.draft.palette.glow_color)}" data-field="palette.glow_color" />
+                </label>
+              </div>
+              <div class="wheel-palette-grid">
+                ${renderPaletteInputs()}
+              </div>
+            </div>
+          </section>
+
+          <section class="ss-panel wheel-editor-panel">
+            <header class="ss-panel-header">
+              <div>
+                <h3>Sound cues</h3>
+                <p class="muted">Uses the real wheel sound library. Defaults are the \`*0\` assets in each category.</p>
+              </div>
+            </header>
+            <div class="ss-panel-body wheel-sound-grid">
+              ${renderSoundSettings()}
+            </div>
+          </section>
+
+          <section class="ss-panel wheel-editor-panel">
+            <header class="ss-panel-header">
+              <div>
+                <h3>Entrants</h3>
+                <p class="muted">Manual labels, avatar defaults, weights, colors, and account linkage persist with the artifact. Backend winner history is still not implied here.</p>
+              </div>
+              <div class="wheel-panel-actions">
+                <button class="creator-button secondary" type="button" data-action="add-entry">Add entrant</button>
               </div>
             </header>
             <div class="ss-panel-body wheel-entry-stack">
               ${renderEntries()}
-            </div>
-          </section>
-
-          <section class="ss-panel wheel-editor-panel">
-            <header class="ss-panel-header">
-              <div>
-                <h3>Palette</h3>
-                <p class="muted">A restrained practical segment palette for both wheel and scoreboard views.</p>
-              </div>
-              <div class="wheel-panel-actions">
-                <button class="creator-button secondary" type="button" data-action="add-palette-color" ${(state.draft.palette.segment_colors || []).length >= 12 ? "disabled" : ""}>Add color</button>
-              </div>
-            </header>
-            <div class="ss-panel-body wheel-palette-grid">
-              ${renderPaletteInputs()}
             </div>
           </section>
 
@@ -693,22 +1153,169 @@
     updateToolbarState();
   }
 
-  function setNestedField(path, value) {
-    const segments = String(path || "").split(".");
-    let cursor = state.draft;
-    segments.slice(0, -1).forEach((segment) => {
-      if (!cursor[segment] || typeof cursor[segment] !== "object") cursor[segment] = {};
-      cursor = cursor[segment];
-    });
-    cursor[segments[segments.length - 1]] = value;
-  }
-
   function moveEntry(index, direction) {
     const nextIndex = index + direction;
     if (nextIndex < 0 || nextIndex >= state.draft.entries.length) return;
     const [entry] = state.draft.entries.splice(index, 1);
     state.draft.entries.splice(nextIndex, 0, entry);
     render();
+  }
+
+  function findEntryById(entryId) {
+    return state.draft?.entries?.find((entry) => entry.entry_id === entryId) || null;
+  }
+
+  function syncLookupContainer(entryId) {
+    const entry = findEntryById(entryId);
+    if (!entry) return;
+    const container = state.root?.querySelector(`[data-entry-card="${CSS.escape(entryId)}"] .wheel-assignment-search`);
+    if (!container) return;
+    const resultsMarkup = renderLookupResults(entry);
+    const existingResults = container.querySelector(".wheel-assignment-results");
+    if (existingResults) existingResults.remove();
+    if (resultsMarkup) {
+      container.insertAdjacentHTML("beforeend", resultsMarkup);
+    }
+  }
+
+  async function runAccountLookup(entryId, query) {
+    const entry = findEntryById(entryId);
+    if (!entry) return;
+    const lookup = getLookupStateByKey(entryId);
+    if (!lookup) return;
+    const trimmed = String(query || "").trim();
+    lookup.query = trimmed;
+    if (trimmed.length < 2) {
+      lookup.results = [];
+      lookup.loading = false;
+      lookup.error = "";
+      lookup.open = false;
+      syncLookupContainer(entryId);
+      return;
+    }
+    const activeAborter = state.lookupAborters.get(entryId);
+    if (activeAborter) {
+      activeAborter.abort();
+    }
+    const controller = new AbortController();
+    state.lookupAborters.set(entryId, controller);
+    lookup.loading = true;
+    lookup.error = "";
+    lookup.open = true;
+    syncLookupContainer(entryId);
+    try {
+      const payload = await requestJson(
+        `${WHEEL_ACCOUNT_LOOKUP_ENDPOINT}?q=${encodeURIComponent(trimmed)}`,
+        { signal: controller.signal }
+      );
+      lookup.results = Array.isArray(payload.items) ? payload.items : [];
+      lookup.loading = false;
+      lookup.open = true;
+      lookup.error = "";
+    } catch (error) {
+      if (controller.signal.aborted) return;
+      lookup.results = [];
+      lookup.loading = false;
+      lookup.open = true;
+      lookup.error = error instanceof Error ? error.message : "Unable to search accounts.";
+    } finally {
+      if (state.lookupAborters.get(entryId) === controller) {
+        state.lookupAborters.delete(entryId);
+      }
+      syncLookupContainer(entryId);
+    }
+  }
+
+  function queueAccountLookup(entryId, query) {
+    const existingTimer = state.lookupDebounce.get(entryId);
+    if (existingTimer) window.clearTimeout(existingTimer);
+    const lookup = getLookupStateByKey(entryId);
+    if (lookup) {
+      lookup.query = query;
+      lookup.open = String(query || "").trim().length >= 2;
+      syncLookupContainer(entryId);
+    }
+    const timerId = window.setTimeout(() => {
+      state.lookupDebounce.delete(entryId);
+      void runAccountLookup(entryId, query);
+    }, LOOKUP_DEBOUNCE_MS);
+    state.lookupDebounce.set(entryId, timerId);
+  }
+
+  function applyAssignmentResult(entryId, resultIndex) {
+    const entry = findEntryById(entryId);
+    const lookup = getLookupStateByKey(entryId);
+    if (!entry || !lookup) return;
+    const picked = lookup.results?.[resultIndex];
+    if (!picked) return;
+    entry.assignment = normalizeAssignment(picked, entry);
+    entry.display_name = String(entry.display_name || picked.display_name || picked.user_code || entry.label).trim() || entry.label;
+    if (!entry.avatar_url && picked.avatar_url) {
+      entry.avatar_url = String(picked.avatar_url).trim();
+    }
+    if (Array.isArray(picked.badges) && picked.badges.length) {
+      entry.role_badges = normalizeBadges(picked.badges);
+    }
+    lookup.query = entry.assignment?.display_name || entry.display_name || "";
+    lookup.results = [];
+    lookup.loading = false;
+    lookup.error = "";
+    lookup.open = false;
+    render();
+  }
+
+  function clearAssignment(entryId) {
+    const entry = findEntryById(entryId);
+    if (!entry) return;
+    entry.assignment = null;
+    entry.role_badges = [];
+    const lookup = getLookupStateByKey(entryId);
+    if (lookup) {
+      lookup.query = "";
+      lookup.results = [];
+      lookup.loading = false;
+      lookup.error = "";
+      lookup.open = false;
+    }
+    render();
+  }
+
+  function updateEntryField(index, field, rawValue) {
+    const entry = state.draft?.entries?.[index];
+    if (!entry) return;
+    switch (field) {
+      case "weight":
+      case "share":
+        entry[field] = Math.max(0.1, Number(rawValue) || 1);
+        break;
+      case "color":
+        entry.color = String(rawValue || DEFAULT_COLORS[index % DEFAULT_COLORS.length]);
+        break;
+      default:
+        entry[field] = String(rawValue || "");
+        break;
+    }
+    if (field === "label" && !entry.display_name.trim()) {
+      entry.display_name = entry.label;
+    }
+    updateToolbarState();
+  }
+
+  function coerceFieldValue(input, field) {
+    if (input instanceof HTMLInputElement && input.type === "checkbox") {
+      return input.checked;
+    }
+    if (
+      input instanceof HTMLInputElement &&
+      input.type === "number" &&
+      ["winner_limit", "presentation.spin_duration_ms", "presentation.scoreboard_max_rows"].includes(field)
+    ) {
+      const numeric = Number(input.value);
+      if (field === "winner_limit") return Math.max(1, Math.min(100, Number.isFinite(numeric) ? numeric : 1));
+      if (field === "presentation.spin_duration_ms") return Math.max(2000, Math.min(60000, Number.isFinite(numeric) ? numeric : 8500));
+      if (field === "presentation.scoreboard_max_rows") return Math.max(3, Math.min(100, Number.isFinite(numeric) ? numeric : 24));
+    }
+    return input.value;
   }
 
   function bindEvents() {
@@ -748,7 +1355,9 @@
         const index = Number(trigger.dataset.entryIndex);
         if (!Number.isFinite(index)) return;
         state.draft.entries.splice(index, 1);
-        if (!state.draft.entries.length) state.draft.entries.push(createEntry(0));
+        if (!state.draft.entries.length) {
+          state.draft.entries.push(createEntry(0));
+        }
         render();
         return;
       }
@@ -781,6 +1390,14 @@
       if (action === "import-text") {
         if (!state.importText.trim()) return;
         void importPayload(state.importText, "pasted-wheel.json");
+        return;
+      }
+      if (action === "assign-entry-account") {
+        applyAssignmentResult(String(trigger.dataset.entryId || ""), Number(trigger.dataset.resultIndex));
+        return;
+      }
+      if (action === "clear-entry-assignment") {
+        clearAssignment(String(trigger.dataset.entryId || ""));
       }
     });
 
@@ -796,12 +1413,8 @@
         const input = target;
         const index = Number(input.dataset.entryIndex);
         const field = String(input.dataset.entryField || "");
-        if (!Number.isFinite(index) || !state.draft.entries[index]) return;
-        state.draft.entries[index][field] =
-          field === "weight"
-            ? Math.max(1, Number(input.value) || 1)
-            : String(input.value || "");
-        updateToolbarState();
+        if (!Number.isFinite(index)) return;
+        updateEntryField(index, field, input.value);
         return;
       }
       if (target.matches("[data-palette-index]")) {
@@ -815,13 +1428,11 @@
       if (target.matches("[data-field]")) {
         const input = target;
         const field = String(input.dataset.field || "");
-        const value =
-          input instanceof HTMLInputElement && input.type === "checkbox"
-            ? input.checked
-            : input instanceof HTMLInputElement && input.type === "number"
-              ? Number(input.value)
-              : input.value;
+        const value = coerceFieldValue(input, field);
         setNestedField(field, value);
+        if (field === "presentation.celebration_enabled") {
+          state.draft.presentation.confetti_enabled = value === true;
+        }
         updateToolbarState();
       }
     });
@@ -832,7 +1443,30 @@
       if (target.matches("[data-wheel-import-text='true']")) {
         state.importText = target.value || "";
         updateToolbarState();
+        return;
       }
+      if (target.matches("[data-entry-id][data-action-input='entry-assignment-query']")) {
+        const input = target;
+        const entryId = String(input.dataset.entryId || "");
+        queueAccountLookup(entryId, input.value || "");
+      }
+    });
+
+    state.root.addEventListener("focusout", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (!target.matches("[data-entry-id][data-action-input='entry-assignment-query']")) return;
+      const entryId = String(target.dataset.entryId || "");
+      window.setTimeout(() => {
+        const lookup = getLookupStateByKey(entryId);
+        if (!lookup) return;
+        const active = document.activeElement;
+        if (active?.closest?.(`[data-entry-card="${CSS.escape(entryId)}"] .wheel-assignment-results`)) {
+          return;
+        }
+        lookup.open = false;
+        syncLookupContainer(entryId);
+      }, 140);
     });
   }
 
@@ -848,6 +1482,7 @@
   }
 
   function destroy() {
+    clearLookupTimers();
     closeWheelEvents();
     state.root = null;
     state.items = [];
@@ -858,6 +1493,7 @@
     state.error = "";
     state.importText = "";
     state.importFile = null;
+    state.lookupState = Object.create(null);
   }
 
   window.WheelsView = { init, destroy };
