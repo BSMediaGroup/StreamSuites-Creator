@@ -52,6 +52,9 @@ test("creator wheels editor talks only to the authoritative runtime/Auth wheel e
   assert.match(js, /trim_color/);
   assert.match(js, /glow_color/);
   assert.match(js, /presentation\.sound\.\$\{category\}\.asset_id|presentation\.sound\./);
+  assert.match(js, /function resolvePublicBase\(\)/);
+  assert.match(js, /return "http:\/\/127\.0\.0\.1:8788";/);
+  assert.match(js, /const WHEEL_SOUND_BASE = `\$\{resolvePublicBase\(\)\}\/assets\/sounds\/wheels`;/);
   assert.match(js, /function buildWheelSoundUrl\(category, assetId\)/);
   assert.match(js, /data-action="preview-sound"/);
   assert.match(js, /Search existing StreamSuites accounts/);

@@ -23,8 +23,15 @@
   const WHEELS_EVENTS_ENDPOINT = `${API_BASE}/api/creator/wheels/events`;
   const WHEEL_ACCOUNT_LOOKUP_ENDPOINT = `${API_BASE}/api/creator/wheels/account-lookup`;
   const DEFAULT_PUBLIC_BASE = "https://streamsuites.app";
+  function resolvePublicBase() {
+    const host = (window.location.hostname || "").toLowerCase();
+    if (host === "localhost" || host === "127.0.0.1") {
+      return "http://127.0.0.1:8788";
+    }
+    return DEFAULT_PUBLIC_BASE;
+  }
   const DEFAULT_COLORS = ["#ff6b6b", "#ffd166", "#06d6a0", "#118ab2", "#9b5de5", "#f15bb5"];
-  const WHEEL_SOUND_BASE = "/assets/sounds/wheels";
+  const WHEEL_SOUND_BASE = `${resolvePublicBase()}/assets/sounds/wheels`;
   const SLICE_LABEL_MODES = [
     { value: "full_name", label: "Full name" },
     { value: "initials", label: "Initials" },
