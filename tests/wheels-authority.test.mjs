@@ -48,10 +48,18 @@ test("creator wheels editor talks only to the authoritative runtime/Auth wheel e
   assert.match(js, /\$\{WHEELS_ENDPOINT\}\/\$\{encodeURIComponent\(state\.selectedCode\)\}\/export/);
   assert.match(js, /const WHEEL_ACCOUNT_LOOKUP_ENDPOINT = `\$\{API_BASE\}\/api\/creator\/wheels\/account-lookup`;/);
   assert.match(js, /winner_limit/);
+  assert.match(js, /custom_slug/);
+  assert.match(js, /shortlink_slug/);
   assert.match(js, /slice_label_mode/);
+  assert.match(js, /center_image_url/);
+  assert.match(js, /spin_owner_only/);
   assert.match(js, /trim_color/);
   assert.match(js, /glow_color/);
   assert.match(js, /presentation\.sound\.\$\{category\}\.asset_id|presentation\.sound\./);
+  assert.match(js, /const WHEEL_CENTER_ACCEPT = ".webp,.png,.jpg,.jpeg,.gif,.svg";/);
+  assert.match(js, /Choose center image/);
+  assert.match(js, /Strongly recommended\. Public spinning stays enabled by default/);
+  assert.match(js, /Shortlink/);
   assert.match(js, /function resolvePublicBase\(\)/);
   assert.match(js, /return "http:\/\/127\.0\.0\.1:8788";/);
   assert.match(js, /const WHEEL_SOUND_BASE = `\$\{resolvePublicBase\(\)\}\/assets\/sounds\/wheels`;/);
@@ -69,6 +77,8 @@ test("creator wheels editor talks only to the authoritative runtime/Auth wheel e
   assert.match(css, /\.wheel-list-card/);
   assert.match(css, /\.wheel-list-card__footer/);
   assert.match(css, /\.wheel-entry-card/);
+  assert.match(css, /\.wheel-share-stack/);
+  assert.match(css, /\.wheel-center-preview-card/);
   assert.match(css, /\.wheel-sound-grid/);
   assert.match(css, /\.wheel-sound-row__controls/);
   assert.match(css, /\.wheel-assignment-results/);

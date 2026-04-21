@@ -56,6 +56,8 @@
     winner: ["winner0.mp3", "winner1.mp3", "winner2.mp3", "winner3.mp3", "winner4.mp3", "winner5.mp3", "winner6.mp3"]
   });
   const DEFAULT_ASSIGNMENT_BADGE = "/assets/icons/ui/wheeluser.svg";
+  const WHEEL_CENTER_ACCEPT = ".webp,.png,.jpg,.jpeg,.gif,.svg";
+  const WHEEL_CENTER_DEFAULT = "/assets/placeholders/wheelcenterdefault.webp";
   const LOOKUP_DEBOUNCE_MS = 240;
 
   let wheelEvents = null;
@@ -80,7 +82,8 @@
     lookupDebounce: new Map(),
     lookupAborters: new Map(),
     previewAudio: null,
-    previewCategory: ""
+    previewCategory: "",
+    centerImageUploadName: ""
   };
 
   function escapeHtml(value) {
@@ -94,6 +97,15 @@
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => resolve(String(reader.result || "")), { once: true });
+      reader.addEventListener("error", () => reject(reader.error || new Error("Unable to read file.")), { once: true });
+      reader.readAsDataURL(file);
+    });
   }
 
   function createSoundCategory(category) {
@@ -264,6 +276,7 @@
   function createBlankDraft() {
     return normalizeWheelForEditor({
       title: "Untitled wheel",
+      custom_slug: "",
       description: "",
       notes: "",
       default_display_mode: "wheel",
@@ -287,6 +300,8 @@
         show_entry_labels: true,
         show_display_names_on_slices: true,
         slice_label_mode: "full_name",
+        center_image_url: WHEEL_CENTER_DEFAULT,
+        spin_owner_only: false,
         slow_drift_enabled: true,
         spin_duration_ms: 8500,
         scoreboard_max_rows: 24,
@@ -342,6 +357,11 @@
     return {
       artifact_code: String(source.artifact_code || "").trim(),
       title: String(source.title || "Untitled wheel").trim() || "Untitled wheel",
+      slug: String(source.slug || source.default_slug || "").trim(),
+      default_slug: String(source.default_slug || source.slug || "").trim(),
+      custom_slug: String(source.custom_slug || "").trim(),
+      shortlink_slug: String(source.shortlink_slug || "").trim(),
+      slug_aliases: Array.isArray(source.slug_aliases) ? source.slug_aliases.map((item) => String(item || "").trim()).filter(Boolean) : [],
       description: String(source.description || "").trim(),
       notes: String(source.notes || "").trim(),
       default_display_mode: source.default_display_mode === "scoreboard" ? "scoreboard" : "wheel",
@@ -374,6 +394,12 @@
         slice_label_mode: ["full_name", "initials", "avatar"].includes(String(presentation.slice_label_mode || "").trim())
           ? String(presentation.slice_label_mode).trim()
           : "full_name",
+        center_image_url: String(presentation.center_image_url || presentation.centerImageUrl || WHEEL_CENTER_DEFAULT).trim() || WHEEL_CENTER_DEFAULT,
+        spin_owner_only:
+          presentation.spin_owner_only === true ||
+          presentation.spinOwnerOnly === true ||
+          presentation.owner_spin_only === true ||
+          presentation.ownerSpinOnly === true,
         slow_drift_enabled: presentation.slow_drift_enabled !== false,
         spin_duration_ms: Number.isFinite(Number(presentation.spin_duration_ms))
           ? Math.max(2000, Math.min(60000, Number(presentation.spin_duration_ms)))
@@ -403,6 +429,11 @@
     return JSON.stringify({
       artifact_code: draft.artifact_code || "",
       title: draft.title,
+      slug: draft.slug || draft.default_slug || "",
+      default_slug: draft.default_slug || draft.slug || "",
+      custom_slug: draft.custom_slug || "",
+      shortlink_slug: draft.shortlink_slug || "",
+      slug_aliases: draft.slug_aliases || [],
       description: draft.description,
       notes: draft.notes,
       default_display_mode: draft.default_display_mode,
@@ -422,6 +453,7 @@
     state.selectedCode = state.draft.artifact_code || "";
     state.baseline = draftSnapshot(state.draft);
     state.lookupState = Object.create(null);
+    state.centerImageUploadName = "";
   }
 
   function isDirty() {
@@ -542,6 +574,39 @@
     return { publicPath, publicUrl };
   }
 
+  function resolveWheelShareModel(item) {
+    const slug = String(item?.slug || item?.custom_slug || item?.default_slug || "").trim();
+    const defaultSlug = String(item?.default_slug || item?.slug || "").trim();
+    const customSlug = String(item?.custom_slug || "").trim();
+    const shortlinkSlug = String(item?.shortlink_slug || "").trim();
+    const publicPath =
+      String(item?.public_path || "").trim() ||
+      (slug ? `/wheels/${encodeURIComponent(slug)}` : "");
+    const defaultPublicPath =
+      String(item?.default_public_path || "").trim() ||
+      (defaultSlug ? `/wheels/${encodeURIComponent(defaultSlug)}` : "");
+    const publicUrl =
+      String(item?.public_url || "").trim() ||
+      (publicPath ? `${DEFAULT_PUBLIC_BASE}${publicPath}` : "");
+    const defaultPublicUrl =
+      String(item?.default_public_url || "").trim() ||
+      (defaultPublicPath ? `${DEFAULT_PUBLIC_BASE}${defaultPublicPath}` : "");
+    const shortlinkUrl =
+      String(item?.shortlink_url || "").trim() ||
+      (shortlinkSlug ? `https://ssvx.cc/${encodeURIComponent(shortlinkSlug)}` : "");
+    return {
+      slug,
+      defaultSlug,
+      customSlug,
+      shortlinkSlug,
+      publicPath,
+      publicUrl,
+      defaultPublicPath,
+      defaultPublicUrl,
+      shortlinkUrl
+    };
+  }
+
   async function loadWheels({ selectCode = "" } = {}) {
     state.loading = true;
     state.error = "";
@@ -570,6 +635,7 @@
   function buildSavePayload() {
     return {
       title: state.draft.title,
+      custom_slug: state.draft.custom_slug,
       description: state.draft.description,
       notes: state.draft.notes,
       default_display_mode: state.draft.default_display_mode,
@@ -984,6 +1050,9 @@
     const selected = currentSelection();
     const fileName = state.importFile?.name || "No file selected";
     const activeModeLabel = state.draft.default_display_mode === "scoreboard" ? "List view" : "Wheel";
+    const shareModel = resolveWheelShareModel(selected || state.draft);
+    const centerImageUrl = String(state.draft.presentation.center_image_url || WHEEL_CENTER_DEFAULT).trim() || WHEEL_CENTER_DEFAULT;
+    const centerImageLabel = state.centerImageUploadName || centerImageUrl.split("/").pop() || "Embedded center image";
     state.root.innerHTML = `
       <div class="wheel-manager-shell">
         <aside class="wheel-manager-sidebar">
@@ -1083,6 +1152,33 @@
                 </section>
 
                 <section class="wheel-form-section">
+                  <h4>Access + links</h4>
+                  <label class="account-field-label">Optional custom slug</label>
+                  <input class="account-field-input" type="text" value="${escapeHtml(state.draft.custom_slug)}" data-field="custom_slug" placeholder="mycustomwheel" />
+                  <p class="muted">Leave blank to keep the generated 6-character public slug. Custom slugs are claimed only when available.</p>
+                  <label class="wheel-toggle-row">
+                    <input type="checkbox" data-field="presentation.spin_owner_only" ${state.draft.presentation.spin_owner_only ? "checked" : ""} />
+                    <span>Restrict spinning to the logged-in wheel owner</span>
+                  </label>
+                  <p class="muted">Strongly recommended. Public spinning stays enabled by default so existing flows are not blocked until you opt in.</p>
+                  <div class="wheel-share-stack">
+                    <div class="wheel-share-row">
+                      <span>Primary public URL</span>
+                      <code>${escapeHtml(shareModel.publicUrl || "Generated on first save")}</code>
+                    </div>
+                    <div class="wheel-share-row">
+                      <span>Generated slug URL</span>
+                      <code>${escapeHtml(shareModel.defaultPublicUrl || "Generated on first save")}</code>
+                    </div>
+                    <div class="wheel-share-row">
+                      <span>Shortlink</span>
+                      <code>${escapeHtml(shareModel.shortlinkUrl || "Generated on first save")}</code>
+                    </div>
+                  </div>
+                  ${state.draft.slug_aliases.length ? `<p class="muted">Legacy route aliases: ${escapeHtml(state.draft.slug_aliases.join(", "))}</p>` : ""}
+                </section>
+
+                <section class="wheel-form-section">
                   <h4>Rules</h4>
                   <label class="account-field-label">Default public layout</label>
                   <select class="account-field-input" data-field="default_display_mode">
@@ -1106,6 +1202,22 @@
                   <select class="account-field-input" data-field="presentation.slice_label_mode">
                     ${SLICE_LABEL_MODES.map((option) => `<option value="${escapeHtml(option.value)}" ${state.draft.presentation.slice_label_mode === option.value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
                   </select>
+                  <label class="account-field-label">Centerpiece image URL / embedded data URL</label>
+                  <input class="account-field-input" type="text" value="${escapeHtml(centerImageUrl)}" data-field="presentation.center_image_url" />
+                  <div class="wheel-center-media-row">
+                    <label class="wheel-file-picker wheel-file-picker--inline">
+                      <span>Choose center image</span>
+                      <input type="file" accept="${escapeHtml(WHEEL_CENTER_ACCEPT)}" data-wheel-center-file="true" />
+                    </label>
+                    <button class="creator-button secondary" type="button" data-action="reset-center-image">Use default</button>
+                  </div>
+                  <div class="wheel-center-preview-card">
+                    <img src="${escapeHtml(centerImageUrl)}" alt="" loading="lazy" decoding="async" />
+                    <div>
+                      <strong>${escapeHtml(centerImageLabel)}</strong>
+                      <p class="muted">Local files are embedded inline into the saved wheel artifact so this field stays truthful without inventing a separate media upload backend.</p>
+                    </div>
+                  </div>
                   <label class="wheel-toggle-row">
                     <input type="checkbox" data-field="presentation.show_display_names_on_slices" ${state.draft.presentation.show_display_names_on_slices ? "checked" : ""} />
                     <span>Show display names on slices</span>
@@ -1437,6 +1549,12 @@
         render();
         return;
       }
+      if (action === "reset-center-image") {
+        state.draft.presentation.center_image_url = WHEEL_CENTER_DEFAULT;
+        state.centerImageUploadName = "";
+        render();
+        return;
+      }
       if (action === "remove-palette-color") {
         const index = Number(trigger.dataset.paletteIndex);
         if (!Number.isFinite(index)) return;
@@ -1471,6 +1589,21 @@
     state.root.addEventListener("change", (event) => {
       const target = event.target;
       if (!(target instanceof HTMLElement)) return;
+      if (target.matches("[data-wheel-center-file='true']")) {
+        const file = target.files?.[0];
+        if (!file) return;
+        readFileAsDataUrl(file)
+          .then((dataUrl) => {
+            state.draft.presentation.center_image_url = dataUrl || WHEEL_CENTER_DEFAULT;
+            state.centerImageUploadName = file.name || "";
+            render();
+          })
+          .catch((error) => {
+            state.error = error instanceof Error ? error.message : "Unable to load center image.";
+            render();
+          });
+        return;
+      }
       if (target.matches("[data-wheel-import-file='true']")) {
         state.importFile = target.files?.[0] || null;
         render();

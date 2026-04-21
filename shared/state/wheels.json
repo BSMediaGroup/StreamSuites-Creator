@@ -1,6 +1,6 @@
 {
   "schema_version": "streamsuites.public-wheels.v1",
-  "generated_at": "2026-04-20T17:55:36Z",
+  "generated_at": "2026-04-21T11:25:24Z",
   "meta": {
     "source": "StreamSuites runtime",
     "visibility": "public",
@@ -16,7 +16,13 @@
       "id": "artifact-f86dba051ec249f1b739fb9d0be60cd3",
       "artifact_code": "artifact-f86dba051ec249f1b739fb9d0be60cd3",
       "artifact_type": "wheel",
-      "slug": "test-wheel",
+      "slug": "1zzI5k",
+      "default_slug": "1zzI5k",
+      "custom_slug": "",
+      "shortlink_slug": "B0ht1S",
+      "slug_aliases": [
+        "test-wheel"
+      ],
       "title": "Test Wheel",
       "summary": "test",
       "description": "test",
@@ -27,24 +33,111 @@
       "auto_remove_winner": true,
       "entries": [
         {
+          "assignment": {
+            "account_id": "",
+            "avatar_url": "",
+            "badges": [],
+            "display_name": "Daniel",
+            "identity_code": "",
+            "public_profile": {
+              "background_image_url": "",
+              "banner_image_url": "",
+              "bio": "",
+              "cover_image_url": "",
+              "is_listed": true,
+              "public_slug": ""
+            },
+            "public_slug": "",
+            "role": "",
+            "tier": "",
+            "user_code": ""
+          },
+          "avatar_url": "",
           "color": "#ff6b6b",
+          "display_name": "Daniel",
           "entry_id": "entry-1",
           "label": "Daniel",
           "notes": "",
+          "role_badges": [],
+          "share": 3.0,
+          "stats_stub": {
+            "level": null,
+            "rank": null,
+            "season": "",
+            "xp": null
+          },
           "weight": 3.0
         },
         {
+          "assignment": {
+            "account_id": "",
+            "avatar_url": "",
+            "badges": [],
+            "display_name": "Big Balloon",
+            "identity_code": "",
+            "public_profile": {
+              "background_image_url": "",
+              "banner_image_url": "",
+              "bio": "",
+              "cover_image_url": "",
+              "is_listed": true,
+              "public_slug": ""
+            },
+            "public_slug": "",
+            "role": "",
+            "tier": "",
+            "user_code": ""
+          },
+          "avatar_url": "",
           "color": "#ffd166",
+          "display_name": "Big Balloon",
           "entry_id": "entry-2",
           "label": "Big Balloon",
           "notes": "",
+          "role_badges": [],
+          "share": 1.0,
+          "stats_stub": {
+            "level": null,
+            "rank": null,
+            "season": "",
+            "xp": null
+          },
           "weight": 1.0
         },
         {
+          "assignment": {
+            "account_id": "",
+            "avatar_url": "",
+            "badges": [],
+            "display_name": "Tully",
+            "identity_code": "",
+            "public_profile": {
+              "background_image_url": "",
+              "banner_image_url": "",
+              "bio": "",
+              "cover_image_url": "",
+              "is_listed": true,
+              "public_slug": ""
+            },
+            "public_slug": "",
+            "role": "",
+            "tier": "",
+            "user_code": ""
+          },
+          "avatar_url": "",
           "color": "#9147ff",
+          "display_name": "Tully",
           "entry_id": "entry-3",
           "label": "Tully",
           "notes": "",
+          "role_badges": [],
+          "share": 1.0,
+          "stats_stub": {
+            "level": null,
+            "rank": null,
+            "season": "",
+            "xp": null
+          },
           "weight": 1.0
         }
       ],
@@ -52,6 +145,7 @@
       "palette": {
         "accent_color": "#38bdf8",
         "background_color": "#0f172a",
+        "glow_color": "#38bdf8",
         "segment_colors": [
           "#ff6b6b",
           "#ffd166",
@@ -60,15 +154,80 @@
           "#9b5de5",
           "#f15bb5"
         ],
-        "text_color": "#f8fafc"
+        "text_color": "#f8fafc",
+        "trim_color": "#38bdf8"
       },
       "presentation": {
         "animation_enabled": true,
-        "confetti_enabled": true,
+        "celebration_enabled": false,
+        "center_image_url": "/assets/placeholders/wheelcenterdefault.webp",
+        "confetti_enabled": false,
         "scoreboard_max_rows": 24,
+        "show_display_names_on_slices": true,
         "show_entry_labels": true,
+        "slice_label_mode": "full_name",
+        "slow_drift_enabled": true,
+        "sound": {
+          "click": {
+            "asset_id": "click0.mp3",
+            "enabled": true,
+            "options": [
+              "click0.mp3",
+              "click1.mp3",
+              "click2.mp3",
+              "click3.mp3",
+              "click4.mp3",
+              "click5.mp3",
+              "click6.mp3"
+            ]
+          },
+          "music": {
+            "asset_id": "music0.mp3",
+            "enabled": true,
+            "options": [
+              "music0.mp3",
+              "music1.mp3",
+              "music2.mp3",
+              "music3.mp3",
+              "music4.mp3",
+              "music5.mp3",
+              "music6.mp3"
+            ]
+          },
+          "respin": {
+            "asset_id": "respin0.mp3",
+            "enabled": true,
+            "options": [
+              "respin0.mp3",
+              "respin1.mp3"
+            ]
+          },
+          "startspin": {
+            "asset_id": "startspin0.mp3",
+            "enabled": true,
+            "options": [
+              "startspin0.mp3",
+              "startspin1.mp3",
+              "startspin2.mp3"
+            ]
+          },
+          "winner": {
+            "asset_id": "winner0.mp3",
+            "enabled": true,
+            "options": [
+              "winner0.mp3",
+              "winner1.mp3",
+              "winner2.mp3",
+              "winner3.mp3",
+              "winner4.mp3",
+              "winner5.mp3",
+              "winner6.mp3"
+            ]
+          }
+        },
         "sound_enabled": true,
-        "spin_duration_ms": 8500
+        "spin_duration_ms": 8500,
+        "spin_owner_only": true
       },
       "creator": {
         "account_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
@@ -92,7 +251,7 @@
       },
       "unsupported_import_fields": [],
       "created_at": "2026-04-20T04:59:14Z",
-      "updated_at": "2026-04-20T05:00:28Z"
+      "updated_at": "2026-04-21T11:25:24Z"
     }
   ]
 }

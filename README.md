@@ -126,7 +126,7 @@ StreamSuites-Creator/
 │   │   └── ss-profile-hovercard.css
 │   ├── js/
 │   │   └── ss-profile-hovercard.js
-│   └── [backgrounds, fonts, icons, illustrations, logos, placeholders, including icons/ui/ss-admin.svg, ss-creator.svg, ss-developer.svg, ss-public.svg]
+│   └── [backgrounds, fonts, icons, illustrations, logos, placeholders, including icons/wheelarrow.svg, placeholders/wheelcenterdefault.webp, icons/ui/ss-admin.svg, ss-creator.svg, ss-developer.svg, ss-public.svg]
 ├── css/
 │   ├── base.css
 │   ├── components.css

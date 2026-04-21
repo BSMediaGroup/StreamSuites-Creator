@@ -1,6 +1,6 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-04-20T05:00:28Z",
+  "generated_at": "2026-04-21T11:25:24Z",
   "counts": {
     "total": 1,
     "listed": 1,
@@ -26,16 +26,23 @@
       "metadata": {
         "allow_duplicates": true,
         "auto_remove_winner": true,
+        "custom_slug": "",
         "default_display_mode": "wheel",
+        "default_slug": "1zzI5k",
         "entry_count": 3,
         "palette_color_count": 6,
-        "slug": "test-wheel",
+        "shortlink_slug": "B0ht1S",
+        "slug": "1zzI5k",
+        "slug_aliases": [
+          "test-wheel"
+        ],
         "source_format": "sswheel",
         "unsupported_import_fields": [],
-        "wheel_schema_version": "streamsuites.wheel.v1"
+        "wheel_schema_version": "streamsuites.wheel.v1",
+        "winner_limit": 1
       },
       "created_at": "2026-04-20T04:59:14Z",
-      "updated_at": "2026-04-20T05:00:28Z",
+      "updated_at": "2026-04-21T11:25:24Z",
       "suppressed_at": null,
       "suppression_reason": null
     }
