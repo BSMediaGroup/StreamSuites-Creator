@@ -488,6 +488,14 @@
                 <input class="account-field-input" type="password" autocomplete="new-password" data-rumble-input="stream_key" placeholder="Paste Rumble stream/API key" />
               </label>
               <label class="account-field">
+                <span class="account-field-label">Authorized cookie header</span>
+                <textarea class="account-field-input" rows="4" spellcheck="false" data-rumble-input="session_cookie_header" placeholder="Cookie: name=value; other=value"></textarea>
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Structured cookies JSON</span>
+                <textarea class="account-field-input" rows="6" spellcheck="false" data-rumble-input="session_cookies_json" placeholder='{"cookies":[{"name":"sessionid","value":"..."}]}'></textarea>
+              </label>
+              <label class="account-field">
                 <span class="account-field-label">Channel URL</span>
                 <input class="account-field-input" type="url" data-rumble-input="channel_url" placeholder="https://rumble.com/c/yourchannel" />
               </label>

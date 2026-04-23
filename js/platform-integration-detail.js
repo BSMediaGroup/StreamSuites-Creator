@@ -246,6 +246,12 @@
     }
   }
 
+  function humanizeLabel(value) {
+    const normalized = String(value || "").trim();
+    if (!normalized) return "Unavailable";
+    return normalized.replace(/[_-]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
   function humanizeBooleanState(value, truthyLabel, falsyLabel) {
     return value ? truthyLabel : falsyLabel;
   }
@@ -1318,11 +1324,20 @@
     const badgeEl = query("[data-rumble-secret-badges=\"true\"]");
     const summaryEl = query("[data-rumble-secret-summary=\"true\"]");
     if (!(badgeEl instanceof HTMLElement) || !(summaryEl instanceof HTMLElement)) return;
+    const configuredTypes = Array.isArray(integration?.session_material_types)
+      ? integration.session_material_types.filter(Boolean)
+      : [];
+    const validationErrors = Array.isArray(integration?.session_material_validation_errors)
+      ? integration.session_material_validation_errors.filter(Boolean)
+      : [];
     const badges = [];
     if (integration?.secret_present) {
       badges.push({ label: "Secret stored", tone: "success" });
     } else {
       badges.push({ label: "No stored secret", tone: "warning" });
+    }
+    if (integration?.session_cookie_material_present) {
+      badges.push({ label: "Session material stored", tone: "success" });
     }
     if (integration?.verified_at) {
       badges.push({ label: "Verified", tone: "success" });
@@ -1331,13 +1346,31 @@
     } else {
       badges.push({ label: "Awaiting verification", tone: "subtle" });
     }
+    if (validationErrors.length) {
+      badges.push({ label: "Session material needs attention", tone: "warning" });
+    }
     if (integration?.secret_mask) {
       badges.push({ label: integration.secret_mask, tone: "subtle" });
     }
     renderPills(badgeEl, badges);
-    summaryEl.textContent = integration?.secret_present
-      ? "A backend-owned Rumble secret is stored. The creator surface only receives masked presence state after submission."
-      : "No backend-owned Rumble secret is currently stored for this creator.";
+    const summaryBits = [];
+    if (integration?.secret_present) {
+      summaryBits.push("A backend-owned Rumble secret is stored.");
+    } else {
+      summaryBits.push("No backend-owned Rumble secret is currently stored for this creator.");
+    }
+    if (configuredTypes.length) {
+      summaryBits.push(`Session material: ${configuredTypes.map(humanizeLabel).join(", ")}.`);
+    }
+    if (integration?.session_material_updated_at) {
+      summaryBits.push(`Updated ${formatTimestamp(integration.session_material_updated_at)}.`);
+    }
+    if (validationErrors.length) {
+      summaryBits.push(`Validation: ${validationErrors.map(humanizeLabel).join(", ")}.`);
+    } else if (integration?.session_cookie_material_present) {
+      summaryBits.push("Only safe configured posture is shown here after save.");
+    }
+    summaryEl.textContent = summaryBits.join(" ");
   }
 
   function renderRumbleActions(integration) {
@@ -1398,6 +1431,8 @@
     const channelUrl = query('[data-rumble-input="channel_url"]');
     const channelHandle = query('[data-rumble-input="channel_handle"]');
     const secretInput = query('[data-rumble-input="stream_key"]');
+    const cookieHeaderInput = query('[data-rumble-input="session_cookie_header"]');
+    const cookiesJsonInput = query('[data-rumble-input="session_cookies_json"]');
     if (channelUrl instanceof HTMLInputElement) {
       channelUrl.value = integration?.public_url || "";
     }
@@ -1406,6 +1441,12 @@
     }
     if (secretInput instanceof HTMLInputElement) {
       secretInput.value = "";
+    }
+    if (cookieHeaderInput instanceof HTMLTextAreaElement) {
+      cookieHeaderInput.value = "";
+    }
+    if (cookiesJsonInput instanceof HTMLTextAreaElement) {
+      cookiesJsonInput.value = "";
     }
   }
 
@@ -1640,6 +1681,8 @@
   async function submitRumbleSecret(form) {
     if (!(form instanceof HTMLFormElement)) return;
     const secretInput = query('[data-rumble-input="stream_key"]');
+    const cookieHeaderInput = query('[data-rumble-input="session_cookie_header"]');
+    const cookiesJsonInput = query('[data-rumble-input="session_cookies_json"]');
     const channelUrlInput = query('[data-rumble-input="channel_url"]');
     const channelHandleInput = query('[data-rumble-input="channel_handle"]');
     if (!(secretInput instanceof HTMLInputElement)) return;
@@ -1651,11 +1694,19 @@
         timeoutMs: SAVE_TIMEOUT_MS,
         body: JSON.stringify({
           stream_key: secretInput.value,
+          session_cookie_header: cookieHeaderInput instanceof HTMLTextAreaElement ? cookieHeaderInput.value : "",
+          session_cookies_json: cookiesJsonInput instanceof HTMLTextAreaElement ? cookiesJsonInput.value : "",
           channel_url: channelUrlInput instanceof HTMLInputElement ? channelUrlInput.value : "",
           channel_handle: channelHandleInput instanceof HTMLInputElement ? channelHandleInput.value : ""
         })
       });
       secretInput.value = "";
+      if (cookieHeaderInput instanceof HTMLTextAreaElement) {
+        cookieHeaderInput.value = "";
+      }
+      if (cookiesJsonInput instanceof HTMLTextAreaElement) {
+        cookiesJsonInput.value = "";
+      }
       renderIntegration(payload?.integration || state.integration);
       closeRumbleDialog();
       setRumbleStatus("Secure linkage saved. The secret remains masked from this surface.", "success");
