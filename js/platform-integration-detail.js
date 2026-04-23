@@ -1689,17 +1689,43 @@
     setBusy(true);
     setRumbleStatus("Saving secure backend linkage...", "neutral");
     try {
+      const streamKeyValue = secretInput.value.trim();
+      const cookieHeaderValue = cookieHeaderInput instanceof HTMLTextAreaElement ? cookieHeaderInput.value.trim() : "";
+      const cookiesJsonValue = cookiesJsonInput instanceof HTMLTextAreaElement ? cookiesJsonInput.value.trim() : "";
+      const expectedSessionTypes = [];
+      const requestBody = {
+        channel_url: channelUrlInput instanceof HTMLInputElement ? channelUrlInput.value : "",
+        channel_handle: channelHandleInput instanceof HTMLInputElement ? channelHandleInput.value : ""
+      };
+      if (streamKeyValue) {
+        requestBody.stream_key = streamKeyValue;
+      }
+      if (cookieHeaderValue) {
+        requestBody.session_cookie_header = cookieHeaderValue;
+        expectedSessionTypes.push("cookie_header");
+      }
+      if (cookiesJsonValue) {
+        requestBody.session_cookies_json = cookiesJsonValue;
+        expectedSessionTypes.push("structured_cookie_json");
+      }
       const payload = await requestJson(`${API_BASE}/api/creator/integrations/rumble/secret`, {
         method: "POST",
         timeoutMs: SAVE_TIMEOUT_MS,
-        body: JSON.stringify({
-          stream_key: secretInput.value,
-          session_cookie_header: cookieHeaderInput instanceof HTMLTextAreaElement ? cookieHeaderInput.value : "",
-          session_cookies_json: cookiesJsonInput instanceof HTMLTextAreaElement ? cookiesJsonInput.value : "",
-          channel_url: channelUrlInput instanceof HTMLInputElement ? channelUrlInput.value : "",
-          channel_handle: channelHandleInput instanceof HTMLInputElement ? channelHandleInput.value : ""
-        })
+        body: JSON.stringify(requestBody)
       });
+      const integration = payload?.integration || state.integration || {};
+      const returnedTypes = Array.isArray(integration?.session_material_types)
+        ? integration.session_material_types.map((item) => String(item || "").trim()).filter(Boolean)
+        : [];
+      const sessionReadbackMatches = expectedSessionTypes.every((type) => returnedTypes.includes(type));
+      if (expectedSessionTypes.length && (!integration?.session_cookie_material_present || !sessionReadbackMatches)) {
+        renderIntegration(integration);
+        throw new Error("Secure linkage write completed, but safe readback did not confirm the submitted Rumble session material.");
+      }
+      if (!expectedSessionTypes.length && streamKeyValue && !integration?.secret_present) {
+        renderIntegration(integration);
+        throw new Error("Secure linkage write completed, but safe readback did not confirm stored Rumble material.");
+      }
       secretInput.value = "";
       if (cookieHeaderInput instanceof HTMLTextAreaElement) {
         cookieHeaderInput.value = "";
@@ -1707,9 +1733,9 @@
       if (cookiesJsonInput instanceof HTMLTextAreaElement) {
         cookiesJsonInput.value = "";
       }
-      renderIntegration(payload?.integration || state.integration);
+      renderIntegration(integration);
       closeRumbleDialog();
-      setRumbleStatus("Secure linkage saved. The secret remains masked from this surface.", "success");
+      setRumbleStatus("Secure linkage saved and confirmed by masked readback.", "success");
     } catch (err) {
       setRumbleStatus(err?.message || "Unable to save secure linkage.", "danger");
     } finally {

@@ -32,8 +32,12 @@ test("creator rumble integration detail uses the runtime bot auto-deploy authori
   assert.match(rumbleView, /data-rumble-input="session_cookies_json"/);
   assert.match(detailJs, /\/api\/creator\/integrations\/rumble\/bot-auto-deploy/);
   assert.match(detailJs, /\/api\/creator\/integrations\/rumble\/secret/);
-  assert.match(detailJs, /session_cookie_header:/);
-  assert.match(detailJs, /session_cookies_json:/);
+  assert.match(detailJs, /requestBody\.session_cookie_header = cookieHeaderValue/);
+  assert.match(detailJs, /requestBody\.session_cookies_json = cookiesJsonValue/);
+  assert.match(detailJs, /expectedSessionTypes\.every/);
+  assert.match(detailJs, /safe readback did not confirm the submitted Rumble session material/);
+  assert.doesNotMatch(detailJs, /session_cookie_header:\s*cookieHeaderInput/);
+  assert.doesNotMatch(detailJs, /session_cookies_json:\s*cookiesJsonInput/);
   assert.match(detailJs, /integration\?\.bot_auto_deploy/);
   assert.match(detailJs, /integration\?\.bot_auto_deploy_enabled/);
   assert.match(detailJs, /integration\?\.managed_session/);

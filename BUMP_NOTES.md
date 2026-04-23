@@ -2,6 +2,9 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Hardened the Creator Rumble secure-secret submit path in `js/platform-integration-detail.js` so blank cookie companion fields are omitted instead of being sent as implicit clears, cookie header and structured-cookie JSON saves declare the intended material type, and success now depends on the masked safe readback posture returned by `POST /api/creator/integrations/rumble/secret`. The page still never receives or renders raw cookie values.
+- Expanded `tests/notifications-authority.test.mjs` additively to pin the omit-blank behavior and safe-readback confirmation requirement for `/integrations/rumble`. No files were created or removed.
+
 - Extended the existing Creator Rumble secure-secret flow in `views/platforms/rumble.html` and `js/platform-integration-detail.js` so operators can now submit authorized session-cookie header text or structured cookie JSON through the same authoritative `POST /api/creator/integrations/rumble/secret` path already used for Rumble secret storage. The page still never echoes raw secrets back; after save it now renders only safe posture such as configured material types, updated timestamp, and validation state.
 - Expanded `tests/notifications-authority.test.mjs` additively so the Creator route must keep the lawful session-material inputs, use the authoritative backend route, and render the additive safe posture fields without exposing cookie values. No files were created or removed in this pass.
 
