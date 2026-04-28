@@ -257,16 +257,16 @@
 
               <p>
 
-                This surface consumes the runtime/Auth trigger registry. Foundation-grade built-ins can
-                be enabled or disabled here without inventing unsupported advanced trigger editing flows.
+                This surface consumes the runtime/Auth livechat registry. Registry rows are read-only
+                in this phase; custom creator trigger configuration is a later managed-control phase.
 
               </p>
 
             </div>
 
             <div class="creator-hero-actions">
-              <button class="creator-button primary" type="button" data-trigger-add>
-                Add Rumble text trigger
+              <button class="creator-button primary" type="button" data-trigger-add disabled aria-disabled="true">
+                Managed controls coming later
               </button>
               <button class="creator-button secondary" type="button" data-trigger-reset>
                 Reload registry
@@ -283,11 +283,11 @@
               </div>
               <div class="stat-grid">
                 <div>
-                  <span class="stat-label">Enabled triggers</span>
+                  <span class="stat-label">Runtime triggers</span>
                   <span class="stat-value" data-trigger-enabled-count="true">0</span>
                 </div>
                 <div>
-                  <span class="stat-label">Foundational readiness</span>
+                  <span class="stat-label">Registry phase</span>
                   <span class="stat-value" data-trigger-foundation-ready="true">Checking</span>
                 </div>
                 <div>
@@ -295,7 +295,7 @@
                   <span class="stat-value" data-trigger-platform-count="true">0</span>
                 </div>
                 <div>
-                  <span class="stat-label">Deployable relationships</span>
+                  <span class="stat-label">Game definitions</span>
                   <span class="stat-value" data-trigger-deployable-count="true">0</span>
                 </div>
               </div>
@@ -310,9 +310,9 @@
                 <span class="status-pill warning"><span class="status-dot"></span>Rumble text phase</span>
               </div>
               <ul class="integration-readiness-list">
-                <li>Command rows and edits are stored in the authoritative backend registry.</li>
-                <li>Only simple text-response triggers are operational for Rumble in this phase.</li>
-                <li>Clip-style or non-Rumble trigger types remain visible only as later-phase work.</li>
+                <li>Runtime/Auth is the only authority for the registry shown here.</li>
+                <li>Rows are registry foundations only; trigger execution is not implemented here.</li>
+                <li>Pilled remains registry-ready but planned/disabled until transport exists.</li>
               </ul>
             </article>
 
@@ -342,11 +342,11 @@
 
           <article class="card platform-detail-card-wide" data-trigger-editor-panel hidden>
             <div class="card-top">
-              <h3 data-trigger-editor-title>Add Rumble text trigger</h3>
-              <span class="status-pill subtle" data-trigger-editor-pill="true"><span class="status-dot"></span>Editor idle</span>
+                <h3 data-trigger-editor-title>Managed trigger controls</h3>
+              <span class="status-pill subtle" data-trigger-editor-pill="true"><span class="status-dot"></span>Future phase</span>
             </div>
             <p class="account-note" data-trigger-editor-note="true">
-              Supported here: simple creator-configured Rumble text replies routed through runtime/Auth.
+              Custom creator trigger configuration is intentionally disabled while registry hydration is read-only.
             </p>
             <form class="platform-workspace-form" data-trigger-form>
               <label class="account-field">
@@ -377,7 +377,7 @@
               </label>
               <input type="hidden" name="trigger_id" value="" />
               <div class="platform-actions">
-                <button class="creator-button primary" type="submit">Save trigger</button>
+                <button class="creator-button primary" type="submit" disabled aria-disabled="true">Save trigger</button>
                 <button class="creator-button secondary" type="button" data-trigger-editor-cancel>Cancel</button>
               </div>
             </form>
@@ -399,7 +399,7 @@
 
             <p>
 
-              This page is authoritative for creator-managed Rumble text trigger config in phase one.
+              This page reads the authoritative StreamSuites runtime/Auth livechat registry only.
               Manual send testing remains separate on the <a href="/integrations/rumble">Rumble integration page</a>.
 
             </p>

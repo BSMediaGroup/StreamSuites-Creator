@@ -16,12 +16,16 @@ test("creator triggers view exposes a controller-backed runtime authority surfac
 
   assert.match(renderJs, /controllerName:\s*"TriggersView"/);
   assert.match(triggersJs, /window\.TriggersView = \{/);
-  assert.match(triggersJs, /init,\s*destroy,/);
+  assert.match(triggersJs, /init,\s*destroy/);
   assert.match(triggersJs, /state\.abortController = new AbortController\(\)/);
-  assert.match(triggersJs, /method:\s*"POST"/);
-  assert.match(triggersJs, /method: "DELETE"/);
+  assert.match(triggersJs, /\/api\/livechat\/registry-summary/);
+  assert.match(triggersJs, /\/api\/livechat\/triggers/);
+  assert.match(triggersJs, /\/api\/livechat\/capabilities/);
+  assert.doesNotMatch(triggersJs, /method:\s*"POST"/);
+  assert.doesNotMatch(triggersJs, /method:\s*"DELETE"/);
   assert.doesNotMatch(triggersJs, /DOMContentLoaded/);
-  assert.match(triggersHtml, /Add Rumble text trigger/);
+  assert.match(triggersHtml, /Managed controls coming later/);
+  assert.match(triggersHtml, /Registry rows are read-only/);
   assert.match(triggersHtml, /Manual send testing remains separate on the <a href="\/integrations\/rumble">Rumble integration page<\/a>/);
 });
 
