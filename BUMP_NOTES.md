@@ -2,6 +2,8 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Restrained-polished the Creator dashboard shell in `css/creator-dashboard.css` so the existing sidebar, topbar, footer, cards, panels, status chips, buttons, form containers, and common empty/loading-adjacent surfaces align more closely with the current Public `/u/*` profile visual language. The change is CSS-only and preserves the existing layout, DOM structure, route behavior, checkbox controls, toggle switch internals, and topbar loader gradient. Affected files: `css/creator-dashboard.css`, `BUMP_NOTES.md`. Verification: `node --test tests` passed, and Playwright screenshot checks covered `/overview` at desktop and mobile-sized viewports. Risks/follow-ups: review authenticated route-specific module panels for any specialized classes that need an additional scoped polish hook; no runtime authority/state behavior was introduced. Individual Public `/u/{user}` profile pages were preserved and not intentionally redesigned.
+
 - Hardened the Creator Rumble secure-secret submit path in `js/platform-integration-detail.js` so blank cookie companion fields are omitted instead of being sent as implicit clears, cookie header and structured-cookie JSON saves declare the intended material type, and success now depends on the masked safe readback posture returned by `POST /api/creator/integrations/rumble/secret`. The page still never receives or renders raw cookie values.
 - Expanded `tests/notifications-authority.test.mjs` additively to pin the omit-blank behavior and safe-readback confirmation requirement for `/integrations/rumble`. No files were created or removed.
 

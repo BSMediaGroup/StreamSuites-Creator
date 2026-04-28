@@ -8387,3 +8387,209 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
     grid-column: auto;
   }
 }
+
+/* Creator shell polish aligned to the current public /u/* profile language.
+   This intentionally avoids checkbox, toggle-switch, and loader-bar internals. */
+:root {
+  --creator-bg: #06070a;
+  --creator-panel: #101722;
+  --creator-panel-alt: #0c111a;
+  --creator-border: rgba(218, 228, 246, 0.15);
+  --creator-text: #f3f7ff;
+  --creator-muted: rgba(194, 207, 229, 0.78);
+  --creator-accent: #87bce8;
+  --creator-accent-strong: #a7d9ff;
+  --creator-radius: 16px;
+  --creator-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+  --creator-btn-primary-1: #77aee4;
+  --creator-btn-primary-2: #355a90;
+  --creator-btn-primary-border: rgba(167, 217, 255, 0.42);
+  --creator-btn-secondary-1: #1f2a3c;
+  --creator-btn-secondary-2: #111824;
+  --creator-btn-secondary-border: rgba(188, 207, 237, 0.24);
+  --creator-btn-focus-ring: rgba(167, 217, 255, 0.36);
+}
+
+body {
+  background:
+    radial-gradient(820px 460px at 50% -10%, rgba(110, 135, 170, 0.14), transparent 64%),
+    radial-gradient(760px 420px at 86% 8%, rgba(81, 132, 178, 0.1), transparent 64%),
+    linear-gradient(180deg, #050608 0%, #080d15 52%, #0b121e 100%);
+}
+
+body::before {
+  opacity: 0.78;
+  background-size: 56px 56px;
+}
+
+#app-nav.creator-nav,
+#app-header.creator-header,
+#app-footer.creator-footer {
+  border-color: rgba(214, 225, 242, 0.14);
+  background:
+    linear-gradient(180deg, rgba(15, 20, 31, 0.9), rgba(6, 9, 14, 0.92)),
+    rgba(8, 11, 16, 0.84);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+#app-nav .ss-sidebar-brand,
+#app-footer.creator-footer {
+  border-color: rgba(188, 207, 237, 0.14);
+}
+
+#view-container.creator-main {
+  gap: 28px;
+  padding: 18px;
+}
+
+.creator-section,
+.creator-hero,
+.card,
+.account-settings .account-grid > .card,
+.ss-panel,
+.integration-health-card,
+.account-media-slot-card,
+.account-billing-panel,
+.platform-security-panel,
+.creator-dialog-card,
+.wheel-manager-panel,
+.wheel-editor-card,
+.wheel-sound-row,
+.wheel-kpi-card,
+.trigger-card {
+  border-color: rgba(212, 224, 244, 0.15);
+  background:
+    linear-gradient(180deg, rgba(19, 25, 36, 0.76), rgba(8, 11, 17, 0.88)),
+    rgba(9, 12, 18, 0.84);
+  box-shadow:
+    var(--creator-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px) saturate(116%);
+}
+
+.creator-section,
+.card {
+  border-radius: 14px;
+}
+
+.creator-hero {
+  border-radius: 16px;
+}
+
+.card.highlight {
+  border-color: rgba(154, 209, 255, 0.28);
+  background:
+    radial-gradient(90% 120% at 18% 0%, rgba(125, 162, 216, 0.14), transparent 62%),
+    linear-gradient(180deg, rgba(21, 31, 46, 0.78), rgba(8, 11, 17, 0.9));
+  box-shadow:
+    var(--creator-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 22px rgba(125, 162, 216, 0.08);
+}
+
+.section-header {
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.section-kicker,
+.creator-nav-title,
+.creator-nav-label,
+.dashboard-badge,
+.creator-topbar-page-title,
+.status-pill {
+  letter-spacing: 0.14em;
+}
+
+.section-header h2,
+.creator-hero h3,
+.card h3,
+.ss-panel-header h2,
+.ss-panel-header h3 {
+  letter-spacing: 0;
+  color: rgba(245, 247, 250, 0.98);
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.42);
+}
+
+.card p,
+.section-subtext,
+.creator-hero p,
+.ss-panel-body,
+.platform-metrics {
+  color: var(--creator-muted);
+}
+
+#app-nav a,
+.sidebar-collapse-toggle,
+.creator-account-toggle,
+.creator-notifications-toggle,
+.creator-button,
+.creator-account-item,
+.creator-account-button,
+.lockout-button {
+  border-color: rgba(225, 232, 244, 0.16);
+  background: linear-gradient(180deg, rgba(28, 33, 43, 0.58), rgba(8, 10, 14, 0.64));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 22px rgba(0, 0, 0, 0.2);
+}
+
+#app-nav a:hover,
+#app-nav a:focus-visible,
+#app-nav a.is-active,
+.sidebar-collapse-toggle:hover,
+.sidebar-collapse-toggle:focus-visible,
+.creator-account-toggle:hover,
+.creator-account-toggle:focus-visible,
+.creator-account-toggle[aria-expanded="true"],
+.creator-notifications-toggle:hover,
+.creator-notifications-toggle:focus-visible,
+.creator-notifications-toggle[aria-expanded="true"],
+.creator-button:hover:not(:disabled, [aria-disabled="true"]),
+.creator-account-item:hover,
+.creator-account-item:focus-visible,
+.creator-account-button:hover,
+.creator-account-button:focus-visible,
+.lockout-button:hover,
+.lockout-button:focus-visible {
+  border-color: rgba(232, 238, 248, 0.42);
+  background: linear-gradient(180deg, rgba(45, 53, 68, 0.72), rgba(13, 16, 22, 0.74));
+  color: #f5f8ff;
+}
+
+.status-pill,
+.dashboard-badge,
+.creator-notifications-dropdown-count {
+  min-height: 24px;
+  border-color: rgba(188, 207, 237, 0.22);
+  background: linear-gradient(135deg, rgba(94, 114, 146, 0.2), rgba(18, 26, 40, 0.68));
+  color: rgba(237, 244, 255, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.status-pill.success {
+  color: #c8f0d3;
+  border-color: rgba(118, 220, 159, 0.32);
+  background: rgba(21, 58, 39, 0.56);
+}
+
+.status-pill.warning {
+  color: #f4d9a9;
+  border-color: rgba(234, 184, 92, 0.3);
+  background: rgba(57, 42, 18, 0.56);
+}
+
+.creator-app :is(
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea
+) {
+  border-color: rgba(188, 207, 237, 0.18);
+  background: rgba(6, 10, 16, 0.86);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
