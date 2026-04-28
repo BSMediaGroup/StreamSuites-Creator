@@ -20,6 +20,14 @@
   const CAPABILITIES_ENDPOINT = `${API_BASE}/api/livechat/capabilities`;
   const CUSTOM_TRIGGERS_ENDPOINT = `${API_BASE}/api/livechat/custom-triggers`;
   const CUSTOM_TRIGGER_PREVIEW_ENDPOINT = `${API_BASE}/api/livechat/custom-triggers/preview`;
+  const PLATFORM_META = {
+    rumble: { label: "Rumble", icon: "/assets/icons/rumble.svg" },
+    youtube: { label: "YouTube", icon: "/assets/icons/youtube.svg" },
+    twitch: { label: "Twitch", icon: "/assets/icons/twitch.svg" },
+    kick: { label: "Kick", icon: "/assets/icons/kick.svg" },
+    streamsuites_unified: { label: "StreamSuites Unified", icon: "/assets/icons/streamsuites.svg" },
+    pilled: { label: "Pilled", icon: "/assets/icons/pilled.svg", planned: true },
+  };
 
   const state = {
     items: [],
@@ -112,15 +120,41 @@
     el.customCancel = root.querySelector("[data-custom-trigger-cancel]");
     el.previewForm = root.querySelector("[data-custom-trigger-preview-form]");
     el.previewSelect = root.querySelector("[data-preview-trigger-select]");
+    el.previewTriggerEmpty = root.querySelector("[data-preview-trigger-empty]");
     el.previewResult = root.querySelector("[data-custom-trigger-preview-result]");
     el.previewSubmit = root.querySelector("[data-custom-trigger-preview-submit]");
   }
 
+  function normalizePlatform(platform) {
+    return String(platform || "").trim().toLowerCase() || "unknown";
+  }
+
   function humanizePlatform(platform) {
-    const normalized = String(platform || "").trim().toLowerCase();
-    if (normalized === "youtube") return "YouTube";
-    if (normalized === "streamsuites_unified") return "StreamSuites unified";
+    const normalized = normalizePlatform(platform);
+    if (PLATFORM_META[normalized]) return PLATFORM_META[normalized].label;
     return normalized ? normalized.replace(/\b\w/g, (char) => char.toUpperCase()) : "Unknown";
+  }
+
+  function platformMeta(platform) {
+    const normalized = normalizePlatform(platform);
+    return PLATFORM_META[normalized] || { label: humanizePlatform(normalized), icon: "/assets/icons/ui/chat.svg" };
+  }
+
+  function renderPlatformChip(platform, options = {}) {
+    const normalized = normalizePlatform(platform);
+    const meta = platformMeta(normalized);
+    const planned = Boolean(meta.planned || options.planned);
+    const label = `${meta.label}${planned && options.includePlanned !== false ? " planned/disabled" : ""}`;
+    return `
+      <span class="trigger-platform-chip ${planned ? "is-planned" : ""}" data-trigger-platform="${escapeHtml(normalized)}">
+        <img src="${escapeHtml(meta.icon)}" alt="" aria-hidden="true" />
+        <span>${escapeHtml(label)}</span>
+      </span>
+    `;
+  }
+
+  function renderCornerChip(label, tone = "subtle") {
+    return `<span class="status-pill ${escapeHtml(tone)} trigger-corner-chip">${escapeHtml(label)}</span>`;
   }
 
   function renderSummary() {
@@ -159,8 +193,9 @@
             ${aliases}
           </div>
           <div class="trigger-card-meta">
-            <span class="status-pill ${item.status === "active" ? "success" : "warning"}">${escapeHtml(item.status || "planned")}</span>
-            <span class="status-pill subtle">${escapeHtml(item.type || "registry")}</span>
+            ${renderCornerChip(item.status || "planned", item.status === "active" ? "success" : "warning")}
+            ${item.access ? renderCornerChip(item.access, "subtle") : ""}
+            ${renderCornerChip(item.type || "registry", "subtle")}
           </div>
         </div>
         <div class="trigger-card-body">
@@ -175,7 +210,7 @@
           <div class="trigger-card-section">
             <span class="trigger-section-label">Platforms</span>
             <div class="trigger-platform-grid">
-              ${platforms.map((platform) => `<span class="status-pill ${platform === "pilled" ? "warning" : "subtle"}">${escapeHtml(humanizePlatform(platform))}${platform === "pilled" ? " planned/disabled" : ""}</span>`).join("")}
+              ${platforms.map((platform) => renderPlatformChip(platform)).join("")}
             </div>
           </div>
           <div class="trigger-card-section">
@@ -230,8 +265,9 @@
   function previewPayload() {
     const form = el.previewForm;
     const data = new FormData(form);
+    const previewMode = data.get("preview_mode") || "match_message";
     return {
-      custom_trigger_id: data.get("custom_trigger_id") || undefined,
+      custom_trigger_id: previewMode === "selected_custom" ? data.get("custom_trigger_id") || undefined : undefined,
       platform: data.get("platform") || "rumble",
       message: data.get("message") || "",
       actor: {
@@ -246,6 +282,26 @@
         creator_display_name: data.get("creator_display_name") || "",
       },
     };
+  }
+
+  function selectedPreviewCustomTrigger() {
+    if (!(el.previewForm instanceof HTMLFormElement)) return null;
+    const id = new FormData(el.previewForm).get("custom_trigger_id");
+    return state.customItems.find((item) => String(item.id) === String(id)) || null;
+  }
+
+  function setPreviewMode(mode) {
+    if (!(el.previewForm instanceof HTMLFormElement)) return;
+    const input = el.previewForm.querySelector(`input[name="preview_mode"][value="${mode}"]`);
+    if (input instanceof HTMLInputElement) input.checked = true;
+  }
+
+  function applySelectedTriggerToPreview() {
+    if (!(el.previewForm instanceof HTMLFormElement)) return;
+    const item = selectedPreviewCustomTrigger();
+    if (!item) return;
+    setPreviewMode("selected_custom");
+    el.previewForm.elements.message.value = item.command_text || `${item.prefix || "!"}${item.trigger || ""}`;
   }
 
   function resetForm() {
@@ -313,15 +369,16 @@
               <p class="trigger-card-aliases">Aliases: ${escapeHtml((item.aliases || []).join(", ") || "none")}</p>
             </div>
             <div class="trigger-card-meta">
-              <span class="status-pill ${item.enabled ? "success" : "warning"}">${escapeHtml(item.enabled ? "Enabled config" : "Disabled config")}</span>
-              <span class="status-pill subtle">Management layer ready</span>
+              ${renderCornerChip(item.enabled ? "Enabled config" : "Disabled config", item.enabled ? "success" : "warning")}
+              ${renderCornerChip(item.access || "everyone", "subtle")}
+              ${renderCornerChip("Management layer ready", "subtle")}
             </div>
           </div>
           <div class="trigger-card-body">
             <div class="trigger-card-section">
               <span class="trigger-section-label">Platforms</span>
               <div class="trigger-platform-grid">
-                ${(item.eligible_platforms || []).map((platform) => `<span class="status-pill ${platform === "pilled" ? "warning" : "subtle"}">${escapeHtml(humanizePlatform(platform))}${platform === "pilled" ? " planned/disabled" : ""}</span>`).join("")}
+                ${(item.eligible_platforms || []).map((platform) => renderPlatformChip(platform)).join("")}
               </div>
             </div>
             <div class="trigger-card-section">
@@ -346,52 +403,125 @@
   function renderPreviewTriggerOptions() {
     if (!(el.previewSelect instanceof HTMLSelectElement)) return;
     const current = el.previewSelect.value;
-    el.previewSelect.innerHTML = `<option value="">Match simulated message</option>${state.customItems.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.command_text || item.id)}${item.enabled ? "" : " (disabled)"}</option>`).join("")}`;
+    el.previewSelect.innerHTML = `<option value="">Type a message manually</option>${state.customItems.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.command_text || item.id)}${item.enabled ? "" : " (disabled)"}</option>`).join("")}`;
     if (current && state.customItems.some((item) => String(item.id) === current)) {
       el.previewSelect.value = current;
     }
+    if (el.previewTriggerEmpty) {
+      el.previewTriggerEmpty.hidden = state.customItems.length > 0;
+    }
   }
 
-  function renderPreviewResult(payload) {
-    if (!(el.previewResult instanceof HTMLElement)) return;
+  function renderViewerBubble(simulation) {
+    const actor = simulation?.actor || {};
+    const handle = String(actor.handle || "previewviewer").replace(/^@/, "");
+    const roleLabels = [
+      actor.is_moderator ? "Moderator" : "",
+      actor.is_subscriber ? "Subscriber" : "",
+      actor.is_follower ? "Follower" : "",
+    ].filter(Boolean);
+    return `
+      <div class="trigger-chat-bubble is-viewer">
+        <div class="trigger-chat-bubble-top">
+          <strong>${escapeHtml(actor.display_name || "Preview Viewer")}</strong>
+          <span>@${escapeHtml(handle || "previewviewer")}</span>
+          ${renderPlatformChip(simulation?.platform || "rumble", { includePlanned: false })}
+        </div>
+        <p>${escapeHtml(simulation?.message || "!hello")}</p>
+        ${roleLabels.length ? `<div class="trigger-chat-tags">${roleLabels.map((label) => renderCornerChip(label, "subtle")).join("")}</div>` : ""}
+      </div>
+    `;
+  }
+
+  function renderTechnicalDetails(payload) {
+    const warnings = Array.isArray(payload?.validation_warnings) ? payload.validation_warnings : [];
+    const rows = [
+      ["dry_run", payload?.dry_run ?? true],
+      ["posted", payload?.posted ?? false],
+      ["would_post", payload?.would_post ?? false],
+      ["matched", payload?.matched ?? false],
+      ["match_reason", payload?.match_reason || "no_match"],
+      ["trigger/custom_trigger_id", payload?.custom_trigger_id || payload?.trigger_id || "none"],
+      ["platform max chars", payload?.platform_max_chars || "-"],
+      ["response mode", payload?.response_mode || "inline_single"],
+      ["warnings", warnings.join(", ") || payload?.blocked_reason || "none"],
+    ];
+    return `
+      <details class="trigger-technical-details">
+        <summary>Technical dry-run details</summary>
+        <dl>
+          ${rows.map(([key, value]) => `<div><dt>${escapeHtml(key)}</dt><dd>${escapeHtml(String(value))}</dd></div>`).join("")}
+        </dl>
+      </details>
+    `;
+  }
+
+  function renderBotBubbles(payload, pending = false) {
+    if (pending) {
+      return `
+        <div class="trigger-chat-bubble is-bot is-pending">
+          <div class="trigger-chat-bubble-top">
+            <strong>StreamSuites Bot</strong>
+            ${renderCornerChip("Runtime/Auth dry run", "subtle")}
+          </div>
+          <p>Waiting for runtime/Auth preview...</p>
+        </div>
+      `;
+    }
     if (!payload) {
-      el.previewResult.innerHTML = `<div class="trigger-card trigger-empty-card"><h3 class="trigger-card-title">Preview only</h3><p>No live chat post will be sent. Runtime/Auth will return the match and rendered response here.</p></div>`;
-      return;
+      return `
+        <div class="trigger-chat-bubble is-system">
+          <div class="trigger-chat-bubble-top">
+            <strong>Simulator ready</strong>
+            ${renderCornerChip("No send", "warning")}
+          </div>
+          <p>Run a chat simulation to render the bot response through runtime/Auth.</p>
+        </div>
+      `;
     }
     const pages = Array.isArray(payload.pages) ? payload.pages : [];
     const warnings = Array.isArray(payload.validation_warnings) ? payload.validation_warnings : [];
-    const status = payload.would_post ? "Would post" : payload.matched ? "Blocked" : "No matching trigger";
+    const matchedLabel = payload.matched ? payload.trigger_name || payload.command_text || payload.trigger_id || payload.custom_trigger_id || "Matched trigger" : "No matching trigger";
+    const blocked = !payload.would_post;
+    const statusLabel = payload.would_post ? "Dry run: would_post true" : payload.matched ? "Disabled or blocked - would not post" : "No matching trigger";
+    const body = payload.rendered_text || payload.blocked_reason || (payload.matched ? "No rendered response returned." : "No trigger matched this simulated message.");
+    const pageBubbles = pages.length
+      ? pages.map((page, index) => `
+        <div class="trigger-chat-bubble is-bot">
+          <div class="trigger-chat-bubble-top">
+            <strong>${escapeHtml(matchedLabel)} - page ${escapeHtml(page.page_index || index + 1)}/${escapeHtml(page.total_pages || pages.length)}</strong>
+            ${renderCornerChip("Dry run", "warning")}
+          </div>
+          <p>${escapeHtml(page.text || page.rendered_text || "")}</p>
+        </div>
+      `).join("")
+      : `
+        <div class="trigger-chat-bubble ${payload.matched ? "is-bot" : "is-system"} ${blocked ? "is-blocked" : ""}">
+          <div class="trigger-chat-bubble-top">
+            <strong>${escapeHtml(matchedLabel)}</strong>
+            ${renderCornerChip(statusLabel, payload.would_post ? "success" : "warning")}
+          </div>
+          <p>${escapeHtml(body)}</p>
+          ${warnings.length ? `<div class="trigger-chat-warning">${escapeHtml(warnings.join(", "))}</div>` : ""}
+        </div>
+      `;
+    return `${pageBubbles}${renderTechnicalDetails(payload)}`;
+  }
+
+  function renderPreviewResult(payload, options = {}) {
+    if (!(el.previewResult instanceof HTMLElement)) return;
+    const simulation = options.simulation || (el.previewForm instanceof HTMLFormElement ? previewPayload() : null);
     el.previewResult.innerHTML = `
-      <article class="trigger-card">
-        <div class="trigger-card-header">
-          <div>
-            <h3 class="trigger-card-title">Dry run - ${escapeHtml(status)}</h3>
-            <p>${escapeHtml(payload.rendered_text || payload.blocked_reason || "No rendered response.")}</p>
-          </div>
-          <div class="trigger-card-meta">
-            <span class="status-pill ${payload.would_post ? "success" : "warning"}">${escapeHtml(payload.would_post ? "Would post" : "No send")}</span>
-            <span class="status-pill subtle">posted: ${escapeHtml(String(payload.posted))}</span>
-          </div>
+      <div class="trigger-livechat-shell" aria-live="polite">
+        <div class="trigger-livechat-top">
+          <span>Simulated livechat</span>
+          ${renderCornerChip("Preview only", "warning")}
         </div>
-        <div class="trigger-card-body">
-          <div class="trigger-card-section">
-            <span class="trigger-section-label">Match</span>
-            <p>${escapeHtml(payload.trigger_id || "none")} - ${escapeHtml(payload.match_reason || "no_match")}${payload.matched_alias ? ` - alias ${escapeHtml(payload.matched_alias)}` : ""}</p>
-          </div>
-          <div class="trigger-card-section">
-            <span class="trigger-section-label">Platform</span>
-            <p>${escapeHtml(humanizePlatform(payload.platform))} - max ${escapeHtml(payload.platform_max_chars || "-")} chars</p>
-          </div>
-          <div class="trigger-card-section">
-            <span class="trigger-section-label">Warnings</span>
-            <p>${escapeHtml(warnings.join(", ") || payload.blocked_reason || "none")}</p>
-          </div>
+        <div class="trigger-chat-log">
+          ${renderViewerBubble(simulation)}
+          ${renderBotBubbles(payload, Boolean(options.pending))}
         </div>
-        <div class="trigger-card-section">
-          <span class="trigger-section-label">Split pages</span>
-          ${pages.length ? pages.map((page) => `<p><strong>${escapeHtml(page.page_index)}/${escapeHtml(page.total_pages)}</strong> ${escapeHtml(page.text)}</p>`).join("") : "<p>No pages returned.</p>"}
-        </div>
-      </article>
+      </div>
     `;
   }
 
@@ -422,15 +552,17 @@
 
   async function runPreview() {
     if (!(el.previewForm instanceof HTMLFormElement)) return;
+    const simulation = previewPayload();
+    renderPreviewResult(null, { simulation, pending: true });
     if (el.previewSubmit) el.previewSubmit.disabled = true;
     try {
       state.previewResult = await requestJson(CUSTOM_TRIGGER_PREVIEW_ENDPOINT, {
         method: "POST",
-        body: previewPayload(),
+        body: simulation,
       });
-      renderPreviewResult(state.previewResult);
+      renderPreviewResult(state.previewResult, { simulation });
     } catch (err) {
-      renderPreviewResult({ posted: false, would_post: false, matched: false, blocked_reason: err?.message || "Preview failed", validation_warnings: ["preview_request_failed"] });
+      renderPreviewResult({ dry_run: true, posted: false, would_post: false, matched: false, blocked_reason: err?.message || "Preview failed", validation_warnings: ["preview_request_failed"] }, { simulation });
     } finally {
       if (el.previewSubmit) el.previewSubmit.disabled = false;
     }
@@ -523,6 +655,18 @@
       el.previewForm.addEventListener("submit", (event) => {
         event.preventDefault();
         void runPreview();
+      }, { signal });
+      el.previewForm.addEventListener("input", () => {
+        state.previewResult = null;
+        renderPreviewResult(null);
+      }, { signal });
+      el.previewForm.addEventListener("change", (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        if (target?.matches("[data-preview-trigger-select]")) {
+          applySelectedTriggerToPreview();
+        }
+        state.previewResult = null;
+        renderPreviewResult(null);
       }, { signal });
     }
   }

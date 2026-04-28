@@ -42,13 +42,40 @@ test("creator triggers view keeps custom config runtime-backed and phase truthfu
   assert.match(triggersJs, /CUSTOM_TRIGGER_PREVIEW_ENDPOINT/);
   assert.match(triggersJs, /runPreview/);
   assert.match(triggersJs, /\/api\/livechat\/custom-triggers\/preview/);
+  assert.match(triggersJs, /renderPreviewResult\(state\.previewResult/);
+  assert.match(triggersJs, /renderPreviewResult\(null,\s*\{\s*simulation,\s*pending:\s*true\s*\}/);
   assert.doesNotMatch(triggersJs, /localStorage/);
   assert.match(triggersHtml, /Configured for future dispatch/);
+  assert.match(triggersHtml, /Livechat Trigger Simulator/);
   assert.match(triggersHtml, /Preview only - no live chat post will be sent/);
+  assert.match(triggersHtml, /DRY RUN \/ NO SEND/);
   assert.match(triggersHtml, /data-custom-trigger-preview-form/);
+  assert.match(triggersHtml, /Run chat simulation/);
   assert.match(triggersHtml, /execution\/transport is a later phase/);
   assert.match(triggersHtml, /Pilled planned\/disabled/);
   assert.doesNotMatch(triggersJs, /rumble-dispatch/);
+  assert.doesNotMatch(triggersJs, /dispatchEndpoint|livePost|transportSend/);
+});
+
+test("creator triggers view renders compact platform icon chips and slim card status chips", () => {
+  const triggersJs = read("js/triggers.js");
+  const triggersHtml = read("views/triggers.html");
+  const dashboardCss = read("css/creator-dashboard.css");
+
+  assert.match(triggersJs, /PLATFORM_META/);
+  assert.match(triggersJs, /\/assets\/icons\/rumble\.svg/);
+  assert.match(triggersJs, /\/assets\/icons\/youtube\.svg/);
+  assert.match(triggersJs, /\/assets\/icons\/twitch\.svg/);
+  assert.match(triggersJs, /\/assets\/icons\/kick\.svg/);
+  assert.match(triggersJs, /\/assets\/icons\/pilled\.svg/);
+  assert.match(triggersJs, /\/assets\/icons\/streamsuites\.svg/);
+  assert.match(triggersJs, /renderPlatformChip/);
+  assert.match(triggersJs, /renderCornerChip/);
+  assert.match(triggersHtml, /trigger-platform-option/);
+  assert.match(triggersHtml, /StreamSuites Unified/);
+  assert.match(dashboardCss, /\.trigger-platform-chip/);
+  assert.match(dashboardCss, /\.trigger-corner-chip\.status-pill/);
+  assert.match(dashboardCss, /\.trigger-chat-bubble/);
 });
 
 test("creator rumble integration distinguishes creator, admin, and trigger-generated dispatch rows", () => {

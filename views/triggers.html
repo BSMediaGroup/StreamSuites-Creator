@@ -424,35 +424,60 @@
             <p>Create a runtime-backed custom trigger config above. It will not execute live until dispatch and transport are implemented later.</p>
           </article>
 
-          <article class="card platform-detail-card-wide" data-custom-trigger-preview-panel>
-            <div class="card-top">
-              <h3>Preview custom trigger</h3>
-              <span class="status-pill warning"><span class="status-dot"></span>Preview only - no live chat post will be sent</span>
+          <article class="card platform-detail-card-wide trigger-simulator-card" data-custom-trigger-preview-panel>
+            <div class="trigger-simulator-header">
+              <div>
+                <span class="section-kicker">Preview only - no live chat post will be sent.</span>
+                <h3>Livechat Trigger Simulator</h3>
+                <p class="account-note">
+                  Simulates a viewer message and renders the bot response through runtime/Auth. This does not dispatch to Rumble, YouTube, Twitch, Kick, or Pilled.
+                </p>
+              </div>
+              <span class="status-pill warning trigger-corner-chip"><span class="status-dot"></span>DRY RUN / NO SEND</span>
             </div>
-            <p class="account-note">
-              This dry run calls runtime/Auth to match and render creator-owned custom trigger config. It does not call transport, dispatch, or live chat posting.
-            </p>
-            <form class="platform-workspace-form" data-custom-trigger-preview-form>
+            <form class="platform-workspace-form trigger-simulator-form" data-custom-trigger-preview-form>
+              <fieldset class="account-field trigger-mode-field">
+                <legend class="account-field-label">Mode</legend>
+                <label><input type="radio" name="preview_mode" value="match_message" checked /> Match simulated message</label>
+                <label><input type="radio" name="preview_mode" value="selected_custom" /> Preview selected custom trigger</label>
+              </fieldset>
               <label class="account-field">
-                <span class="account-field-label">Trigger</span>
+                <span class="account-field-label">Quick select custom trigger</span>
                 <select class="account-field-input" name="custom_trigger_id" data-preview-trigger-select>
                   <option value="">Match simulated message</option>
                 </select>
+                <span class="account-field-hint" data-preview-trigger-empty>No custom triggers loaded yet. You can still simulate a typed message.</span>
               </label>
-              <label class="account-field">
-                <span class="account-field-label">Platform</span>
-                <select class="account-field-input" name="platform">
-                  <option value="rumble">Rumble</option>
-                  <option value="youtube">YouTube</option>
-                  <option value="twitch">Twitch</option>
-                  <option value="kick">Kick</option>
-                  <option value="streamsuites_unified">StreamSuites Unified</option>
-                  <option value="pilled">Pilled planned/disabled</option>
-                </select>
-              </label>
+              <fieldset class="account-field trigger-platform-selector">
+                <legend class="account-field-label">Platform</legend>
+                <label class="trigger-platform-option">
+                  <input type="radio" name="platform" value="rumble" checked />
+                  <span class="trigger-platform-chip"><img src="/assets/icons/rumble.svg" alt="" aria-hidden="true" /> Rumble</span>
+                </label>
+                <label class="trigger-platform-option">
+                  <input type="radio" name="platform" value="youtube" />
+                  <span class="trigger-platform-chip"><img src="/assets/icons/youtube.svg" alt="" aria-hidden="true" /> YouTube</span>
+                </label>
+                <label class="trigger-platform-option">
+                  <input type="radio" name="platform" value="twitch" />
+                  <span class="trigger-platform-chip"><img src="/assets/icons/twitch.svg" alt="" aria-hidden="true" /> Twitch</span>
+                </label>
+                <label class="trigger-platform-option">
+                  <input type="radio" name="platform" value="kick" />
+                  <span class="trigger-platform-chip"><img src="/assets/icons/kick.svg" alt="" aria-hidden="true" /> Kick</span>
+                </label>
+                <label class="trigger-platform-option">
+                  <input type="radio" name="platform" value="streamsuites_unified" />
+                  <span class="trigger-platform-chip"><img src="/assets/icons/streamsuites.svg" alt="" aria-hidden="true" /> StreamSuites Unified</span>
+                </label>
+                <label class="trigger-platform-option is-planned">
+                  <input type="radio" name="platform" value="pilled" />
+                  <span class="trigger-platform-chip"><img src="/assets/icons/pilled.svg" alt="" aria-hidden="true" /> Pilled <em>planned</em></span>
+                </label>
+              </fieldset>
               <label class="account-field">
                 <span class="account-field-label">Simulated message</span>
-                <input class="account-field-input" type="text" name="message" maxlength="180" value="!hello" />
+                <input class="account-field-input" type="text" name="message" maxlength="180" value="!hello" placeholder="!hello" />
               </label>
               <label class="account-field">
                 <span class="account-field-label">Actor display name</span>
@@ -477,10 +502,10 @@
                 <input class="account-field-input" type="text" name="creator_display_name" maxlength="80" placeholder="Optional creator context" />
               </label>
               <div class="platform-actions">
-                <button class="creator-button primary" type="submit" data-custom-trigger-preview-submit>Run dry-run preview</button>
+                <button class="creator-button primary" type="submit" data-custom-trigger-preview-submit>Run chat simulation</button>
               </div>
             </form>
-            <div data-custom-trigger-preview-result></div>
+            <div class="trigger-simulator-window" data-custom-trigger-preview-result></div>
           </article>
 
 
