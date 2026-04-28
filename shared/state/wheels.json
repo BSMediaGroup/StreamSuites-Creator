@@ -1,6 +1,6 @@
 {
   "schema_version": "streamsuites.public-wheels.v1",
-  "generated_at": "2026-04-23T17:28:54Z",
+  "generated_at": "2026-04-23T22:09:10Z",
   "meta": {
     "source": "StreamSuites runtime",
     "visibility": "public",
@@ -234,7 +234,7 @@
         "user_code": "4TiOlvS",
         "public_slug": "danielclancy",
         "display_name": "Daniel Clancy",
-        "avatar_url": "https://cdn.streamsuites.app/u/4TiOlvS/avatar/v1.webp"
+        "avatar_url": "https://cdn.streamsuites.app/u/4TiOlvS/avatar/v3.webp"
       },
       "visibility": "listed",
       "state": "active",
