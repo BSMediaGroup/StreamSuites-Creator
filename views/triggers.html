@@ -424,6 +424,65 @@
             <p>Create a runtime-backed custom trigger config above. It will not execute live until dispatch and transport are implemented later.</p>
           </article>
 
+          <article class="card platform-detail-card-wide" data-custom-trigger-preview-panel>
+            <div class="card-top">
+              <h3>Preview custom trigger</h3>
+              <span class="status-pill warning"><span class="status-dot"></span>Preview only - no live chat post will be sent</span>
+            </div>
+            <p class="account-note">
+              This dry run calls runtime/Auth to match and render creator-owned custom trigger config. It does not call transport, dispatch, or live chat posting.
+            </p>
+            <form class="platform-workspace-form" data-custom-trigger-preview-form>
+              <label class="account-field">
+                <span class="account-field-label">Trigger</span>
+                <select class="account-field-input" name="custom_trigger_id" data-preview-trigger-select>
+                  <option value="">Match simulated message</option>
+                </select>
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Platform</span>
+                <select class="account-field-input" name="platform">
+                  <option value="rumble">Rumble</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="twitch">Twitch</option>
+                  <option value="kick">Kick</option>
+                  <option value="streamsuites_unified">StreamSuites Unified</option>
+                  <option value="pilled">Pilled planned/disabled</option>
+                </select>
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Simulated message</span>
+                <input class="account-field-input" type="text" name="message" maxlength="180" value="!hello" />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Actor display name</span>
+                <input class="account-field-input" type="text" name="display_name" maxlength="80" value="Preview Viewer" />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Actor handle</span>
+                <input class="account-field-input" type="text" name="handle" maxlength="80" value="previewviewer" />
+              </label>
+              <fieldset class="account-field">
+                <legend class="account-field-label">Actor roles</legend>
+                <label><input type="checkbox" name="is_moderator" /> Moderator</label>
+                <label><input type="checkbox" name="is_subscriber" /> Subscriber</label>
+                <label><input type="checkbox" name="is_follower" /> Follower</label>
+              </fieldset>
+              <label class="account-field">
+                <span class="account-field-label">Stream title</span>
+                <input class="account-field-input" type="text" name="stream_title" maxlength="120" placeholder="Optional stream context" />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Creator display name</span>
+                <input class="account-field-input" type="text" name="creator_display_name" maxlength="80" placeholder="Optional creator context" />
+              </label>
+              <div class="platform-actions">
+                <button class="creator-button primary" type="submit" data-custom-trigger-preview-submit>Run dry-run preview</button>
+              </div>
+            </form>
+            <div data-custom-trigger-preview-result></div>
+          </article>
+
 
 
           <div class="triggers-grid" data-trigger-list>

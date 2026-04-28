@@ -2,6 +2,9 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Added a Creator custom trigger preview panel to `views/triggers.html` and `js/triggers.js`. The panel selects an existing custom trigger or simulated chat message, platform, actor identity, role flags, and stream context, then calls the runtime/Auth `POST /api/livechat/custom-triggers/preview` dry-run endpoint and renders the returned match, would-post/no-send status, warnings, blocked reason, platform max chars, rendered text, and split pages.
+- The preview UI is explicitly no-send and does not locally match/render trigger output, call transport routes, or imply live dispatch. No files were created or removed; the existing trigger JS/view/test files are longer because the runtime-backed preview controls were added beside the management section.
+
 - Replaced the Creator Chat Triggers read-only managed-controls placeholder with real runtime/Auth-backed creator custom trigger configuration management. The page still hydrates the global seed registry from `/api/livechat/registry-summary`, `/api/livechat/triggers`, and `/api/livechat/capabilities` as read-only data, and now separately lists, creates, edits, enables/disables, and deletes creator-owned config rows through `/api/livechat/custom-triggers` only.
 - Added tier-cap display, API validation error surfacing, empty/error states, Pilled planned/disabled presentation, and truthful phase copy that custom triggers are configured for future dispatch while execution/transport remains later work. No files were created or removed; `js/triggers.js` and `views/triggers.html` were replaced/updated in place and are expected to be longer because the placeholder controls became real runtime-backed management UI.
 

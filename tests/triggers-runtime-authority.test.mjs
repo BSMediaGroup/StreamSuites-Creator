@@ -39,10 +39,16 @@ test("creator triggers view keeps custom config runtime-backed and phase truthfu
   assert.match(triggersJs, /saveCustomTrigger/);
   assert.match(triggersJs, /toggleCustomTrigger/);
   assert.match(triggersJs, /deleteCustomTrigger/);
+  assert.match(triggersJs, /CUSTOM_TRIGGER_PREVIEW_ENDPOINT/);
+  assert.match(triggersJs, /runPreview/);
+  assert.match(triggersJs, /\/api\/livechat\/custom-triggers\/preview/);
   assert.doesNotMatch(triggersJs, /localStorage/);
   assert.match(triggersHtml, /Configured for future dispatch/);
+  assert.match(triggersHtml, /Preview only - no live chat post will be sent/);
+  assert.match(triggersHtml, /data-custom-trigger-preview-form/);
   assert.match(triggersHtml, /execution\/transport is a later phase/);
   assert.match(triggersHtml, /Pilled planned\/disabled/);
+  assert.doesNotMatch(triggersJs, /rumble-dispatch/);
 });
 
 test("creator rumble integration distinguishes creator, admin, and trigger-generated dispatch rows", () => {

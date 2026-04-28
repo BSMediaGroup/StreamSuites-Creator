@@ -19,6 +19,7 @@
   const TRIGGERS_ENDPOINT = `${API_BASE}/api/livechat/triggers`;
   const CAPABILITIES_ENDPOINT = `${API_BASE}/api/livechat/capabilities`;
   const CUSTOM_TRIGGERS_ENDPOINT = `${API_BASE}/api/livechat/custom-triggers`;
+  const CUSTOM_TRIGGER_PREVIEW_ENDPOINT = `${API_BASE}/api/livechat/custom-triggers/preview`;
 
   const state = {
     items: [],
@@ -26,6 +27,7 @@
     capabilities: [],
     customItems: [],
     customCap: null,
+    previewResult: null,
     editingId: "",
     root: null,
     abortController: null,
@@ -108,6 +110,10 @@
     el.customForm = root.querySelector("[data-custom-trigger-form]");
     el.customSubmit = root.querySelector("[data-custom-trigger-submit]");
     el.customCancel = root.querySelector("[data-custom-trigger-cancel]");
+    el.previewForm = root.querySelector("[data-custom-trigger-preview-form]");
+    el.previewSelect = root.querySelector("[data-preview-trigger-select]");
+    el.previewResult = root.querySelector("[data-custom-trigger-preview-result]");
+    el.previewSubmit = root.querySelector("[data-custom-trigger-preview-submit]");
   }
 
   function humanizePlatform(platform) {
@@ -221,6 +227,27 @@
     };
   }
 
+  function previewPayload() {
+    const form = el.previewForm;
+    const data = new FormData(form);
+    return {
+      custom_trigger_id: data.get("custom_trigger_id") || undefined,
+      platform: data.get("platform") || "rumble",
+      message: data.get("message") || "",
+      actor: {
+        display_name: data.get("display_name") || "Preview Viewer",
+        handle: data.get("handle") || "previewviewer",
+        is_moderator: data.get("is_moderator") === "on",
+        is_subscriber: data.get("is_subscriber") === "on",
+        is_follower: data.get("is_follower") === "on",
+      },
+      stream_context: {
+        stream_title: data.get("stream_title") || "",
+        creator_display_name: data.get("creator_display_name") || "",
+      },
+    };
+  }
+
   function resetForm() {
     if (!(el.customForm instanceof HTMLFormElement)) return;
     state.editingId = "";
@@ -275,6 +302,7 @@
       el.customEmpty.hidden = state.customItems.length > 0;
     }
     if (!el.customList) return;
+    renderPreviewTriggerOptions();
     el.customList.innerHTML = state.customItems.length
       ? state.customItems.map((item) => `
         <article class="trigger-card" data-custom-trigger-card="${escapeHtml(item.id)}">
@@ -315,6 +343,58 @@
       : "";
   }
 
+  function renderPreviewTriggerOptions() {
+    if (!(el.previewSelect instanceof HTMLSelectElement)) return;
+    const current = el.previewSelect.value;
+    el.previewSelect.innerHTML = `<option value="">Match simulated message</option>${state.customItems.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.command_text || item.id)}${item.enabled ? "" : " (disabled)"}</option>`).join("")}`;
+    if (current && state.customItems.some((item) => String(item.id) === current)) {
+      el.previewSelect.value = current;
+    }
+  }
+
+  function renderPreviewResult(payload) {
+    if (!(el.previewResult instanceof HTMLElement)) return;
+    if (!payload) {
+      el.previewResult.innerHTML = `<div class="trigger-card trigger-empty-card"><h3 class="trigger-card-title">Preview only</h3><p>No live chat post will be sent. Runtime/Auth will return the match and rendered response here.</p></div>`;
+      return;
+    }
+    const pages = Array.isArray(payload.pages) ? payload.pages : [];
+    const warnings = Array.isArray(payload.validation_warnings) ? payload.validation_warnings : [];
+    const status = payload.would_post ? "Would post" : payload.matched ? "Blocked" : "No matching trigger";
+    el.previewResult.innerHTML = `
+      <article class="trigger-card">
+        <div class="trigger-card-header">
+          <div>
+            <h3 class="trigger-card-title">Dry run - ${escapeHtml(status)}</h3>
+            <p>${escapeHtml(payload.rendered_text || payload.blocked_reason || "No rendered response.")}</p>
+          </div>
+          <div class="trigger-card-meta">
+            <span class="status-pill ${payload.would_post ? "success" : "warning"}">${escapeHtml(payload.would_post ? "Would post" : "No send")}</span>
+            <span class="status-pill subtle">posted: ${escapeHtml(String(payload.posted))}</span>
+          </div>
+        </div>
+        <div class="trigger-card-body">
+          <div class="trigger-card-section">
+            <span class="trigger-section-label">Match</span>
+            <p>${escapeHtml(payload.trigger_id || "none")} - ${escapeHtml(payload.match_reason || "no_match")}${payload.matched_alias ? ` - alias ${escapeHtml(payload.matched_alias)}` : ""}</p>
+          </div>
+          <div class="trigger-card-section">
+            <span class="trigger-section-label">Platform</span>
+            <p>${escapeHtml(humanizePlatform(payload.platform))} - max ${escapeHtml(payload.platform_max_chars || "-")} chars</p>
+          </div>
+          <div class="trigger-card-section">
+            <span class="trigger-section-label">Warnings</span>
+            <p>${escapeHtml(warnings.join(", ") || payload.blocked_reason || "none")}</p>
+          </div>
+        </div>
+        <div class="trigger-card-section">
+          <span class="trigger-section-label">Split pages</span>
+          ${pages.length ? pages.map((page) => `<p><strong>${escapeHtml(page.page_index)}/${escapeHtml(page.total_pages)}</strong> ${escapeHtml(page.text)}</p>`).join("") : "<p>No pages returned.</p>"}
+        </div>
+      </article>
+    `;
+  }
+
   function renderCustomFailure(message) {
     if (el.customStatus) {
       el.customStatus.textContent = message || "Custom trigger config unavailable";
@@ -338,6 +418,22 @@
     state.customItems = Array.isArray(payload.items) ? payload.items : [];
     state.customCap = payload.cap || null;
     renderCustomTriggers();
+  }
+
+  async function runPreview() {
+    if (!(el.previewForm instanceof HTMLFormElement)) return;
+    if (el.previewSubmit) el.previewSubmit.disabled = true;
+    try {
+      state.previewResult = await requestJson(CUSTOM_TRIGGER_PREVIEW_ENDPOINT, {
+        method: "POST",
+        body: previewPayload(),
+      });
+      renderPreviewResult(state.previewResult);
+    } catch (err) {
+      renderPreviewResult({ posted: false, would_post: false, matched: false, blocked_reason: err?.message || "Preview failed", validation_warnings: ["preview_request_failed"] });
+    } finally {
+      if (el.previewSubmit) el.previewSubmit.disabled = false;
+    }
   }
 
   async function saveCustomTrigger() {
@@ -423,6 +519,12 @@
         void saveCustomTrigger();
       }, { signal });
     }
+    if (el.previewForm) {
+      el.previewForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        void runPreview();
+      }, { signal });
+    }
   }
 
   function init(root = document) {
@@ -431,6 +533,7 @@
     state.root = root;
     cacheElements(root);
     resetForm();
+    renderPreviewResult(null);
     bindEvents(root);
     void loadRegistry().catch((err) => renderLoadFailure(String(err?.message || "Unable to load runtime registry.")));
     void loadCustomTriggers().catch((err) => renderCustomFailure(String(err?.message || "Unable to load custom triggers.")));
@@ -447,6 +550,7 @@
     state.capabilities = [];
     state.customItems = [];
     state.customCap = null;
+    state.previewResult = null;
     state.editingId = "";
   }
 
