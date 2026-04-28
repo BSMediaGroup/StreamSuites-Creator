@@ -21,12 +21,28 @@ test("creator triggers view exposes a controller-backed runtime authority surfac
   assert.match(triggersJs, /\/api\/livechat\/registry-summary/);
   assert.match(triggersJs, /\/api\/livechat\/triggers/);
   assert.match(triggersJs, /\/api\/livechat\/capabilities/);
-  assert.doesNotMatch(triggersJs, /method:\s*"POST"/);
-  assert.doesNotMatch(triggersJs, /method:\s*"DELETE"/);
+  assert.match(triggersJs, /\/api\/livechat\/custom-triggers/);
+  assert.match(triggersJs, /const method = id \? "PATCH" : "POST"/);
+  assert.match(triggersJs, /method:\s*"DELETE"/);
   assert.doesNotMatch(triggersJs, /DOMContentLoaded/);
-  assert.match(triggersHtml, /Managed controls coming later/);
   assert.match(triggersHtml, /Registry rows are read-only/);
+  assert.match(triggersHtml, /Custom triggers are creator-owned runtime config records/);
   assert.match(triggersHtml, /Manual send testing remains separate on the <a href="\/integrations\/rumble">Rumble integration page<\/a>/);
+});
+
+test("creator triggers view keeps custom config runtime-backed and phase truthful", () => {
+  const triggersJs = read("js/triggers.js");
+  const triggersHtml = read("views/triggers.html");
+
+  assert.match(triggersJs, /CUSTOM_TRIGGERS_ENDPOINT/);
+  assert.match(triggersJs, /loadCustomTriggers/);
+  assert.match(triggersJs, /saveCustomTrigger/);
+  assert.match(triggersJs, /toggleCustomTrigger/);
+  assert.match(triggersJs, /deleteCustomTrigger/);
+  assert.doesNotMatch(triggersJs, /localStorage/);
+  assert.match(triggersHtml, /Configured for future dispatch/);
+  assert.match(triggersHtml, /execution\/transport is a later phase/);
+  assert.match(triggersHtml, /Pilled planned\/disabled/);
 });
 
 test("creator rumble integration distinguishes creator, admin, and trigger-generated dispatch rows", () => {

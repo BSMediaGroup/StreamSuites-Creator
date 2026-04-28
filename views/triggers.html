@@ -257,16 +257,16 @@
 
               <p>
 
-                This surface consumes the runtime/Auth livechat registry. Registry rows are read-only
-                in this phase; custom creator trigger configuration is a later managed-control phase.
+                This surface consumes the runtime/Auth livechat registry. Registry rows are read-only,
+                while custom trigger rows below are creator-owned runtime config for future dispatch.
 
               </p>
 
             </div>
 
             <div class="creator-hero-actions">
-              <button class="creator-button primary" type="button" data-trigger-add disabled aria-disabled="true">
-                Managed controls coming later
+              <button class="creator-button primary" type="button" data-custom-trigger-focus>
+                Manage custom triggers
               </button>
               <button class="creator-button secondary" type="button" data-trigger-reset>
                 Reload registry
@@ -310,8 +310,8 @@
                 <span class="status-pill warning"><span class="status-dot"></span>Rumble text phase</span>
               </div>
               <ul class="integration-readiness-list">
-                <li>Runtime/Auth is the only authority for the registry shown here.</li>
-                <li>Rows are registry foundations only; trigger execution is not implemented here.</li>
+                <li>Runtime/Auth is the only authority for the global registry shown here.</li>
+                <li>Custom trigger management is a separate creator-owned runtime config layer.</li>
                 <li>Pilled remains registry-ready but planned/disabled until transport exists.</li>
               </ul>
             </article>
@@ -340,25 +340,18 @@
 
           </div>
 
-          <article class="card platform-detail-card-wide" data-trigger-editor-panel hidden>
+          <article class="card platform-detail-card-wide" data-custom-trigger-panel>
             <div class="card-top">
-                <h3 data-trigger-editor-title>Managed trigger controls</h3>
-              <span class="status-pill subtle" data-trigger-editor-pill="true"><span class="status-dot"></span>Future phase</span>
+                <h3>Custom triggers</h3>
+              <span class="status-pill subtle" data-custom-trigger-status><span class="status-dot"></span>Loading config</span>
             </div>
-            <p class="account-note" data-trigger-editor-note="true">
-              Custom creator trigger configuration is intentionally disabled while registry hydration is read-only.
+            <p class="account-note">
+              Custom triggers are creator-owned runtime config records. Configured for future dispatch; execution/transport is a later phase.
             </p>
-            <form class="platform-workspace-form" data-trigger-form>
-              <label class="account-field">
-                <span class="account-field-label">Command text</span>
-                <input class="account-field-input" type="text" name="command_text" maxlength="80" placeholder="!ping" required />
-              </label>
-              <label class="account-field">
-                <span class="account-field-label">Response text</span>
-                <textarea class="account-field-input" name="response_template" rows="4" maxlength="500" placeholder="Pong. StreamSuites is listening." required></textarea>
-              </label>
+            <p class="account-note" data-custom-trigger-cap>0/0 used - 0 remaining</p>
+            <form class="platform-workspace-form" data-custom-trigger-form>
               <label class="platform-workspace-toggle">
-                <span class="platform-workspace-toggle-copy">Enabled for Rumble trigger evaluation</span>
+                <span class="platform-workspace-toggle-copy">Enabled config</span>
                 <span class="switch-button">
                   <span class="switch-scale">
                     <span class="switch-outer">
@@ -372,15 +365,63 @@
                 </span>
               </label>
               <label class="account-field">
-                <span class="account-field-label">Cooldown seconds</span>
-                <input class="account-field-input" type="number" name="cooldown_seconds" min="0" max="300" step="1" value="5" />
+                <span class="account-field-label">Prefix</span>
+                <input class="account-field-input" type="text" name="prefix" maxlength="8" value="!" required />
               </label>
-              <input type="hidden" name="trigger_id" value="" />
+              <label class="account-field">
+                <span class="account-field-label">Trigger</span>
+                <input class="account-field-input" type="text" name="trigger" maxlength="64" placeholder="faq" required />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Aliases</span>
+                <input class="account-field-input" type="text" name="aliases" maxlength="260" placeholder="!info, !links" />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Response text</span>
+                <textarea class="account-field-input" name="response_template" rows="4" maxlength="2000" placeholder="Thanks for asking. Here is the current link..." required></textarea>
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Cooldown seconds</span>
+                <input class="account-field-input" type="number" name="cooldown_seconds" min="5" max="300" step="1" value="5" />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Response mode</span>
+                <select class="account-field-input" name="response_mode">
+                  <option value="inline_single">Inline single</option>
+                </select>
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Access</span>
+                <select class="account-field-input" name="access">
+                  <option value="everyone">Everyone</option>
+                  <option value="followers">Followers</option>
+                  <option value="subscribers">Subscribers</option>
+                  <option value="mods">Mods</option>
+                </select>
+              </label>
+              <fieldset class="account-field">
+                <legend class="account-field-label">Eligible platforms</legend>
+                <label><input type="checkbox" name="eligible_platforms" value="rumble" checked /> Rumble</label>
+                <label><input type="checkbox" name="eligible_platforms" value="youtube" checked /> YouTube</label>
+                <label><input type="checkbox" name="eligible_platforms" value="twitch" checked /> Twitch</label>
+                <label><input type="checkbox" name="eligible_platforms" value="kick" checked /> Kick</label>
+                <label><input type="checkbox" name="eligible_platforms" value="pilled" /> Pilled planned/disabled</label>
+              </fieldset>
+              <details class="account-field">
+                <summary class="account-field-label">Notes</summary>
+                <textarea class="account-field-input" name="notes" rows="3" maxlength="500" placeholder="Internal creator note"></textarea>
+              </details>
               <div class="platform-actions">
-                <button class="creator-button primary" type="submit" disabled aria-disabled="true">Save trigger</button>
-                <button class="creator-button secondary" type="button" data-trigger-editor-cancel>Cancel</button>
+                <button class="creator-button primary" type="submit" data-custom-trigger-submit>Create custom trigger</button>
+                <button class="creator-button secondary" type="button" data-custom-trigger-cancel>Cancel</button>
               </div>
             </form>
+          </article>
+
+          <section class="triggers-grid" data-custom-trigger-list></section>
+          <article class="trigger-card trigger-empty-card" data-custom-trigger-empty>
+            <h3 class="trigger-card-title">No custom triggers configured</h3>
+            <p>Create a runtime-backed custom trigger config above. It will not execute live until dispatch and transport are implemented later.</p>
           </article>
 
 
@@ -400,7 +441,7 @@
             <p>
 
               This page reads the authoritative StreamSuites runtime/Auth livechat registry only.
-              Manual send testing remains separate on the <a href="/integrations/rumble">Rumble integration page</a>.
+              Custom trigger config writes also go through runtime/Auth only. Manual send testing remains separate on the <a href="/integrations/rumble">Rumble integration page</a>.
 
             </p>
 

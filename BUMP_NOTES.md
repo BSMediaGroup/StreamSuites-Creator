@@ -2,6 +2,9 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Replaced the Creator Chat Triggers read-only managed-controls placeholder with real runtime/Auth-backed creator custom trigger configuration management. The page still hydrates the global seed registry from `/api/livechat/registry-summary`, `/api/livechat/triggers`, and `/api/livechat/capabilities` as read-only data, and now separately lists, creates, edits, enables/disables, and deletes creator-owned config rows through `/api/livechat/custom-triggers` only.
+- Added tier-cap display, API validation error surfacing, empty/error states, Pilled planned/disabled presentation, and truthful phase copy that custom triggers are configured for future dispatch while execution/transport remains later work. No files were created or removed; `js/triggers.js` and `views/triggers.html` were replaced/updated in place and are expected to be longer because the placeholder controls became real runtime-backed management UI.
+
 - Replaced the Creator Chat Triggers page controller with read-only hydration from the authoritative runtime/Auth `/api/livechat/registry-summary`, `/api/livechat/triggers`, and `/api/livechat/capabilities` endpoints. The page now presents runtime-owned registry counts, trigger rows, Games foundation status, and Pilled planned/disabled posture without local registry scaffolds or mutation calls.
 - Disabled the existing trigger create/edit form controls on the Creator triggers page and updated route copy so custom creator trigger configuration is explicitly marked as a later managed-control phase. No files were created or removed; `js/triggers.js` was replaced in place and is expected to be shorter because the previous mutation workflow was removed from this read-only registry view.
 
