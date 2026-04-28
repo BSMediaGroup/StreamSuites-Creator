@@ -8422,7 +8422,6 @@ body::before {
   background-size: 56px 56px;
 }
 
-#app-nav.creator-nav,
 #app-header.creator-header,
 #app-footer.creator-footer {
   border-color: rgba(214, 225, 242, 0.14);
@@ -8432,7 +8431,6 @@ body::before {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-#app-nav .ss-sidebar-brand,
 #app-footer.creator-footer {
   border-color: rgba(188, 207, 237, 0.14);
 }
@@ -8519,7 +8517,6 @@ body::before {
   color: var(--creator-muted);
 }
 
-#app-nav a,
 .sidebar-collapse-toggle,
 .creator-account-toggle,
 .creator-notifications-toggle,
@@ -8532,9 +8529,6 @@ body::before {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 22px rgba(0, 0, 0, 0.2);
 }
 
-#app-nav a:hover,
-#app-nav a:focus-visible,
-#app-nav a.is-active,
 .sidebar-collapse-toggle:hover,
 .sidebar-collapse-toggle:focus-visible,
 .creator-account-toggle:hover,
