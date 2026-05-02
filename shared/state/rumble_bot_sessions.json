@@ -1,6 +1,6 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-04-25T06:25:08.657617Z",
+  "generated_at": "2026-05-02T14:35:38.325609Z",
   "provider": "rumble",
   "count": 15,
   "summary": {
@@ -75,8 +75,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:13.343055Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:42.412416Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -108,7 +108,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -120,7 +120,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -132,18 +132,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -208,8 +208,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:11.307358Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:40.794060Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -241,7 +241,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -253,7 +253,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -265,18 +265,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -341,8 +341,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:12.298690Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:41.630473Z",
         "authoritative_identity": {
           "source": "creator_integration",
           "selected_fields": {
@@ -385,7 +385,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -397,7 +397,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -409,18 +409,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -485,8 +485,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:10.344835Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:39.926571Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -518,7 +518,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -530,7 +530,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -542,18 +542,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -618,8 +618,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:11.001146Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:40.502393Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -651,7 +651,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -663,7 +663,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -675,18 +675,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -751,8 +751,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:10.013748Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:39.639408Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -784,7 +784,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -796,7 +796,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -808,18 +808,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -884,8 +884,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:09.371449Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:39.032067Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -917,7 +917,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -929,7 +929,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -941,18 +941,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -1017,8 +1017,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:10.681027Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:40.214197Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -1050,7 +1050,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -1062,7 +1062,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -1074,18 +1074,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -1150,8 +1150,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:08.782326Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:38.442314Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -1183,7 +1183,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -1195,7 +1195,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -1207,18 +1207,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -1283,8 +1283,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:12.647450Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:41.886792Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -1316,7 +1316,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -1328,7 +1328,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -1340,18 +1340,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -1416,8 +1416,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:11.977078Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:41.368270Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -1449,7 +1449,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -1461,7 +1461,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -1473,18 +1473,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -1549,8 +1549,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:11.627796Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:41.110628Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -1582,7 +1582,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -1594,7 +1594,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -1606,18 +1606,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -1644,7 +1644,7 @@
         "stream_identity": null,
         "video_id": null,
         "chat_id": null,
-        "channel_handle": "@DanielClancy",
+        "channel_handle": "DanielClancy",
         "channel_url": "https://rumble.com/user/danielclancy",
         "channel_slug": "danielclancy"
       },
@@ -1667,7 +1667,7 @@
         "resolved_stream_identity": null,
         "resolved_video_id": null,
         "resolved_chat_id": null,
-        "resolved_channel_handle": "@DanielClancy",
+        "resolved_channel_handle": "DanielClancy",
         "resolved_channel_url": "https://rumble.com/user/danielclancy",
         "resolved_channel_slug": "danielclancy",
         "creator_offline": false,
@@ -1683,12 +1683,12 @@
           "creator_status_unknown",
           "sample_browse_live_request_failed"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:00.621340Z",
-        "last_evaluated_at": "2026-04-25T06:25:12.992854Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:09.262524Z",
+        "last_evaluated_at": "2026-05-02T14:35:42.150886Z",
         "authoritative_identity": {
           "source": "creator_integration",
           "selected_fields": {
-            "channel_handle": "@DanielClancy",
+            "channel_handle": "DanielClancy",
             "public_url": "https://rumble.com/user/danielclancy",
             "channel_id": null,
             "profile_id": null
@@ -1727,7 +1727,7 @@
           "stale": false,
           "error": "sample_browse_live_request_failed",
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": true,
@@ -1739,7 +1739,7 @@
           "stop_reason": "sample_browse_live_request_failed",
           "stop_detail": "blocked_http_403",
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -1752,18 +1752,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -1828,8 +1828,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:09.072416Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:38.729902Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -1861,7 +1861,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -1873,7 +1873,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -1885,18 +1885,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     },
@@ -1961,8 +1961,8 @@
           "discovery_missing_live_row",
           "creator_status_unknown"
         ],
-        "last_live_status_checked_at": "2026-04-25T06:25:03.663672Z",
-        "last_evaluated_at": "2026-04-25T06:25:09.689134Z",
+        "last_live_status_checked_at": "2026-05-02T14:35:12.297234Z",
+        "last_evaluated_at": "2026-05-02T14:35:39.339965Z",
         "authoritative_identity": {
           "source": "none",
           "selected_fields": {},
@@ -1994,7 +1994,7 @@
           "stale": null,
           "error": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.663672Z"
+          "export_checked_at": "2026-05-02T14:35:12.297234Z"
         },
         "discovery": {
           "matched": false,
@@ -2006,7 +2006,7 @@
           "stop_reason": null,
           "stop_detail": null,
           "export_status": "fresh",
-          "export_checked_at": "2026-04-25T06:25:03.183702Z",
+          "export_checked_at": "2026-05-02T14:35:11.861103Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -2018,18 +2018,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-04-25T06:25:08.657617Z",
+      "last_evaluated_at": "2026-05-02T14:35:38.325609Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-04-23T22:09:32.296639Z",
+      "last_transition_at": "2026-04-30T01:13:21.368052Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-04-25T06:25:08.657617Z",
+      "stopped_at": "2026-05-02T14:35:38.325609Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-04-25T06:25:08.657617Z",
+        "at": "2026-05-02T14:35:38.325609Z",
         "message": "Managed Rumble transport was already stopped."
       }
     }
