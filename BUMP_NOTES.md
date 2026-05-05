@@ -2,6 +2,8 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Updated the Creator wheel route copy from XP/rank to XP/level terminology so the read-only Creator reference remains aligned with the runtime progression schema change. This is wording-only in `js/wheels.js`; no Creator authority, wheel behavior, automation, or XP awarding logic changed, and no files were created or removed.
+
 - Refined the Creator Chat Triggers page UI in `views/triggers.html`, `js/triggers.js`, and `css/creator-dashboard.css` so trigger cards now render compact platform chips with the existing platform SVG assets for Rumble, YouTube, Twitch, Kick, Pilled, and StreamSuites Unified. Pilled remains visually planned/disabled, and the card corner status/access chips are slimmer while preserving the same status semantics.
 - Replaced the confusing flat custom-trigger preview result with a `Livechat Trigger Simulator` that shows a simulated viewer message, pending/runtime-backed bot response bubbles, no-match/error/blocked states, split response pages, and compact dry-run technical details. The simulator still calls only the existing runtime/Auth `POST /api/livechat/custom-triggers/preview` endpoint, keeps the custom trigger management section intact, and continues to say that no live chat post or transport dispatch occurs. No files were created or removed; the touched HTML/JS/CSS/test files are expected to be longer because the old preview panel was replaced in place with clearer simulator markup, controller rendering, scoped styles, and regression assertions.
 

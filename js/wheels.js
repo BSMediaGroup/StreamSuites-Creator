@@ -1100,7 +1100,7 @@
               </div>
             </header>
             <div class="ss-panel-body">
-              <p class="muted">Backend winner history, automation, and XP/rank logic are intentionally not active on this route yet.</p>
+              <p class="muted">Backend winner history, automation, and XP/level logic are intentionally not active on this route yet.</p>
             </div>
           </section>
         </aside>
