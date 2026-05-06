@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 4167 4167" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+<svg width="100%" height="100%" viewBox="0 0 17363 17363" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <g transform="matrix(4.16667,0,0,4.16667,0,0)">
-        <g transform="matrix(1.30479,-1.35588,1.16643,1.12248,-735.746,616.836)">
-            <path d="M481.384,876.332L433.753,819.033L433.753,180.969L482.28,126.685L481.384,876.332ZM519.615,124.56L566.314,180.969L566.314,819.033L517.297,873.863L519.615,124.56Z"/>
-        </g>
-        <g id="Artboard3" transform="matrix(1,0,0,1,-1075.66,-1166.67)">
-            <rect x="1075.66" y="1166.67" width="1000" height="1000" style="fill:none;"/>
-            <clipPath id="_clip1">
-                <rect x="1075.66" y="1166.67" width="1000" height="1000"/>
-            </clipPath>
-            <g clip-path="url(#_clip1)">
-                <g transform="matrix(0.0211694,0,0,0.0211694,731.918,822.862)">
-                    <path d="M22913.9,31743.7L22914,42604.9L33342.1,42604.7L43766.2,31697.3L51020.6,31697.2L63478.8,18702.9L35463.2,18703.4L22913.9,31743.9L22913.9,31743.7ZM56802.7,47972.7L56802.5,37111.5L46374.4,37111.7L35950.4,48019.1L28695.9,48019.1L16237.6,61013.4L44253.2,61013L56802.6,47972.6L56802.7,47972.6L56802.7,47972.7Z"/>
+        <g transform="matrix(4.16667,0,0,4.16667,0,0)">
+            <g transform="matrix(1.30479,-1.35588,1.16643,1.12248,-735.746,616.836)">
+                <path d="M481.384,876.332L433.753,819.033L433.753,180.969L482.28,126.685L481.384,876.332ZM519.615,124.56L566.314,180.969L566.314,819.033L517.297,873.863L519.615,124.56Z"/>
+            </g>
+            <g id="Artboard3" transform="matrix(1,0,0,1,-1075.66,-1166.67)">
+                <rect x="1075.66" y="1166.67" width="1000" height="1000" style="fill:none;"/>
+                <g>
+                    <clipPath id="_clip1">
+                        <rect x="1075.66" y="1166.67" width="1000" height="1000"/>
+                    </clipPath>
+                    <g clip-path="url(#_clip1)">
+                        <g transform="matrix(0.0211694,0,0,0.0211694,731.918,822.862)">
+                            <path d="M56802.7,47972.6L56802.6,47972.6L55046.6,49797.3L53222,47972.8C53222,49186.5 53719.9,49993 54344.3,50527.1L44253.2,61013L16237.6,61013.4L28695.9,48019.1L35950.4,48019.1L46374.4,37111.7L56802.5,37111.5L56802.7,47972.6ZM53222,46529.4L53221.9,40692.3L47905.4,40692.4L37481.3,51599.8L30223.4,51599.8L24631.3,57432.6L42729.6,57432.3L53222,46529.4ZM22913.9,31743.9L35463.2,18703.4L63478.8,18702.9L51020.6,31697.2L43766.2,31697.3L33342.1,42604.7L22914,42604.9L22913.9,31743.9ZM26494.6,33187L26494.7,39024.1L31811.2,39024L42235.3,28116.6L49493,28116.5L55085.2,22283.8L36986.8,22284.1L26494.6,33187Z"/>
+                        </g>
+                    </g>
                 </g>
             </g>
         </g>
