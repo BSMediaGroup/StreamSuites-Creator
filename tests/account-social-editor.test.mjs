@@ -29,10 +29,14 @@ test("creator account social editor uses the shared canonical platform registry"
   const accountJs = read("js/account-settings.js");
 
   assert.match(accountJs, /window\.StreamSuitesSocialPlatforms/);
+  assert.match(accountJs, /function validateCanonicalSocialUrl/);
+  assert.match(accountJs, /https:\/\/\$\{expectedHost\}\/yourhandle/);
   assert.match(helperJs, /group: "first-class"/);
   assert.match(helperJs, /group: "extended"/);
   assert.match(helperJs, /label: "WhatsApp Channels"/);
   assert.match(helperJs, /icon: "\/assets\/icons\/whatsapp\.svg"/);
+  assert.match(helperJs, /key: "pickax"[\s\S]*label: "Pickax"[\s\S]*icon: "\/assets\/icons\/pickax\.svg"[\s\S]*placeholder: "https:\/\/pickax\.com\/yourhandle"/);
+  assert.match(helperJs, /key: "onlyfans"[\s\S]*label: "OnlyFans"[\s\S]*icon: "\/assets\/icons\/onlyfans\.svg"[\s\S]*placeholder: "https:\/\/onlyfans\.com\/yourhandle"/);
   assert.match(helperJs, /label: "Custom"/);
   assert.doesNotMatch(helperJs, /dlive/i);
 });

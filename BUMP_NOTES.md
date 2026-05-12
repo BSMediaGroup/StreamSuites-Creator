@@ -2,6 +2,8 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Tightened the Creator account/profile editor without changing the runtime/Auth profile contract. `views/account.html` now moves Media assets directly under the core identity section so cover/avatar/background/logo controls appear near the top, `css/creator-dashboard.css` gives the account page a capped two-column structure on wider workspaces while keeping single-column laptop/mobile behavior, and `js/social-platforms.js` adds Pickax and OnlyFans to the existing canonical Creator social registry with the provided SVG assets and expected URL placeholders. The Creator save flow now checks Pickax and OnlyFans links for `https://pickax.com/<handle>` / `https://onlyfans.com/<handle>` shape before sending the existing profile payload. Existing save, upload, reset, social-link preservation, and `/api/public/profile/me` behavior are otherwise unchanged. No files were created, removed, or renamed; the public-content and media cards were reordered in place.
+
 - Updated the Creator wheel route copy from XP/rank to XP/level terminology so the read-only Creator reference remains aligned with the runtime progression schema change. This is wording-only in `js/wheels.js`; no Creator authority, wheel behavior, automation, or XP awarding logic changed, and no files were created or removed.
 
 - Refined the Creator Chat Triggers page UI in `views/triggers.html`, `js/triggers.js`, and `css/creator-dashboard.css` so trigger cards now render compact platform chips with the existing platform SVG assets for Rumble, YouTube, Twitch, Kick, Pilled, and StreamSuites Unified. Pilled remains visually planned/disabled, and the card corner status/access chips are slimmer while preserving the same status semantics.

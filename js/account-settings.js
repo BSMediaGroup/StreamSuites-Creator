@@ -1698,6 +1698,32 @@
     return comparable;
   }
 
+  function validateCanonicalSocialUrl(key, value) {
+    const normalizedKey = normalizeSocialPlatformKey(key);
+    const text = coerceText(value);
+    if (!text || (normalizedKey !== "pickax" && normalizedKey !== "onlyfans")) return null;
+    let parsed = null;
+    try {
+      parsed = new URL(text);
+    } catch (_err) {
+      return `${getSocialPlatformLabel(normalizedKey)} must be a valid https URL.`;
+    }
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+    const expectedHost = normalizedKey === "pickax" ? "pickax.com" : "onlyfans.com";
+    if (parsed.protocol !== "https:" || host !== expectedHost || !parsed.pathname.replace(/^\/+|\/+$/g, "")) {
+      return `${getSocialPlatformLabel(normalizedKey)} links must use https://${expectedHost}/yourhandle.`;
+    }
+    return null;
+  }
+
+  function validateCanonicalSocialLinks(links) {
+    for (const [key, value] of Object.entries(links || {})) {
+      const error = validateCanonicalSocialUrl(key, value);
+      if (error) return error;
+    }
+    return "";
+  }
+
   function buildSocialEditorRowMarkup(key, value) {
     const meta = getSocialPlatformMeta(key);
     const aliases = Array.isArray(meta?.aliases)
@@ -3669,6 +3695,16 @@
       }
       renderIdentityFeedback();
       renderAvatarFeedback();
+      return;
+    }
+
+    const socialValidationError = validateCanonicalSocialLinks(draft.social_links);
+    if (socialValidationError) {
+      setMessage("[data-profile-save-status=\"true\"]", socialValidationError, "warning");
+      showToast(socialValidationError, "warning", {
+        key: "creator-profile-social-validation",
+        title: "Check social link"
+      });
       return;
     }
 

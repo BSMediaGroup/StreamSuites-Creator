@@ -2152,6 +2152,42 @@ h3 {
   grid-column: 1 / -1;
 }
 
+@media (min-width: 1080px) {
+  .account-settings .account-grid {
+    grid-template-columns: minmax(360px, 0.95fr) minmax(420px, 1.05fr);
+    gap: 22px;
+  }
+
+  .account-profile-card,
+  .account-profile-media-card {
+    grid-column: auto;
+  }
+
+  .account-profile-card {
+    position: sticky;
+    top: calc(var(--creator-account-scroll-offset, 132px) + 12px);
+  }
+
+  .account-profile-content-card,
+  .account-findme-branding-card,
+  .account-preview-hub-card {
+    grid-column: 1 / -1;
+  }
+
+  .account-security-card,
+  .account-integration-hub,
+  .account-billing-card,
+  .account-badge-governance-card {
+    grid-column: span 1;
+  }
+}
+
+@media (min-width: 1360px) {
+  .account-settings .account-grid {
+    grid-template-columns: minmax(390px, 0.9fr) minmax(520px, 1.1fr);
+  }
+}
+
 .account-settings .account-field-grid {
   gap: 16px;
 }
@@ -2165,6 +2201,10 @@ h3 {
 .account-section-stack {
   display: grid;
   gap: 16px;
+}
+
+.account-profile-media-card .account-section-stack {
+  gap: 14px;
 }
 
 .account-stack-fields {
