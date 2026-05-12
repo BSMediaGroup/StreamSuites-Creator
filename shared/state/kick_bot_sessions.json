@@ -1,0 +1,1671 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-05-12T17:05:15.233876Z",
+  "provider": "kick",
+  "count": 17,
+  "summary": {
+    "desired_count": 0,
+    "active_count": 0,
+    "blocked_count": 17,
+    "awaiting_transport_count": 0,
+    "awaiting_credentials_count": 0,
+    "awaiting_scopes_count": 0,
+    "awaiting_webhook_public_url_count": 0,
+    "dispatch_ready_count": 0,
+    "listening_via_webhook_count": 0,
+    "by_state": {
+      "blocked": 17
+    }
+  },
+  "sessions": [
+    {
+      "session_id": "kick-auto-fba1051d75fe1a4c",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "04abe79e-0741-44dc-937b-33d0c0332acd",
+      "creator_user_code": "L6E7ZDQ",
+      "creator_display_name": "Just Gina",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "04abe79e-0741-44dc-937b-33d0c0332acd",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:15.533288Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-ea3346b77f753cd7",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "064370cb-161a-438d-b657-d57a54aa1712",
+      "creator_user_code": "VIvXsPS",
+      "creator_display_name": "Red Mandolin",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "064370cb-161a-438d-b657-d57a54aa1712",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:19.549652Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-d165a84b767f99b1",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+      "creator_user_code": "7lPBEiA",
+      "creator_display_name": "Jarred Pluschke",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "123750a8-351f-4f91-bf64-b331b3fd1df4",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:17.945803Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-8d507b93a960911b",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "2b20d3e9-feee-4b8b-a78d-566912b68e8d",
+      "creator_user_code": "fowTR0T",
+      "creator_display_name": "Third Railify",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "2b20d3e9-feee-4b8b-a78d-566912b68e8d",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:18.735362Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-72cddcd107215412",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "338edf81-9e24-4730-977a-c9972aecba4d",
+      "creator_user_code": "rDbzSZQ",
+      "creator_display_name": "DanielClancyLive",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "338edf81-9e24-4730-977a-c9972aecba4d",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:17.143766Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-b21217c73e28f639",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "3a190fb9-1804-4a8f-b0d4-03cbf03ef06c",
+      "creator_user_code": "HNNqTcX",
+      "creator_display_name": "\u2666\ufe0f Red Mandolin \u2666\ufe0f",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "3a190fb9-1804-4a8f-b0d4-03cbf03ef06c",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:17.672644Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-8970cfa665f0b8ab",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+      "creator_user_code": "YR992ZS",
+      "creator_display_name": "Admin",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "3c426a3d-2409-4409-a0bf-c26960081027",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:16.883731Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-9ef30b2cfa811ec3",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "45385ed3-1b85-4deb-853f-2bf75fa6360c",
+      "creator_user_code": "Y55GHS6",
+      "creator_display_name": "System",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "45385ed3-1b85-4deb-853f-2bf75fa6360c",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:16.358539Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-5a50a8441821a068",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "75d556b3-dd22-40b6-9d3e-8a034af552d6",
+      "creator_user_code": "84BPuNT",
+      "creator_display_name": "Digital Cyanide",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "75d556b3-dd22-40b6-9d3e-8a034af552d6",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:17.416354Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-b9b000534a4e3751",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "880d5c4b-a5af-4058-8237-bf3c687becea",
+      "creator_user_code": "R8UVPMQ",
+      "creator_display_name": "Developer",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "880d5c4b-a5af-4058-8237-bf3c687becea",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:15.820124Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-37ce4f1ad7901ecb",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+      "creator_user_code": "7XaVoy7",
+      "creator_display_name": "Daniel Clancy",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "8b391d1d-d2bb-4627-96dc-33d171841b20",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:18.992091Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-cbd60079c62f0f99",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+      "creator_user_code": "hVRt8Qp",
+      "creator_display_name": "Daniel Clancy",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "9112b74f-d53e-46fd-8dc8-08c6007b1489",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:18.471514Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-6f12191be8d3a293",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+      "creator_user_code": "JqhcS2m",
+      "creator_display_name": "kanefort89",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "a5a9f0b4-17d8-4dae-9bfb-81463c199347",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:18.208857Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-c343315059012478",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "creator_user_code": "4TiOlvS",
+      "creator_display_name": "Daniel Clancy",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:19.284230Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-0dd5d18f1477b6b1",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "b3a2875c-545b-4ab8-a9f2-9cd14ff12baf",
+      "creator_user_code": "JQ6MMUB",
+      "creator_display_name": "Automations",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "b3a2875c-545b-4ab8-a9f2-9cd14ff12baf",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:16.088483Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-5abbdf0c16beb06a",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "c1bb0187-5940-4665-897c-3dad1d49fe27",
+      "creator_user_code": "32PNHKK",
+      "creator_display_name": "Simple Davy",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "c1bb0187-5940-4665-897c-3dad1d49fe27",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:15.277563Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    },
+    {
+      "session_id": "kick-auto-e9160b292968c9f4",
+      "platform": "kick",
+      "session_kind": "auto",
+      "creator_account_id": "d61f5f01-a8e2-4f8c-8a7d-d6023652ae49",
+      "creator_user_code": "UGHW8WQ",
+      "creator_display_name": "SStestAcc",
+      "lifecycle_state": "blocked",
+      "desired": false,
+      "enabled": false,
+      "eligible": false,
+      "blocking_reason": "creator_disabled",
+      "status_reason": "Kick auto-deploy blocked: creator_disabled.",
+      "runner_kind": "chat_worker",
+      "runner_state": "blocked",
+      "transport_status": "blocked",
+      "resolved_target": {},
+      "decision": {
+        "platform": "kick",
+        "enabled": false,
+        "eligible": false,
+        "decision_state": "creator_disabled",
+        "blocking_reason": "creator_disabled",
+        "connected": false,
+        "creator_identifiable": true,
+        "resolved_target": {},
+        "target_error": "awaiting_target",
+        "transport_capabilities": {
+          "can_listen": false,
+          "can_send": false,
+          "dispatch_ready": false,
+          "webhook_subscription_ready": false,
+          "inbound_event_normalization": true,
+          "trigger_evaluation": true
+        },
+        "runtime_diagnostics": [
+          "kick_auto_deploy_evaluated",
+          "kick_official_api_contract_evaluated"
+        ],
+        "credential_readiness": {
+          "status": "awaiting_credentials",
+          "ready": false,
+          "missing": [
+            "kick_client_id",
+            "kick_access_token",
+            "kick_scopes"
+          ],
+          "missing_scopes": [
+            "chat:write",
+            "events:subscribe"
+          ],
+          "config": {
+            "source": "environment",
+            "creator_account_id": "d61f5f01-a8e2-4f8c-8a7d-d6023652ae49",
+            "client_id_present": false,
+            "client_secret_present": true,
+            "access_token_present": false,
+            "refresh_token_present": false,
+            "token_expires_at": null,
+            "scopes": [],
+            "broadcaster_user_id": null,
+            "channel_slug": null,
+            "webhook_public_url_present": false,
+            "webhook_secret_present": false,
+            "bot_user_id": null,
+            "bot_username": null,
+            "secret_keys_present": []
+          }
+        },
+        "last_evaluated_at": "2026-05-12T17:05:16.614129Z"
+      },
+      "last_evaluated_at": "2026-05-12T17:05:15.233876Z",
+      "last_attach_attempt_at": null,
+      "last_heartbeat_at": "2026-05-12T17:05:15.233876Z",
+      "last_dispatch_attempt_at": null,
+      "last_dispatch_success_at": null,
+      "last_dispatch_error": "creator_disabled",
+      "last_dispatch_status": "dispatch_unsupported",
+      "dispatch_capabilities": {
+        "can_send": false,
+        "chat_scope_present": false,
+        "events_scope_present": false
+      },
+      "webhook_subscription_status": "awaiting_webhook_public_url",
+      "webhook_subscription_id": null,
+      "last_subscription_attempt_at": null,
+      "last_subscription_success_at": null,
+      "last_subscription_error": null,
+      "transport_capabilities": {
+        "can_listen": false,
+        "can_send": false,
+        "dispatch_ready": false,
+        "webhook_subscription_ready": false,
+        "inbound_event_normalization": true,
+        "trigger_evaluation": true
+      }
+    }
+  ]
+}
