@@ -2164,8 +2164,8 @@ h3 {
   }
 
   .account-profile-card {
-    position: sticky;
-    top: calc(var(--creator-account-scroll-offset, 132px) + 12px);
+    position: static;
+    top: auto;
   }
 
   .account-profile-content-card,
@@ -2791,9 +2791,9 @@ h3 {
 }
 
 .account-shell-tabs-wrap {
-  position: sticky;
-  top: var(--creator-account-tabs-top, 64px);
-  z-index: calc(var(--creator-shell-z-topbar) - 1);
+  position: relative;
+  top: auto;
+  z-index: 1;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
