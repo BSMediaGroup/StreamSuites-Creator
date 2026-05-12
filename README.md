@@ -77,7 +77,7 @@ flowchart TD
 - This phase keeps `StreamSuites-Creator` as a static consumer of runtime/Auth truth for creator account posture, platform integrations, and the first centralized trigger registry pass.
 - The account/settings route now summarizes authoritative platform linkage state instead of inventing local platform truth.
 - Dedicated platform routes consume per-platform integration detail from runtime/Auth and use safe messaging for providers that are still planned or unavailable.
-- Kick now has a runtime/Auth-owned OAuth setup and credential-management page. Creator starts OAuth, refresh/recheck, and disconnect actions, but only runtime/Auth stores Kick credentials/tokens and Creator renders redacted readiness for scopes, token expiry, webhook URL, subscriptions, dispatch, auto-deploy, and bot session state.
+- Kick now has a runtime/Auth-owned OAuth setup and credential-management page. Creator starts OAuth, refresh/recheck, manual channel slug/URL fallback, and disconnect actions, but only runtime/Auth stores Kick credentials/tokens and Creator renders redacted readiness for channel identity, deploy-target export, scopes, token expiry, webhook URL, subscriptions, dispatch, auto-deploy, and bot session state.
 - Rumble uses a backend-owned secret save/remove flow that returns masked presence state only.
 - The triggers route now consumes the central runtime/Auth trigger registry foundation, supports creator-scoped Rumble text trigger CRUD for the first operational phase, and keeps that config authoritative in runtime/Auth.
 - The Rumble integration route now includes a creator-scoped controlled manual send surface that uses the same managed dispatch path as automatic trigger replies.

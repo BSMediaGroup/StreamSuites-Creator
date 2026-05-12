@@ -1033,7 +1033,7 @@
         }
       });
     });
-    queryAll("[data-platform-connect-provider], [data-platform-refresh-detail], [data-platform-remove-workspace], [data-kick-reconcile=\"true\"], [data-kick-disconnect=\"true\"], [data-rumble-secret-open=\"true\"], [data-rumble-secret-remove-inline=\"true\"], [data-rumble-bot-autodeploy-toggle=\"true\"]").forEach((button) => {
+    queryAll("[data-platform-connect-provider], [data-platform-refresh-detail], [data-platform-remove-workspace], [data-kick-reconcile=\"true\"], [data-kick-channel-save=\"true\"], [data-kick-disconnect=\"true\"], [data-rumble-secret-open=\"true\"], [data-rumble-secret-remove-inline=\"true\"], [data-rumble-bot-autodeploy-toggle=\"true\"]").forEach((button) => {
       if (button instanceof HTMLButtonElement) {
         button.disabled = state.busy;
       }
@@ -1174,8 +1174,13 @@
     const nextSteps = Array.isArray(status.next_steps) ? status.next_steps : [];
     return [
       `Kick connection: ${status.connected ? "connected" : "not connected"}`,
-      `Channel slug: ${status.account?.channel_slug || "not resolved"}`,
-      `Broadcaster ID: ${status.account?.broadcaster_user_id || "not resolved"}`,
+      `Channel link: ${status.channel_link_saved ? "saved" : "not saved"}`,
+      `Channel slug: ${status.channel_slug || status.account?.channel_slug || "not resolved"}`,
+      `Channel URL: ${status.channel_url || status.account?.channel_url || "not resolved"}`,
+      `Broadcaster ID: ${status.broadcaster_user_id || status.account?.broadcaster_user_id || "not resolved"}`,
+      `Identity status: ${humanizeLabel(status.identity_status || "unresolved")}`,
+      `Identity note: ${status.identity_error ? humanizeLabel(status.identity_error) : "none"}`,
+      `Deploy target exported: ${status.deploy_target_exported ? "yes" : "no"}`,
       `Granted scopes: ${granted.length ? granted.join(", ") : "none"}`,
       `Missing scopes: ${missing.length ? missing.join(", ") : "none"}`,
       `Access token: ${status.token?.has_access_token ? "present in runtime" : "not present"}`,
@@ -1240,6 +1245,10 @@
         : platformMeta().actionSummary;
     }
     const nextSteps = Array.isArray(status?.next_steps) ? status.next_steps : [];
+    const channelValue = status?.channel_slug || status?.channel_url || "";
+    const identityWarning = connected && !status?.channel_link_saved
+      ? `<div class="platform-inline-note" data-tone="warning">Kick connected, but StreamSuites could not automatically detect the channel. Enter your Kick channel slug below or click Refresh/Recheck.</div>`
+      : "";
     container.innerHTML = `
       <div class="platform-management-block">
         <div class="platform-management-block-head">
@@ -1260,6 +1269,29 @@
         <div class="platform-inline-note">
           No Kick tokens, client secrets, auth codes, or PKCE verifier values are stored in Creator or rendered in the DOM.
         </div>
+      </div>
+      <div class="platform-management-block">
+        <div class="platform-management-block-head">
+          <strong>Kick channel target</strong>
+          <span class="status-pill ${status?.channel_link_saved ? "success" : "warning"}">${escapeHtml(status?.channel_link_saved ? "Channel link saved" : "Channel link not saved")}</span>
+        </div>
+        ${identityWarning}
+        <div class="platform-workspace-grid">
+          <label class="account-field platform-workspace-field-wide">
+            <span class="account-field-label">Kick channel slug / URL</span>
+            <input class="account-field-input" type="text" data-kick-channel-input="true" maxlength="160" value="${escapeHtml(channelValue)}" placeholder="mychannel or https://kick.com/mychannel" autocomplete="off" />
+          </label>
+        </div>
+        <div class="platform-actions">
+          <button class="creator-button primary" type="button" data-kick-channel-save="true">Save channel target</button>
+        </div>
+        <ul class="platform-management-checklist">
+          <li>Channel slug: ${escapeHtml(status?.channel_slug || status?.account?.channel_slug || "not resolved")}</li>
+          <li>Broadcaster user ID: ${escapeHtml(status?.broadcaster_user_id || status?.account?.broadcaster_user_id || "not resolved")}</li>
+          <li>Identity status: ${escapeHtml(humanizeLabel(status?.identity_status || "unresolved"))}</li>
+          <li>Deploy target exported: ${escapeHtml(status?.deploy_target_exported ? "yes" : "no")}</li>
+          <li>Auto-deploy: ${escapeHtml(status?.auto_deploy?.eligible ? "eligible" : humanizeLabel(status?.auto_deploy?.reason || "blocked"))}</li>
+        </ul>
       </div>
       <div class="platform-management-block">
         <div class="platform-management-block-head">
@@ -1604,7 +1636,9 @@
 
     const stats = {
       connection: humanizeStatus(integration?.status),
-      channel: integration?.channel_handle || integration?.public_url || "Not saved",
+      channel: state.platform === "kick"
+        ? (kickStatus()?.channel_link_saved ? (kickStatus()?.channel_slug || kickStatus()?.channel_url || "Saved") : "Not saved")
+        : integration?.channel_handle || integration?.public_url || "Not saved",
       auth: humanizeAuthMode(integration?.auth_mode),
       checked: formatTimestamp(integration?.last_checked_at),
       triggers: `${integration?.deployment?.enabled_trigger_count || 0} enabled`,
@@ -1824,6 +1858,35 @@
     }
   }
 
+  async function saveKickChannelTarget() {
+    const input = query("[data-kick-channel-input=\"true\"]");
+    const channelSlug = input instanceof HTMLInputElement ? input.value.trim() : "";
+    if (!channelSlug) {
+      setActionStatus("Enter a Kick channel slug or URL before saving.", "warning");
+      return;
+    }
+    setBusy(true);
+    setActionStatus("Saving Kick channel target in runtime/Auth...", "neutral");
+    try {
+      state.kickStatus = await requestJson(`${API_BASE}/api/creator/integrations/kick/channel`, {
+        method: "POST",
+        timeoutMs: SAVE_TIMEOUT_MS,
+        body: JSON.stringify({ channel_slug: channelSlug })
+      });
+      await loadIntegration();
+      setActionStatus(
+        state.kickStatus?.channel_link_saved
+          ? "Kick channel target saved."
+          : "Kick channel target save returned without a deploy target.",
+        state.kickStatus?.channel_link_saved ? "success" : "warning"
+      );
+    } catch (err) {
+      setActionStatus(err?.message || "Unable to save Kick channel target.", "danger");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function disconnectKick() {
     setBusy(true);
     setActionStatus("Disconnecting Kick in runtime/Auth...", "neutral");
@@ -2004,6 +2067,12 @@
       return;
     }
 
+    const kickChannelSaveButton = target.closest("[data-kick-channel-save=\"true\"]");
+    if (kickChannelSaveButton instanceof HTMLButtonElement) {
+      void saveKickChannelTarget();
+      return;
+    }
+
     const kickDisconnectButton = target.closest("[data-kick-disconnect=\"true\"]");
     if (kickDisconnectButton instanceof HTMLButtonElement) {
       if (window.confirm("Disconnect Kick? Runtime/Auth will clear stored Kick OAuth token material.")) {
@@ -2110,7 +2179,11 @@
     if (state.platform === "kick") {
       const params = new URLSearchParams(window.location.search || "");
       if (params.get("connected") === "1") {
-        setActionStatus("Kick OAuth connected. Loading redacted readiness from runtime/Auth...", "success");
+        if (params.get("warning") === "channel_unresolved") {
+          setActionStatus("Kick connected, but StreamSuites could not automatically detect the channel. Enter your Kick channel slug below or click Refresh/Recheck.", "warning");
+        } else {
+          setActionStatus("Kick OAuth connected. Loading redacted readiness from runtime/Auth...", "success");
+        }
       } else if (params.get("error")) {
         setActionStatus(`Kick OAuth did not complete: ${humanizeLabel(params.get("error"))}.`, "warning");
       }

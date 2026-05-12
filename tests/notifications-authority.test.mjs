@@ -16,8 +16,13 @@ test("Kick integration UI uses runtime OAuth endpoints without handling secrets"
   assert.match(detailJs, /\/api\/creator\/integrations\/kick\/oauth\/start/);
   assert.match(detailJs, /\/api\/creator\/integrations\/kick\/status/);
   assert.match(detailJs, /\/api\/creator\/integrations\/kick\/reconcile/);
+  assert.match(detailJs, /\/api\/creator\/integrations\/kick\/channel/);
   assert.match(detailJs, /\/api\/creator\/integrations\/kick\/disconnect/);
   assert.match(detailJs, /authorization_url/);
+  assert.match(detailJs, /data-kick-channel-input/);
+  assert.match(detailJs, /channel_unresolved/);
+  assert.match(detailJs, /Channel link: \$\{status\.channel_link_saved \? "saved" : "not saved"\}/);
+  assert.match(detailJs, /Deploy target exported: \$\{status\.deploy_target_exported \? "yes" : "no"\}/);
   assert.doesNotMatch(detailJs, /localStorage\.setItem\([^)]*kick/i);
   assert.doesNotMatch(detailJs, /sessionStorage\.setItem\([^)]*kick/i);
   assert.match(kickView, /Creator never stores token values, client secrets,\s+auth codes, PKCE verifiers/);
