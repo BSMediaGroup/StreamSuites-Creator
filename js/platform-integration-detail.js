@@ -96,25 +96,26 @@
     },
     kick: {
       title: "Kick",
-      authProvider: "",
-      oauthCapable: false,
-      planned: true,
-      actionableTitle: "Readiness workspace",
+      authProvider: "kick",
+      oauthCapable: true,
+      planned: false,
+      actionableTitle: "OAuth and bot readiness",
       actionSummary:
-        "Kick remains staged, but this page still lets creators keep expected channel details and external setup notes in one truthful workspace.",
+        "Connect Kick through the runtime-owned OAuth flow, then recheck redacted chat dispatch and webhook readiness here.",
       enables: [
-        "Replaces the dead placeholder state with a real readiness workspace.",
-        "Keeps expected channel metadata and setup posture visible for future onboarding.",
-        "Maintains honest planned-state messaging instead of implying live provider support."
+        "Starts Kick OAuth without exposing client secrets, access tokens, refresh tokens, auth codes, or code verifiers to Creator.",
+        "Shows granted and missing scopes, token expiry posture, webhook subscription state, and dispatch readiness from runtime/Auth.",
+        "Lets creators disconnect or recheck Kick without Creator storing any sensitive OAuth material."
       ],
       limitations: [
-        "Kick creator self-service linkage is still planned rather than deployed.",
-        "Saved workspace details do not mean runtime trigger execution is available yet."
+        "No live Kick credentials have been validated in this local milestone.",
+        "Webhook/event ingestion requires a configured public webhook URL and the `events:subscribe` scope.",
+        "FFmpeg clipping and `!clip` are not implemented."
       ],
       setupChecklist: [
-        "Record the public channel reference expected to be used later.",
-        "Track whether external provider setup has started, stalled, or completed.",
-        "Revisit the page once backend Kick support is promoted beyond staged readiness."
+        "Configure the Kick app client ID, client secret, and redirect URI in runtime/Auth.",
+        "Connect Kick with `user:read`, `channel:read`, `chat:write`, and `events:subscribe` scopes.",
+        "Use Refresh/Recheck after app or webhook configuration changes."
       ]
     },
     pilled: {
@@ -146,6 +147,7 @@
     root: null,
     platform: "",
     integration: null,
+    kickStatus: null,
     cleanup: [],
     loadToken: 0,
     busy: false
@@ -977,6 +979,9 @@
     const normalized = String(provider || "").trim().toLowerCase();
     if (!normalized) return "";
     const returnTo = `${window.location.origin}/integrations/${state.platform}`;
+    if (normalized === "kick") {
+      return `${API_BASE}/api/creator/integrations/kick/oauth/start`;
+    }
     if (normalized === "twitch") {
       return `${API_BASE}/oauth/twitch/start?surface=creator&mode=link&return_to=${encodeURIComponent(returnTo)}`;
     }
@@ -1028,7 +1033,7 @@
         }
       });
     });
-    queryAll("[data-platform-connect-provider], [data-platform-refresh-detail], [data-platform-remove-workspace], [data-rumble-secret-open=\"true\"], [data-rumble-secret-remove-inline=\"true\"], [data-rumble-bot-autodeploy-toggle=\"true\"]").forEach((button) => {
+    queryAll("[data-platform-connect-provider], [data-platform-refresh-detail], [data-platform-remove-workspace], [data-kick-reconcile=\"true\"], [data-kick-disconnect=\"true\"], [data-rumble-secret-open=\"true\"], [data-rumble-secret-remove-inline=\"true\"], [data-rumble-bot-autodeploy-toggle=\"true\"]").forEach((button) => {
       if (button instanceof HTMLButtonElement) {
         button.disabled = state.busy;
       }
@@ -1069,7 +1074,7 @@
   function capabilityLines(integration) {
     const capabilities = integration?.capabilities || {};
     const metadata = integrationMetadata(integration);
-    return [
+    const lines = [
       `Chat read: ${capabilities.chat_read ? "ready" : "not available"}`,
       `Chat send: ${capabilities.chat_send ? "ready" : "not available"}`,
       `Live status lookup: ${capabilities.live_status_lookup ? "ready" : "not available"}`,
@@ -1078,6 +1083,13 @@
       `Checks enabled: ${integration?.checks_enabled ? "yes" : "no"}`,
       `External setup: ${humanizeSetupState(metadata.external_setup_state)}`
     ];
+    if (state.platform === "kick") {
+      const status = kickStatus();
+      lines.push(`Official chat dispatch: ${status?.dispatch?.ready ? "ready" : "not ready"}`);
+      lines.push(`Webhook ingestion: ${status?.webhook?.public_url_configured ? "URL configured" : "URL missing"}`);
+      lines.push(`Event subscription: ${humanizeLabel(status?.webhook?.subscription_status || "not evaluated")}`);
+    }
+    return lines;
   }
 
   function metadataLines(integration) {
@@ -1107,6 +1119,9 @@
     }
     if (integration?.secret_mask) {
       lines.push(`Stored secret mask: ${integration.secret_mask}`);
+    }
+    if (state.platform === "kick") {
+      lines.push(...kickReadinessLines());
     }
     return lines;
   }
@@ -1140,7 +1155,39 @@
     if (integration?.last_error) {
       lines.push(`Last backend note: ${integration.last_error}`);
     }
+    if (state.platform === "kick") {
+      const nextSteps = Array.isArray(kickStatus()?.next_steps) ? kickStatus().next_steps : [];
+      nextSteps.forEach((step) => lines.push(`Runtime next step: ${humanizeLabel(step)}`));
+    }
     return lines;
+  }
+
+  function kickStatus() {
+    return state.kickStatus && typeof state.kickStatus === "object" ? state.kickStatus : null;
+  }
+
+  function kickReadinessLines() {
+    const status = kickStatus();
+    if (!status) return [];
+    const granted = Array.isArray(status.scopes?.granted) ? status.scopes.granted : [];
+    const missing = Array.isArray(status.scopes?.missing) ? status.scopes.missing : [];
+    const nextSteps = Array.isArray(status.next_steps) ? status.next_steps : [];
+    return [
+      `Kick connection: ${status.connected ? "connected" : "not connected"}`,
+      `Channel slug: ${status.account?.channel_slug || "not resolved"}`,
+      `Broadcaster ID: ${status.account?.broadcaster_user_id || "not resolved"}`,
+      `Granted scopes: ${granted.length ? granted.join(", ") : "none"}`,
+      `Missing scopes: ${missing.length ? missing.join(", ") : "none"}`,
+      `Access token: ${status.token?.has_access_token ? "present in runtime" : "not present"}`,
+      `Refresh token: ${status.token?.has_refresh_token ? "present in runtime" : "not present"}`,
+      `Token expiry: ${status.token?.expires_at || "not exported"}`,
+      `Webhook URL: ${status.webhook?.public_url_configured ? "configured" : "missing"}`,
+      `Subscription: ${humanizeLabel(status.webhook?.subscription_status || "not evaluated")}`,
+      `Dispatch: ${status.dispatch?.ready ? "ready" : humanizeLabel(status.dispatch?.status || "not ready")}`,
+      `Auto-deploy: ${status.auto_deploy?.eligible ? "eligible" : humanizeLabel(status.auto_deploy?.reason || "blocked")}`,
+      `Bot session: ${humanizeLabel(status.bot_session?.status || "detached")}`,
+      `Next steps: ${nextSteps.length ? nextSteps.map(humanizeLabel).join(", ") : "none"}`
+    ];
   }
 
   function connectionSummary(integration) {
@@ -1179,6 +1226,51 @@
         tone: deployment?.enabled_trigger_count ? "success" : "warning"
       }
     ];
+  }
+
+  function renderKickActions(integration) {
+    const container = query("[data-platform-actions=\"true\"]");
+    const summary = query("[data-platform-action-summary=\"true\"]");
+    if (!(container instanceof HTMLElement)) return;
+    const status = kickStatus();
+    const connected = Boolean(status?.connected);
+    if (summary instanceof HTMLElement) {
+      summary.textContent = status
+        ? "Kick OAuth, dispatch, webhook, subscription, and bot-session posture are loaded from runtime/Auth with secrets redacted."
+        : platformMeta().actionSummary;
+    }
+    const nextSteps = Array.isArray(status?.next_steps) ? status.next_steps : [];
+    container.innerHTML = `
+      <div class="platform-management-block">
+        <div class="platform-management-block-head">
+          <strong>Kick OAuth connection</strong>
+          <span class="status-pill ${connected ? "success" : "warning"}">${escapeHtml(connected ? "Connected" : "Not connected")}</span>
+        </div>
+        <p class="account-note">
+          Creator starts the OAuth flow here, but runtime/Auth owns the client secret, PKCE verifier, auth code exchange, token storage, refresh, webhook readiness, and subscription reconciliation.
+        </p>
+        <div class="platform-actions">
+          <button class="creator-button ${connected ? "secondary" : "primary"}" type="button" data-platform-connect-provider="kick">
+            ${escapeHtml(connected ? "Reconnect Kick" : "Connect Kick")}
+          </button>
+          <button class="creator-button secondary" type="button" data-kick-reconcile="true">Refresh/Recheck</button>
+          ${connected ? '<button class="creator-button danger" type="button" data-kick-disconnect="true">Disconnect</button>' : ""}
+          <a class="creator-button secondary" href="/triggers">Review triggers</a>
+        </div>
+        <div class="platform-inline-note">
+          No Kick tokens, client secrets, auth codes, or PKCE verifier values are stored in Creator or rendered in the DOM.
+        </div>
+      </div>
+      <div class="platform-management-block">
+        <div class="platform-management-block-head">
+          <strong>Safe next steps</strong>
+          <span class="status-pill ${nextSteps.includes("ready_to_deploy") ? "success" : "warning"}">${escapeHtml(nextSteps.length ? "Runtime guidance" : "Not evaluated")}</span>
+        </div>
+        <ul class="platform-management-checklist">
+          ${(nextSteps.length ? nextSteps : platformMeta().setupChecklist).map((item) => `<li>${escapeHtml(humanizeLabel(item))}</li>`).join("")}
+        </ul>
+      </div>
+    `;
   }
 
   function renderWorkspaceForm(integration) {
@@ -1424,6 +1516,10 @@
       renderRumbleActions(integration);
       return;
     }
+    if (state.platform === "kick") {
+      renderKickActions(integration);
+      return;
+    }
     renderNonRumbleActions(integration);
   }
 
@@ -1602,6 +1698,19 @@
         method: "GET",
         timeoutMs: DETAIL_TIMEOUT_MS
       });
+      if (state.platform === "kick") {
+        try {
+          state.kickStatus = await requestJson(`${API_BASE}/api/creator/integrations/kick/status`, {
+            method: "GET",
+            timeoutMs: DETAIL_TIMEOUT_MS
+          });
+        } catch (err) {
+          state.kickStatus = null;
+          setActionStatus(err?.message || "Kick readiness status is temporarily unavailable.", "warning");
+        }
+      } else {
+        state.kickStatus = null;
+      }
       if (token !== state.loadToken) return;
       renderIntegration(payload?.integration || null);
     } catch (err) {
@@ -1673,6 +1782,61 @@
       setActionStatus("Saved workspace cleared.", "success");
     } catch (err) {
       setActionStatus(err?.message || "Unable to clear saved workspace.", "danger");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function startKickOAuth() {
+    setBusy(true);
+    setActionStatus("Starting Kick OAuth setup...", "neutral");
+    try {
+      const payload = await requestJson(`${API_BASE}/api/creator/integrations/kick/oauth/start`, {
+        method: "GET",
+        timeoutMs: SAVE_TIMEOUT_MS
+      });
+      if (payload?.authorization_url) {
+        window.location.assign(payload.authorization_url);
+        return;
+      }
+      window.location.assign(`${API_BASE}/api/creator/integrations/kick/oauth/start`);
+    } catch (err) {
+      setActionStatus(err?.message || "Unable to start Kick OAuth.", "danger");
+      setBusy(false);
+    }
+  }
+
+  async function reconcileKick() {
+    setBusy(true);
+    setActionStatus("Refreshing Kick readiness from runtime/Auth...", "neutral");
+    try {
+      state.kickStatus = await requestJson(`${API_BASE}/api/creator/integrations/kick/reconcile`, {
+        method: "POST",
+        timeoutMs: SAVE_TIMEOUT_MS,
+        body: JSON.stringify({})
+      });
+      await loadIntegration();
+      setActionStatus("Kick readiness refreshed.", "success");
+    } catch (err) {
+      setActionStatus(err?.message || "Unable to refresh Kick readiness.", "danger");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function disconnectKick() {
+    setBusy(true);
+    setActionStatus("Disconnecting Kick in runtime/Auth...", "neutral");
+    try {
+      state.kickStatus = await requestJson(`${API_BASE}/api/creator/integrations/kick/disconnect`, {
+        method: "POST",
+        timeoutMs: SAVE_TIMEOUT_MS,
+        body: JSON.stringify({})
+      });
+      await loadIntegration();
+      setActionStatus("Kick disconnected. Runtime/Auth cleared stored Kick OAuth token material.", "success");
+    } catch (err) {
+      setActionStatus(err?.message || "Unable to disconnect Kick.", "danger");
     } finally {
       setBusy(false);
     }
@@ -1817,6 +1981,10 @@
     const connectButton = target.closest("[data-platform-connect-provider]");
     if (connectButton instanceof HTMLButtonElement) {
       const provider = connectButton.getAttribute("data-platform-connect-provider") || "";
+      if (provider === "kick") {
+        void startKickOAuth();
+        return;
+      }
       const url = oauthStartUrl(provider);
       if (url) {
         window.location.assign(url);
@@ -1827,6 +1995,20 @@
     const refreshButton = target.closest("[data-platform-refresh-detail]");
     if (refreshButton instanceof HTMLButtonElement) {
       void loadIntegration();
+      return;
+    }
+
+    const kickReconcileButton = target.closest("[data-kick-reconcile=\"true\"]");
+    if (kickReconcileButton instanceof HTMLButtonElement) {
+      void reconcileKick();
+      return;
+    }
+
+    const kickDisconnectButton = target.closest("[data-kick-disconnect=\"true\"]");
+    if (kickDisconnectButton instanceof HTMLButtonElement) {
+      if (window.confirm("Disconnect Kick? Runtime/Auth will clear stored Kick OAuth token material.")) {
+        void disconnectKick();
+      }
       return;
     }
 
@@ -1925,6 +2107,14 @@
     state.platform = String(nextRoot.getAttribute("data-platform-root") || "").trim().toLowerCase();
     if (!state.platform) return;
     bindEvents();
+    if (state.platform === "kick") {
+      const params = new URLSearchParams(window.location.search || "");
+      if (params.get("connected") === "1") {
+        setActionStatus("Kick OAuth connected. Loading redacted readiness from runtime/Auth...", "success");
+      } else if (params.get("error")) {
+        setActionStatus(`Kick OAuth did not complete: ${humanizeLabel(params.get("error"))}.`, "warning");
+      }
+    }
     void loadIntegration();
   }
 

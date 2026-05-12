@@ -9,6 +9,20 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
 }
 
+test("Kick integration UI uses runtime OAuth endpoints without handling secrets", () => {
+  const detailJs = read("js/platform-integration-detail.js");
+  const kickView = read("views/platforms/kick.html");
+
+  assert.match(detailJs, /\/api\/creator\/integrations\/kick\/oauth\/start/);
+  assert.match(detailJs, /\/api\/creator\/integrations\/kick\/status/);
+  assert.match(detailJs, /\/api\/creator\/integrations\/kick\/reconcile/);
+  assert.match(detailJs, /\/api\/creator\/integrations\/kick\/disconnect/);
+  assert.match(detailJs, /authorization_url/);
+  assert.doesNotMatch(detailJs, /localStorage\.setItem\([^)]*kick/i);
+  assert.doesNotMatch(detailJs, /sessionStorage\.setItem\([^)]*kick/i);
+  assert.match(kickView, /Creator never stores token values, client secrets,\s+auth codes, PKCE verifiers/);
+});
+
 test("creator notifications store no longer carries seed hydration branches", () => {
   const storeJs = read("js/utils/notifications-store.js");
 

@@ -53,9 +53,9 @@
     kick: {
       title: "Kick",
       icon: "/assets/icons/kick.svg",
-      description: "Planned workspace with saved readiness details and truthful rollout messaging.",
+      description: "Runtime-owned OAuth setup and redacted bot readiness for official Kick chat dispatch and webhooks.",
       primaryHref: "/integrations/kick",
-      primaryLabel: "Open planning view",
+      primaryLabel: "Manage Kick",
       secondaryHref: "/triggers",
       secondaryLabel: "Review triggers",
     },

@@ -256,12 +256,12 @@
 
             <div class="platform-page-topper-copy">
 
-              <h3>Kick is staged for future onboarding</h3>
+              <h3>Connect Kick through runtime-owned OAuth</h3>
 
               <p>
 
-                This page reflects the authoritative runtime/Auth status for Kick while the creator
-                linkage path remains staged rather than pretending the integration is already live.
+                This page starts the Kick OAuth setup flow and renders only redacted runtime/Auth
+                readiness for chat dispatch, webhook ingestion, event subscriptions, and bot sessions.
 
               </p>
 
@@ -352,7 +352,8 @@
             <article class="card platform-detail-card-wide">
               <h3>Management actions</h3>
               <p class="account-note" data-platform-action-summary="true">
-                Kick remains staged, so this page keeps management guidance truthful and limited.
+                Kick actions call runtime/Auth only. Creator never stores token values, client secrets,
+                auth codes, PKCE verifiers, cookies, or raw Authorization headers.
               </p>
               <div class="platform-actions" data-platform-actions="true"></div>
               <p class="account-note" data-platform-action-status="true">No management action has run yet.</p>
@@ -375,7 +376,8 @@
 
               <p>
 
-                Connection controls and guidance will appear here once Kick onboarding is ready.
+                Runtime/Auth reports the exact missing configuration, scope, webhook, token, and session
+                blockers without exposing secret material.
 
               </p>
 
