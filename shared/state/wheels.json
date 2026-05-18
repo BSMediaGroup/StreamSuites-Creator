@@ -1,6 +1,6 @@
 {
   "schema_version": "streamsuites.public-wheels.v1",
-  "generated_at": "2026-05-16T16:45:06Z",
+  "generated_at": "2026-05-18T15:18:12Z",
   "meta": {
     "source": "StreamSuites runtime",
     "visibility": "public",
@@ -16,7 +16,7 @@
       "id": "artifact-f86dba051ec249f1b739fb9d0be60cd3",
       "artifact_code": "artifact-f86dba051ec249f1b739fb9d0be60cd3",
       "artifact_type": "wheel",
-      "slug": "1zzI5k",
+      "slug": "test-wheel",
       "default_slug": "1zzI5k",
       "custom_slug": "",
       "shortlink_slug": "B0ht1S",

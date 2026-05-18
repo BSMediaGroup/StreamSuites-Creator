@@ -1,6 +1,6 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-05-16T17:56:11.238334Z",
+  "generated_at": "2026-05-18T16:45:12.013757Z",
   "provider_priority": [
     "twitch",
     "youtube",
@@ -13,8 +13,8 @@
       "stale_after_seconds": 180,
       "batch_size": 25,
       "creators_configured": 1,
-      "last_refresh_started_at": "2026-05-16T17:56:07.905033Z",
-      "last_refresh_completed_at": "2026-05-16T17:56:11.238334Z",
+      "last_refresh_started_at": "2026-05-18T16:44:17.795441Z",
+      "last_refresh_completed_at": "2026-05-18T16:44:21.110899Z",
       "last_error": null
     },
     {
@@ -23,8 +23,8 @@
       "stale_after_seconds": 90,
       "batch_size": 100,
       "creators_configured": 1,
-      "last_refresh_started_at": "2026-05-16T17:55:34.590967Z",
-      "last_refresh_completed_at": "2026-05-16T17:55:34.590967Z",
+      "last_refresh_started_at": "2026-05-18T16:45:12.013757Z",
+      "last_refresh_completed_at": "2026-05-18T16:45:12.013757Z",
       "last_error": null
     },
     {
@@ -33,8 +33,8 @@
       "stale_after_seconds": 150,
       "batch_size": 50,
       "creators_configured": 1,
-      "last_refresh_started_at": "2026-05-16T17:55:02.010244Z",
-      "last_refresh_completed_at": "2026-05-16T17:55:02.315627Z",
+      "last_refresh_started_at": "2026-05-18T16:44:14.359468Z",
+      "last_refresh_completed_at": "2026-05-18T16:44:14.510006Z",
       "last_error": null
     }
   ],
@@ -45,7 +45,7 @@
       "is_live": false,
       "active_provider": null,
       "active_status": null,
-      "last_checked_at": "2026-05-16T17:56:07.905033Z",
+      "last_checked_at": "2026-05-18T16:45:12.013757Z",
       "freshness": "fresh",
       "stale": false,
       "checked_provider_count": 3,
@@ -64,7 +64,7 @@
           "viewer_count": null,
           "game_name": null,
           "started_at": null,
-          "last_checked_at": "2026-05-16T17:55:34.590967Z",
+          "last_checked_at": "2026-05-18T16:45:12.013757Z",
           "stale": false,
           "freshness": "fresh",
           "error": null,
@@ -85,7 +85,7 @@
           "viewer_count": null,
           "game_name": null,
           "started_at": null,
-          "last_checked_at": "2026-05-16T17:55:02.010244Z",
+          "last_checked_at": "2026-05-18T16:44:14.359468Z",
           "stale": false,
           "freshness": "fresh",
           "error": null,
@@ -106,7 +106,7 @@
           "viewer_count": null,
           "game_name": null,
           "started_at": null,
-          "last_checked_at": "2026-05-16T17:56:07.905033Z",
+          "last_checked_at": "2026-05-18T16:44:17.795441Z",
           "stale": false,
           "freshness": "fresh",
           "error": "sample_browse_live_request_failed",
