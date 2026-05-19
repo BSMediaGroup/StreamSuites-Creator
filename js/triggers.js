@@ -18,6 +18,9 @@
   const REGISTRY_SUMMARY_ENDPOINT = `${API_BASE}/api/livechat/registry-summary`;
   const TRIGGERS_ENDPOINT = `${API_BASE}/api/livechat/triggers`;
   const CAPABILITIES_ENDPOINT = `${API_BASE}/api/livechat/capabilities`;
+  const TRIGGER_EDITOR_ENDPOINT = `${API_BASE}/api/livechat/trigger-editor`;
+  const TRIGGER_EDITOR_VALIDATE_ENDPOINT = `${API_BASE}/api/livechat/trigger-editor/validate`;
+  const TRIGGER_EDITOR_DRY_RUN_ENDPOINT = `${API_BASE}/api/livechat/trigger-editor/dry-run`;
   const CUSTOM_TRIGGERS_ENDPOINT = `${API_BASE}/api/livechat/custom-triggers`;
   const CUSTOM_TRIGGER_PREVIEW_ENDPOINT = `${API_BASE}/api/livechat/custom-triggers/preview`;
   const PLATFORM_META = {
@@ -35,6 +38,7 @@
     capabilities: [],
     customItems: [],
     customCap: null,
+    editor: null,
     previewResult: null,
     editingId: "",
     root: null,
@@ -194,14 +198,16 @@
           </div>
           <div class="trigger-card-meta">
             ${renderCornerChip(item.status || "planned", item.status === "active" ? "success" : "warning")}
-            ${item.access ? renderCornerChip(item.access, "subtle") : ""}
+            ${renderCornerChip(item.source || "runtime", "subtle")}
+            ${item.read_only ? renderCornerChip("Read-only", "subtle") : ""}
+            ${item.permission?.access ? renderCornerChip(item.permission.access, "subtle") : item.access ? renderCornerChip(item.access, "subtle") : ""}
             ${renderCornerChip(item.type || "registry", "subtle")}
           </div>
         </div>
         <div class="trigger-card-body">
           <div class="trigger-card-section">
             <span class="trigger-section-label">Registry source</span>
-            <p>Global registry: read-only runtime seed.</p>
+            <p>${escapeHtml(item.source || "runtime")} trigger definition${item.read_only ? " protected by runtime/Auth." : " managed through runtime/Auth."}</p>
           </div>
           <div class="trigger-card-section">
             <span class="trigger-section-label">Module</span>
@@ -215,7 +221,7 @@
           </div>
           <div class="trigger-card-section">
             <span class="trigger-section-label">Execution phase</span>
-            <p>No trigger dispatch or transport sending is implemented by this registry view.</p>
+            <p>${escapeHtml(item.module_status || (item.enabled ? "available" : "disabled"))}${item.source === "planned" ? " - module unavailable; no fake success will be dispatched." : ""}</p>
           </div>
         </div>
       </article>
@@ -223,11 +229,20 @@
   }
 
   function renderRegistry(payloads) {
-    state.summary = payloads.summary || null;
-    state.items = Array.isArray(payloads.triggers?.items) ? payloads.triggers.items : [];
-    state.capabilities = Array.isArray(payloads.capabilities?.items) ? payloads.capabilities.items : [];
+    const editor = payloads.editor || {};
+    state.editor = editor;
+    state.summary = {
+      counts: {
+        trigger_count: Array.isArray(editor.effective_triggers) ? editor.effective_triggers.length : 0,
+        game_count: Array.isArray(editor.planned_module_triggers) ? editor.planned_module_triggers.filter((item) => String(item.module || "").toUpperCase() === "GAMES").length : 0,
+        asset_count: 0,
+      },
+      served_at: editor.generated_at,
+    };
+    state.items = Array.isArray(editor.effective_triggers) ? editor.effective_triggers : [];
+    state.capabilities = Array.isArray(editor.available_platforms) ? editor.available_platforms : [];
     if (el.count) el.count.textContent = String(state.items.length);
-    if (el.updated) el.updated.textContent = formatTimestamp(payloads.triggers?.served_at || state.summary?.served_at);
+    if (el.updated) el.updated.textContent = formatTimestamp(editor.generated_at);
     if (el.status) {
       el.status.textContent = state.items.length ? "Runtime registry loaded" : "No triggers returned";
       el.status.classList.remove("warning", "success", "subtle");
@@ -481,10 +496,12 @@
     }
     const pages = Array.isArray(payload.pages) ? payload.pages : [];
     const warnings = Array.isArray(payload.validation_warnings) ? payload.validation_warnings : [];
-    const matchedLabel = payload.matched ? payload.trigger_name || payload.command_text || payload.trigger_id || payload.custom_trigger_id || "Matched trigger" : "No matching trigger";
-    const blocked = !payload.would_post;
-    const statusLabel = payload.would_post ? "Dry run: would_post true" : payload.matched ? "Disabled or blocked - would not post" : "No matching trigger";
-    const body = payload.rendered_text || payload.blocked_reason || (payload.matched ? "No rendered response returned." : "No trigger matched this simulated message.");
+    const matched = payload.matched_trigger || {};
+    const matchedLabel = payload.matched ? matched.command_text || payload.trigger_name || payload.command_text || payload.trigger_id || payload.custom_trigger_id || "Matched trigger" : "No matching trigger";
+    const wouldDispatch = Boolean(payload.action_summary?.would_dispatch || payload.would_post);
+    const blocked = !wouldDispatch;
+    const statusLabel = wouldDispatch ? "Dry run: would dispatch" : payload.matched ? "Disabled or module unavailable" : "No matching trigger";
+    const body = payload.generated_reply || payload.rendered_text || payload.no_match_reason || payload.blocked_reason || (payload.matched ? "No rendered response returned." : "No trigger matched this simulated message.");
     const pageBubbles = pages.length
       ? pages.map((page, index) => `
         <div class="trigger-chat-bubble is-bot">
@@ -535,12 +552,8 @@
 
   async function loadRegistry() {
     const signal = state.abortController?.signal;
-    const [summary, triggers, capabilities] = await Promise.all([
-      requestJson(REGISTRY_SUMMARY_ENDPOINT, { signal }),
-      requestJson(TRIGGERS_ENDPOINT, { signal }),
-      requestJson(CAPABILITIES_ENDPOINT, { signal }),
-    ]);
-    renderRegistry({ summary, triggers, capabilities });
+    const editor = await requestJson(TRIGGER_EDITOR_ENDPOINT, { signal });
+    renderRegistry({ editor });
   }
 
   async function loadCustomTriggers() {
@@ -556,7 +569,7 @@
     renderPreviewResult(null, { simulation, pending: true });
     if (el.previewSubmit) el.previewSubmit.disabled = true;
     try {
-      state.previewResult = await requestJson(CUSTOM_TRIGGER_PREVIEW_ENDPOINT, {
+      state.previewResult = await requestJson(TRIGGER_EDITOR_DRY_RUN_ENDPOINT, {
         method: "POST",
         body: simulation,
       });
@@ -576,6 +589,14 @@
     const method = id ? "PATCH" : "POST";
     if (el.customSubmit) el.customSubmit.disabled = true;
     try {
+      const validation = await requestJson(TRIGGER_EDITOR_VALIDATE_ENDPOINT, {
+        method: "POST",
+        body: { ...payload, source: "custom", trigger_id: id || undefined },
+      });
+      if (validation && validation.valid === false) {
+        const firstError = Array.isArray(validation.errors) && validation.errors.length ? validation.errors[0] : null;
+        throw new Error(firstError?.message || firstError?.code || "Trigger validation failed.");
+      }
       await requestJson(url, { method, body: payload });
       resetForm();
       await loadCustomTriggers();
@@ -694,6 +715,7 @@
     state.capabilities = [];
     state.customItems = [];
     state.customCap = null;
+    state.editor = null;
     state.previewResult = null;
     state.editingId = "";
   }
