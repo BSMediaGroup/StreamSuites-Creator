@@ -109,12 +109,14 @@
     el.updated = root.querySelector("[data-trigger-updated]");
     el.count = root.querySelector("[data-trigger-count]");
     el.enabledCount = root.querySelector("[data-trigger-enabled-count]");
+    el.customCount = root.querySelector("[data-custom-trigger-count]");
     el.platformCount = root.querySelector("[data-trigger-platform-count]");
     el.deployableCount = root.querySelector("[data-trigger-deployable-count]");
     el.foundationReady = root.querySelector("[data-trigger-foundation-ready]");
     el.foundationPill = root.querySelector("[data-trigger-foundation-pill]");
     el.foundationSummary = root.querySelector("[data-trigger-foundation-summary]");
     el.readinessRelationship = root.querySelector("[data-trigger-readiness-relationship]");
+    el.plannedList = root.querySelector("[data-trigger-planned-list]");
     el.customList = root.querySelector("[data-custom-trigger-list]");
     el.customStatus = root.querySelector("[data-custom-trigger-status]");
     el.customCap = root.querySelector("[data-custom-trigger-cap]");
@@ -161,13 +163,54 @@
     return `<span class="status-pill ${escapeHtml(tone)} trigger-corner-chip">${escapeHtml(label)}</span>`;
   }
 
+  function commandText(item) {
+    return item.command_text || `${item.prefix || "!"}${item.trigger || ""}` || item.id || "Unknown trigger";
+  }
+
+  function normalizeStatus(item) {
+    if (item.enabled && item.status === "active") return "active";
+    if (item.status) return String(item.status).toLowerCase();
+    if (item.enabled === false) return "disabled";
+    return item.module_status || "staged";
+  }
+
+  function triggerFamily(item) {
+    const text = [
+      item.module,
+      item.module_family,
+      item.type,
+      item.source,
+      item.id,
+      item.trigger,
+      item.command_text,
+      item.module_status,
+      item.status,
+    ].join(" ").toLowerCase();
+    if (text.includes("clip") || text.includes("ffmpeg")) return "clips / ffmpeg";
+    if (text.includes("economy") || text.includes("inventory") || text.includes("wallet")) return "economy / inventory";
+    if (text.includes("game")) return "game commands";
+    if (text.includes("xp") || text.includes("rank") || text.includes("progression") || text.includes("level")) return "xp / rank";
+    if (text.includes("admin") || text.includes("system")) return "admin/system";
+    return "built-in";
+  }
+
+  function statusTone(item) {
+    const status = normalizeStatus(item);
+    if (status === "active" || status === "enabled") return "success";
+    if (status === "disabled") return "subtle";
+    return "warning";
+  }
+
   function renderSummary() {
     const counts = state.summary?.counts || {};
     const platformCount = (state.capabilities || []).length;
     const pilled = state.capabilities.find((item) => item?.platform === "pilled");
-    if (el.enabledCount) el.enabledCount.textContent = String(counts.trigger_count || state.items.length);
+    const activeCount = state.items.filter((item) => normalizeStatus(item) === "active").length;
+    const stagedCount = state.items.filter((item) => ["planned", "staged", "unavailable"].includes(normalizeStatus(item)) || item.source === "planned").length;
+    if (el.enabledCount) el.enabledCount.textContent = String(activeCount || counts.trigger_count || state.items.length);
+    if (el.customCount) el.customCount.textContent = String(state.customItems.length);
     if (el.platformCount) el.platformCount.textContent = String(platformCount);
-    if (el.deployableCount) el.deployableCount.textContent = String(counts.game_count || 0);
+    if (el.deployableCount) el.deployableCount.textContent = String(stagedCount || counts.game_count || 0);
     if (el.foundationReady) el.foundationReady.textContent = "Read-only";
     setStatusPill(el.foundationPill, "Global registry: read-only runtime seed", "success");
     if (el.foundationSummary) {
@@ -185,61 +228,67 @@
   function renderRegistryCard(item) {
     const platforms = Array.isArray(item?.eligible_platforms) ? item.eligible_platforms : [];
     const aliases = Array.isArray(item?.aliases) && item.aliases.length
-      ? `<p class="trigger-card-aliases">Aliases: ${item.aliases.map((alias) => escapeHtml(alias)).join(", ")}</p>`
+      ? `<span>Aliases: ${item.aliases.map((alias) => escapeHtml(alias)).join(", ")}</span>`
       : "";
-    const isGames = String(item?.module || "").toUpperCase() === "GAMES";
+    const family = triggerFamily(item);
     return `
-      <article class="trigger-card" data-trigger-card="${escapeHtml(item.id)}">
-        <div class="trigger-card-header">
-          <div>
-            <h3 class="trigger-card-title">${escapeHtml(`${item.prefix || "!"}${item.trigger || item.id}`)}</h3>
-            <p>${escapeHtml(item.default_response || item.notes || "Runtime registry definition.")}</p>
-            ${aliases}
-          </div>
-          <div class="trigger-card-meta">
-            ${renderCornerChip(item.status || "planned", item.status === "active" ? "success" : "warning")}
-            ${renderCornerChip(item.source || "runtime", "subtle")}
-            ${item.read_only ? renderCornerChip("Read-only", "subtle") : ""}
-            ${item.permission?.access ? renderCornerChip(item.permission.access, "subtle") : item.access ? renderCornerChip(item.access, "subtle") : ""}
-            ${renderCornerChip(item.type || "registry", "subtle")}
-          </div>
+      <article class="trigger-row ${normalizeStatus(item) === "active" ? "is-active" : "is-staged"}" data-trigger-card="${escapeHtml(item.id)}">
+        <div class="trigger-row-main">
+          <strong>${escapeHtml(commandText(item))}</strong>
+          <span>${escapeHtml(family)}${aliases ? ` - ${aliases}` : ""}</span>
+          <p>${escapeHtml(item.default_response || item.response_preview_text || item.notes || "Runtime registry definition.")}</p>
         </div>
-        <div class="trigger-card-body">
-          <div class="trigger-card-section">
-            <span class="trigger-section-label">Registry source</span>
-            <p>${escapeHtml(item.source || "runtime")} trigger definition${item.read_only ? " protected by runtime/Auth." : " managed through runtime/Auth."}</p>
-          </div>
-          <div class="trigger-card-section">
-            <span class="trigger-section-label">Module</span>
-            <p>${escapeHtml(item.module || "Unknown")}${isGames ? " - Games foundation, not playable yet" : ""}</p>
-          </div>
-          <div class="trigger-card-section">
-            <span class="trigger-section-label">Platforms</span>
-            <div class="trigger-platform-grid">
-              ${platforms.map((platform) => renderPlatformChip(platform)).join("")}
-            </div>
-          </div>
-          <div class="trigger-card-section">
-            <span class="trigger-section-label">Execution phase</span>
-            <p>${escapeHtml(item.module_status || (item.enabled ? "available" : "disabled"))}${item.source === "planned" ? " - module unavailable; no fake success will be dispatched." : ""}</p>
-          </div>
+        <div class="trigger-row-side">
+          ${renderCornerChip(item.read_only ? "Protected / read-only" : "Runtime editable", item.read_only ? "subtle" : "warning")}
+          ${renderCornerChip(item.module_status || normalizeStatus(item), statusTone(item))}
+          <div class="trigger-platform-grid">${platforms.slice(0, 5).map((platform) => renderPlatformChip(platform)).join("")}</div>
         </div>
       </article>
     `;
   }
 
+  function renderPlannedModules() {
+    if (!el.plannedList) return;
+    const rows = state.items.filter((item) => {
+      const family = triggerFamily(item);
+      const status = normalizeStatus(item);
+      return ["xp / rank", "clips / ffmpeg", "economy / inventory", "game commands"].includes(family) || ["planned", "staged", "unavailable"].includes(status);
+    });
+    el.plannedList.innerHTML = rows.length
+      ? rows.map((item) => `
+        <article class="trigger-roadmap-row ${normalizeStatus(item) === "active" ? "is-active" : "is-staged"}">
+          <strong>${escapeHtml(commandText(item))}</strong>
+          <span>${escapeHtml(triggerFamily(item))} - ${escapeHtml(item.module_status || normalizeStatus(item))}</span>
+        </article>
+      `).join("")
+      : `
+        <article class="trigger-roadmap-row is-staged"><strong>Clips / FFmpeg</strong><span>Staged or unavailable until Runtime/Auth enables the module.</span></article>
+        <article class="trigger-roadmap-row is-staged"><strong>Economy / Inventory</strong><span>Coming soon roadmap rows only.</span></article>
+        <article class="trigger-roadmap-row is-staged"><strong>Game commands</strong><span>Foundation definitions only.</span></article>
+      `;
+  }
+
   function renderRegistry(payloads) {
     const editor = payloads.editor || {};
+    const effectiveRows = Array.isArray(editor.effective_triggers) ? editor.effective_triggers : [];
+    const plannedRows = Array.isArray(editor.planned_module_triggers) ? editor.planned_module_triggers : [];
+    const seen = new Set();
+    const combinedRows = [...effectiveRows, ...plannedRows].filter((item) => {
+      const key = item.id || item.trigger_id || `${item.module}:${commandText(item)}:${item.status}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
     state.editor = editor;
     state.summary = {
       counts: {
-        trigger_count: Array.isArray(editor.effective_triggers) ? editor.effective_triggers.length : 0,
-        game_count: Array.isArray(editor.planned_module_triggers) ? editor.planned_module_triggers.filter((item) => String(item.module || "").toUpperCase() === "GAMES").length : 0,
+        trigger_count: effectiveRows.length,
+        game_count: plannedRows.filter((item) => String(item.module || "").toUpperCase() === "GAMES").length,
         asset_count: 0,
       },
       served_at: editor.generated_at,
     };
-    state.items = Array.isArray(editor.effective_triggers) ? editor.effective_triggers : [];
+    state.items = combinedRows;
     state.capabilities = Array.isArray(editor.available_platforms) ? editor.available_platforms : [];
     if (el.count) el.count.textContent = String(state.items.length);
     if (el.updated) el.updated.textContent = formatTimestamp(editor.generated_at);
@@ -250,10 +299,12 @@
     }
     renderSummary();
     if (el.list) {
-      el.list.innerHTML = state.items.length
-        ? state.items.map(renderRegistryCard).join("")
-        : `<article class="trigger-card trigger-empty-card"><h3 class="trigger-card-title">No trigger rows returned</h3><p>Runtime/Auth returned an empty registry.</p></article>`;
+      const builtIns = state.items.filter((item) => triggerFamily(item) !== "admin/system");
+      el.list.innerHTML = builtIns.length
+        ? builtIns.map(renderRegistryCard).join("")
+        : `<article class="trigger-row is-empty"><strong>No trigger rows returned</strong><span>Runtime/Auth returned an empty registry.</span></article>`;
     }
+    renderPlannedModules();
   }
 
   function parsePlatforms(formData) {
@@ -364,6 +415,7 @@
       el.customStatus.classList.remove("warning", "subtle");
       el.customStatus.classList.add("success");
     }
+    if (el.customCount) el.customCount.textContent = String(state.customItems.length);
     if (el.customSubmit) {
       const capReached = !state.editingId && Number(cap.remaining || 0) <= 0;
       el.customSubmit.disabled = capReached;
@@ -376,39 +428,21 @@
     renderPreviewTriggerOptions();
     el.customList.innerHTML = state.customItems.length
       ? state.customItems.map((item) => `
-        <article class="trigger-card" data-custom-trigger-card="${escapeHtml(item.id)}">
-          <div class="trigger-card-header">
-            <div>
-              <h3 class="trigger-card-title">${escapeHtml(item.command_text || `${item.prefix || "!"}${item.trigger || ""}`)}</h3>
-              <p>${escapeHtml(item.response_template || "Configured for future dispatch.")}</p>
-              <p class="trigger-card-aliases">Aliases: ${escapeHtml((item.aliases || []).join(", ") || "none")}</p>
-            </div>
-            <div class="trigger-card-meta">
-              ${renderCornerChip(item.enabled ? "Enabled config" : "Disabled config", item.enabled ? "success" : "warning")}
-              ${renderCornerChip(item.access || "everyone", "subtle")}
-              ${renderCornerChip("Management layer ready", "subtle")}
-            </div>
+        <article class="trigger-row ${item.enabled ? "is-active" : "is-disabled"}" data-custom-trigger-card="${escapeHtml(item.id)}">
+          <div class="trigger-row-main">
+            <strong>${escapeHtml(commandText(item))}</strong>
+            <span>Aliases: ${escapeHtml((item.aliases || []).join(", ") || "none")}</span>
+            <p>${escapeHtml(item.response_template || "Configured for future dispatch.")}</p>
           </div>
-          <div class="trigger-card-body">
-            <div class="trigger-card-section">
-              <span class="trigger-section-label">Platforms</span>
-              <div class="trigger-platform-grid">
-                ${(item.eligible_platforms || []).map((platform) => renderPlatformChip(platform)).join("")}
-              </div>
-            </div>
-            <div class="trigger-card-section">
-              <span class="trigger-section-label">Response / cooldown</span>
-              <p>${escapeHtml(item.response_mode || "inline_single")} - ${escapeHtml(item.cooldown_seconds || 5)}s user cooldown</p>
-            </div>
-            <div class="trigger-card-section">
-              <span class="trigger-section-label">Authority</span>
-              <p>Creator-owned runtime config. Configured for future dispatch; execution/transport is a later phase.</p>
-            </div>
-          </div>
-          <div class="platform-actions">
+          <div class="trigger-row-side">
+            ${renderCornerChip(item.enabled ? "Enabled config" : "Disabled config", item.enabled ? "success" : "warning")}
+            ${renderCornerChip(item.access || "everyone", "subtle")}
+            <div class="trigger-platform-grid">${(item.eligible_platforms || []).map((platform) => renderPlatformChip(platform)).join("")}</div>
+            <div class="platform-actions">
             <button class="creator-button secondary" type="button" data-custom-trigger-edit="${escapeHtml(item.id)}">Edit</button>
             <button class="creator-button secondary" type="button" data-custom-trigger-toggle="${escapeHtml(item.id)}" data-next-enabled="${item.enabled ? "false" : "true"}">${item.enabled ? "Disable" : "Enable"}</button>
             <button class="creator-button secondary" type="button" data-custom-trigger-delete="${escapeHtml(item.id)}">Delete</button>
+            </div>
           </div>
         </article>
       `).join("")

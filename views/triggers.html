@@ -225,131 +225,79 @@
 
       <main id="app-main">
         <div id="view-container" class="creator-main" data-creator-content>
-          <section class="creator-section">
-
-          <div class="section-header">
-
+          <section class="creator-section creator-trigger-editor">
+          <div class="section-header trigger-editor-header">
             <div>
-
               <span class="section-kicker">Automation</span>
-
               <h2>Chat triggers</h2>
-
+              <p class="account-note">
+                Built-in commands are protected runtime rows. Custom triggers below are your creator-owned config.
+              </p>
             </div>
-
             <div class="section-actions">
-
-              <span class="status-pill warning"><span class="status-dot"></span>Foundation v1</span>
-
               <span class="status-pill subtle" data-trigger-status>No preview changes</span>
-
-            </div>
-
-          </div>
-
-
-
-          <div class="creator-hero">
-
-            <div>
-
-              <h3>Review the authoritative trigger registry.</h3>
-
-              <p>
-
-                This surface consumes the runtime/Auth trigger editor contract. Built-in and system commands are visible but protected,
-                custom trigger rows below are creator-owned runtime config, and planned modules are marked unavailable until their backend exists.
-
-              </p>
-
-            </div>
-
-            <div class="creator-hero-actions">
-              <button class="creator-button primary" type="button" data-custom-trigger-focus>
-                Manage custom triggers
-              </button>
-              <button class="creator-button secondary" type="button" data-trigger-reset>
-                Reload registry
-              </button>
-              <a class="creator-button secondary" href="/account">Open integration hub</a>
+              <button class="creator-button secondary" type="button" data-trigger-reset>Reload</button>
             </div>
           </div>
 
-          <div class="card-grid trigger-summary-grid">
-            <article class="card trigger-summary-card">
-              <div class="card-top">
-                <h3>Foundation summary</h3>
-                <span class="status-pill subtle" data-trigger-foundation-pill="true"><span class="status-dot"></span>Loading</span>
-              </div>
-              <div class="stat-grid">
-                <div>
-                  <span class="stat-label">Runtime triggers</span>
-                  <span class="stat-value" data-trigger-enabled-count="true">0</span>
-                </div>
-                <div>
-                  <span class="stat-label">Registry phase</span>
-                  <span class="stat-value" data-trigger-foundation-ready="true">Checking</span>
-                </div>
-                <div>
-                  <span class="stat-label">Platforms with scope</span>
-                  <span class="stat-value" data-trigger-platform-count="true">0</span>
-                </div>
-                <div>
-                  <span class="stat-label">Game definitions</span>
-                  <span class="stat-value" data-trigger-deployable-count="true">0</span>
-                </div>
-              </div>
-              <p class="account-note" data-trigger-foundation-summary="true">
-                The trigger registry foundation is loading from runtime/Auth.
-              </p>
+          <div class="trigger-status-strip" aria-label="Trigger status summary">
+            <article>
+              <span>Active commands</span>
+              <strong data-trigger-enabled-count="true">0</strong>
             </article>
-
-            <article class="card trigger-summary-card">
-              <div class="card-top">
-                <h3>How this phase works</h3>
-                <span class="status-pill warning"><span class="status-dot"></span>Rumble text phase</span>
-              </div>
-              <ul class="integration-readiness-list">
-                <li>Runtime/Auth is the only authority for the trigger editor contract shown here.</li>
-                <li>Custom trigger management is a separate creator-owned runtime config layer.</li>
-                <li>XP/rank, economy, game, Pilled, and clip modules remain coming soon/module unavailable until runtime/Auth enables them.</li>
-              </ul>
+            <article>
+              <span>Custom triggers</span>
+              <strong data-custom-trigger-count="true">0</strong>
             </article>
-
-            <article class="card trigger-summary-card">
-              <div class="card-top">
-                <h3>Readiness relationship</h3>
-                <a href="/integrations/discord">Open Discord bot -&gt;</a>
-              </div>
-              <ul class="integration-readiness-list" data-trigger-readiness-relationship="true">
-                <li>Loading platform and trigger relationship details...</li>
-              </ul>
+            <article>
+              <span>Staged modules</span>
+              <strong data-trigger-deployable-count="true">0</strong>
+            </article>
+            <article>
+              <span>Platforms</span>
+              <strong data-trigger-platform-count="true">0</strong>
             </article>
           </div>
 
           <div class="triggers-toolbar">
-            <div class="triggers-meta">
-              Triggers: <strong data-trigger-count>0</strong>
-            </div>
-
-            <div class="triggers-meta">
-
-              Last updated: <span data-trigger-updated>Not updated yet</span>
-
-            </div>
-
+            <div class="triggers-meta">Last updated: <span data-trigger-updated>Not updated yet</span></div>
+            <div class="triggers-meta" data-trigger-foundation-summary="true">Loading runtime/Auth trigger editor...</div>
           </div>
 
-          <article class="card platform-detail-card-wide" data-custom-trigger-panel>
+          <div class="trigger-editor-layout">
+            <section class="trigger-column">
+              <article class="card trigger-compact-panel">
+                <div class="card-top">
+                  <h3>Built-in commands</h3>
+                  <span class="status-pill success" data-trigger-foundation-pill="true"><span class="status-dot"></span>Protected</span>
+                </div>
+                <div class="trigger-compact-list" data-trigger-list>
+                  <article class="trigger-row is-empty">
+                    <strong>Loading trigger registry...</strong>
+                    <span>Runtime/Auth rows will appear here.</span>
+                  </article>
+                </div>
+              </article>
+
+              <article class="card trigger-compact-panel">
+                <div class="card-top">
+                  <h3>Planned modules</h3>
+                  <span class="status-pill warning"><span class="status-dot"></span>Coming soon</span>
+                </div>
+                <div class="trigger-roadmap-list" data-trigger-planned-list>
+                  <article class="trigger-roadmap-row"><strong>Loading module roadmap...</strong><span>Runtime/Auth module states will appear here.</span></article>
+                </div>
+              </article>
+            </section>
+
+            <section class="trigger-column">
+              <article class="card trigger-compact-panel" data-custom-trigger-panel>
             <div class="card-top">
-                <h3>Custom triggers</h3>
+              <h3>My custom triggers</h3>
               <span class="status-pill subtle" data-custom-trigger-status><span class="status-dot"></span>Loading config</span>
             </div>
-            <p class="account-note">
-              Custom triggers are creator-owned runtime config records. Configured for future dispatch; execution/transport is a later phase.
-            </p>
             <p class="account-note" data-custom-trigger-cap>0/0 used - 0 remaining</p>
-            <form class="platform-workspace-form" data-custom-trigger-form>
+            <form class="platform-workspace-form trigger-custom-form" data-custom-trigger-form>
               <label class="platform-workspace-toggle">
                 <span class="platform-workspace-toggle-copy">Enabled config</span>
                 <span class="switch-button">
@@ -376,9 +324,9 @@
                 <span class="account-field-label">Aliases</span>
                 <input class="account-field-input" type="text" name="aliases" maxlength="260" placeholder="!info, !links" />
               </label>
-              <label class="account-field">
+              <label class="account-field trigger-form-wide">
                 <span class="account-field-label">Response text</span>
-                <textarea class="account-field-input" name="response_template" rows="4" maxlength="2000" placeholder="Thanks for asking. Here is the current link..." required></textarea>
+                <textarea class="account-field-input" name="response_template" rows="3" maxlength="2000" placeholder="Thanks for asking. Here is the current link..." required></textarea>
               </label>
               <label class="account-field">
                 <span class="account-field-label">Cooldown seconds</span>
@@ -399,7 +347,7 @@
                   <option value="mods">Mods</option>
                 </select>
               </label>
-              <fieldset class="account-field">
+              <fieldset class="account-field trigger-form-wide">
                 <legend class="account-field-label">Eligible platforms</legend>
                 <label><input type="checkbox" name="eligible_platforms" value="rumble" checked /> Rumble</label>
                 <label><input type="checkbox" name="eligible_platforms" value="youtube" checked /> YouTube</label>
@@ -407,30 +355,31 @@
                 <label><input type="checkbox" name="eligible_platforms" value="kick" checked /> Kick</label>
                 <label><input type="checkbox" name="eligible_platforms" value="pilled" /> Pilled planned/disabled</label>
               </fieldset>
-              <details class="account-field">
+              <details class="account-field trigger-form-wide">
                 <summary class="account-field-label">Notes</summary>
                 <textarea class="account-field-input" name="notes" rows="3" maxlength="500" placeholder="Internal creator note"></textarea>
               </details>
-              <div class="platform-actions">
+              <div class="platform-actions trigger-form-wide">
                 <button class="creator-button primary" type="submit" data-custom-trigger-submit>Create custom trigger</button>
                 <button class="creator-button secondary" type="button" data-custom-trigger-cancel>Cancel</button>
               </div>
             </form>
-          </article>
+                <section class="trigger-compact-list" data-custom-trigger-list></section>
+                <article class="trigger-row is-empty" data-custom-trigger-empty>
+                  <strong>No custom triggers configured</strong>
+                  <span>Create a runtime-backed custom trigger config above.</span>
+                </article>
+              </article>
+            </section>
+          </div>
 
-          <section class="triggers-grid" data-custom-trigger-list></section>
-          <article class="trigger-card trigger-empty-card" data-custom-trigger-empty>
-            <h3 class="trigger-card-title">No custom triggers configured</h3>
-            <p>Create a runtime-backed custom trigger config above. It will not execute live until dispatch and transport are implemented later.</p>
-          </article>
-
-          <article class="card platform-detail-card-wide trigger-simulator-card" data-custom-trigger-preview-panel>
+          <article class="card trigger-simulator-card" data-custom-trigger-preview-panel>
             <div class="trigger-simulator-header">
               <div>
                 <span class="section-kicker">Preview only - no live chat post will be sent.</span>
-                <h3>Livechat Trigger Simulator</h3>
+                <h3>Dry-run preview</h3>
                 <p class="account-note">
-                  Simulates a viewer message and renders the bot response through runtime/Auth. This does not dispatch to Rumble, YouTube, Twitch, Kick, or Pilled.
+                  Runtime/Auth matches the simulated chat message, validates permissions/cooldowns, and returns the generated preview without dispatching to chat.
                 </p>
               </div>
               <span class="status-pill warning trigger-corner-chip"><span class="status-dot"></span>DRY RUN / NO SEND</span>
@@ -475,7 +424,7 @@
                   <span class="trigger-platform-chip"><img src="/assets/icons/pilled.svg" alt="" aria-hidden="true" /> Pilled <em>planned</em></span>
                 </label>
               </fieldset>
-              <label class="account-field">
+              <label class="account-field trigger-form-wide">
                 <span class="account-field-label">Simulated message</span>
                 <input class="account-field-input" type="text" name="message" maxlength="180" value="!hello" placeholder="!hello" />
               </label>
@@ -507,28 +456,12 @@
             </form>
             <div class="trigger-simulator-window" data-custom-trigger-preview-result></div>
           </article>
-
-
-
-          <div class="triggers-grid" data-trigger-list>
-            <article class="trigger-card trigger-empty-card">
-              <h3 class="trigger-card-title">Loading trigger registry...</h3>
-              <p>Authoritative trigger entries will appear here once runtime/Auth responds.</p>
-            </article>
-          </div>
-
-
           <div class="trigger-footnote">
-
             <span class="status-pill subtle">Authoritative backend</span>
-
             <p>
-
-              This page reads the authoritative StreamSuites runtime/Auth trigger editor contract only.
-              Custom trigger config writes, validation, and dry-run preview also go through runtime/Auth only. Manual send testing remains separate on the <a href="/integrations/rumble">Rumble integration page</a>.
-
+              This page reads the authoritative StreamSuites runtime/Auth trigger editor contract only. Creator cannot edit admin/system triggers.
+              Custom trigger config writes, validation, and dry-run preview also go through runtime/Auth only.
             </p>
-
           </div>
 
         </section>

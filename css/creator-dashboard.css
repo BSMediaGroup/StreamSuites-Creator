@@ -6517,6 +6517,144 @@ body.creator-lockout-active .creator-lockout {
   margin-top: 18px;
 }
 
+.creator-trigger-editor {
+  gap: 16px;
+}
+
+.trigger-editor-header {
+  align-items: flex-start;
+}
+
+.trigger-editor-header .account-note {
+  margin: 6px 0 0;
+  max-width: 760px;
+}
+
+.trigger-status-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.trigger-status-strip article {
+  min-height: 66px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 15, 23, 0.82);
+  display: grid;
+  gap: 5px;
+  align-content: center;
+}
+
+.trigger-status-strip span,
+.trigger-row span,
+.trigger-roadmap-row span {
+  color: var(--creator-muted);
+  font-size: 12px;
+}
+
+.trigger-status-strip strong {
+  color: var(--creator-text);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.trigger-editor-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 0.8fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.trigger-column {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.trigger-compact-panel {
+  padding: 14px;
+  border-radius: 10px;
+}
+
+.trigger-compact-panel .card-top {
+  margin-bottom: 12px;
+}
+
+.trigger-compact-list,
+.trigger-roadmap-list {
+  display: grid;
+  gap: 8px;
+}
+
+.trigger-row,
+.trigger-roadmap-row {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid rgba(123, 140, 255, 0.45);
+  background: rgba(8, 12, 19, 0.72);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.trigger-row.is-active,
+.trigger-roadmap-row.is-active {
+  border-left-color: rgba(82, 220, 151, 0.8);
+}
+
+.trigger-row.is-disabled {
+  border-left-color: rgba(168, 178, 194, 0.42);
+}
+
+.trigger-row.is-staged,
+.trigger-roadmap-row.is-staged {
+  border-left-color: rgba(255, 205, 115, 0.78);
+}
+
+.trigger-row.is-empty {
+  grid-template-columns: 1fr;
+}
+
+.trigger-row-main {
+  min-width: 0;
+}
+
+.trigger-row-main strong,
+.trigger-roadmap-row strong {
+  display: block;
+  color: var(--creator-text);
+  font-size: 14px;
+}
+
+.trigger-row-main p {
+  margin: 5px 0 0;
+  color: var(--creator-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.trigger-row-side {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+  max-width: 320px;
+}
+
+.trigger-custom-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.trigger-form-wide {
+  grid-column: 1 / -1;
+}
+
 .trigger-card {
   background: rgba(15, 20, 30, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -6968,6 +7106,18 @@ body.creator-lockout-active .creator-lockout {
 }
 
 @media (max-width: 720px) {
+  .trigger-status-strip,
+  .trigger-editor-layout,
+  .trigger-row,
+  .trigger-custom-form {
+    grid-template-columns: 1fr;
+  }
+
+  .trigger-row-side {
+    justify-content: flex-start;
+    max-width: none;
+  }
+
   .trigger-platform-grid {
     gap: 7px;
   }

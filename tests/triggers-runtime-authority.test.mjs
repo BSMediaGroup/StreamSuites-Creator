@@ -24,9 +24,9 @@ test("creator triggers view exposes a controller-backed runtime authority surfac
   assert.match(triggersJs, /const method = id \? "PATCH" : "POST"/);
   assert.match(triggersJs, /method:\s*"DELETE"/);
   assert.doesNotMatch(triggersJs, /DOMContentLoaded/);
-  assert.match(triggersHtml, /Built-in and system commands are visible but protected/);
-  assert.match(triggersHtml, /Custom triggers are creator-owned runtime config records/);
-  assert.match(triggersHtml, /Manual send testing remains separate on the <a href="\/integrations\/rumble">Rumble integration page<\/a>/);
+  assert.match(triggersHtml, /Built-in commands are protected runtime rows/);
+  assert.match(triggersHtml, /My custom triggers/);
+  assert.match(triggersHtml, /Creator cannot edit admin\/system triggers/);
 });
 
 test("creator triggers view keeps custom config runtime-backed and phase truthful", () => {
@@ -46,24 +46,37 @@ test("creator triggers view keeps custom config runtime-backed and phase truthfu
   assert.match(triggersJs, /renderPreviewResult\(state\.previewResult/);
   assert.match(triggersJs, /renderPreviewResult\(null,\s*\{\s*simulation,\s*pending:\s*true\s*\}/);
   assert.doesNotMatch(triggersJs, /localStorage/);
-  assert.match(triggersHtml, /Configured for future dispatch/);
-  assert.match(triggersHtml, /planned modules are marked unavailable/);
-  assert.match(triggersHtml, /Livechat Trigger Simulator/);
+  assert.match(triggersHtml, /Planned modules/);
+  assert.match(triggersHtml, /Coming soon/);
+  assert.match(triggersHtml, /Dry-run preview/);
   assert.match(triggersHtml, /Preview only - no live chat post will be sent/);
   assert.match(triggersHtml, /DRY RUN \/ NO SEND/);
   assert.match(triggersHtml, /data-custom-trigger-preview-form/);
   assert.match(triggersHtml, /Run chat simulation/);
-  assert.match(triggersHtml, /execution\/transport is a later phase/);
+  assert.match(triggersHtml, /without dispatching to chat/);
   assert.match(triggersHtml, /Pilled planned\/disabled/);
   assert.doesNotMatch(triggersJs, /rumble-dispatch/);
   assert.doesNotMatch(triggersJs, /dispatchEndpoint|livePost|transportSend/);
 });
 
-test("creator triggers view renders compact platform icon chips and slim card status chips", () => {
+test("creator triggers view renders compact protected built-ins, custom rows, roadmap, and platform chips", () => {
   const triggersJs = read("js/triggers.js");
   const triggersHtml = read("views/triggers.html");
   const dashboardCss = read("css/creator-dashboard.css");
 
+  assert.match(triggersJs, /triggerFamily/);
+  assert.match(triggersJs, /planned_module_triggers/);
+  assert.match(triggersJs, /\.\.\.effectiveRows,\s*\.\.\.plannedRows/);
+  assert.match(triggersJs, /admin\/system/);
+  assert.match(triggersJs, /clips \/ ffmpeg/);
+  assert.match(triggersJs, /economy \/ inventory/);
+  assert.match(triggersJs, /xp \/ rank/);
+  assert.match(triggersJs, /renderPlannedModules/);
+  assert.match(triggersJs, /Protected \/ read-only/);
+  assert.match(triggersHtml, /trigger-status-strip/);
+  assert.match(triggersHtml, /data-custom-trigger-count/);
+  assert.match(triggersHtml, /data-trigger-planned-list/);
+  assert.match(triggersHtml, /trigger-compact-list/);
   assert.match(triggersJs, /PLATFORM_META/);
   assert.match(triggersJs, /\/assets\/icons\/rumble\.svg/);
   assert.match(triggersJs, /\/assets\/icons\/youtube\.svg/);
@@ -75,6 +88,9 @@ test("creator triggers view renders compact platform icon chips and slim card st
   assert.match(triggersJs, /renderCornerChip/);
   assert.match(triggersHtml, /trigger-platform-option/);
   assert.match(triggersHtml, /StreamSuites Unified/);
+  assert.match(dashboardCss, /\.trigger-status-strip/);
+  assert.match(dashboardCss, /\.trigger-editor-layout/);
+  assert.match(dashboardCss, /\.trigger-row/);
   assert.match(dashboardCss, /\.trigger-platform-chip/);
   assert.match(dashboardCss, /\.trigger-corner-chip\.status-pill/);
   assert.match(dashboardCss, /\.trigger-chat-bubble/);
