@@ -40,3 +40,39 @@ test("creator account social editor uses the shared canonical platform registry"
   assert.match(helperJs, /label: "Custom"/);
   assert.doesNotMatch(helperJs, /dlive/i);
 });
+
+test("creator account page wires runtime-backed platform identity aliases", () => {
+  const html = read("views/account.html");
+  const accountJs = read("js/account-settings.js");
+
+  assert.match(html, /data-platform-identities-panel="true"/);
+  assert.match(html, /data-platform-identity-form="true"/);
+  assert.match(html, /data-platform-identity-field="platform_user_id"/);
+  assert.match(html, /data-platform-identity-field="chat_id"/);
+  assert.match(html, /Fuzzy matching is not used/);
+  assert.match(accountJs, /PLATFORM_IDENTITIES_ENDPOINT = `\$\{API_BASE\}\/api\/account\/platform-identities`/);
+  assert.match(accountJs, /method: draft\.identity_id \? "PATCH" : "POST"/);
+  assert.match(accountJs, /Add at least one Runtime\/Auth identifier/);
+  assert.match(accountJs, /platformIdentityDuplicateExists/);
+  assert.match(accountJs, /Remove unavailable/);
+});
+
+test("creator account page keeps scoped roll-up suppression disabled without runtime contract", () => {
+  const html = read("views/account.html");
+
+  assert.match(html, /data-scoped-rollup-panel="true"/);
+  assert.match(html, /Suppressing global roll-up is discouraged/);
+  assert.match(html, /Runtime setting not available yet/);
+  assert.match(html, /type="checkbox" aria-label="Suppress global roll-up for scoped livechat awards" disabled/);
+});
+
+test("platform detail pages show manual chat identity matching action", () => {
+  const detailJs = read("js/platform-integration-detail.js");
+
+  assert.match(detailJs, /function renderChatIdentityPanel/);
+  assert.match(detailJs, /data-platform-identity-hint="true"/);
+  assert.match(detailJs, /Manage manual aliases/);
+  assert.match(detailJs, /Platform user ID: \$\{status\.broadcaster_user_id/);
+  assert.match(detailJs, /Rumble chat payloads can expose sender IDs and usernames/);
+  assert.match(detailJs, /Fuzzy matching is not used/);
+});

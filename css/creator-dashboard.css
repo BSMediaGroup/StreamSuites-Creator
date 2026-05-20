@@ -4404,6 +4404,82 @@ h3 {
   margin-top: 18px;
 }
 
+.platform-identity-panel {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(106, 214, 255, 0.16);
+  background: rgba(7, 13, 22, 0.7);
+}
+
+.platform-identity-panel-advanced {
+  border-color: rgba(255, 195, 110, 0.22);
+  background: rgba(31, 23, 12, 0.28);
+}
+
+.platform-identity-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  gap: 14px;
+  align-items: start;
+}
+
+.platform-identity-list,
+.platform-identity-form {
+  display: grid;
+  gap: 10px;
+}
+
+.platform-identity-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(5, 9, 16, 0.7);
+}
+
+.platform-identity-row-title {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.platform-identity-row-main {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.platform-identity-row-main p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.platform-identity-form {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(5, 9, 16, 0.58);
+}
+
+.platform-identity-disabled-toggle {
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 195, 110, 0.2);
+  background: rgba(5, 9, 16, 0.45);
+}
+
+.platform-identity-hint {
+  border-color: rgba(106, 214, 255, 0.14);
+}
+
 .platform-status-strip,
 .platform-badge-row {
   display: flex;
@@ -6183,7 +6259,9 @@ h3 {
   }
 
   .account-billing-hero,
-  .account-billing-layout {
+  .account-billing-layout,
+  .platform-identity-layout,
+  .platform-identity-row {
     grid-template-columns: minmax(0, 1fr);
   }
 

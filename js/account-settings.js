@@ -25,11 +25,20 @@
   const AVATAR_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/avatar`;
   const COVER_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/cover`;
   const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
+  const PLATFORM_IDENTITIES_ENDPOINT = `${API_BASE}/api/account/platform-identities`;
   const AVATAR_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
   const COVER_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
   const BACKGROUND_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
   const LOGO_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
   const INTEGRATION_KEYS = Object.freeze(["youtube", "rumble", "twitch", "kick", "pilled"]);
+  const PLATFORM_IDENTITY_KEYS = Object.freeze(["kick", "rumble", "youtube", "twitch", "other"]);
+  const PLATFORM_IDENTITY_LABELS = Object.freeze({
+    kick: "Kick",
+    rumble: "Rumble",
+    youtube: "YouTube",
+    twitch: "Twitch",
+    other: "Other / future platform",
+  });
   const SOCIAL_PLATFORMS = window.StreamSuitesSocialPlatforms || null;
   const KNOWN_SOCIAL_KEYS = Object.freeze(
     Array.isArray(SOCIAL_PLATFORMS?.ORDER)
@@ -149,6 +158,11 @@
     socialEditorFilter: "all",
     socialEditorQuery: "",
     socialEditorExtendedOpen: false,
+    platformIdentities: [],
+    platformIdentitiesLoading: false,
+    platformIdentitiesSaving: false,
+    platformIdentityEditingId: "",
+    platformIdentitiesAvailable: true,
   };
 
   function showToast(message, tone = "info", options = {}) {
@@ -1292,6 +1306,271 @@
 
   function integrationHasPartialState(item) {
     return !!(item?.provider_linked || item?.secret_present || item?.channel_handle || item?.public_url);
+  }
+
+  function normalizePlatformIdentity(identity) {
+    if (!identity || typeof identity !== "object") return null;
+    const platform = coerceText(identity.platform).toLowerCase();
+    const identityId = coerceText(identity.identity_id);
+    return {
+      identity_id: identityId,
+      platform: PLATFORM_IDENTITY_KEYS.includes(platform) ? platform : platform || "other",
+      platform_user_id: coerceText(identity.platform_user_id),
+      chat_id: coerceText(identity.chat_id),
+      username: coerceText(identity.username || identity.handle),
+      handle: coerceText(identity.handle || identity.username),
+      display_name: coerceText(identity.display_name),
+      channel_url: coerceText(identity.channel_url),
+      profile_url: coerceText(identity.profile_url),
+      source: coerceText(identity.source || "manual").toLowerCase(),
+      verified: identity.verified === true,
+      discovered: identity.discovered === true,
+      manual: identity.manual !== false,
+      updated_at: coerceText(identity.updated_at),
+    };
+  }
+
+  function platformIdentityLabel(platform) {
+    const key = coerceText(platform).toLowerCase();
+    return PLATFORM_IDENTITY_LABELS[key] || humanizeIntegrationStatus(key || "other");
+  }
+
+  function platformIdentitySourceLabel(identity) {
+    const flags = [];
+    if (identity?.verified) flags.push("verified");
+    if (identity?.discovered) flags.push("discovered");
+    if (identity?.manual) flags.push("manual");
+    const source = coerceText(identity?.source || "manual").toLowerCase();
+    return [source, ...flags.filter((item) => item !== source)]
+      .map((item) => item.replace(/[_-]+/g, " "))
+      .join(" / ");
+  }
+
+  function platformIdentityDuplicateExists(draft, ignoredId = "") {
+    const normalizedPlatform = coerceText(draft.platform).toLowerCase();
+    const normalizedUserId = coerceText(draft.platform_user_id).toLowerCase();
+    const normalizedChatId = coerceText(draft.chat_id).toLowerCase();
+    const normalizedHandle = coerceText(draft.handle || draft.username).replace(/^@+/, "").toLowerCase();
+    return state.platformIdentities.some((identity) => {
+      if (ignoredId && identity.identity_id === ignoredId) return false;
+      if (identity.platform !== normalizedPlatform) return false;
+      if (normalizedUserId && normalizedUserId === identity.platform_user_id.toLowerCase()) return true;
+      if (normalizedChatId && normalizedChatId === identity.chat_id.toLowerCase()) return true;
+      const handle = coerceText(identity.handle || identity.username).replace(/^@+/, "").toLowerCase();
+      return Boolean(normalizedHandle && handle && normalizedHandle === handle);
+    });
+  }
+
+  function getPlatformIdentityElements() {
+    return {
+      panel: document.querySelector("[data-platform-identities-panel=\"true\"]"),
+      pill: document.querySelector("[data-platform-identities-pill=\"true\"]"),
+      list: document.querySelector("[data-platform-identities-list=\"true\"]"),
+      form: document.querySelector("[data-platform-identity-form=\"true\"]"),
+      status: document.querySelector("[data-platform-identity-status=\"true\"]"),
+      submit: document.querySelector("[data-platform-identity-submit=\"true\"]"),
+      cancel: document.querySelector("[data-platform-identity-cancel=\"true\"]"),
+      editId: document.querySelector("[data-platform-identity-field=\"identity_id\"]"),
+      platform: document.querySelector("[data-platform-identity-field=\"platform\"]"),
+      platformUserId: document.querySelector("[data-platform-identity-field=\"platform_user_id\"]"),
+      chatId: document.querySelector("[data-platform-identity-field=\"chat_id\"]"),
+      handle: document.querySelector("[data-platform-identity-field=\"handle\"]"),
+      displayName: document.querySelector("[data-platform-identity-field=\"display_name\"]"),
+      profileUrl: document.querySelector("[data-platform-identity-field=\"profile_url\"]"),
+    };
+  }
+
+  function renderPlatformIdentityList() {
+    const els = getPlatformIdentityElements();
+    if (!(els.list instanceof HTMLElement)) return;
+    if (state.platformIdentitiesLoading) {
+      els.list.innerHTML = `<div class="account-empty-state">Loading platform identity aliases...</div>`;
+      setStatusPill(els.pill, "Loading aliases", "subtle");
+      return;
+    }
+    if (!state.platformIdentitiesAvailable) {
+      els.list.innerHTML = `<div class="account-empty-state">Runtime/Auth platform identity aliases are not available on this build.</div>`;
+      setStatusPill(els.pill, "Endpoint unavailable", "warning");
+      return;
+    }
+    if (!state.platformIdentities.length) {
+      els.list.innerHTML = `<div class="account-empty-state">No platform identity aliases are saved yet. Add exact chat IDs or usernames so livechat awards can resolve to your StreamSuites account without fuzzy matching.</div>`;
+      setStatusPill(els.pill, "No aliases", "warning");
+      return;
+    }
+    els.list.innerHTML = state.platformIdentities.map((identity) => {
+      const primaryBits = [
+        identity.platform_user_id ? `User ID: ${escapeHtml(identity.platform_user_id)}` : "",
+        identity.chat_id ? `Chat ID: ${escapeHtml(identity.chat_id)}` : "",
+        identity.handle ? `Handle: ${escapeHtml(identity.handle)}` : "",
+      ].filter(Boolean);
+      const secondaryBits = [
+        identity.display_name ? `Display: ${escapeHtml(identity.display_name)}` : "",
+        identity.profile_url || identity.channel_url
+          ? `URL: <a href="${escapeHtml(identity.profile_url || identity.channel_url)}" target="_blank" rel="noreferrer">${escapeHtml(identity.profile_url || identity.channel_url)}</a>`
+          : "",
+        identity.updated_at ? `Updated: ${escapeHtml(identity.updated_at)}` : "",
+      ].filter(Boolean);
+      const editable = identity.manual && identity.source === "manual";
+      return `
+        <article class="platform-identity-row" data-platform-identity-id="${escapeHtml(identity.identity_id)}">
+          <div class="platform-identity-row-main">
+            <div class="platform-identity-row-title">
+              <strong>${escapeHtml(platformIdentityLabel(identity.platform))}</strong>
+              <span class="status-pill subtle">${escapeHtml(platformIdentitySourceLabel(identity))}</span>
+            </div>
+            <p>${primaryBits.join(" · ") || "No identifier returned by Runtime/Auth."}</p>
+            <p class="account-note">${secondaryBits.join(" · ") || "No optional display metadata saved."}</p>
+          </div>
+          <div class="account-provider-actions">
+            <button class="creator-button secondary" type="button" data-platform-identity-edit="${escapeHtml(identity.identity_id)}"${editable ? "" : " disabled"}>${editable ? "Edit" : "Locked"}</button>
+            <button class="creator-button secondary" type="button" disabled title="Runtime/Auth has no self-service delete endpoint yet.">Remove unavailable</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+    setStatusPill(els.pill, `${state.platformIdentities.length} alias${state.platformIdentities.length === 1 ? "" : "es"}`, "success");
+  }
+
+  function resetPlatformIdentityForm(identity = null) {
+    const els = getPlatformIdentityElements();
+    const selected = normalizePlatformIdentity(identity) || null;
+    state.platformIdentityEditingId = selected?.identity_id || "";
+    if (els.editId instanceof HTMLInputElement) els.editId.value = state.platformIdentityEditingId;
+    if (els.platform instanceof HTMLSelectElement) els.platform.value = selected?.platform || "kick";
+    if (els.platformUserId instanceof HTMLInputElement) els.platformUserId.value = selected?.platform_user_id || "";
+    if (els.chatId instanceof HTMLInputElement) els.chatId.value = selected?.chat_id || "";
+    if (els.handle instanceof HTMLInputElement) els.handle.value = selected?.handle || selected?.username || "";
+    if (els.displayName instanceof HTMLInputElement) els.displayName.value = selected?.display_name || "";
+    if (els.profileUrl instanceof HTMLInputElement) els.profileUrl.value = selected?.profile_url || selected?.channel_url || "";
+    if (els.submit instanceof HTMLButtonElement) els.submit.textContent = selected ? "Save alias" : "Add alias";
+    if (els.cancel instanceof HTMLButtonElement) els.cancel.hidden = !selected;
+    setMessage("[data-platform-identity-status=\"true\"]", selected ? "Editing a manual alias. Keep at least one exact identifier attached." : "", "neutral");
+  }
+
+  function platformIdentityDraftFromForm() {
+    const els = getPlatformIdentityElements();
+    return {
+      identity_id: els.editId instanceof HTMLInputElement ? els.editId.value.trim() : "",
+      platform: els.platform instanceof HTMLSelectElement ? els.platform.value.trim() : "",
+      platform_user_id: els.platformUserId instanceof HTMLInputElement ? els.platformUserId.value.trim() : "",
+      chat_id: els.chatId instanceof HTMLInputElement ? els.chatId.value.trim() : "",
+      handle: els.handle instanceof HTMLInputElement ? els.handle.value.trim() : "",
+      username: els.handle instanceof HTMLInputElement ? els.handle.value.trim() : "",
+      display_name: els.displayName instanceof HTMLInputElement ? els.displayName.value.trim() : "",
+      profile_url: els.profileUrl instanceof HTMLInputElement ? els.profileUrl.value.trim() : "",
+      channel_url: els.profileUrl instanceof HTMLInputElement ? els.profileUrl.value.trim() : "",
+    };
+  }
+
+  function validatePlatformIdentityDraft(draft) {
+    if (!PLATFORM_IDENTITY_KEYS.includes(coerceText(draft.platform).toLowerCase())) {
+      return "Choose a supported platform.";
+    }
+    if (!coerceText(draft.platform_user_id) && !coerceText(draft.chat_id) && !coerceText(draft.handle)) {
+      return "Add at least one Runtime/Auth identifier: user ID, chat ID, or username/handle. Display name is saved as supporting metadata.";
+    }
+    if (platformIdentityDuplicateExists(draft, draft.identity_id)) {
+      return "That platform identity already appears in your saved aliases.";
+    }
+    return "";
+  }
+
+  async function loadPlatformIdentities() {
+    const els = getPlatformIdentityElements();
+    if (!els.panel) return null;
+    state.platformIdentitiesLoading = true;
+    renderPlatformIdentityList();
+    try {
+      const payload = await requestJson(PLATFORM_IDENTITIES_ENDPOINT, { method: "GET" });
+      state.platformIdentities = (Array.isArray(payload?.identities) ? payload.identities : [])
+        .map(normalizePlatformIdentity)
+        .filter(Boolean);
+      state.platformIdentitiesAvailable = true;
+      renderPlatformIdentityList();
+      return payload;
+    } catch (err) {
+      state.platformIdentitiesAvailable = false;
+      renderPlatformIdentityList();
+      setMessage("[data-platform-identity-status=\"true\"]", err?.message || "Unable to load platform identity aliases.", "warning");
+      return null;
+    } finally {
+      state.platformIdentitiesLoading = false;
+      renderPlatformIdentityList();
+    }
+  }
+
+  async function savePlatformIdentityFromForm() {
+    if (state.platformIdentitiesSaving) return;
+    const draft = platformIdentityDraftFromForm();
+    const validation = validatePlatformIdentityDraft(draft);
+    if (validation) {
+      setMessage("[data-platform-identity-status=\"true\"]", validation, "warning");
+      return;
+    }
+    state.platformIdentitiesSaving = true;
+    const els = getPlatformIdentityElements();
+    if (els.submit instanceof HTMLButtonElement) els.submit.disabled = true;
+    setMessage("[data-platform-identity-status=\"true\"]", "Saving alias through Runtime/Auth...", "neutral");
+    try {
+      const payload = await requestJson(PLATFORM_IDENTITIES_ENDPOINT, {
+        method: draft.identity_id ? "PATCH" : "POST",
+        body: JSON.stringify({
+          platform: draft.platform,
+          platform_user_id: draft.platform_user_id,
+          chat_id: draft.chat_id,
+          username: draft.username,
+          handle: draft.handle,
+          display_name: draft.display_name,
+          profile_url: draft.profile_url,
+          channel_url: draft.channel_url,
+          source: "manual",
+          manual: true,
+        }),
+      });
+      const saved = normalizePlatformIdentity(payload?.identity);
+      if (saved) {
+        const index = state.platformIdentities.findIndex((identity) => identity.identity_id === saved.identity_id);
+        if (index >= 0) {
+          state.platformIdentities.splice(index, 1, saved);
+        } else {
+          state.platformIdentities.push(saved);
+        }
+      }
+      state.platformIdentitiesAvailable = true;
+      resetPlatformIdentityForm();
+      renderPlatformIdentityList();
+      setMessage("[data-platform-identity-status=\"true\"]", "Platform identity alias saved.", "success");
+    } catch (err) {
+      setMessage("[data-platform-identity-status=\"true\"]", err?.message || "Unable to save platform identity alias.", "danger");
+    } finally {
+      state.platformIdentitiesSaving = false;
+      if (els.submit instanceof HTMLButtonElement) els.submit.disabled = false;
+    }
+  }
+
+  function wirePlatformIdentityControls() {
+    const els = getPlatformIdentityElements();
+    if (!(els.form instanceof HTMLFormElement) || els.form.dataset.platformIdentityWired === "true") return;
+    els.form.dataset.platformIdentityWired = "true";
+    els.form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      void savePlatformIdentityFromForm();
+    });
+    if (els.cancel instanceof HTMLButtonElement) {
+      els.cancel.addEventListener("click", () => resetPlatformIdentityForm());
+    }
+    if (els.list instanceof HTMLElement) {
+      els.list.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const button = target.closest("[data-platform-identity-edit]");
+        if (!(button instanceof HTMLButtonElement)) return;
+        const identityId = button.getAttribute("data-platform-identity-edit") || "";
+        const identity = state.platformIdentities.find((item) => item.identity_id === identityId);
+        if (identity) resetPlatformIdentityForm(identity);
+      });
+    }
   }
 
   function renderIntegrationHub(payload) {
@@ -3606,6 +3885,7 @@
     renderIntegrationHub();
     renderBillingSection();
     renderBadgeGovernanceSection();
+    renderPlatformIdentityList();
     setStatusPill(els.loadPill, "Profile loaded", "success");
     setMessage("[data-profile-save-status=\"true\"]", "Authoritative profile settings are ready to edit.", "neutral");
   }
@@ -4224,18 +4504,21 @@
     renderSocialLinksEditor();
     wireProviderButtons();
     wireEmailChange();
+    wirePlatformIdentityControls();
     wirePublicProfileControls();
     wireAccountShell();
 
     const tasks = await Promise.allSettled([
       refreshAuthMethods(),
       loadPublicProfile(),
-      loadCreatorIntegrations()
+      loadCreatorIntegrations(),
+      loadPlatformIdentities()
     ]);
 
     const authResult = tasks[0];
     const profileResult = tasks[1];
     const integrationsResult = tasks[2];
+    const identitiesResult = tasks[3];
 
     if (window.location.search.includes("linked_provider=")) {
       setMessage("[data-account-provider-status-message=\"true\"]", "");
@@ -4279,6 +4562,10 @@
       }
     }
 
+    if (identitiesResult.status === "rejected") {
+      setMessage("[data-platform-identity-status=\"true\"]", identitiesResult.reason?.message || "Unable to load platform identity aliases.", "warning");
+    }
+
     renderBillingSection();
     renderBadgeGovernanceSection();
     await window.CreatorModeratorSurface?.init?.();
@@ -4287,8 +4574,12 @@
   function destroy() {
     state.profile = null;
     state.integrations = [];
+    state.platformIdentities = [];
     state.uploads = { avatar: null, cover: null, background: null, logo: null };
     state.loadingProfile = false;
+    state.platformIdentitiesLoading = false;
+    state.platformIdentitiesSaving = false;
+    state.platformIdentityEditingId = "";
     state.savingProfile = false;
     state.controlsWired = false;
     state.previewMode = "streamsuites";

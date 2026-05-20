@@ -1195,6 +1195,64 @@
     ];
   }
 
+  function identityDetectionLines(integration) {
+    const lines = [];
+    if (state.platform === "kick") {
+      const status = kickStatus();
+      if (status?.broadcaster_user_id || status?.account?.broadcaster_user_id) {
+        lines.push(`Platform user ID: ${status.broadcaster_user_id || status.account.broadcaster_user_id}`);
+      }
+      if (status?.channel_slug || status?.account?.channel_slug) {
+        lines.push(`Sender username: ${status.channel_slug || status.account.channel_slug}`);
+      }
+      if (status?.account?.display_name || status?.display_name) {
+        lines.push(`Display name: ${status.account?.display_name || status.display_name}`);
+      }
+    }
+    const metadata = integrationMetadata(integration);
+    [
+      ["Platform user ID", integration?.platform_user_id || integration?.user_id || metadata.platform_user_id],
+      ["Chat ID", integration?.chat_id || metadata.chat_id],
+      ["Username", integration?.username || integration?.channel_handle || metadata.username],
+      ["Display name", integration?.display_name || integration?.display_label || metadata.display_name],
+      ["Profile URL", integration?.profile_url || integration?.public_url || metadata.profile_url],
+    ].forEach(([label, value]) => {
+      const text = String(value || "").trim();
+      if (text && !lines.some((line) => line.endsWith(text))) {
+        lines.push(`${label}: ${text}`);
+      }
+    });
+    return lines;
+  }
+
+  function renderChatIdentityPanel(integration) {
+    const detected = identityDetectionLines(integration);
+    const platformLabel = platformMeta().title;
+    const reminder = state.platform === "rumble"
+      ? "Rumble chat payloads can expose sender IDs and usernames; Creator does not add scraping or new provider API logic here."
+      : state.platform === "kick"
+        ? "Kick matching works best with platform user ID/chat ID, sender username, and display name from current runtime payloads."
+        : "When Runtime/Auth does not return detected chat identifiers, add exact manual aliases on Account settings.";
+    return `
+      <div class="platform-management-block platform-identity-hint" data-platform-identity-hint="true">
+        <div class="platform-management-block-head">
+          <strong>Chat identity matching</strong>
+          <span class="status-pill ${detected.length ? "success" : "subtle"}">${escapeHtml(detected.length ? "Detected identifiers" : "Manual alias available")}</span>
+        </div>
+        <p class="account-note">
+          Exact ${escapeHtml(platformLabel)} chat aliases improve livechat XP, rank, and inventory assignment to StreamSuites accounts. Fuzzy matching is not used.
+        </p>
+        <ul class="platform-management-checklist">
+          ${(detected.length ? detected : ["No detected chat identifiers are returned by the current integration payload."]).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+          <li>${escapeHtml(reminder)}</li>
+        </ul>
+        <div class="platform-actions">
+          <a class="creator-button secondary" href="/account">Manage manual aliases</a>
+        </div>
+      </div>
+    `;
+  }
+
   function connectionSummary(integration) {
     const deployment = integration?.deployment || {};
     if (deployment.can_deploy) {
@@ -1250,6 +1308,7 @@
       ? `<div class="platform-inline-note" data-tone="warning">Kick connected, but StreamSuites could not automatically detect the channel. Enter your Kick channel slug below or click Refresh/Recheck.</div>`
       : "";
     container.innerHTML = `
+      ${renderChatIdentityPanel(integration)}
       <div class="platform-management-block">
         <div class="platform-management-block-head">
           <strong>Kick OAuth connection</strong>
@@ -1441,7 +1500,7 @@
       </div>
     `;
 
-    container.innerHTML = `${connectPanel}${checklistMarkup}${renderWorkspaceForm(integration)}`;
+    container.innerHTML = `${renderChatIdentityPanel(integration)}${connectPanel}${checklistMarkup}${renderWorkspaceForm(integration)}`;
   }
 
   function renderRumbleSecretState(integration) {
@@ -1505,6 +1564,7 @@
       summary.textContent = platformMeta().actionSummary;
     }
     container.innerHTML = `
+      ${renderChatIdentityPanel(integration)}
       <div class="platform-management-block">
         <div class="platform-management-block-head">
           <strong>Secure secret entry</strong>

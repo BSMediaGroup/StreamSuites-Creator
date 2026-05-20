@@ -1122,6 +1122,100 @@
                 </section>
               </div>
 
+              <div class="platform-identity-panel" data-platform-identities-panel="true">
+                <div class="card-top">
+                  <div>
+                    <h4>Chat identity matching</h4>
+                    <p class="account-note">
+                      Add exact platform aliases so Kick, Rumble, Twitch, YouTube, and future chat awards can resolve to this StreamSuites account. Fuzzy matching is not used.
+                    </p>
+                  </div>
+                  <span class="status-pill subtle" data-platform-identities-pill="true"><span class="status-dot"></span>Loading aliases</span>
+                </div>
+                <div class="platform-identity-layout">
+                  <div class="platform-identity-list" data-platform-identities-list="true">
+                    <div class="account-empty-state">Loading platform identity aliases...</div>
+                  </div>
+                  <form class="platform-identity-form" data-platform-identity-form="true">
+                    <input type="hidden" data-platform-identity-field="identity_id" />
+                    <div class="account-field-grid">
+                      <label class="account-field">
+                        <span class="account-field-label">Platform</span>
+                        <select class="account-field-input" data-platform-identity-field="platform" required>
+                          <option value="kick">Kick</option>
+                          <option value="rumble">Rumble</option>
+                          <option value="youtube">YouTube</option>
+                          <option value="twitch">Twitch</option>
+                          <option value="other">Other / future platform</option>
+                        </select>
+                      </label>
+                      <label class="account-field">
+                        <span class="account-field-label">Platform user ID</span>
+                        <input class="account-field-input" type="text" data-platform-identity-field="platform_user_id" maxlength="255" placeholder="Exact platform user ID" autocomplete="off" />
+                      </label>
+                      <label class="account-field">
+                        <span class="account-field-label">Chat ID</span>
+                        <input class="account-field-input" type="text" data-platform-identity-field="chat_id" maxlength="255" placeholder="Exact chat sender ID" autocomplete="off" />
+                      </label>
+                      <label class="account-field">
+                        <span class="account-field-label">Username / handle</span>
+                        <input class="account-field-input" type="text" data-platform-identity-field="handle" maxlength="160" placeholder="@exacthandle" autocomplete="off" />
+                      </label>
+                      <label class="account-field">
+                        <span class="account-field-label">Display name</span>
+                        <input class="account-field-input" type="text" data-platform-identity-field="display_name" maxlength="255" placeholder="Visible chat name" autocomplete="off" />
+                      </label>
+                      <label class="account-field">
+                        <span class="account-field-label">Profile / channel URL</span>
+                        <input class="account-field-input" type="url" data-platform-identity-field="profile_url" maxlength="500" placeholder="https://..." autocomplete="off" />
+                      </label>
+                    </div>
+                    <p class="account-field-note">
+                      Platform and one Runtime/Auth identifier are required: user ID, chat ID, or exact handle. Display name is supporting metadata.
+                    </p>
+                    <div class="platform-actions">
+                      <button class="creator-button primary" type="submit" data-platform-identity-submit="true">Add alias</button>
+                      <button class="creator-button secondary" type="button" data-platform-identity-cancel="true" hidden>Cancel edit</button>
+                    </div>
+                    <p class="account-note" data-platform-identity-status="true"></p>
+                  </form>
+                </div>
+              </div>
+
+              <div class="platform-identity-panel platform-identity-panel-advanced" data-scoped-rollup-panel="true">
+                <div class="card-top">
+                  <div>
+                    <h4>Advanced scoped livechat roll-up</h4>
+                    <p class="account-note">
+                      Suppressing global roll-up is discouraged. Leaving this off means scoped livechat XP also contributes to global XP/economy/inventory where Runtime/Auth supports it.
+                    </p>
+                  </div>
+                  <span class="status-pill warning"><span class="status-dot"></span>Runtime setting not available yet</span>
+                </div>
+                <label class="platform-workspace-toggle platform-identity-disabled-toggle">
+                  <span class="platform-workspace-toggle-copy">
+                    Suppress global roll-up for this creator/channel
+                    <span class="account-field-note">
+                      Default is off. Turning this on could make your channel economy feel isolated and confuse viewers because their global totals would not increase from this channel.
+                    </span>
+                  </span>
+                  <span class="switch-button">
+                    <span class="switch-scale">
+                      <span class="switch-outer">
+                        <input type="checkbox" aria-label="Suppress global roll-up for scoped livechat awards" disabled />
+                        <span class="ss-switch-inner">
+                          <span class="ss-switch-toggle"></span>
+                          <span class="ss-switch-indicator"></span>
+                        </span>
+                      </span>
+                    </span>
+                  </span>
+                </label>
+                <p class="account-note">
+                  Creator will wire this toggle when Runtime/Auth exposes a creator-owned read/write endpoint for scoped progression settings.
+                </p>
+              </div>
+
               <div class="integration-platform-list-wrap">
                 <div class="card-top">
                   <h4>Platform quick links</h4>
