@@ -26,6 +26,8 @@ test("creator triggers view exposes a controller-backed runtime authority surfac
   assert.doesNotMatch(triggersJs, /DOMContentLoaded/);
   assert.match(triggersHtml, /Built-in commands are protected runtime rows/);
   assert.match(triggersHtml, /My custom triggers/);
+  assert.match(triggersHtml, /trigger-custom-row/);
+  assert.match(triggersHtml, /trigger-custom-row-panel/);
   assert.match(triggersHtml, /Creator cannot edit admin\/system triggers/);
 });
 
@@ -76,6 +78,9 @@ test("creator triggers view renders compact protected built-ins, custom rows, ro
   assert.match(triggersHtml, /trigger-status-strip/);
   assert.match(triggersHtml, /data-custom-trigger-count/);
   assert.match(triggersHtml, /data-trigger-planned-list/);
+  assert.match(triggersHtml, /trigger-library-row/);
+  assert.match(triggersHtml, /trigger-library-column/);
+  assert.match(triggersHtml, /trigger-custom-row-grid/);
   assert.match(triggersHtml, /trigger-compact-list/);
   assert.match(triggersJs, /PLATFORM_META/);
   assert.match(triggersJs, /\/assets\/icons\/rumble\.svg/);
@@ -90,6 +95,9 @@ test("creator triggers view renders compact protected built-ins, custom rows, ro
   assert.match(triggersHtml, /StreamSuites Unified/);
   assert.match(dashboardCss, /\.trigger-status-strip/);
   assert.match(dashboardCss, /\.trigger-editor-layout/);
+  assert.match(dashboardCss, /\.trigger-library-column/);
+  assert.match(dashboardCss, /\.trigger-custom-row-grid/);
+  assert.match(dashboardCss, /grid-template-columns:\s*minmax\(360px,\s*0\.92fr\)\s*minmax\(320px,\s*1fr\)/);
   assert.match(dashboardCss, /\.trigger-row/);
   assert.match(dashboardCss, /\.trigger-platform-chip/);
   assert.match(dashboardCss, /\.trigger-corner-chip\.status-pill/);

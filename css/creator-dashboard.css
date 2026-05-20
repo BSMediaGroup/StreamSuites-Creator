@@ -6562,8 +6562,17 @@ body.creator-lockout-active .creator-lockout {
 
 .trigger-editor-layout {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 0.8fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
+  align-items: start;
+}
+
+.trigger-library-row {
+  width: 100%;
+}
+
+.trigger-library-column {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
 }
 
@@ -6649,6 +6658,28 @@ body.creator-lockout-active .creator-lockout {
 .trigger-custom-form {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+.trigger-custom-row {
+  display: block;
+}
+
+.trigger-custom-row-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.trigger-custom-row-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.92fr) minmax(320px, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.trigger-custom-list-pane {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
 }
 
 .trigger-form-wide {
@@ -7105,9 +7136,18 @@ body.creator-lockout-active .creator-lockout {
   visibility: visible;
 }
 
+@media (max-width: 1040px) {
+  .trigger-library-column,
+  .trigger-custom-row-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 720px) {
   .trigger-status-strip,
   .trigger-editor-layout,
+  .trigger-library-column,
+  .trigger-custom-row-grid,
   .trigger-row,
   .trigger-custom-form {
     grid-template-columns: 1fr;

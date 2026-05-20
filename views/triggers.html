@@ -264,8 +264,8 @@
             <div class="triggers-meta" data-trigger-foundation-summary="true">Loading runtime/Auth trigger editor...</div>
           </div>
 
-          <div class="trigger-editor-layout">
-            <section class="trigger-column">
+          <div class="trigger-editor-layout trigger-library-row">
+            <section class="trigger-column trigger-library-column">
               <article class="card trigger-compact-panel">
                 <div class="card-top">
                   <h3>Built-in commands</h3>
@@ -289,89 +289,93 @@
                 </div>
               </article>
             </section>
+          </div>
 
-            <section class="trigger-column">
-              <article class="card trigger-compact-panel" data-custom-trigger-panel>
+          <section class="trigger-custom-row" aria-label="Custom trigger editor">
+            <article class="card trigger-compact-panel trigger-custom-row-panel" data-custom-trigger-panel>
             <div class="card-top">
               <h3>My custom triggers</h3>
               <span class="status-pill subtle" data-custom-trigger-status><span class="status-dot"></span>Loading config</span>
             </div>
             <p class="account-note" data-custom-trigger-cap>0/0 used - 0 remaining</p>
-            <form class="platform-workspace-form trigger-custom-form" data-custom-trigger-form>
-              <label class="platform-workspace-toggle">
-                <span class="platform-workspace-toggle-copy">Enabled config</span>
-                <span class="switch-button">
-                  <span class="switch-scale">
-                    <span class="switch-outer">
-                      <input type="checkbox" name="enabled" checked />
-                      <span class="ss-switch-inner">
-                        <span class="ss-switch-toggle"></span>
-                        <span class="ss-switch-indicator"></span>
+            <div class="trigger-custom-row-grid">
+              <form class="platform-workspace-form trigger-custom-form" data-custom-trigger-form>
+                <label class="platform-workspace-toggle">
+                  <span class="platform-workspace-toggle-copy">Enabled config</span>
+                  <span class="switch-button">
+                    <span class="switch-scale">
+                      <span class="switch-outer">
+                        <input type="checkbox" name="enabled" checked />
+                        <span class="ss-switch-inner">
+                          <span class="ss-switch-toggle"></span>
+                          <span class="ss-switch-indicator"></span>
+                        </span>
                       </span>
                     </span>
                   </span>
-                </span>
-              </label>
-              <label class="account-field">
-                <span class="account-field-label">Prefix</span>
-                <input class="account-field-input" type="text" name="prefix" maxlength="8" value="!" required />
-              </label>
-              <label class="account-field">
-                <span class="account-field-label">Trigger</span>
-                <input class="account-field-input" type="text" name="trigger" maxlength="64" placeholder="faq" required />
-              </label>
-              <label class="account-field">
-                <span class="account-field-label">Aliases</span>
-                <input class="account-field-input" type="text" name="aliases" maxlength="260" placeholder="!info, !links" />
-              </label>
-              <label class="account-field trigger-form-wide">
-                <span class="account-field-label">Response text</span>
-                <textarea class="account-field-input" name="response_template" rows="3" maxlength="2000" placeholder="Thanks for asking. Here is the current link..." required></textarea>
-              </label>
-              <label class="account-field">
-                <span class="account-field-label">Cooldown seconds</span>
-                <input class="account-field-input" type="number" name="cooldown_seconds" min="5" max="300" step="1" value="5" />
-              </label>
-              <label class="account-field">
-                <span class="account-field-label">Response mode</span>
-                <select class="account-field-input" name="response_mode">
-                  <option value="inline_single">Inline single</option>
-                </select>
-              </label>
-              <label class="account-field">
-                <span class="account-field-label">Access</span>
-                <select class="account-field-input" name="access">
-                  <option value="everyone">Everyone</option>
-                  <option value="followers">Followers</option>
-                  <option value="subscribers">Subscribers</option>
-                  <option value="mods">Mods</option>
-                </select>
-              </label>
-              <fieldset class="account-field trigger-form-wide">
-                <legend class="account-field-label">Eligible platforms</legend>
-                <label><input type="checkbox" name="eligible_platforms" value="rumble" checked /> Rumble</label>
-                <label><input type="checkbox" name="eligible_platforms" value="youtube" checked /> YouTube</label>
-                <label><input type="checkbox" name="eligible_platforms" value="twitch" checked /> Twitch</label>
-                <label><input type="checkbox" name="eligible_platforms" value="kick" checked /> Kick</label>
-                <label><input type="checkbox" name="eligible_platforms" value="pilled" /> Pilled planned/disabled</label>
-              </fieldset>
-              <details class="account-field trigger-form-wide">
-                <summary class="account-field-label">Notes</summary>
-                <textarea class="account-field-input" name="notes" rows="3" maxlength="500" placeholder="Internal creator note"></textarea>
-              </details>
-              <div class="platform-actions trigger-form-wide">
-                <button class="creator-button primary" type="submit" data-custom-trigger-submit>Create custom trigger</button>
-                <button class="creator-button secondary" type="button" data-custom-trigger-cancel>Cancel</button>
-              </div>
-            </form>
+                </label>
+                <label class="account-field">
+                  <span class="account-field-label">Prefix</span>
+                  <input class="account-field-input" type="text" name="prefix" maxlength="8" value="!" required />
+                </label>
+                <label class="account-field">
+                  <span class="account-field-label">Trigger</span>
+                  <input class="account-field-input" type="text" name="trigger" maxlength="64" placeholder="faq" required />
+                </label>
+                <label class="account-field">
+                  <span class="account-field-label">Aliases</span>
+                  <input class="account-field-input" type="text" name="aliases" maxlength="260" placeholder="!info, !links" />
+                </label>
+                <label class="account-field trigger-form-wide">
+                  <span class="account-field-label">Response text</span>
+                  <textarea class="account-field-input" name="response_template" rows="3" maxlength="2000" placeholder="Thanks for asking. Here is the current link..." required></textarea>
+                </label>
+                <label class="account-field">
+                  <span class="account-field-label">Cooldown seconds</span>
+                  <input class="account-field-input" type="number" name="cooldown_seconds" min="5" max="300" step="1" value="5" />
+                </label>
+                <label class="account-field">
+                  <span class="account-field-label">Response mode</span>
+                  <select class="account-field-input" name="response_mode">
+                    <option value="inline_single">Inline single</option>
+                  </select>
+                </label>
+                <label class="account-field">
+                  <span class="account-field-label">Access</span>
+                  <select class="account-field-input" name="access">
+                    <option value="everyone">Everyone</option>
+                    <option value="followers">Followers</option>
+                    <option value="subscribers">Subscribers</option>
+                    <option value="mods">Mods</option>
+                  </select>
+                </label>
+                <fieldset class="account-field trigger-form-wide">
+                  <legend class="account-field-label">Eligible platforms</legend>
+                  <label><input type="checkbox" name="eligible_platforms" value="rumble" checked /> Rumble</label>
+                  <label><input type="checkbox" name="eligible_platforms" value="youtube" checked /> YouTube</label>
+                  <label><input type="checkbox" name="eligible_platforms" value="twitch" checked /> Twitch</label>
+                  <label><input type="checkbox" name="eligible_platforms" value="kick" checked /> Kick</label>
+                  <label><input type="checkbox" name="eligible_platforms" value="pilled" /> Pilled planned/disabled</label>
+                </fieldset>
+                <details class="account-field trigger-form-wide">
+                  <summary class="account-field-label">Notes</summary>
+                  <textarea class="account-field-input" name="notes" rows="3" maxlength="500" placeholder="Internal creator note"></textarea>
+                </details>
+                <div class="platform-actions trigger-form-wide">
+                  <button class="creator-button primary" type="submit" data-custom-trigger-submit>Create custom trigger</button>
+                  <button class="creator-button secondary" type="button" data-custom-trigger-cancel>Cancel</button>
+                </div>
+              </form>
+              <div class="trigger-custom-list-pane">
                 <section class="trigger-compact-list" data-custom-trigger-list></section>
                 <article class="trigger-row is-empty" data-custom-trigger-empty>
                   <strong>No custom triggers configured</strong>
                   <span>Create a runtime-backed custom trigger config above.</span>
                 </article>
-              </article>
-            </section>
-          </div>
+              </div>
+            </div>
+            </article>
+          </section>
 
           <article class="card trigger-simulator-card" data-custom-trigger-preview-panel>
             <div class="trigger-simulator-header">
