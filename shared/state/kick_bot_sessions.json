@@ -1,6 +1,6 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-05-21T13:42:00.485926Z",
+  "generated_at": "2026-05-21T16:04:42.746824Z",
   "provider": "kick",
   "count": 2,
   "summary": {
@@ -74,7 +74,7 @@
         "target_source": "manual_channel",
         "target_input": "streamsuites",
         "target_normalized": "streamsuites",
-        "target_last_changed_at": 1779370136,
+        "target_last_changed_at": 1779377261,
         "target_changed_by": "creator",
         "auto_deploy_reason": "subscription_pending",
         "integration_connected": true,
@@ -120,7 +120,7 @@
             "client_secret_present": true,
             "access_token_present": true,
             "refresh_token_present": true,
-            "token_expires_at": 1779377336,
+            "token_expires_at": 1779384461,
             "scopes": [
               "channel:read",
               "chat:write",
@@ -139,11 +139,11 @@
             ]
           }
         },
-        "last_evaluated_at": "2026-05-21T13:42:05.538495Z"
+        "last_evaluated_at": "2026-05-21T16:04:47.666710Z"
       },
-      "last_evaluated_at": "2026-05-21T13:42:00.485926Z",
-      "last_attach_attempt_at": "2026-05-21T13:42:00.485926Z",
-      "last_heartbeat_at": "2026-05-21T13:42:00.485926Z",
+      "last_evaluated_at": "2026-05-21T16:04:42.746824Z",
+      "last_attach_attempt_at": "2026-05-21T16:04:42.746824Z",
+      "last_heartbeat_at": "2026-05-21T16:04:42.746824Z",
       "last_dispatch_attempt_at": null,
       "last_dispatch_success_at": null,
       "last_dispatch_error": null,
@@ -193,8 +193,8 @@
       ],
       "subscription_next_step": "Wait for the first Kick webhook chat event.",
       "webhook_subscription_id": null,
-      "last_subscription_attempt_at": "2026-05-21T13:42:05.607377Z",
-      "last_subscription_success_at": "2026-05-21T13:42:05.607377Z",
+      "last_subscription_attempt_at": "2026-05-21T16:04:47.729790Z",
+      "last_subscription_success_at": "2026-05-21T16:04:47.729790Z",
       "last_subscription_error": null,
       "visible_in_admin": true,
       "actionable": true,
@@ -203,7 +203,7 @@
       "target_source": "manual_channel",
       "target_input": "streamsuites",
       "target_normalized": "streamsuites",
-      "target_last_changed_at": "1779370136",
+      "target_last_changed_at": "1779377261",
       "target_changed_by": "creator",
       "transport_capabilities": {
         "can_listen": true,
@@ -264,7 +264,7 @@
         "target_source": "manual_channel",
         "target_input": "danielclancy",
         "target_normalized": "danielclancy",
-        "target_last_changed_at": 1779370112,
+        "target_last_changed_at": 1779377237,
         "target_changed_by": "creator",
         "auto_deploy_reason": "subscription_pending",
         "integration_connected": true,
@@ -310,7 +310,7 @@
             "client_secret_present": true,
             "access_token_present": true,
             "refresh_token_present": true,
-            "token_expires_at": 1779377311,
+            "token_expires_at": 1779384437,
             "scopes": [
               "channel:read",
               "chat:write",
@@ -329,11 +329,11 @@
             ]
           }
         },
-        "last_evaluated_at": "2026-05-21T13:42:13.782874Z"
+        "last_evaluated_at": "2026-05-21T16:04:56.588809Z"
       },
-      "last_evaluated_at": "2026-05-21T13:42:00.485926Z",
-      "last_attach_attempt_at": "2026-05-21T13:42:00.485926Z",
-      "last_heartbeat_at": "2026-05-21T13:42:00.485926Z",
+      "last_evaluated_at": "2026-05-21T16:04:42.746824Z",
+      "last_attach_attempt_at": "2026-05-21T16:04:42.746824Z",
+      "last_heartbeat_at": "2026-05-21T16:04:42.746824Z",
       "last_dispatch_attempt_at": null,
       "last_dispatch_success_at": null,
       "last_dispatch_error": null,
@@ -383,8 +383,8 @@
       ],
       "subscription_next_step": "Wait for the first Kick webhook chat event.",
       "webhook_subscription_id": null,
-      "last_subscription_attempt_at": "2026-05-21T13:42:13.853508Z",
-      "last_subscription_success_at": "2026-05-21T13:42:13.853508Z",
+      "last_subscription_attempt_at": "2026-05-21T16:04:56.651642Z",
+      "last_subscription_success_at": "2026-05-21T16:04:56.651642Z",
       "last_subscription_error": null,
       "visible_in_admin": true,
       "actionable": true,
@@ -393,7 +393,7 @@
       "target_source": "manual_channel",
       "target_input": "danielclancy",
       "target_normalized": "danielclancy",
-      "target_last_changed_at": "1779370112",
+      "target_last_changed_at": "1779377237",
       "target_changed_by": "creator",
       "transport_capabilities": {
         "can_listen": true,
