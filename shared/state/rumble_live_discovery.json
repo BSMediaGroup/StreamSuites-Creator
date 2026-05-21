@@ -1,11 +1,11 @@
 {
   "schema_version": "v1",
   "provider": "rumble",
-  "generated_at": "2026-05-19T14:38:10.963779Z",
+  "generated_at": "2026-05-21T11:42:18.695183Z",
   "scan": {
-    "started_at": "2026-05-19T14:37:44.485922Z",
-    "completed_at": "2026-05-19T14:38:10.963779Z",
-    "duration_ms": 26477,
+    "started_at": "2026-05-21T11:42:15.698685Z",
+    "completed_at": "2026-05-21T11:42:18.695183Z",
+    "duration_ms": 2996,
     "pages_requested": 10,
     "pages_succeeded": 0,
     "browse_entries_found": 0,
@@ -24,7 +24,9 @@
       "browse_page_8: cloudflare_challenge",
       "browse_page_9: cloudflare_challenge",
       "browse_page_10: cloudflare_challenge",
-      "creator_probe_As5TyU: HTTP 403 for https://rumble.com/-livestream-api/get-data?key=QKnU5szjYBOc-HtlTf-WS6llE1ULUvsDlyfOQhkw2yi4lRj-rp8hijAzbn4yiCT2uUbKM5VHhvUw0fGAGYMVjw"
+      "creator_probe_As5TyU: HTTP 403 for https://rumble.com/-livestream-api/get-data?key=QKnU5szjYBOc-HtlTf-WS6llE1ULUvsDlyfOQhkw2yi4lRj-rp8hijAzbn4yiCT2uUbKM5VHhvUw0fGAGYMVjw",
+      "creator_probe_2b20d3e9-feee-4b8b-a78d-566912b68e8d: HTTP 403 for https://rumble.com/-livestream-api/get-data?key=QKnU5szjYBOc-HtlTf-WS6llE1ULUvsDlyfOQhkw2yi4lRj-rp8hijAzbn4yiCT2uUbKM5VHhvUw0fGAGYMVjw",
+      "creator_probe_aa4359f0-b243-42de-bbf4-dbab8cbaa09c: HTTP 403 for https://rumble.com/-livestream-api/get-data?key=xf-4LTx4Zcd9CJVyeo1MtmNKJUvPU1jeS0jnUk-Nm_sWmusZNusKm64givhDkiHI75sPTglwzbwn0-JtMrg5yg"
     ],
     "scanner": {
       "max_pages": 10,
@@ -32,7 +34,7 @@
       "stream_resolution_concurrency": 6,
       "chat_metric_concurrency": 4,
       "creator_probe_concurrency": 4,
-      "creator_probes_requested": 1,
+      "creator_probes_requested": 3,
       "creator_probe_live_rows": 0
     }
   },
@@ -48,9 +50,10 @@
       "live_url": null,
       "viewer_count": null,
       "started_at": null,
-      "last_checked_at": "2026-05-19T14:37:44.485922Z",
+      "last_checked_at": "2026-05-21T11:42:15.698685Z",
       "stream_key": null,
       "numeric_video_id": null,
+      "embed_id": null,
       "channel_url": "https://rumble.com/user/danielclancy",
       "channel_slug": "danielclancy",
       "chat_id": null,
@@ -119,12 +122,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5689,
-                "body_sha256_16": "f54c0e360132b09a",
+                "body_sha256_16": "a96e7d2df680feb7",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7686a1cf79b-LAX"
+                  "cf-ray": "9ff3511b0978e9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -193,12 +196,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5689,
-                "body_sha256_16": "5f1ecb84ee3c4e5e",
+                "body_sha256_16": "0d5a6e081b4d03a4",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7672d32f79b-LAX"
+                  "cf-ray": "9ff35119ce25e9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -267,12 +270,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5689,
-                "body_sha256_16": "d3079cc74f0c7ba8",
+                "body_sha256_16": "6dc51492700f9272",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7686a14f79b-LAX"
+                  "cf-ray": "9ff3511b0975e9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -341,12 +344,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5689,
-                "body_sha256_16": "73c27c5cc6bf65a1",
+                "body_sha256_16": "3e1571428f9b4c7b",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7686a18f79b-LAX"
+                  "cf-ray": "9ff3511b0976e9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -415,12 +418,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5689,
-                "body_sha256_16": "5e6bef049c0f265a",
+                "body_sha256_16": "ee3e1dff7c3b15e3",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7fdbeccf79b-LAX"
+                  "cf-ray": "9ff3511b19b3e9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -489,12 +492,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5689,
-                "body_sha256_16": "a8539ddd2792f8a0",
+                "body_sha256_16": "aac63277a249d5c6",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7fdcee4f79b-LAX"
+                  "cf-ray": "9ff3511c6cfee9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -563,12 +566,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5689,
-                "body_sha256_16": "c070127ea5058e38",
+                "body_sha256_16": "ae60f7bb2ac8b7ba",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7fdceedf79b-LAX"
+                  "cf-ray": "9ff3511c8d3ae9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -637,12 +640,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5689,
-                "body_sha256_16": "91a9ce42fbaa1b1e",
+                "body_sha256_16": "1efdd4f5492978f5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7fdcef9f79b-LAX"
+                  "cf-ray": "9ff3511cadbbe9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -711,12 +714,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5689,
-                "body_sha256_16": "c7fb27c702b99c00",
+                "body_sha256_16": "b514f6daffa2833b",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7ff3deaf79b-LAX"
+                  "cf-ray": "9ff3511cbddbe9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -785,12 +788,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5692,
-                "body_sha256_16": "fa3bedd2bb9b9f34",
+                "body_sha256_16": "308ab4f6969a6641",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "9fe3d7ff4e2df79b-LAX"
+                  "cf-ray": "9ff3511dd8b4e9df-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -993,12 +996,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5743,
-                  "body_sha256_16": "d4006404da6fc68b",
+                  "body_sha256_16": "bd2c0aa5bc610f73",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "9fe3d8018f7df79b-LAX"
+                    "cf-ray": "9ff351215997e9df-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1072,12 +1075,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5713,
-                  "body_sha256_16": "6d7aa2c2479a36d7",
+                  "body_sha256_16": "1a2ffa48ff67ea0b",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "9fe3d802ed6af79b-LAX"
+                    "cf-ray": "9ff35122bd2ee9df-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1114,8 +1117,8 @@
                 "url": "https://rumble.com/user/danielclancy",
                 "final_url": "https://rumble.com/user/danielclancy",
                 "status_code": 403,
-                "response_size": 5665,
-                "response_length": 5665,
+                "response_size": 5686,
+                "response_length": 5686,
                 "content_type": "text/html; charset=UTF-8",
                 "http_version": "HTTP/2",
                 "blocked": true,
@@ -1150,13 +1153,13 @@
                   "session_mode_used": false,
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
-                  "response_length": 5665,
-                  "body_sha256_16": "2d16298249d9030e",
+                  "response_length": 5686,
+                  "body_sha256_16": "3225313b73c5c2fe",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "9fe3d8045c11f79b-LAX"
+                    "cf-ray": "9ff351241892e9df-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1230,12 +1233,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5677,
-                  "body_sha256_16": "b93dedf604cf5353",
+                  "body_sha256_16": "1e2bad538449a5b1",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "9fe3d805ca74f79b-LAX"
+                    "cf-ray": "9ff351257c6be9df-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1307,8 +1310,8 @@
                 "url": "https://rumble.com/user/danielclancy",
                 "status_code": 403,
                 "final_url": "https://rumble.com/user/danielclancy",
-                "response_size": 5665,
-                "response_length": 5665,
+                "response_size": 5686,
+                "response_length": 5686,
                 "blocked": true,
                 "error": null
               },
@@ -1399,12 +1402,12 @@
               "cookie_material_present": false,
               "authenticated_probe_attempted": false,
               "response_length": 6066,
-              "body_sha256_16": "e5eadde229f565a3",
+              "body_sha256_16": "2a356290c6acb509",
               "headers": {
                 "content-type": "text/html; charset=UTF-8",
                 "cf-mitigated": "challenge",
                 "server": "cloudflare",
-                "cf-ray": "9fe3d80738daf79b-LAX"
+                "cf-ray": "9ff35126dfe3e9df-LAX"
               },
               "markers": {
                 "cloudflare_just_a_moment": true,
@@ -1446,8 +1449,2926 @@
         },
         "watch_resolution": null,
         "freshness": {
-          "scan_started_at": "2026-05-19T14:37:44.485922Z",
-          "status_checked_at": "2026-05-19T14:37:44.485922Z"
+          "scan_started_at": "2026-05-21T11:42:15.698685Z",
+          "status_checked_at": "2026-05-21T11:42:15.698685Z"
+        },
+        "decision_summary": {
+          "selected_creator_url": "https://rumble.com/user/danielclancy",
+          "decision_source": null,
+          "resolution_source": null,
+          "resolved_watch_url": null,
+          "resolved_numeric_video_id": null,
+          "resolved_chat_id": null,
+          "attach_identity_ready": null
+        },
+        "sample_parity_summary": {
+          "sample_path_stages_attempted": [
+            {
+              "stage": "browse_live",
+              "attempted": true,
+              "request_count": 10,
+              "success_count": 0,
+              "failure_count": 10,
+              "construction_matches_sample": true,
+              "first_failure_reason": "blocked_http_403"
+            },
+            {
+              "stage": "creator_page_probe",
+              "attempted": true,
+              "request_count": 4,
+              "success_count": 0,
+              "failure_count": 4,
+              "construction_matches_sample": true,
+              "first_failure_reason": "blocked_http_403"
+            },
+            {
+              "stage": "livestream_api_probe",
+              "attempted": true,
+              "request_count": 1,
+              "success_count": 0,
+              "failure_count": 1,
+              "construction_matches_sample": null,
+              "first_failure_reason": "blocked_http_403"
+            }
+          ],
+          "first_failed_stage": "browse_live",
+          "first_failure_reason": "blocked_http_403",
+          "construction_matches_sample_for_first_failed_stage": true,
+          "failure_class": "pre_parse_blocked",
+          "watch_resolution_attempted": false
+        }
+      }
+    },
+    {
+      "creator_id": "2b20d3e9-feee-4b8b-a78d-566912b68e8d",
+      "display_name": "Third Railify",
+      "is_live": false,
+      "match_reason": null,
+      "matched_value": null,
+      "live_title": null,
+      "live_url": null,
+      "viewer_count": null,
+      "started_at": null,
+      "last_checked_at": "2026-05-21T11:42:15.698685Z",
+      "stream_key": null,
+      "numeric_video_id": null,
+      "embed_id": null,
+      "channel_url": "https://rumble.com/c/StreamSuites",
+      "channel_slug": "StreamSuites",
+      "chat_id": null,
+      "stop_stage": "browse_live",
+      "stop_reason": "sample_browse_live_request_failed",
+      "stop_detail": "blocked_http_403",
+      "diagnostics": {
+        "authoritative_identity": {
+          "creator_id": "2b20d3e9-feee-4b8b-a78d-566912b68e8d",
+          "display_name": "Third Railify",
+          "provider_channel_url": "https://rumble.com/c/StreamSuites",
+          "public_url": "https://rumble.com/c/StreamSuites",
+          "provider_channel_slug": "StreamSuites",
+          "provider_channel_id": null,
+          "future_secret_ref_present": true
+        },
+        "selected_creator_target": {
+          "creator_id": "2b20d3e9-feee-4b8b-a78d-566912b68e8d",
+          "display_name": "Third Railify",
+          "provider": "rumble",
+          "provider_account_id": null,
+          "provider_channel_id": null,
+          "provider_channel_url": "https://rumble.com/c/StreamSuites",
+          "public_url": "https://rumble.com/c/StreamSuites",
+          "provider_account_login": "@StreamSuites",
+          "provider_channel_handle": "@StreamSuites"
+        },
+        "browse_live": {
+          "requests": [
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=1",
+              "final_url": "https://rumble.com/browse/live?page=1",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "a96e7d2df680feb7",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511b0978e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=2",
+              "final_url": "https://rumble.com/browse/live?page=2",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "0d5a6e081b4d03a4",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff35119ce25e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=3",
+              "final_url": "https://rumble.com/browse/live?page=3",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "6dc51492700f9272",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511b0975e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=4",
+              "final_url": "https://rumble.com/browse/live?page=4",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "3e1571428f9b4c7b",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511b0976e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=5",
+              "final_url": "https://rumble.com/browse/live?page=5",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "ee3e1dff7c3b15e3",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511b19b3e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=6",
+              "final_url": "https://rumble.com/browse/live?page=6",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "aac63277a249d5c6",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511c6cfee9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=7",
+              "final_url": "https://rumble.com/browse/live?page=7",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "ae60f7bb2ac8b7ba",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511c8d3ae9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=8",
+              "final_url": "https://rumble.com/browse/live?page=8",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "1efdd4f5492978f5",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511cadbbe9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=9",
+              "final_url": "https://rumble.com/browse/live?page=9",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "b514f6daffa2833b",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511cbddbe9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=10",
+              "final_url": "https://rumble.com/browse/live?page=10",
+              "status_code": 403,
+              "response_size": 5692,
+              "response_length": 5692,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5692,
+                "body_sha256_16": "308ab4f6969a6641",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511dd8b4e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            }
+          ],
+          "request_attempted": true,
+          "request_success_count": 0,
+          "request_failure_count": 10,
+          "live_tiles_found": 0,
+          "watch_hrefs_extracted": 0,
+          "matched_live_row_count": 0,
+          "matched_live_row_found": false,
+          "matched_live_rows": [],
+          "selected_match": null,
+          "stop_stage": "browse_live",
+          "stop_reason": "sample_browse_live_request_failed",
+          "stop_detail": "blocked_http_403",
+          "request_sequence": [
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=1",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=1",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=2",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=2",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=3",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=3",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=4",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=4",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=5",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=5",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=6",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=6",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=7",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=7",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=8",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=8",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=9",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=9",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=10",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=10",
+              "response_length": 5692,
+              "blocked": true,
+              "error": null
+            }
+          ]
+        },
+        "creator_channel_probe": {
+          "creator_identity_url": "https://rumble.com/c/StreamSuites",
+          "selected_creator_channel_url": "https://rumble.com/c/StreamSuites",
+          "livestream_api_url_selected": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
+          "creator_page_probe": {
+            "creator_identity_url": "https://rumble.com/c/StreamSuites",
+            "candidate_urls": [
+              "https://rumble.com/c/StreamSuites/livestreams",
+              "https://rumble.com/user/StreamSuites/livestreams",
+              "https://rumble.com/c/StreamSuites",
+              "https://rumble.com/user/StreamSuites"
+            ],
+            "session_mode": {
+              "session_mode_available": false,
+              "cookie_material_present": false,
+              "session_material_types": [],
+              "validation_errors": [],
+              "selected_material_type": null,
+              "authority_path": "creator_live_status_secrets:rumble",
+              "session_mode_used": false,
+              "authenticated_probe_attempted": false
+            },
+            "candidate_video_ids": [],
+            "requests": [
+              {
+                "stage": "creator_page_probe_request",
+                "method": "GET",
+                "url": "https://rumble.com/c/StreamSuites/livestreams",
+                "final_url": "https://rumble.com/c/StreamSuites/livestreams",
+                "status_code": 403,
+                "response_size": 5713,
+                "response_length": 5713,
+                "content_type": "text/html; charset=UTF-8",
+                "http_version": "HTTP/2",
+                "blocked": true,
+                "error": null,
+                "request_headers": {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                  "Accept-Language": "en-US,en;q=0.9",
+                  "Sec-Fetch-Dest": "document",
+                  "Sec-Fetch-Mode": "navigate",
+                  "Sec-Fetch-Site": "none",
+                  "Upgrade-Insecure-Requests": "1"
+                },
+                "parse_markers": {
+                  "videostream_nodes_found": 0,
+                  "parsed_entries": 0,
+                  "matching_video_rows_found": 0,
+                  "live_markers_found": false,
+                  "sample_equivalent_card_parse_used": true
+                },
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "response_shape": {
+                  "heuristic": true,
+                  "status": 403,
+                  "challenge_detected": true,
+                  "challenge_type": "turnstile_or_cloudflare_challenge",
+                  "response_shape": "challenge_or_interstitial",
+                  "expected_content_type": "text/html",
+                  "observed_content_type": "text/html; charset=UTF-8",
+                  "likely_pre_parse_block": true,
+                  "session_mode_used": false,
+                  "cookie_material_present": false,
+                  "authenticated_probe_attempted": false,
+                  "response_length": 5713,
+                  "body_sha256_16": "d0dbe204dd4b6a00",
+                  "headers": {
+                    "content-type": "text/html; charset=UTF-8",
+                    "cf-mitigated": "challenge",
+                    "server": "cloudflare",
+                    "cf-ray": "9ff35121599be9df-LAX"
+                  },
+                  "markers": {
+                    "cloudflare_just_a_moment": true,
+                    "cloudflare_challenge_platform": true,
+                    "cloudflare_challenge_options": true,
+                    "cloudflare_cf_challenge": false,
+                    "turnstile": true,
+                    "access_denied": false,
+                    "login_required": false,
+                    "html_document": true,
+                    "cloudflare_header_present": true,
+                    "unexpected_html_for_expected_json": false
+                  },
+                  "matched_marker_names": [
+                    "cloudflare_just_a_moment",
+                    "cloudflare_challenge_platform",
+                    "cloudflare_challenge_options",
+                    "turnstile",
+                    "html_document"
+                  ],
+                  "summary": "turnstile_or_cloudflare_challenge"
+                },
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "sample_equivalent_request": true
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "method": "GET",
+                "url": "https://rumble.com/user/StreamSuites/livestreams",
+                "final_url": "https://rumble.com/user/StreamSuites/livestreams",
+                "status_code": 403,
+                "response_size": 5743,
+                "response_length": 5743,
+                "content_type": "text/html; charset=UTF-8",
+                "http_version": "HTTP/2",
+                "blocked": true,
+                "error": null,
+                "request_headers": {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                  "Accept-Language": "en-US,en;q=0.9",
+                  "Sec-Fetch-Dest": "document",
+                  "Sec-Fetch-Mode": "navigate",
+                  "Sec-Fetch-Site": "none",
+                  "Upgrade-Insecure-Requests": "1"
+                },
+                "parse_markers": {
+                  "videostream_nodes_found": 0,
+                  "parsed_entries": 0,
+                  "matching_video_rows_found": 0,
+                  "live_markers_found": false,
+                  "sample_equivalent_card_parse_used": true
+                },
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "response_shape": {
+                  "heuristic": true,
+                  "status": 403,
+                  "challenge_detected": true,
+                  "challenge_type": "turnstile_or_cloudflare_challenge",
+                  "response_shape": "challenge_or_interstitial",
+                  "expected_content_type": "text/html",
+                  "observed_content_type": "text/html; charset=UTF-8",
+                  "likely_pre_parse_block": true,
+                  "session_mode_used": false,
+                  "cookie_material_present": false,
+                  "authenticated_probe_attempted": false,
+                  "response_length": 5743,
+                  "body_sha256_16": "ff3a198fcef52dff",
+                  "headers": {
+                    "content-type": "text/html; charset=UTF-8",
+                    "cf-mitigated": "challenge",
+                    "server": "cloudflare",
+                    "cf-ray": "9ff35122edaae9df-LAX"
+                  },
+                  "markers": {
+                    "cloudflare_just_a_moment": true,
+                    "cloudflare_challenge_platform": true,
+                    "cloudflare_challenge_options": true,
+                    "cloudflare_cf_challenge": false,
+                    "turnstile": true,
+                    "access_denied": false,
+                    "login_required": false,
+                    "html_document": true,
+                    "cloudflare_header_present": true,
+                    "unexpected_html_for_expected_json": false
+                  },
+                  "matched_marker_names": [
+                    "cloudflare_just_a_moment",
+                    "cloudflare_challenge_platform",
+                    "cloudflare_challenge_options",
+                    "turnstile",
+                    "html_document"
+                  ],
+                  "summary": "turnstile_or_cloudflare_challenge"
+                },
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "sample_equivalent_request": true
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "method": "GET",
+                "url": "https://rumble.com/c/StreamSuites",
+                "final_url": "https://rumble.com/c/StreamSuites",
+                "status_code": 403,
+                "response_size": 5677,
+                "response_length": 5677,
+                "content_type": "text/html; charset=UTF-8",
+                "http_version": "HTTP/2",
+                "blocked": true,
+                "error": null,
+                "request_headers": {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                  "Accept-Language": "en-US,en;q=0.9",
+                  "Sec-Fetch-Dest": "document",
+                  "Sec-Fetch-Mode": "navigate",
+                  "Sec-Fetch-Site": "none",
+                  "Upgrade-Insecure-Requests": "1"
+                },
+                "parse_markers": {
+                  "videostream_nodes_found": 0,
+                  "parsed_entries": 0,
+                  "matching_video_rows_found": 0,
+                  "live_markers_found": false,
+                  "sample_equivalent_card_parse_used": true
+                },
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "response_shape": {
+                  "heuristic": true,
+                  "status": 403,
+                  "challenge_detected": true,
+                  "challenge_type": "turnstile_or_cloudflare_challenge",
+                  "response_shape": "challenge_or_interstitial",
+                  "expected_content_type": "text/html",
+                  "observed_content_type": "text/html; charset=UTF-8",
+                  "likely_pre_parse_block": true,
+                  "session_mode_used": false,
+                  "cookie_material_present": false,
+                  "authenticated_probe_attempted": false,
+                  "response_length": 5677,
+                  "body_sha256_16": "ffe25f5a969df4b8",
+                  "headers": {
+                    "content-type": "text/html; charset=UTF-8",
+                    "cf-mitigated": "challenge",
+                    "server": "cloudflare",
+                    "cf-ray": "9ff351244903e9df-LAX"
+                  },
+                  "markers": {
+                    "cloudflare_just_a_moment": true,
+                    "cloudflare_challenge_platform": true,
+                    "cloudflare_challenge_options": true,
+                    "cloudflare_cf_challenge": false,
+                    "turnstile": true,
+                    "access_denied": false,
+                    "login_required": false,
+                    "html_document": true,
+                    "cloudflare_header_present": true,
+                    "unexpected_html_for_expected_json": false
+                  },
+                  "matched_marker_names": [
+                    "cloudflare_just_a_moment",
+                    "cloudflare_challenge_platform",
+                    "cloudflare_challenge_options",
+                    "turnstile",
+                    "html_document"
+                  ],
+                  "summary": "turnstile_or_cloudflare_challenge"
+                },
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "sample_equivalent_request": true
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "method": "GET",
+                "url": "https://rumble.com/user/StreamSuites",
+                "final_url": "https://rumble.com/user/StreamSuites",
+                "status_code": 403,
+                "response_size": 5686,
+                "response_length": 5686,
+                "content_type": "text/html; charset=UTF-8",
+                "http_version": "HTTP/2",
+                "blocked": true,
+                "error": null,
+                "request_headers": {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                  "Accept-Language": "en-US,en;q=0.9",
+                  "Sec-Fetch-Dest": "document",
+                  "Sec-Fetch-Mode": "navigate",
+                  "Sec-Fetch-Site": "none",
+                  "Upgrade-Insecure-Requests": "1"
+                },
+                "parse_markers": {
+                  "videostream_nodes_found": 0,
+                  "parsed_entries": 0,
+                  "matching_video_rows_found": 0,
+                  "live_markers_found": false,
+                  "sample_equivalent_card_parse_used": true
+                },
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "response_shape": {
+                  "heuristic": true,
+                  "status": 403,
+                  "challenge_detected": true,
+                  "challenge_type": "turnstile_or_cloudflare_challenge",
+                  "response_shape": "challenge_or_interstitial",
+                  "expected_content_type": "text/html",
+                  "observed_content_type": "text/html; charset=UTF-8",
+                  "likely_pre_parse_block": true,
+                  "session_mode_used": false,
+                  "cookie_material_present": false,
+                  "authenticated_probe_attempted": false,
+                  "response_length": 5686,
+                  "body_sha256_16": "dc4d60ab21f4a3a0",
+                  "headers": {
+                    "content-type": "text/html; charset=UTF-8",
+                    "cf-mitigated": "challenge",
+                    "server": "cloudflare",
+                    "cf-ray": "9ff35125acd8e9df-LAX"
+                  },
+                  "markers": {
+                    "cloudflare_just_a_moment": true,
+                    "cloudflare_challenge_platform": true,
+                    "cloudflare_challenge_options": true,
+                    "cloudflare_cf_challenge": false,
+                    "turnstile": true,
+                    "access_denied": false,
+                    "login_required": false,
+                    "html_document": true,
+                    "cloudflare_header_present": true,
+                    "unexpected_html_for_expected_json": false
+                  },
+                  "matched_marker_names": [
+                    "cloudflare_just_a_moment",
+                    "cloudflare_challenge_platform",
+                    "cloudflare_challenge_options",
+                    "turnstile",
+                    "html_document"
+                  ],
+                  "summary": "turnstile_or_cloudflare_challenge"
+                },
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "sample_equivalent_request": true
+              }
+            ],
+            "parsed_rows": [],
+            "live_tile_rows_found": 0,
+            "matched_candidate_row_count": 0,
+            "matching_video_row_found": false,
+            "live_markers_found": false,
+            "watch_url_extracted": false,
+            "resolved_watch_url": null,
+            "resolved_numeric_video_id": null,
+            "resolved_channel_url": null,
+            "resolved_channel_name": null,
+            "resolved_viewer_count": null,
+            "resolution_source": null,
+            "selected_row": null,
+            "rejected_evidence": [],
+            "request_sequence": [
+              {
+                "stage": "creator_page_probe_request",
+                "url": "https://rumble.com/c/StreamSuites/livestreams",
+                "status_code": 403,
+                "final_url": "https://rumble.com/c/StreamSuites/livestreams",
+                "response_size": 5713,
+                "response_length": 5713,
+                "blocked": true,
+                "error": null
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "url": "https://rumble.com/user/StreamSuites/livestreams",
+                "status_code": 403,
+                "final_url": "https://rumble.com/user/StreamSuites/livestreams",
+                "response_size": 5743,
+                "response_length": 5743,
+                "blocked": true,
+                "error": null
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "url": "https://rumble.com/c/StreamSuites",
+                "status_code": 403,
+                "final_url": "https://rumble.com/c/StreamSuites",
+                "response_size": 5677,
+                "response_length": 5677,
+                "blocked": true,
+                "error": null
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "url": "https://rumble.com/user/StreamSuites",
+                "status_code": 403,
+                "final_url": "https://rumble.com/user/StreamSuites",
+                "response_size": 5686,
+                "response_length": 5686,
+                "blocked": true,
+                "error": null
+              }
+            ],
+            "stop_stage": "creator_page_probe",
+            "stop_reason": "creator_page_probe_failed",
+            "stop_detail": "blocked_http_403"
+          },
+          "resolved_watch_url": null,
+          "resolved_numeric_video_id": null,
+          "resolved_chat_id": null,
+          "resolution_source": null,
+          "decision_source": null,
+          "authoritative_source": "creator_channel_probe",
+          "authenticated_session": {
+            "session_mode_available": false,
+            "cookie_material_present": false,
+            "session_material_types": [],
+            "validation_errors": [],
+            "selected_material_type": null,
+            "authority_path": "creator_live_status_secrets:rumble",
+            "session_backed_attempted": false,
+            "last_authenticated_probe_attempted": null
+          },
+          "ignored_fallback_paths": [],
+          "rejected_evidence": [],
+          "parity_comparison": {
+            "sample_equivalent_path": {
+              "request_attempted": true,
+              "live_row_found": false,
+              "resolved_watch_url": null,
+              "resolved_numeric_video_id": null,
+              "stop_stage": "creator_page_probe",
+              "stop_reason": "creator_page_probe_failed",
+              "stop_detail": "blocked_http_403"
+            },
+            "livestream_api_path": {
+              "request_attempted": true,
+              "authenticated_request_attempted": false,
+              "live_row_found": false,
+              "resolved_watch_url": null,
+              "resolved_numeric_video_id": null,
+              "stop_stage": "creator_channel_probe",
+              "stop_reason": "creator_channel_probe_failed",
+              "stop_detail": "blocked_http_403"
+            }
+          },
+          "request": {
+            "stage": "creator_channel_probe_request",
+            "method": "GET",
+            "url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
+            "final_url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
+            "status_code": 403,
+            "response_size": 6066,
+            "response_length": 6066,
+            "content_type": "text/html; charset=UTF-8",
+            "http_version": "HTTP/2",
+            "blocked": true,
+            "error": null,
+            "request_headers": {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+              "Accept": "application/json,text/plain,*/*",
+              "Accept-Language": "en-US,en;q=0.9"
+            },
+            "parse_markers": {},
+            "expected_content_type": "application/json",
+            "observed_content_type": "text/html; charset=UTF-8",
+            "response_shape": {
+              "heuristic": true,
+              "status": 403,
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "response_shape": "challenge_or_interstitial",
+              "expected_content_type": "application/json",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false,
+              "response_length": 6066,
+              "body_sha256_16": "92f813cefba51071",
+              "headers": {
+                "content-type": "text/html; charset=UTF-8",
+                "cf-mitigated": "challenge",
+                "server": "cloudflare",
+                "cf-ray": "9ff35127188ee9df-LAX"
+              },
+              "markers": {
+                "cloudflare_just_a_moment": true,
+                "cloudflare_challenge_platform": true,
+                "cloudflare_challenge_options": true,
+                "cloudflare_cf_challenge": false,
+                "turnstile": true,
+                "access_denied": false,
+                "login_required": false,
+                "html_document": true,
+                "cloudflare_header_present": true,
+                "unexpected_html_for_expected_json": true
+              },
+              "matched_marker_names": [
+                "cloudflare_just_a_moment",
+                "cloudflare_challenge_platform",
+                "cloudflare_challenge_options",
+                "turnstile",
+                "html_document"
+              ],
+              "summary": "turnstile_or_cloudflare_challenge"
+            },
+            "challenge_detected": true,
+            "challenge_type": "turnstile_or_cloudflare_challenge",
+            "likely_pre_parse_block": true,
+            "session_mode_used": false,
+            "cookie_material_present": false,
+            "authenticated_probe_attempted": false
+          },
+          "livestream_count": null,
+          "live_markers_found": false,
+          "watch_url_extracted": false,
+          "video_id_extracted": false,
+          "chat_id_extracted": false,
+          "channel_url_rejected_as_live_target": false,
+          "stop_stage": "creator_channel_probe",
+          "stop_reason": "creator_channel_probe_failed",
+          "stop_detail": "blocked_http_403"
+        },
+        "watch_resolution": null,
+        "freshness": {
+          "scan_started_at": "2026-05-21T11:42:15.698685Z",
+          "status_checked_at": "2026-05-21T11:42:15.698685Z"
+        },
+        "decision_summary": {
+          "selected_creator_url": "https://rumble.com/c/StreamSuites",
+          "decision_source": null,
+          "resolution_source": null,
+          "resolved_watch_url": null,
+          "resolved_numeric_video_id": null,
+          "resolved_chat_id": null,
+          "attach_identity_ready": null
+        },
+        "sample_parity_summary": {
+          "sample_path_stages_attempted": [
+            {
+              "stage": "browse_live",
+              "attempted": true,
+              "request_count": 10,
+              "success_count": 0,
+              "failure_count": 10,
+              "construction_matches_sample": true,
+              "first_failure_reason": "blocked_http_403"
+            },
+            {
+              "stage": "creator_page_probe",
+              "attempted": true,
+              "request_count": 4,
+              "success_count": 0,
+              "failure_count": 4,
+              "construction_matches_sample": true,
+              "first_failure_reason": "blocked_http_403"
+            },
+            {
+              "stage": "livestream_api_probe",
+              "attempted": true,
+              "request_count": 1,
+              "success_count": 0,
+              "failure_count": 1,
+              "construction_matches_sample": null,
+              "first_failure_reason": "blocked_http_403"
+            }
+          ],
+          "first_failed_stage": "browse_live",
+          "first_failure_reason": "blocked_http_403",
+          "construction_matches_sample_for_first_failed_stage": true,
+          "failure_class": "pre_parse_blocked",
+          "watch_resolution_attempted": false
+        }
+      }
+    },
+    {
+      "creator_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+      "display_name": "Daniel Clancy",
+      "is_live": false,
+      "match_reason": null,
+      "matched_value": null,
+      "live_title": null,
+      "live_url": null,
+      "viewer_count": null,
+      "started_at": null,
+      "last_checked_at": "2026-05-21T11:42:15.698685Z",
+      "stream_key": null,
+      "numeric_video_id": null,
+      "embed_id": null,
+      "channel_url": "https://rumble.com/user/danielclancy",
+      "channel_slug": "danielclancy",
+      "chat_id": null,
+      "stop_stage": "browse_live",
+      "stop_reason": "sample_browse_live_request_failed",
+      "stop_detail": "blocked_http_403",
+      "diagnostics": {
+        "authoritative_identity": {
+          "creator_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+          "display_name": "Daniel Clancy",
+          "provider_channel_url": "https://rumble.com/user/danielclancy",
+          "public_url": "https://rumble.com/user/danielclancy",
+          "provider_channel_slug": "danielclancy",
+          "provider_channel_id": null,
+          "future_secret_ref_present": true
+        },
+        "selected_creator_target": {
+          "creator_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
+          "display_name": "Daniel Clancy",
+          "provider": "rumble",
+          "provider_account_id": null,
+          "provider_channel_id": null,
+          "provider_channel_url": "https://rumble.com/user/danielclancy",
+          "public_url": "https://rumble.com/user/danielclancy",
+          "provider_account_login": "DanielClancy",
+          "provider_channel_handle": "DanielClancy"
+        },
+        "browse_live": {
+          "requests": [
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=1",
+              "final_url": "https://rumble.com/browse/live?page=1",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "a96e7d2df680feb7",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511b0978e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=2",
+              "final_url": "https://rumble.com/browse/live?page=2",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "0d5a6e081b4d03a4",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff35119ce25e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=3",
+              "final_url": "https://rumble.com/browse/live?page=3",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "6dc51492700f9272",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511b0975e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=4",
+              "final_url": "https://rumble.com/browse/live?page=4",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "3e1571428f9b4c7b",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511b0976e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=5",
+              "final_url": "https://rumble.com/browse/live?page=5",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "ee3e1dff7c3b15e3",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511b19b3e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=6",
+              "final_url": "https://rumble.com/browse/live?page=6",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "aac63277a249d5c6",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511c6cfee9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=7",
+              "final_url": "https://rumble.com/browse/live?page=7",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "ae60f7bb2ac8b7ba",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511c8d3ae9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=8",
+              "final_url": "https://rumble.com/browse/live?page=8",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "1efdd4f5492978f5",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511cadbbe9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=9",
+              "final_url": "https://rumble.com/browse/live?page=9",
+              "status_code": 403,
+              "response_size": 5689,
+              "response_length": 5689,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5689,
+                "body_sha256_16": "b514f6daffa2833b",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511cbddbe9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            },
+            {
+              "stage": "browse_live_request",
+              "method": "GET",
+              "url": "https://rumble.com/browse/live?page=10",
+              "final_url": "https://rumble.com/browse/live?page=10",
+              "status_code": 403,
+              "response_size": 5692,
+              "response_length": 5692,
+              "content_type": "text/html; charset=UTF-8",
+              "http_version": "HTTP/2",
+              "blocked": true,
+              "error": null,
+              "request_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Upgrade-Insecure-Requests": "1"
+              },
+              "parse_markers": {
+                "videostream_nodes_found": 0
+              },
+              "expected_content_type": "text/html",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "response_shape": {
+                "heuristic": true,
+                "status": 403,
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "response_shape": "challenge_or_interstitial",
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "response_length": 5692,
+                "body_sha256_16": "308ab4f6969a6641",
+                "headers": {
+                  "content-type": "text/html; charset=UTF-8",
+                  "cf-mitigated": "challenge",
+                  "server": "cloudflare",
+                  "cf-ray": "9ff3511dd8b4e9df-LAX"
+                },
+                "markers": {
+                  "cloudflare_just_a_moment": true,
+                  "cloudflare_challenge_platform": true,
+                  "cloudflare_challenge_options": true,
+                  "cloudflare_cf_challenge": false,
+                  "turnstile": true,
+                  "access_denied": false,
+                  "login_required": false,
+                  "html_document": true,
+                  "cloudflare_header_present": true,
+                  "unexpected_html_for_expected_json": false
+                },
+                "matched_marker_names": [
+                  "cloudflare_just_a_moment",
+                  "cloudflare_challenge_platform",
+                  "cloudflare_challenge_options",
+                  "turnstile",
+                  "html_document"
+                ],
+                "summary": "turnstile_or_cloudflare_challenge"
+              },
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false
+            }
+          ],
+          "request_attempted": true,
+          "request_success_count": 0,
+          "request_failure_count": 10,
+          "live_tiles_found": 0,
+          "watch_hrefs_extracted": 0,
+          "matched_live_row_count": 0,
+          "matched_live_row_found": false,
+          "matched_live_rows": [],
+          "selected_match": null,
+          "stop_stage": "browse_live",
+          "stop_reason": "sample_browse_live_request_failed",
+          "stop_detail": "blocked_http_403",
+          "request_sequence": [
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=1",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=1",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=2",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=2",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=3",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=3",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=4",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=4",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=5",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=5",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=6",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=6",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=7",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=7",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=8",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=8",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=9",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=9",
+              "response_length": 5689,
+              "blocked": true,
+              "error": null
+            },
+            {
+              "stage": "browse_live_request",
+              "url": "https://rumble.com/browse/live?page=10",
+              "status_code": 403,
+              "final_url": "https://rumble.com/browse/live?page=10",
+              "response_length": 5692,
+              "blocked": true,
+              "error": null
+            }
+          ]
+        },
+        "creator_channel_probe": {
+          "creator_identity_url": "https://rumble.com/user/danielclancy",
+          "selected_creator_channel_url": "https://rumble.com/user/danielclancy",
+          "livestream_api_url_selected": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
+          "creator_page_probe": {
+            "creator_identity_url": "https://rumble.com/user/danielclancy",
+            "candidate_urls": [
+              "https://rumble.com/user/danielclancy/livestreams",
+              "https://rumble.com/c/danielclancy/livestreams",
+              "https://rumble.com/user/danielclancy",
+              "https://rumble.com/c/danielclancy"
+            ],
+            "session_mode": {
+              "session_mode_available": false,
+              "cookie_material_present": false,
+              "session_material_types": [],
+              "validation_errors": [],
+              "selected_material_type": null,
+              "authority_path": "creator_live_status_secrets:rumble",
+              "session_mode_used": false,
+              "authenticated_probe_attempted": false
+            },
+            "candidate_video_ids": [],
+            "requests": [
+              {
+                "stage": "creator_page_probe_request",
+                "method": "GET",
+                "url": "https://rumble.com/user/danielclancy/livestreams",
+                "final_url": "https://rumble.com/user/danielclancy/livestreams",
+                "status_code": 403,
+                "response_size": 5743,
+                "response_length": 5743,
+                "content_type": "text/html; charset=UTF-8",
+                "http_version": "HTTP/2",
+                "blocked": true,
+                "error": null,
+                "request_headers": {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                  "Accept-Language": "en-US,en;q=0.9",
+                  "Sec-Fetch-Dest": "document",
+                  "Sec-Fetch-Mode": "navigate",
+                  "Sec-Fetch-Site": "none",
+                  "Upgrade-Insecure-Requests": "1"
+                },
+                "parse_markers": {
+                  "videostream_nodes_found": 0,
+                  "parsed_entries": 0,
+                  "matching_video_rows_found": 0,
+                  "live_markers_found": false,
+                  "sample_equivalent_card_parse_used": true
+                },
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "response_shape": {
+                  "heuristic": true,
+                  "status": 403,
+                  "challenge_detected": true,
+                  "challenge_type": "turnstile_or_cloudflare_challenge",
+                  "response_shape": "challenge_or_interstitial",
+                  "expected_content_type": "text/html",
+                  "observed_content_type": "text/html; charset=UTF-8",
+                  "likely_pre_parse_block": true,
+                  "session_mode_used": false,
+                  "cookie_material_present": false,
+                  "authenticated_probe_attempted": false,
+                  "response_length": 5743,
+                  "body_sha256_16": "f356407ae5c0db98",
+                  "headers": {
+                    "content-type": "text/html; charset=UTF-8",
+                    "cf-mitigated": "challenge",
+                    "server": "cloudflare",
+                    "cf-ray": "9ff3512159a2e9df-LAX"
+                  },
+                  "markers": {
+                    "cloudflare_just_a_moment": true,
+                    "cloudflare_challenge_platform": true,
+                    "cloudflare_challenge_options": true,
+                    "cloudflare_cf_challenge": false,
+                    "turnstile": true,
+                    "access_denied": false,
+                    "login_required": false,
+                    "html_document": true,
+                    "cloudflare_header_present": true,
+                    "unexpected_html_for_expected_json": false
+                  },
+                  "matched_marker_names": [
+                    "cloudflare_just_a_moment",
+                    "cloudflare_challenge_platform",
+                    "cloudflare_challenge_options",
+                    "turnstile",
+                    "html_document"
+                  ],
+                  "summary": "turnstile_or_cloudflare_challenge"
+                },
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "sample_equivalent_request": true
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "method": "GET",
+                "url": "https://rumble.com/c/danielclancy/livestreams",
+                "final_url": "https://rumble.com/c/danielclancy/livestreams",
+                "status_code": 403,
+                "response_size": 5713,
+                "response_length": 5713,
+                "content_type": "text/html; charset=UTF-8",
+                "http_version": "HTTP/2",
+                "blocked": true,
+                "error": null,
+                "request_headers": {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                  "Accept-Language": "en-US,en;q=0.9",
+                  "Sec-Fetch-Dest": "document",
+                  "Sec-Fetch-Mode": "navigate",
+                  "Sec-Fetch-Site": "none",
+                  "Upgrade-Insecure-Requests": "1"
+                },
+                "parse_markers": {
+                  "videostream_nodes_found": 0,
+                  "parsed_entries": 0,
+                  "matching_video_rows_found": 0,
+                  "live_markers_found": false,
+                  "sample_equivalent_card_parse_used": true
+                },
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "response_shape": {
+                  "heuristic": true,
+                  "status": 403,
+                  "challenge_detected": true,
+                  "challenge_type": "turnstile_or_cloudflare_challenge",
+                  "response_shape": "challenge_or_interstitial",
+                  "expected_content_type": "text/html",
+                  "observed_content_type": "text/html; charset=UTF-8",
+                  "likely_pre_parse_block": true,
+                  "session_mode_used": false,
+                  "cookie_material_present": false,
+                  "authenticated_probe_attempted": false,
+                  "response_length": 5713,
+                  "body_sha256_16": "6bcc98abcf6f5315",
+                  "headers": {
+                    "content-type": "text/html; charset=UTF-8",
+                    "cf-mitigated": "challenge",
+                    "server": "cloudflare",
+                    "cf-ray": "9ff35122bd52e9df-LAX"
+                  },
+                  "markers": {
+                    "cloudflare_just_a_moment": true,
+                    "cloudflare_challenge_platform": true,
+                    "cloudflare_challenge_options": true,
+                    "cloudflare_cf_challenge": false,
+                    "turnstile": true,
+                    "access_denied": false,
+                    "login_required": false,
+                    "html_document": true,
+                    "cloudflare_header_present": true,
+                    "unexpected_html_for_expected_json": false
+                  },
+                  "matched_marker_names": [
+                    "cloudflare_just_a_moment",
+                    "cloudflare_challenge_platform",
+                    "cloudflare_challenge_options",
+                    "turnstile",
+                    "html_document"
+                  ],
+                  "summary": "turnstile_or_cloudflare_challenge"
+                },
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "sample_equivalent_request": true
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "method": "GET",
+                "url": "https://rumble.com/user/danielclancy",
+                "final_url": "https://rumble.com/user/danielclancy",
+                "status_code": 403,
+                "response_size": 5686,
+                "response_length": 5686,
+                "content_type": "text/html; charset=UTF-8",
+                "http_version": "HTTP/2",
+                "blocked": true,
+                "error": null,
+                "request_headers": {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                  "Accept-Language": "en-US,en;q=0.9",
+                  "Sec-Fetch-Dest": "document",
+                  "Sec-Fetch-Mode": "navigate",
+                  "Sec-Fetch-Site": "none",
+                  "Upgrade-Insecure-Requests": "1"
+                },
+                "parse_markers": {
+                  "videostream_nodes_found": 0,
+                  "parsed_entries": 0,
+                  "matching_video_rows_found": 0,
+                  "live_markers_found": false,
+                  "sample_equivalent_card_parse_used": true
+                },
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "response_shape": {
+                  "heuristic": true,
+                  "status": 403,
+                  "challenge_detected": true,
+                  "challenge_type": "turnstile_or_cloudflare_challenge",
+                  "response_shape": "challenge_or_interstitial",
+                  "expected_content_type": "text/html",
+                  "observed_content_type": "text/html; charset=UTF-8",
+                  "likely_pre_parse_block": true,
+                  "session_mode_used": false,
+                  "cookie_material_present": false,
+                  "authenticated_probe_attempted": false,
+                  "response_length": 5686,
+                  "body_sha256_16": "34581a95df2f6027",
+                  "headers": {
+                    "content-type": "text/html; charset=UTF-8",
+                    "cf-mitigated": "challenge",
+                    "server": "cloudflare",
+                    "cf-ray": "9ff3512428ace9df-LAX"
+                  },
+                  "markers": {
+                    "cloudflare_just_a_moment": true,
+                    "cloudflare_challenge_platform": true,
+                    "cloudflare_challenge_options": true,
+                    "cloudflare_cf_challenge": false,
+                    "turnstile": true,
+                    "access_denied": false,
+                    "login_required": false,
+                    "html_document": true,
+                    "cloudflare_header_present": true,
+                    "unexpected_html_for_expected_json": false
+                  },
+                  "matched_marker_names": [
+                    "cloudflare_just_a_moment",
+                    "cloudflare_challenge_platform",
+                    "cloudflare_challenge_options",
+                    "turnstile",
+                    "html_document"
+                  ],
+                  "summary": "turnstile_or_cloudflare_challenge"
+                },
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "sample_equivalent_request": true
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "method": "GET",
+                "url": "https://rumble.com/c/danielclancy",
+                "final_url": "https://rumble.com/c/danielclancy",
+                "status_code": 403,
+                "response_size": 5677,
+                "response_length": 5677,
+                "content_type": "text/html; charset=UTF-8",
+                "http_version": "HTTP/2",
+                "blocked": true,
+                "error": null,
+                "request_headers": {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+                  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                  "Accept-Language": "en-US,en;q=0.9",
+                  "Sec-Fetch-Dest": "document",
+                  "Sec-Fetch-Mode": "navigate",
+                  "Sec-Fetch-Site": "none",
+                  "Upgrade-Insecure-Requests": "1"
+                },
+                "parse_markers": {
+                  "videostream_nodes_found": 0,
+                  "parsed_entries": 0,
+                  "matching_video_rows_found": 0,
+                  "live_markers_found": false,
+                  "sample_equivalent_card_parse_used": true
+                },
+                "expected_content_type": "text/html",
+                "observed_content_type": "text/html; charset=UTF-8",
+                "response_shape": {
+                  "heuristic": true,
+                  "status": 403,
+                  "challenge_detected": true,
+                  "challenge_type": "turnstile_or_cloudflare_challenge",
+                  "response_shape": "challenge_or_interstitial",
+                  "expected_content_type": "text/html",
+                  "observed_content_type": "text/html; charset=UTF-8",
+                  "likely_pre_parse_block": true,
+                  "session_mode_used": false,
+                  "cookie_material_present": false,
+                  "authenticated_probe_attempted": false,
+                  "response_length": 5677,
+                  "body_sha256_16": "eaa6578f1f727319",
+                  "headers": {
+                    "content-type": "text/html; charset=UTF-8",
+                    "cf-mitigated": "challenge",
+                    "server": "cloudflare",
+                    "cf-ray": "9ff351258c8ee9df-LAX"
+                  },
+                  "markers": {
+                    "cloudflare_just_a_moment": true,
+                    "cloudflare_challenge_platform": true,
+                    "cloudflare_challenge_options": true,
+                    "cloudflare_cf_challenge": false,
+                    "turnstile": true,
+                    "access_denied": false,
+                    "login_required": false,
+                    "html_document": true,
+                    "cloudflare_header_present": true,
+                    "unexpected_html_for_expected_json": false
+                  },
+                  "matched_marker_names": [
+                    "cloudflare_just_a_moment",
+                    "cloudflare_challenge_platform",
+                    "cloudflare_challenge_options",
+                    "turnstile",
+                    "html_document"
+                  ],
+                  "summary": "turnstile_or_cloudflare_challenge"
+                },
+                "challenge_detected": true,
+                "challenge_type": "turnstile_or_cloudflare_challenge",
+                "likely_pre_parse_block": true,
+                "session_mode_used": false,
+                "cookie_material_present": false,
+                "authenticated_probe_attempted": false,
+                "sample_equivalent_request": true
+              }
+            ],
+            "parsed_rows": [],
+            "live_tile_rows_found": 0,
+            "matched_candidate_row_count": 0,
+            "matching_video_row_found": false,
+            "live_markers_found": false,
+            "watch_url_extracted": false,
+            "resolved_watch_url": null,
+            "resolved_numeric_video_id": null,
+            "resolved_channel_url": null,
+            "resolved_channel_name": null,
+            "resolved_viewer_count": null,
+            "resolution_source": null,
+            "selected_row": null,
+            "rejected_evidence": [],
+            "request_sequence": [
+              {
+                "stage": "creator_page_probe_request",
+                "url": "https://rumble.com/user/danielclancy/livestreams",
+                "status_code": 403,
+                "final_url": "https://rumble.com/user/danielclancy/livestreams",
+                "response_size": 5743,
+                "response_length": 5743,
+                "blocked": true,
+                "error": null
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "url": "https://rumble.com/c/danielclancy/livestreams",
+                "status_code": 403,
+                "final_url": "https://rumble.com/c/danielclancy/livestreams",
+                "response_size": 5713,
+                "response_length": 5713,
+                "blocked": true,
+                "error": null
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "url": "https://rumble.com/user/danielclancy",
+                "status_code": 403,
+                "final_url": "https://rumble.com/user/danielclancy",
+                "response_size": 5686,
+                "response_length": 5686,
+                "blocked": true,
+                "error": null
+              },
+              {
+                "stage": "creator_page_probe_request",
+                "url": "https://rumble.com/c/danielclancy",
+                "status_code": 403,
+                "final_url": "https://rumble.com/c/danielclancy",
+                "response_size": 5677,
+                "response_length": 5677,
+                "blocked": true,
+                "error": null
+              }
+            ],
+            "stop_stage": "creator_page_probe",
+            "stop_reason": "creator_page_probe_failed",
+            "stop_detail": "blocked_http_403"
+          },
+          "resolved_watch_url": null,
+          "resolved_numeric_video_id": null,
+          "resolved_chat_id": null,
+          "resolution_source": null,
+          "decision_source": null,
+          "authoritative_source": "creator_channel_probe",
+          "authenticated_session": {
+            "session_mode_available": false,
+            "cookie_material_present": false,
+            "session_material_types": [],
+            "validation_errors": [],
+            "selected_material_type": null,
+            "authority_path": "creator_live_status_secrets:rumble",
+            "session_backed_attempted": false,
+            "last_authenticated_probe_attempted": null
+          },
+          "ignored_fallback_paths": [],
+          "rejected_evidence": [],
+          "parity_comparison": {
+            "sample_equivalent_path": {
+              "request_attempted": true,
+              "live_row_found": false,
+              "resolved_watch_url": null,
+              "resolved_numeric_video_id": null,
+              "stop_stage": "creator_page_probe",
+              "stop_reason": "creator_page_probe_failed",
+              "stop_detail": "blocked_http_403"
+            },
+            "livestream_api_path": {
+              "request_attempted": true,
+              "authenticated_request_attempted": false,
+              "live_row_found": false,
+              "resolved_watch_url": null,
+              "resolved_numeric_video_id": null,
+              "stop_stage": "creator_channel_probe",
+              "stop_reason": "creator_channel_probe_failed",
+              "stop_detail": "blocked_http_403"
+            }
+          },
+          "request": {
+            "stage": "creator_channel_probe_request",
+            "method": "GET",
+            "url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
+            "final_url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
+            "status_code": 403,
+            "response_size": 6066,
+            "response_length": 6066,
+            "content_type": "text/html; charset=UTF-8",
+            "http_version": "HTTP/2",
+            "blocked": true,
+            "error": null,
+            "request_headers": {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+              "Accept": "application/json,text/plain,*/*",
+              "Accept-Language": "en-US,en;q=0.9"
+            },
+            "parse_markers": {},
+            "expected_content_type": "application/json",
+            "observed_content_type": "text/html; charset=UTF-8",
+            "response_shape": {
+              "heuristic": true,
+              "status": 403,
+              "challenge_detected": true,
+              "challenge_type": "turnstile_or_cloudflare_challenge",
+              "response_shape": "challenge_or_interstitial",
+              "expected_content_type": "application/json",
+              "observed_content_type": "text/html; charset=UTF-8",
+              "likely_pre_parse_block": true,
+              "session_mode_used": false,
+              "cookie_material_present": false,
+              "authenticated_probe_attempted": false,
+              "response_length": 6066,
+              "body_sha256_16": "e596557e087afb10",
+              "headers": {
+                "content-type": "text/html; charset=UTF-8",
+                "cf-mitigated": "challenge",
+                "server": "cloudflare",
+                "cf-ray": "9ff35126e805e9df-LAX"
+              },
+              "markers": {
+                "cloudflare_just_a_moment": true,
+                "cloudflare_challenge_platform": true,
+                "cloudflare_challenge_options": true,
+                "cloudflare_cf_challenge": false,
+                "turnstile": true,
+                "access_denied": false,
+                "login_required": false,
+                "html_document": true,
+                "cloudflare_header_present": true,
+                "unexpected_html_for_expected_json": true
+              },
+              "matched_marker_names": [
+                "cloudflare_just_a_moment",
+                "cloudflare_challenge_platform",
+                "cloudflare_challenge_options",
+                "turnstile",
+                "html_document"
+              ],
+              "summary": "turnstile_or_cloudflare_challenge"
+            },
+            "challenge_detected": true,
+            "challenge_type": "turnstile_or_cloudflare_challenge",
+            "likely_pre_parse_block": true,
+            "session_mode_used": false,
+            "cookie_material_present": false,
+            "authenticated_probe_attempted": false
+          },
+          "livestream_count": null,
+          "live_markers_found": false,
+          "watch_url_extracted": false,
+          "video_id_extracted": false,
+          "chat_id_extracted": false,
+          "channel_url_rejected_as_live_target": false,
+          "stop_stage": "creator_channel_probe",
+          "stop_reason": "creator_channel_probe_failed",
+          "stop_detail": "blocked_http_403"
+        },
+        "watch_resolution": null,
+        "freshness": {
+          "scan_started_at": "2026-05-21T11:42:15.698685Z",
+          "status_checked_at": "2026-05-21T11:42:15.698685Z"
         },
         "decision_summary": {
           "selected_creator_url": "https://rumble.com/user/danielclancy",
