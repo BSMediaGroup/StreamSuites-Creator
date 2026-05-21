@@ -56,7 +56,7 @@ flowchart TD
 - The `/wheels` route is now a real creator-owned wheel artifact manager that lists, creates, imports, edits, exports, and saves wheel artifacts only through the authoritative runtime/Auth wheel API.
 - The creator wheel manager now stays API-first and live via the runtime/Auth wheel SSE stream, so open `/wheels` tabs refresh saved list/editor state after create, import, and update events instead of waiting for stale mirrored exports or manual reloads.
 - The separate `/leaderboards` route is now the truthful creator-facing scaffold for future leaderboard artifacts, while legacy `/scoreboards` compatibility now resolves there instead of duplicating the wheel manager.
-- The account route now keeps integrations as a compact snapshot and link-out surface rather than the primary control center.
+- The account route now keeps integrations as a compact snapshot and link-out surface rather than the primary control center, while consuming Runtime/Auth contracts for removable manual platform aliases and owned scoped livechat XP roll-up settings.
 - A dedicated `/integrations` hub now acts as the full-page creator readiness surface, while per-platform routes carry the actionable setup and management workflows.
 - Creator media editing now prefers upload-from-device for avatar and cover updates while preserving manual URL inputs as secondary paths.
 - Creator account settings currently surface canonical slug editing and visibility, StreamSuites public profile visibility, FindMeHere listing controls, truthful dual share previews, reserved media fields including background image URL, bio/about, grounded public social links, and a small pointer over to Preferences for moderator/community controls.

@@ -54,16 +54,25 @@ test("creator account page wires runtime-backed platform identity aliases", () =
   assert.match(accountJs, /method: draft\.identity_id \? "PATCH" : "POST"/);
   assert.match(accountJs, /Add at least one Runtime\/Auth identifier/);
   assert.match(accountJs, /platformIdentityDuplicateExists/);
-  assert.match(accountJs, /Remove unavailable/);
+  assert.match(accountJs, /data-platform-identity-delete/);
+  assert.match(accountJs, /method: "DELETE"/);
+  assert.match(accountJs, /window\.confirm\(`Remove this manual platform alias/);
 });
 
-test("creator account page keeps scoped roll-up suppression disabled without runtime contract", () => {
+test("creator account page wires runtime-backed scoped roll-up settings", () => {
   const html = read("views/account.html");
+  const accountJs = read("js/account-settings.js");
 
   assert.match(html, /data-scoped-rollup-panel="true"/);
+  assert.match(html, /data-scoped-rollup-list="true"/);
+  assert.match(html, /data-scoped-rollup-save="true"/);
   assert.match(html, /Suppressing global roll-up is discouraged/);
-  assert.match(html, /Runtime setting not available yet/);
-  assert.match(html, /type="checkbox" aria-label="Suppress global roll-up for scoped livechat awards" disabled/);
+  assert.match(html, /Economy and inventory roll-up remain deferred/);
+  assert.match(accountJs, /SCOPED_ROLLUP_SETTINGS_ENDPOINT = `\$\{API_BASE\}\/api\/creator\/progression\/scoped-settings`/);
+  assert.match(accountJs, /loadScopedRollupSettings/);
+  assert.match(accountJs, /saveScopedRollupSettings/);
+  assert.match(accountJs, /method: "PATCH"/);
+  assert.match(accountJs, /Runtime\/Auth scoped progression settings are not available on this build/);
 });
 
 test("platform detail pages show manual chat identity matching action", () => {

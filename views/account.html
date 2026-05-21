@@ -1190,29 +1190,17 @@
                       Suppressing global roll-up is discouraged. Leaving this off means scoped livechat XP also contributes to global XP/economy/inventory where Runtime/Auth supports it.
                     </p>
                   </div>
-                  <span class="status-pill warning"><span class="status-dot"></span>Runtime setting not available yet</span>
+                  <span class="status-pill subtle" data-scoped-rollup-pill="true"><span class="status-dot"></span>Loading settings</span>
                 </div>
-                <label class="platform-workspace-toggle platform-identity-disabled-toggle">
-                  <span class="platform-workspace-toggle-copy">
-                    Suppress global roll-up for this creator/channel
-                    <span class="account-field-note">
-                      Default is off. Turning this on could make your channel economy feel isolated and confuse viewers because their global totals would not increase from this channel.
-                    </span>
-                  </span>
-                  <span class="switch-button">
-                    <span class="switch-scale">
-                      <span class="switch-outer">
-                        <input type="checkbox" aria-label="Suppress global roll-up for scoped livechat awards" disabled />
-                        <span class="ss-switch-inner">
-                          <span class="ss-switch-toggle"></span>
-                          <span class="ss-switch-indicator"></span>
-                        </span>
-                      </span>
-                    </span>
-                  </span>
-                </label>
-                <p class="account-note">
-                  Creator will wire this toggle when Runtime/Auth exposes a creator-owned read/write endpoint for scoped progression settings.
+                <div class="scoped-rollup-list" data-scoped-rollup-list="true">
+                  <div class="account-empty-state">Loading scoped livechat roll-up settings...</div>
+                </div>
+                <div class="account-provider-actions">
+                  <button class="creator-button secondary" type="button" data-scoped-rollup-refresh="true">Refresh</button>
+                  <button class="creator-button primary" type="button" data-scoped-rollup-save="true" disabled>Save roll-up settings</button>
+                </div>
+                <p class="account-note" data-scoped-rollup-status="true">
+                  This setting currently applies to XP roll-up where live scoped award plumbing exists. Economy and inventory roll-up remain deferred until Runtime/Auth ships those award paths.
                 </p>
               </div>
 

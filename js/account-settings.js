@@ -26,6 +26,7 @@
   const COVER_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/cover`;
   const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
   const PLATFORM_IDENTITIES_ENDPOINT = `${API_BASE}/api/account/platform-identities`;
+  const SCOPED_ROLLUP_SETTINGS_ENDPOINT = `${API_BASE}/api/creator/progression/scoped-settings`;
   const AVATAR_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
   const COVER_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
   const BACKGROUND_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
@@ -163,6 +164,10 @@
     platformIdentitiesSaving: false,
     platformIdentityEditingId: "",
     platformIdentitiesAvailable: true,
+    scopedRollupAvailable: true,
+    scopedRollupLoading: false,
+    scopedRollupSaving: false,
+    scopedRollupSettings: null,
   };
 
   function showToast(message, tone = "info", options = {}) {
@@ -1326,6 +1331,9 @@
       verified: identity.verified === true,
       discovered: identity.discovered === true,
       manual: identity.manual !== false,
+      removable: identity.removable === true,
+      protected: identity.protected === true || identity.removable === false,
+      protected_reason: coerceText(identity.protected_reason),
       updated_at: coerceText(identity.updated_at),
     };
   }
@@ -1412,19 +1420,26 @@
         identity.updated_at ? `Updated: ${escapeHtml(identity.updated_at)}` : "",
       ].filter(Boolean);
       const editable = identity.manual && identity.source === "manual";
+      const removable = identity.removable === true || (editable && !identity.verified && identity.protected !== true);
+      const protectedChip = removable
+        ? ""
+        : `<span class="status-pill warning">Protected</span>`;
       return `
         <article class="platform-identity-row" data-platform-identity-id="${escapeHtml(identity.identity_id)}">
           <div class="platform-identity-row-main">
             <div class="platform-identity-row-title">
               <strong>${escapeHtml(platformIdentityLabel(identity.platform))}</strong>
               <span class="status-pill subtle">${escapeHtml(platformIdentitySourceLabel(identity))}</span>
+              ${protectedChip}
             </div>
             <p>${primaryBits.join(" · ") || "No identifier returned by Runtime/Auth."}</p>
             <p class="account-note">${secondaryBits.join(" · ") || "No optional display metadata saved."}</p>
           </div>
           <div class="account-provider-actions">
             <button class="creator-button secondary" type="button" data-platform-identity-edit="${escapeHtml(identity.identity_id)}"${editable ? "" : " disabled"}>${editable ? "Edit" : "Locked"}</button>
-            <button class="creator-button secondary" type="button" disabled title="Runtime/Auth has no self-service delete endpoint yet.">Remove unavailable</button>
+            ${removable
+              ? `<button class="creator-button secondary danger" type="button" data-platform-identity-delete="${escapeHtml(identity.identity_id)}">Remove</button>`
+              : ""}
           </div>
         </article>
       `;
@@ -1549,6 +1564,34 @@
     }
   }
 
+  async function deletePlatformIdentity(identityId) {
+    const identity = state.platformIdentities.find((item) => item.identity_id === identityId);
+    if (!identity || state.platformIdentitiesSaving) return;
+    const label = [platformIdentityLabel(identity.platform), identity.handle || identity.platform_user_id || identity.chat_id]
+      .filter(Boolean)
+      .join(" ");
+    if (!window.confirm(`Remove this manual platform alias${label ? ` (${label})` : ""}? Historical livechat ledger records are not deleted.`)) {
+      return;
+    }
+    state.platformIdentitiesSaving = true;
+    setMessage("[data-platform-identity-status=\"true\"]", "Removing alias through Runtime/Auth...", "neutral");
+    try {
+      const payload = await requestJson(`${PLATFORM_IDENTITIES_ENDPOINT}/${encodeURIComponent(identityId)}`, { method: "DELETE" });
+      state.platformIdentities = (Array.isArray(payload?.identities) ? payload.identities : state.platformIdentities.filter((item) => item.identity_id !== identityId))
+        .map(normalizePlatformIdentity)
+        .filter(Boolean);
+      resetPlatformIdentityForm();
+      renderPlatformIdentityList();
+      setMessage("[data-platform-identity-status=\"true\"]", "Platform identity alias removed.", "success");
+    } catch (err) {
+      const errorKey = err?.payload?.error || err?.message;
+      setMessage("[data-platform-identity-status=\"true\"]", errorKey || "Unable to remove platform identity alias.", "danger");
+    } finally {
+      state.platformIdentitiesSaving = false;
+      renderPlatformIdentityList();
+    }
+  }
+
   function wirePlatformIdentityControls() {
     const els = getPlatformIdentityElements();
     if (!(els.form instanceof HTMLFormElement) || els.form.dataset.platformIdentityWired === "true") return;
@@ -1564,12 +1607,168 @@
       els.list.addEventListener("click", (event) => {
         const target = event.target;
         if (!(target instanceof Element)) return;
+        const deleteButton = target.closest("[data-platform-identity-delete]");
+        if (deleteButton instanceof HTMLButtonElement) {
+          void deletePlatformIdentity(deleteButton.getAttribute("data-platform-identity-delete") || "");
+          return;
+        }
         const button = target.closest("[data-platform-identity-edit]");
-        if (!(button instanceof HTMLButtonElement)) return;
-        const identityId = button.getAttribute("data-platform-identity-edit") || "";
-        const identity = state.platformIdentities.find((item) => item.identity_id === identityId);
-        if (identity) resetPlatformIdentityForm(identity);
+        if (button instanceof HTMLButtonElement) {
+          const identityId = button.getAttribute("data-platform-identity-edit") || "";
+          const identity = state.platformIdentities.find((item) => item.identity_id === identityId);
+          if (identity) resetPlatformIdentityForm(identity);
+        }
       });
+    }
+  }
+
+  function getScopedRollupElements() {
+    return {
+      panel: document.querySelector("[data-scoped-rollup-panel=\"true\"]"),
+      pill: document.querySelector("[data-scoped-rollup-pill=\"true\"]"),
+      list: document.querySelector("[data-scoped-rollup-list=\"true\"]"),
+      save: document.querySelector("[data-scoped-rollup-save=\"true\"]"),
+      refresh: document.querySelector("[data-scoped-rollup-refresh=\"true\"]"),
+      status: document.querySelector("[data-scoped-rollup-status=\"true\"]"),
+    };
+  }
+
+  function normalizeScopedRollupScope(scope) {
+    if (!scope || typeof scope !== "object") return null;
+    const scopeKey = coerceText(scope.scope_key);
+    if (!scopeKey) return null;
+    const suppress = scope.suppress_global_rollup === true || scope.global_rollup_enabled === false;
+    return {
+      scope_key: scopeKey,
+      platform: coerceText(scope.platform),
+      creator_label: coerceText(scope.creator_label),
+      channel_label: coerceText(scope.channel_label),
+      suppress_global_rollup: suppress,
+      global_rollup_enabled: !suppress,
+      updated_at: coerceText(scope.updated_at),
+    };
+  }
+
+  function renderScopedRollupSettings() {
+    const els = getScopedRollupElements();
+    if (!(els.list instanceof HTMLElement)) return;
+    if (state.scopedRollupLoading) {
+      els.list.innerHTML = `<div class="account-empty-state">Loading scoped livechat roll-up settings...</div>`;
+      setStatusPill(els.pill, "Loading settings", "subtle");
+      if (els.save instanceof HTMLButtonElement) els.save.disabled = true;
+      return;
+    }
+    if (!state.scopedRollupAvailable) {
+      els.list.innerHTML = `<div class="account-empty-state">Runtime/Auth scoped progression settings are not available on this build.</div>`;
+      setStatusPill(els.pill, "Runtime setting unavailable", "warning");
+      if (els.save instanceof HTMLButtonElement) els.save.disabled = true;
+      return;
+    }
+    const scopes = Array.isArray(state.scopedRollupSettings?.scopes) ? state.scopedRollupSettings.scopes : [];
+    if (!scopes.length) {
+      els.list.innerHTML = `<div class="account-empty-state">No owned scoped livechat XP scopes are available yet. New scopes appear after Runtime/Auth sees scoped livechat activity for this creator.</div>`;
+      setStatusPill(els.pill, "No scopes yet", "warning");
+      if (els.save instanceof HTMLButtonElement) els.save.disabled = true;
+      return;
+    }
+    els.list.innerHTML = scopes.map((scope) => `
+      <label class="platform-workspace-toggle scoped-rollup-row">
+        <span class="platform-workspace-toggle-copy">
+          ${escapeHtml(platformIdentityLabel(scope.platform || "other"))} ${escapeHtml(scope.channel_label || scope.scope_key)}
+          <span class="account-field-note">
+            Default is global roll-up enabled. Suppression is advanced and discouraged; it only affects future XP awards for this owned scope.
+          </span>
+        </span>
+        <span class="switch-button">
+          <span class="switch-scale">
+            <span class="switch-outer">
+              <input type="checkbox" aria-label="Suppress global roll-up for scoped livechat awards" data-scoped-rollup-scope="${escapeHtml(scope.scope_key)}"${scope.suppress_global_rollup ? " checked" : ""} />
+              <span class="ss-switch-inner">
+                <span class="ss-switch-toggle"></span>
+                <span class="ss-switch-indicator"></span>
+              </span>
+            </span>
+          </span>
+        </span>
+      </label>
+    `).join("");
+    setStatusPill(els.pill, `${scopes.length} scoped setting${scopes.length === 1 ? "" : "s"}`, "success");
+    if (els.save instanceof HTMLButtonElement) els.save.disabled = state.scopedRollupSaving;
+  }
+
+  async function loadScopedRollupSettings() {
+    const els = getScopedRollupElements();
+    if (!els.panel) return null;
+    state.scopedRollupLoading = true;
+    renderScopedRollupSettings();
+    try {
+      const payload = await requestJson(SCOPED_ROLLUP_SETTINGS_ENDPOINT, { method: "GET" });
+      const settings = payload?.settings && typeof payload.settings === "object" ? payload.settings : {};
+      state.scopedRollupSettings = {
+        default_global_rollup_enabled: settings.default_global_rollup_enabled !== false,
+        scopes: (Array.isArray(settings.scopes) ? settings.scopes : [])
+          .map(normalizeScopedRollupScope)
+          .filter(Boolean),
+      };
+      state.scopedRollupAvailable = true;
+      return payload;
+    } catch (err) {
+      state.scopedRollupAvailable = false;
+      setMessage("[data-scoped-rollup-status=\"true\"]", err?.message || "Unable to load scoped roll-up settings.", "warning");
+      return null;
+    } finally {
+      state.scopedRollupLoading = false;
+      renderScopedRollupSettings();
+    }
+  }
+
+  async function saveScopedRollupSettings() {
+    if (state.scopedRollupSaving || !state.scopedRollupAvailable) return;
+    const els = getScopedRollupElements();
+    const scopes = Array.isArray(state.scopedRollupSettings?.scopes) ? state.scopedRollupSettings.scopes : [];
+    const updates = scopes.map((scope) => {
+      const input = document.querySelector(`[data-scoped-rollup-scope="${CSS.escape(scope.scope_key)}"]`);
+      const suppress = input instanceof HTMLInputElement ? input.checked : scope.suppress_global_rollup;
+      return {
+        scope_key: scope.scope_key,
+        platform: scope.platform,
+        channel_label: scope.channel_label,
+        suppress_global_rollup: suppress,
+      };
+    });
+    state.scopedRollupSaving = true;
+    if (els.save instanceof HTMLButtonElement) els.save.disabled = true;
+    setMessage("[data-scoped-rollup-status=\"true\"]", "Saving scoped roll-up settings through Runtime/Auth...", "neutral");
+    try {
+      const payload = await requestJson(SCOPED_ROLLUP_SETTINGS_ENDPOINT, {
+        method: "PATCH",
+        body: JSON.stringify({ scopes: updates }),
+      });
+      const settings = payload?.settings && typeof payload.settings === "object" ? payload.settings : {};
+      state.scopedRollupSettings = {
+        default_global_rollup_enabled: settings.default_global_rollup_enabled !== false,
+        scopes: (Array.isArray(settings.scopes) ? settings.scopes : [])
+          .map(normalizeScopedRollupScope)
+          .filter(Boolean),
+      };
+      setMessage("[data-scoped-rollup-status=\"true\"]", "Scoped roll-up settings saved. Future XP awards use the updated Runtime/Auth setting.", "success");
+    } catch (err) {
+      setMessage("[data-scoped-rollup-status=\"true\"]", err?.payload?.error || err?.message || "Unable to save scoped roll-up settings.", "danger");
+    } finally {
+      state.scopedRollupSaving = false;
+      renderScopedRollupSettings();
+    }
+  }
+
+  function wireScopedRollupControls() {
+    const els = getScopedRollupElements();
+    if (!els.panel || els.panel.dataset.scopedRollupWired === "true") return;
+    els.panel.dataset.scopedRollupWired = "true";
+    if (els.save instanceof HTMLButtonElement) {
+      els.save.addEventListener("click", () => void saveScopedRollupSettings());
+    }
+    if (els.refresh instanceof HTMLButtonElement) {
+      els.refresh.addEventListener("click", () => void loadScopedRollupSettings());
     }
   }
 
@@ -4505,6 +4704,7 @@
     wireProviderButtons();
     wireEmailChange();
     wirePlatformIdentityControls();
+    wireScopedRollupControls();
     wirePublicProfileControls();
     wireAccountShell();
 
@@ -4512,13 +4712,15 @@
       refreshAuthMethods(),
       loadPublicProfile(),
       loadCreatorIntegrations(),
-      loadPlatformIdentities()
+      loadPlatformIdentities(),
+      loadScopedRollupSettings()
     ]);
 
     const authResult = tasks[0];
     const profileResult = tasks[1];
     const integrationsResult = tasks[2];
     const identitiesResult = tasks[3];
+    const scopedRollupResult = tasks[4];
 
     if (window.location.search.includes("linked_provider=")) {
       setMessage("[data-account-provider-status-message=\"true\"]", "");
@@ -4566,6 +4768,10 @@
       setMessage("[data-platform-identity-status=\"true\"]", identitiesResult.reason?.message || "Unable to load platform identity aliases.", "warning");
     }
 
+    if (scopedRollupResult.status === "rejected") {
+      setMessage("[data-scoped-rollup-status=\"true\"]", scopedRollupResult.reason?.message || "Unable to load scoped roll-up settings.", "warning");
+    }
+
     renderBillingSection();
     renderBadgeGovernanceSection();
     await window.CreatorModeratorSurface?.init?.();
@@ -4580,6 +4786,10 @@
     state.platformIdentitiesLoading = false;
     state.platformIdentitiesSaving = false;
     state.platformIdentityEditingId = "";
+    state.scopedRollupAvailable = true;
+    state.scopedRollupLoading = false;
+    state.scopedRollupSaving = false;
+    state.scopedRollupSettings = null;
     state.savingProfile = false;
     state.controlsWired = false;
     state.previewMode = "streamsuites";
