@@ -1,11 +1,11 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-05-22T12:00:00.306567Z",
-  "heartbeat": "2026-05-22T12:00:00.306567Z",
+  "generated_at": "2026-05-25T09:23:48.974377Z",
+  "heartbeat": "2026-05-25T09:23:48.974377Z",
   "runtime": {
     "project": "StreamSuites\u2122 Runtime",
     "version": "0.4.2-alpha",
-    "build": "2026.05.21+009"
+    "build": "2026.05.25+001"
   },
   "system": {
     "platform_polling_enabled": {
@@ -249,7 +249,7 @@
         "twitter": true,
         "discord": true
       },
-      "last_heartbeat": "2026-05-22T11:59:53.265931Z",
+      "last_heartbeat": "2026-05-25T09:23:45.947622Z",
       "error": null,
       "live_status": {
         "creator_id": "As5TyU",
@@ -257,7 +257,7 @@
         "is_live": false,
         "active_provider": null,
         "active_status": null,
-        "last_checked_at": "2026-05-22T11:59:24.450191Z",
+        "last_checked_at": "2026-05-25T09:23:25.139072Z",
         "freshness": "fresh",
         "stale": false,
         "checked_provider_count": 3,
@@ -284,7 +284,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:58:58.971659Z",
+            "last_checked_at": "2026-05-25T09:23:25.139072Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
@@ -318,7 +318,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:59:24.450191Z",
+            "last_checked_at": "2026-05-25T09:22:54.804729Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
@@ -352,7 +352,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:59:23.764409Z",
+            "last_checked_at": "2026-05-25T09:22:22.574265Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
@@ -374,7 +374,7 @@
   "rumble_chat": null,
   "live_status": {
     "schema_version": "v1",
-    "generated_at": "2026-05-22T11:59:30.437135Z",
+    "generated_at": "2026-05-25T09:23:28.286415Z",
     "provider_priority": [
       "kick",
       "rumble",
@@ -388,8 +388,8 @@
         "stale_after_seconds": 120,
         "batch_size": 50,
         "creators_configured": 2,
-        "last_refresh_started_at": "2026-05-22T11:59:26.076661Z",
-        "last_refresh_completed_at": "2026-05-22T11:59:28.271432Z",
+        "last_refresh_started_at": "2026-05-25T09:22:52.340523Z",
+        "last_refresh_completed_at": "2026-05-25T09:22:54.269851Z",
         "last_error": null
       },
       {
@@ -398,8 +398,8 @@
         "stale_after_seconds": 180,
         "batch_size": 25,
         "creators_configured": 3,
-        "last_refresh_started_at": "2026-05-22T11:58:58.971659Z",
-        "last_refresh_completed_at": "2026-05-22T11:59:30.436135Z",
+        "last_refresh_started_at": "2026-05-25T09:23:25.139072Z",
+        "last_refresh_completed_at": "2026-05-25T09:23:28.286415Z",
         "last_error": null
       },
       {
@@ -408,8 +408,8 @@
         "stale_after_seconds": 90,
         "batch_size": 100,
         "creators_configured": 1,
-        "last_refresh_started_at": "2026-05-22T11:59:24.450191Z",
-        "last_refresh_completed_at": "2026-05-22T11:59:24.450191Z",
+        "last_refresh_started_at": "2026-05-25T09:22:54.804729Z",
+        "last_refresh_completed_at": "2026-05-25T09:22:54.804729Z",
         "last_error": null
       },
       {
@@ -418,8 +418,8 @@
         "stale_after_seconds": 150,
         "batch_size": 50,
         "creators_configured": 1,
-        "last_refresh_started_at": "2026-05-22T11:59:23.764409Z",
-        "last_refresh_completed_at": "2026-05-22T11:59:23.915030Z",
+        "last_refresh_started_at": "2026-05-25T09:22:22.574265Z",
+        "last_refresh_completed_at": "2026-05-25T09:22:22.728809Z",
         "last_error": null
       }
     ],
@@ -430,7 +430,7 @@
         "is_live": false,
         "active_provider": null,
         "active_status": null,
-        "last_checked_at": "2026-05-22T11:58:58.971659Z",
+        "last_checked_at": "2026-05-25T09:23:25.139072Z",
         "freshness": "fresh",
         "stale": false,
         "checked_provider_count": 1,
@@ -457,7 +457,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:58:58.971659Z",
+            "last_checked_at": "2026-05-25T09:23:25.139072Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
@@ -477,7 +477,7 @@
         "is_live": false,
         "active_provider": null,
         "active_status": null,
-        "last_checked_at": "2026-05-22T11:59:26.076661Z",
+        "last_checked_at": "2026-05-25T09:22:52.340523Z",
         "freshness": "fresh",
         "stale": false,
         "checked_provider_count": 1,
@@ -504,7 +504,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:59:26.076661Z",
+            "last_checked_at": "2026-05-25T09:22:52.340523Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
@@ -525,18 +525,17 @@
                 "title": "StreamSuites\u2122",
                 "source_url": "https://kick.com/streamsuites",
                 "url": "https://kick.com/streamsuites",
-                "embed_url": null,
                 "thumbnail_url": "https://images.kick.com/video_thumbnails/MDGuGVYzxi2a/lRTTEaAK6Jw0/480.webp",
                 "poster_url": "https://images.kick.com/video_thumbnails/MDGuGVYzxi2a/lRTTEaAK6Jw0/480.webp",
                 "started_at": "2026-05-21T23:27:29Z",
+                "ended_at": "2026-05-21T23:35:31.290089Z",
+                "first_missing_at": "2026-05-21T23:35:31.290089Z",
                 "last_seen_live_at": "2026-05-21T23:34:28.563728Z",
                 "viewer_count": 4,
                 "peak_viewer_count": 4,
                 "last_checked_at": "2026-05-21T23:35:31.290089Z",
                 "status": "ended",
-                "is_live": false,
-                "ended_at": "2026-05-21T23:35:31.290089Z",
-                "first_missing_at": "2026-05-21T23:35:31.290089Z"
+                "is_live": false
               }
             ]
           }
@@ -548,7 +547,7 @@
         "is_live": false,
         "active_provider": null,
         "active_status": null,
-        "last_checked_at": "2026-05-22T11:59:24.450191Z",
+        "last_checked_at": "2026-05-25T09:23:25.139072Z",
         "freshness": "fresh",
         "stale": false,
         "checked_provider_count": 3,
@@ -575,7 +574,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:58:58.971659Z",
+            "last_checked_at": "2026-05-25T09:23:25.139072Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
@@ -609,7 +608,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:59:24.450191Z",
+            "last_checked_at": "2026-05-25T09:22:54.804729Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
@@ -643,7 +642,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:59:23.764409Z",
+            "last_checked_at": "2026-05-25T09:22:22.574265Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
@@ -663,7 +662,7 @@
         "is_live": false,
         "active_provider": null,
         "active_status": null,
-        "last_checked_at": "2026-05-22T11:59:26.076661Z",
+        "last_checked_at": "2026-05-25T09:23:25.139072Z",
         "freshness": "fresh",
         "stale": false,
         "checked_provider_count": 2,
@@ -690,7 +689,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:59:26.076661Z",
+            "last_checked_at": "2026-05-25T09:22:52.340523Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
@@ -724,7 +723,7 @@
             "started_at": null,
             "scheduled_at": null,
             "ended_at": null,
-            "last_checked_at": "2026-05-22T11:58:58.971659Z",
+            "last_checked_at": "2026-05-25T09:23:25.139072Z",
             "next_allowed_check_at": null,
             "stale": false,
             "freshness": "fresh",
