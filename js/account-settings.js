@@ -1689,19 +1689,29 @@
         identity.assigned_at ? `Assigned: ${escapeHtml(identity.assigned_at)}` : "",
       ].filter(Boolean);
       const removable = !identity.primary && identity.removable_by_account_owner === true;
+      const chipTitle = [
+        identity.primary ? "Primary public identity" : "Assigned secondary public identity",
+        identity.assignment_source ? `Source: ${identity.assignment_source.replace(/[_-]+/g, " ")}` : "",
+        identity.assigned_at ? `Assigned: ${identity.assigned_at}` : "",
+        identity.source_platform ? `Platform: ${platformIdentityLabel(identity.source_platform)}` : "",
+        identity.source_user_id ? `Source user: ${identity.source_user_id}` : "",
+        identity.source_channel_scope ? `Scope: ${identity.source_channel_scope}` : "",
+      ].filter(Boolean).join(" · ");
+      const chipMarkup = identity.primary
+        ? `<span class="creator-public-identity-chip is-primary" title="${escapeHtml(chipTitle)}"><span aria-hidden="true">Locked</span>${escapeHtml(identity.identity_code)}<em>Primary</em></span>`
+        : removable
+          ? `<button class="creator-public-identity-chip is-secondary" type="button" title="${escapeHtml(`${chipTitle} · Click to unassign`)}" data-public-identity-unassign="${escapeHtml(identity.identity_code)}">${escapeHtml(identity.identity_code)}<em>Unassign</em></button>`
+          : `<span class="creator-public-identity-chip is-secondary is-locked" title="${escapeHtml(chipTitle)}">${escapeHtml(identity.identity_code)}<em>Assigned</em></span>`;
       return `
         <article class="platform-identity-row" data-public-identity-code="${escapeHtml(identity.identity_code)}">
           <div class="platform-identity-row-main">
             <div class="platform-identity-row-title">
-              <strong>${escapeHtml(identity.identity_code)}</strong>
+              ${chipMarkup}
               <span class="status-pill ${identity.primary ? "success" : "subtle"}">${escapeHtml(label)}</span>
               ${identity.protected || identity.primary ? `<span class="status-pill warning">Protected</span>` : ""}
             </div>
             <p>${sourceBits.join(" · ") || "StreamSuites account primary identity."}</p>
             <p class="account-note">${metaBits.join(" · ") || "No assignment metadata returned."}</p>
-          </div>
-          <div class="account-provider-actions">
-            ${removable ? `<button class="creator-button secondary danger" type="button" data-public-identity-unassign="${escapeHtml(identity.identity_code)}">Unassign</button>` : ""}
           </div>
         </article>
       `;
@@ -1737,13 +1747,18 @@
   async function unassignPublicIdentity(identityCode) {
     const identity = state.publicIdentities.find((item) => item.identity_code === identityCode);
     if (!identity || identity.primary || state.publicIdentitiesSaving) return;
-    if (!window.confirm(`Unassign public identity ${identity.identity_code} from this account? Historical ledger records are not deleted.`)) {
+    const reason = coerceText(window.prompt?.(`Unassign public identity ${identity.identity_code} from this account?\n\nHistorical ledger records are not deleted.\n\nRequired reason/note:`) || "");
+    if (!reason) {
+      setMessage("[data-public-identity-status=\"true\"]", "Unassign requires a reason/note.", "warning");
       return;
     }
     state.publicIdentitiesSaving = true;
     setMessage("[data-public-identity-status=\"true\"]", "Unassigning public identity through Runtime/Auth...", "neutral");
     try {
-      const payload = await requestJson(`${ACCOUNT_PUBLIC_IDENTITIES_ENDPOINT}/${encodeURIComponent(identity.identity_code)}`, { method: "DELETE" });
+      const payload = await requestJson(`${ACCOUNT_PUBLIC_IDENTITIES_ENDPOINT}/${encodeURIComponent(identity.identity_code)}`, {
+        method: "DELETE",
+        body: JSON.stringify({ reason })
+      });
       state.publicIdentities = (Array.isArray(payload?.identities) ? payload.identities : [])
         .map(normalizePublicIdentity)
         .filter(Boolean);

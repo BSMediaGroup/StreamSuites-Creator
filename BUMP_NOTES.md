@@ -2,6 +2,9 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Refined Creator `/account` public identity display to use compact chips. The primary public ID now renders as locked/non-removable, secondary assigned IDs render as removable chips only when Runtime/Auth marks them owner-removable, and self-service unassign now requires a reason/note sent to `DELETE /api/account/public-identities/{identity_code}` before refreshing the account identity list.
+- Human note: creators can clearly see which secondary public IDs are attached and must explain removals; primary IDs and historical ledgers remain protected.
+
 - Added Creator `/account` assigned public identity management through Runtime/Auth `GET /api/account/public-identities` and `DELETE /api/account/public-identities/{identity_code}`. The account page now shows the protected primary public ID, assigned secondary public IDs, source/platform and assignment metadata when returned, a compact roll-up explanation, and an unassign action only when the backend marks the secondary identity removable by the account owner.
 - Human note: creators can see which public/chat identities contribute to their StreamSuites account and can remove only safe secondary assignments; primary public IDs and historical ledger rows stay protected.
 

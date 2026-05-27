@@ -12,6 +12,7 @@ function read(relativePath) {
 test("creator account page mounts the grouped social links editor shell", () => {
   const html = read("views/account.html");
   const accountJs = read("js/account-settings.js");
+  const css = read("css/creator-dashboard.css");
 
   assert.match(html, /data-social-links-editor="true"/);
   assert.match(html, /data-social-links-search="true"/);
@@ -44,6 +45,7 @@ test("creator account social editor uses the shared canonical platform registry"
 test("creator account page wires runtime-backed platform identity aliases", () => {
   const html = read("views/account.html");
   const accountJs = read("js/account-settings.js");
+  const css = read("css/creator-dashboard.css");
 
   assert.match(html, /data-platform-identities-panel="true"/);
   assert.match(html, /data-public-identities-panel="true"/);
@@ -61,8 +63,13 @@ test("creator account page wires runtime-backed platform identity aliases", () =
   assert.match(accountJs, /data-public-identity-unassign/);
   assert.match(accountJs, /removable_by_account_owner/);
   assert.match(accountJs, /method: "DELETE"/);
+  assert.match(accountJs, /creator-public-identity-chip is-primary/);
+  assert.match(accountJs, /Required reason\/note/);
+  assert.match(accountJs, /body: JSON\.stringify\(\{ reason \}\)/);
   assert.match(accountJs, /window\.confirm\(`Remove this manual platform alias/);
-  assert.match(accountJs, /window\.confirm\(`Unassign public identity/);
+  assert.doesNotMatch(accountJs, /window\.confirm\(`Unassign public identity/);
+  assert.match(css, /\.creator-public-identity-chip\.is-primary/);
+  assert.match(css, /button\.creator-public-identity-chip:hover/);
 });
 
 test("creator account page wires runtime-backed scoped roll-up settings", () => {
