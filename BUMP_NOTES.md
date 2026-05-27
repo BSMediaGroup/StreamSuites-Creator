@@ -2,6 +2,9 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Added Creator `/account` assigned public identity management through Runtime/Auth `GET /api/account/public-identities` and `DELETE /api/account/public-identities/{identity_code}`. The account page now shows the protected primary public ID, assigned secondary public IDs, source/platform and assignment metadata when returned, a compact roll-up explanation, and an unassign action only when the backend marks the secondary identity removable by the account owner.
+- Human note: creators can see which public/chat identities contribute to their StreamSuites account and can remove only safe secondary assignments; primary public IDs and historical ledger rows stay protected.
+
 - Enabled Creator `/account` manual platform alias removal now that Runtime/Auth exposes a self-service delete contract. `js/account-settings.js` renders delete actions only for removable/manual aliases, keeps protected/admin/OAuth/verified aliases read-only with a protected chip, confirms before deletion, calls `DELETE /api/account/platform-identities/{alias_id}`, and refreshes the alias list from the authoritative response without a page reload.
 - Wired the advanced scoped livechat roll-up panel to Runtime/Auth `GET/PATCH /api/creator/progression/scoped-settings`. The panel now loads owned scoped settings, keeps global roll-up enabled by default, saves per-scope suppression through Runtime/Auth only, falls back to a disabled explanatory state when the endpoint is unavailable, and states that the setting applies to XP today while economy/inventory roll-up remains deferred.
 - Human note: Creator can now manage safe manual alias cleanup and owned scoped XP roll-up suppression from `/account`; protected aliases stay backend-managed and no localStorage setting authority was introduced.

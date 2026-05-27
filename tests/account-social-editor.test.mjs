@@ -46,17 +46,23 @@ test("creator account page wires runtime-backed platform identity aliases", () =
   const accountJs = read("js/account-settings.js");
 
   assert.match(html, /data-platform-identities-panel="true"/);
+  assert.match(html, /data-public-identities-panel="true"/);
+  assert.match(html, /Public IDs assigned to this account/);
   assert.match(html, /data-platform-identity-form="true"/);
   assert.match(html, /data-platform-identity-field="platform_user_id"/);
   assert.match(html, /data-platform-identity-field="chat_id"/);
   assert.match(html, /Fuzzy matching is not used/);
   assert.match(accountJs, /PLATFORM_IDENTITIES_ENDPOINT = `\$\{API_BASE\}\/api\/account\/platform-identities`/);
+  assert.match(accountJs, /ACCOUNT_PUBLIC_IDENTITIES_ENDPOINT = `\$\{API_BASE\}\/api\/account\/public-identities`/);
   assert.match(accountJs, /method: draft\.identity_id \? "PATCH" : "POST"/);
   assert.match(accountJs, /Add at least one Runtime\/Auth identifier/);
   assert.match(accountJs, /platformIdentityDuplicateExists/);
   assert.match(accountJs, /data-platform-identity-delete/);
+  assert.match(accountJs, /data-public-identity-unassign/);
+  assert.match(accountJs, /removable_by_account_owner/);
   assert.match(accountJs, /method: "DELETE"/);
   assert.match(accountJs, /window\.confirm\(`Remove this manual platform alias/);
+  assert.match(accountJs, /window\.confirm\(`Unassign public identity/);
 });
 
 test("creator account page wires runtime-backed scoped roll-up settings", () => {

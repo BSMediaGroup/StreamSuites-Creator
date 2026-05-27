@@ -26,6 +26,7 @@
   const COVER_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/cover`;
   const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
   const PLATFORM_IDENTITIES_ENDPOINT = `${API_BASE}/api/account/platform-identities`;
+  const ACCOUNT_PUBLIC_IDENTITIES_ENDPOINT = `${API_BASE}/api/account/public-identities`;
   const SCOPED_ROLLUP_SETTINGS_ENDPOINT = `${API_BASE}/api/creator/progression/scoped-settings`;
   const AVATAR_UPLOAD_MAX_BYTES = 2 * 1024 * 1024;
   const COVER_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
@@ -164,6 +165,10 @@
     platformIdentitiesSaving: false,
     platformIdentityEditingId: "",
     platformIdentitiesAvailable: true,
+    publicIdentities: [],
+    publicIdentitiesLoading: false,
+    publicIdentitiesSaving: false,
+    publicIdentitiesAvailable: true,
     scopedRollupAvailable: true,
     scopedRollupLoading: false,
     scopedRollupSaving: false,
@@ -1620,6 +1625,150 @@
         }
       });
     }
+  }
+
+  function normalizePublicIdentity(identity) {
+    if (!identity || typeof identity !== "object") return null;
+    const code = coerceText(identity.identity_code || identity.public_identity_code);
+    if (!code) return null;
+    return {
+      identity_code: code,
+      public_identity_code: coerceText(identity.public_identity_code || code),
+      status: coerceText(identity.status || (identity.primary ? "primary" : identity.identity_kind || "assigned")).toLowerCase(),
+      identity_kind: coerceText(identity.identity_kind),
+      primary: identity.primary === true || identity.is_primary === true || coerceText(identity.status).toLowerCase() === "primary",
+      protected: identity.protected === true,
+      removable_by_account_owner: identity.removable_by_account_owner === true,
+      assignment_source: coerceText(identity.assignment_source || identity.assignment_metadata?.assignment_source),
+      assigned_at: coerceText(identity.assigned_at),
+      source_platform: coerceText(identity.source_platform),
+      source_user_id: coerceText(identity.source_user_id),
+      source_display_name: coerceText(identity.source_display_name || identity.display_name),
+      source_channel_scope: coerceText(identity.source_channel_scope),
+      account_user_code: coerceText(identity.account_user_code || identity.user_code),
+    };
+  }
+
+  function getPublicIdentityElements() {
+    return {
+      panel: document.querySelector("[data-public-identities-panel=\"true\"]"),
+      pill: document.querySelector("[data-public-identities-pill=\"true\"]"),
+      list: document.querySelector("[data-public-identities-list=\"true\"]"),
+      status: document.querySelector("[data-public-identity-status=\"true\"]"),
+    };
+  }
+
+  function renderPublicIdentityList() {
+    const els = getPublicIdentityElements();
+    if (!(els.list instanceof HTMLElement)) return;
+    if (state.publicIdentitiesLoading) {
+      els.list.innerHTML = `<div class="account-empty-state">Loading assigned public identities...</div>`;
+      setStatusPill(els.pill, "Loading public IDs", "subtle");
+      return;
+    }
+    if (!state.publicIdentitiesAvailable) {
+      els.list.innerHTML = `<div class="account-empty-state">Runtime/Auth public identity ownership is not available on this build.</div>`;
+      setStatusPill(els.pill, "Endpoint unavailable", "warning");
+      return;
+    }
+    if (!state.publicIdentities.length) {
+      els.list.innerHTML = `<div class="account-empty-state">No public identities were returned for this account.</div>`;
+      setStatusPill(els.pill, "No public IDs", "warning");
+      return;
+    }
+    els.list.innerHTML = state.publicIdentities.map((identity) => {
+      const label = identity.primary ? "Primary public ID" : "Additional assigned public ID";
+      const sourceBits = [
+        identity.source_platform ? platformIdentityLabel(identity.source_platform) : "",
+        identity.source_user_id ? `User ID: ${escapeHtml(identity.source_user_id)}` : "",
+        identity.source_display_name ? `Display: ${escapeHtml(identity.source_display_name)}` : "",
+        identity.source_channel_scope ? `Scope: ${escapeHtml(identity.source_channel_scope)}` : "",
+      ].filter(Boolean);
+      const metaBits = [
+        identity.assignment_source ? `Source: ${escapeHtml(identity.assignment_source.replace(/[_-]+/g, " "))}` : "",
+        identity.assigned_at ? `Assigned: ${escapeHtml(identity.assigned_at)}` : "",
+      ].filter(Boolean);
+      const removable = !identity.primary && identity.removable_by_account_owner === true;
+      return `
+        <article class="platform-identity-row" data-public-identity-code="${escapeHtml(identity.identity_code)}">
+          <div class="platform-identity-row-main">
+            <div class="platform-identity-row-title">
+              <strong>${escapeHtml(identity.identity_code)}</strong>
+              <span class="status-pill ${identity.primary ? "success" : "subtle"}">${escapeHtml(label)}</span>
+              ${identity.protected || identity.primary ? `<span class="status-pill warning">Protected</span>` : ""}
+            </div>
+            <p>${sourceBits.join(" · ") || "StreamSuites account primary identity."}</p>
+            <p class="account-note">${metaBits.join(" · ") || "No assignment metadata returned."}</p>
+          </div>
+          <div class="account-provider-actions">
+            ${removable ? `<button class="creator-button secondary danger" type="button" data-public-identity-unassign="${escapeHtml(identity.identity_code)}">Unassign</button>` : ""}
+          </div>
+        </article>
+      `;
+    }).join("");
+    const secondaryCount = state.publicIdentities.filter((item) => !item.primary).length;
+    setStatusPill(els.pill, `${state.publicIdentities.length} public ID${state.publicIdentities.length === 1 ? "" : "s"} · ${secondaryCount} secondary`, "success");
+  }
+
+  async function loadPublicIdentities() {
+    const els = getPublicIdentityElements();
+    if (!els.panel) return null;
+    state.publicIdentitiesLoading = true;
+    renderPublicIdentityList();
+    try {
+      const payload = await requestJson(ACCOUNT_PUBLIC_IDENTITIES_ENDPOINT, { method: "GET" });
+      state.publicIdentities = (Array.isArray(payload?.identities) ? payload.identities : [])
+        .map(normalizePublicIdentity)
+        .filter(Boolean);
+      state.publicIdentitiesAvailable = true;
+      renderPublicIdentityList();
+      return payload;
+    } catch (err) {
+      state.publicIdentitiesAvailable = false;
+      renderPublicIdentityList();
+      setMessage("[data-public-identity-status=\"true\"]", err?.message || "Unable to load assigned public identities.", "warning");
+      return null;
+    } finally {
+      state.publicIdentitiesLoading = false;
+      renderPublicIdentityList();
+    }
+  }
+
+  async function unassignPublicIdentity(identityCode) {
+    const identity = state.publicIdentities.find((item) => item.identity_code === identityCode);
+    if (!identity || identity.primary || state.publicIdentitiesSaving) return;
+    if (!window.confirm(`Unassign public identity ${identity.identity_code} from this account? Historical ledger records are not deleted.`)) {
+      return;
+    }
+    state.publicIdentitiesSaving = true;
+    setMessage("[data-public-identity-status=\"true\"]", "Unassigning public identity through Runtime/Auth...", "neutral");
+    try {
+      const payload = await requestJson(`${ACCOUNT_PUBLIC_IDENTITIES_ENDPOINT}/${encodeURIComponent(identity.identity_code)}`, { method: "DELETE" });
+      state.publicIdentities = (Array.isArray(payload?.identities) ? payload.identities : [])
+        .map(normalizePublicIdentity)
+        .filter(Boolean);
+      renderPublicIdentityList();
+      setMessage("[data-public-identity-status=\"true\"]", "Public identity assignment removed.", "success");
+    } catch (err) {
+      setMessage("[data-public-identity-status=\"true\"]", err?.payload?.error || err?.message || "Unable to unassign public identity.", "danger");
+    } finally {
+      state.publicIdentitiesSaving = false;
+      renderPublicIdentityList();
+    }
+  }
+
+  function wirePublicIdentityControls() {
+    const els = getPublicIdentityElements();
+    if (!(els.list instanceof HTMLElement) || els.list.dataset.publicIdentityWired === "true") return;
+    els.list.dataset.publicIdentityWired = "true";
+    els.list.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const button = target.closest("[data-public-identity-unassign]");
+      if (button instanceof HTMLButtonElement) {
+        void unassignPublicIdentity(button.getAttribute("data-public-identity-unassign") || "");
+      }
+    });
   }
 
   function getScopedRollupElements() {
@@ -4704,6 +4853,7 @@
     wireProviderButtons();
     wireEmailChange();
     wirePlatformIdentityControls();
+    wirePublicIdentityControls();
     wireScopedRollupControls();
     wirePublicProfileControls();
     wireAccountShell();
@@ -4713,6 +4863,7 @@
       loadPublicProfile(),
       loadCreatorIntegrations(),
       loadPlatformIdentities(),
+      loadPublicIdentities(),
       loadScopedRollupSettings()
     ]);
 
@@ -4720,7 +4871,8 @@
     const profileResult = tasks[1];
     const integrationsResult = tasks[2];
     const identitiesResult = tasks[3];
-    const scopedRollupResult = tasks[4];
+    const publicIdentitiesResult = tasks[4];
+    const scopedRollupResult = tasks[5];
 
     if (window.location.search.includes("linked_provider=")) {
       setMessage("[data-account-provider-status-message=\"true\"]", "");
@@ -4768,6 +4920,10 @@
       setMessage("[data-platform-identity-status=\"true\"]", identitiesResult.reason?.message || "Unable to load platform identity aliases.", "warning");
     }
 
+    if (publicIdentitiesResult.status === "rejected") {
+      setMessage("[data-public-identity-status=\"true\"]", publicIdentitiesResult.reason?.message || "Unable to load assigned public identities.", "warning");
+    }
+
     if (scopedRollupResult.status === "rejected") {
       setMessage("[data-scoped-rollup-status=\"true\"]", scopedRollupResult.reason?.message || "Unable to load scoped roll-up settings.", "warning");
     }
@@ -4781,11 +4937,15 @@
     state.profile = null;
     state.integrations = [];
     state.platformIdentities = [];
+    state.publicIdentities = [];
     state.uploads = { avatar: null, cover: null, background: null, logo: null };
     state.loadingProfile = false;
     state.platformIdentitiesLoading = false;
     state.platformIdentitiesSaving = false;
     state.platformIdentityEditingId = "";
+    state.publicIdentitiesLoading = false;
+    state.publicIdentitiesSaving = false;
+    state.publicIdentitiesAvailable = true;
     state.scopedRollupAvailable = true;
     state.scopedRollupLoading = false;
     state.scopedRollupSaving = false;
