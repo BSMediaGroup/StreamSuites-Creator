@@ -2,6 +2,10 @@
 
 ## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
 
+- Restored obvious Creator-facing detach controls in the `/account` "Public IDs assigned to this account" section. Secondary public IDs marked `removable_by_account_owner` by Runtime/Auth now show an explicit `DETACH PUBLIC ID` row button, while primary/protected/locked IDs show clear non-detachable status instead of an action.
+- Detach now uses an inline confirmation panel with a reason/note field, Cancel and Confirm Detach actions, disabled saving state, inline feedback, and refreshes the assigned identity list from the existing Runtime/Auth `DELETE /api/account/public-identities/{identity_code}` response after success.
+- Human note: creators no longer need to discover a hidden chip action; detaching a secondary public ID is visible, deliberate, and still owned by Runtime/Auth.
+
 - Refined Creator `/account` public identity display to use compact chips. The primary public ID now renders as locked/non-removable, secondary assigned IDs render as removable chips only when Runtime/Auth marks them owner-removable, and self-service unassign now requires a reason/note sent to `DELETE /api/account/public-identities/{identity_code}` before refreshing the account identity list.
 - Human note: creators can clearly see which secondary public IDs are attached and must explain removals; primary IDs and historical ledgers remain protected.
 

@@ -60,16 +60,23 @@ test("creator account page wires runtime-backed platform identity aliases", () =
   assert.match(accountJs, /Add at least one Runtime\/Auth identifier/);
   assert.match(accountJs, /platformIdentityDuplicateExists/);
   assert.match(accountJs, /data-platform-identity-delete/);
-  assert.match(accountJs, /data-public-identity-unassign/);
+  assert.match(accountJs, /data-public-identity-detach/);
+  assert.match(accountJs, /DETACH PUBLIC ID/);
+  assert.match(accountJs, /data-public-identity-confirm-detach/);
+  assert.match(accountJs, /Confirm Detach/);
+  assert.match(accountJs, /data-public-identity-cancel/);
   assert.match(accountJs, /removable_by_account_owner/);
+  assert.match(accountJs, /identity\.removable_by_account_owner !== true/);
   assert.match(accountJs, /method: "DELETE"/);
   assert.match(accountJs, /creator-public-identity-chip is-primary/);
-  assert.match(accountJs, /Required reason\/note/);
+  assert.match(accountJs, /Reason \/ note/);
   assert.match(accountJs, /body: JSON\.stringify\(\{ reason \}\)/);
   assert.match(accountJs, /window\.confirm\(`Remove this manual platform alias/);
-  assert.doesNotMatch(accountJs, /window\.confirm\(`Unassign public identity/);
+  assert.doesNotMatch(accountJs, /window\.prompt/);
+  assert.doesNotMatch(accountJs, /data-public-identity-unassign/);
   assert.match(css, /\.creator-public-identity-chip\.is-primary/);
-  assert.match(css, /button\.creator-public-identity-chip:hover/);
+  assert.match(css, /\.creator-public-identity-detach-button/);
+  assert.match(css, /\.creator-public-identity-confirm/);
 });
 
 test("creator account page wires runtime-backed scoped roll-up settings", () => {

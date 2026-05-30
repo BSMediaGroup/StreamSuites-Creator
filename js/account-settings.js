@@ -169,6 +169,8 @@
     publicIdentitiesLoading: false,
     publicIdentitiesSaving: false,
     publicIdentitiesAvailable: true,
+    publicIdentityDetachCode: "",
+    publicIdentityDetachReason: "",
     scopedRollupAvailable: true,
     scopedRollupLoading: false,
     scopedRollupSaving: false,
@@ -1678,6 +1680,7 @@
     }
     els.list.innerHTML = state.publicIdentities.map((identity) => {
       const label = identity.primary ? "Primary public ID" : "Additional assigned public ID";
+      const isProtected = identity.protected || identity.primary || identity.status === "protected" || identity.status === "locked";
       const sourceBits = [
         identity.source_platform ? platformIdentityLabel(identity.source_platform) : "",
         identity.source_user_id ? `User ID: ${escapeHtml(identity.source_user_id)}` : "",
@@ -1699,20 +1702,47 @@
       ].filter(Boolean).join(" · ");
       const chipMarkup = identity.primary
         ? `<span class="creator-public-identity-chip is-primary" title="${escapeHtml(chipTitle)}"><span aria-hidden="true">Locked</span>${escapeHtml(identity.identity_code)}<em>Primary</em></span>`
-        : removable
-          ? `<button class="creator-public-identity-chip is-secondary" type="button" title="${escapeHtml(`${chipTitle} · Click to unassign`)}" data-public-identity-unassign="${escapeHtml(identity.identity_code)}">${escapeHtml(identity.identity_code)}<em>Unassign</em></button>`
-          : `<span class="creator-public-identity-chip is-secondary is-locked" title="${escapeHtml(chipTitle)}">${escapeHtml(identity.identity_code)}<em>Assigned</em></span>`;
+        : `<span class="creator-public-identity-chip is-secondary${removable ? "" : " is-locked"}" title="${escapeHtml(chipTitle)}">${escapeHtml(identity.identity_code)}<em>${removable ? "Secondary" : "Assigned"}</em></span>`;
+      const blockedReason = identity.primary
+        ? "Primary ID"
+        : isProtected
+          ? "Protected"
+          : "Cannot detach";
+      const actionMarkup = removable
+        ? `<button class="creator-button danger creator-public-identity-detach-button" type="button" data-public-identity-detach="${escapeHtml(identity.identity_code)}" ${state.publicIdentitiesSaving ? "disabled" : ""}>DETACH PUBLIC ID</button>`
+        : `<span class="status-pill warning creator-public-identity-lock-reason">${escapeHtml(blockedReason)}</span>`;
+      const confirmOpen = state.publicIdentityDetachCode === identity.identity_code;
+      const confirmMarkup = confirmOpen ? `
+        <div class="creator-public-identity-confirm" data-public-identity-confirm="${escapeHtml(identity.identity_code)}">
+          <div>
+            <strong>Detach ${escapeHtml(identity.identity_code)}?</strong>
+            <p class="account-note">This removes the secondary public ID from this account through Runtime/Auth. Historical ledger records are not deleted.</p>
+          </div>
+          <label class="account-field">
+            <span class="account-field-label">Reason / note</span>
+            <textarea class="account-field-input" rows="2" data-public-identity-reason="${escapeHtml(identity.identity_code)}" placeholder="Required reason for detaching this public ID">${escapeHtml(state.publicIdentityDetachReason)}</textarea>
+          </label>
+          <div class="platform-actions">
+            <button class="creator-button secondary" type="button" data-public-identity-cancel="${escapeHtml(identity.identity_code)}" ${state.publicIdentitiesSaving ? "disabled" : ""}>Cancel</button>
+            <button class="creator-button danger" type="button" data-public-identity-confirm-detach="${escapeHtml(identity.identity_code)}" ${state.publicIdentitiesSaving ? "disabled" : ""}>${state.publicIdentitiesSaving ? "Detaching..." : "Confirm Detach"}</button>
+          </div>
+        </div>
+      ` : "";
       return `
         <article class="platform-identity-row" data-public-identity-code="${escapeHtml(identity.identity_code)}">
           <div class="platform-identity-row-main">
             <div class="platform-identity-row-title">
               ${chipMarkup}
               <span class="status-pill ${identity.primary ? "success" : "subtle"}">${escapeHtml(label)}</span>
-              ${identity.protected || identity.primary ? `<span class="status-pill warning">Protected</span>` : ""}
+              ${isProtected ? `<span class="status-pill warning">${identity.primary ? "Protected" : escapeHtml(blockedReason)}</span>` : ""}
             </div>
             <p>${sourceBits.join(" · ") || "StreamSuites account primary identity."}</p>
             <p class="account-note">${metaBits.join(" · ") || "No assignment metadata returned."}</p>
           </div>
+          <div class="creator-public-identity-actions">
+            ${actionMarkup}
+          </div>
+          ${confirmMarkup}
         </article>
       `;
     }).join("");
@@ -1746,14 +1776,15 @@
 
   async function unassignPublicIdentity(identityCode) {
     const identity = state.publicIdentities.find((item) => item.identity_code === identityCode);
-    if (!identity || identity.primary || state.publicIdentitiesSaving) return;
-    const reason = coerceText(window.prompt?.(`Unassign public identity ${identity.identity_code} from this account?\n\nHistorical ledger records are not deleted.\n\nRequired reason/note:`) || "");
+    if (!identity || identity.primary || identity.removable_by_account_owner !== true || state.publicIdentitiesSaving) return;
+    const reason = coerceText(state.publicIdentityDetachReason);
     if (!reason) {
       setMessage("[data-public-identity-status=\"true\"]", "Unassign requires a reason/note.", "warning");
       return;
     }
     state.publicIdentitiesSaving = true;
     setMessage("[data-public-identity-status=\"true\"]", "Unassigning public identity through Runtime/Auth...", "neutral");
+    renderPublicIdentityList();
     try {
       const payload = await requestJson(`${ACCOUNT_PUBLIC_IDENTITIES_ENDPOINT}/${encodeURIComponent(identity.identity_code)}`, {
         method: "DELETE",
@@ -1762,6 +1793,8 @@
       state.publicIdentities = (Array.isArray(payload?.identities) ? payload.identities : [])
         .map(normalizePublicIdentity)
         .filter(Boolean);
+      state.publicIdentityDetachCode = "";
+      state.publicIdentityDetachReason = "";
       renderPublicIdentityList();
       setMessage("[data-public-identity-status=\"true\"]", "Public identity assignment removed.", "success");
     } catch (err) {
@@ -1779,10 +1812,32 @@
     els.list.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
-      const button = target.closest("[data-public-identity-unassign]");
-      if (button instanceof HTMLButtonElement) {
-        void unassignPublicIdentity(button.getAttribute("data-public-identity-unassign") || "");
+      const detachButton = target.closest("[data-public-identity-detach]");
+      if (detachButton instanceof HTMLButtonElement) {
+        state.publicIdentityDetachCode = detachButton.getAttribute("data-public-identity-detach") || "";
+        state.publicIdentityDetachReason = "";
+        setMessage("[data-public-identity-status=\"true\"]", "", "neutral");
+        renderPublicIdentityList();
+        return;
       }
+      const cancelButton = target.closest("[data-public-identity-cancel]");
+      if (cancelButton instanceof HTMLButtonElement) {
+        state.publicIdentityDetachCode = "";
+        state.publicIdentityDetachReason = "";
+        renderPublicIdentityList();
+        return;
+      }
+      const confirmButton = target.closest("[data-public-identity-confirm-detach]");
+      if (confirmButton instanceof HTMLButtonElement) {
+        void unassignPublicIdentity(confirmButton.getAttribute("data-public-identity-confirm-detach") || "");
+      }
+    });
+    els.list.addEventListener("input", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLTextAreaElement)) return;
+      if (!target.matches("[data-public-identity-reason]")) return;
+      if ((target.getAttribute("data-public-identity-reason") || "") !== state.publicIdentityDetachCode) return;
+      state.publicIdentityDetachReason = target.value;
     });
   }
 

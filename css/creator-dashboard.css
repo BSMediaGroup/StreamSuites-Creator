@@ -4501,6 +4501,40 @@ button.creator-public-identity-chip:focus-visible {
   box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
 }
 
+.creator-public-identity-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 156px;
+}
+
+.creator-public-identity-detach-button {
+  min-height: 34px;
+  padding-inline: 12px;
+  white-space: nowrap;
+}
+
+.creator-public-identity-lock-reason {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.creator-public-identity-confirm {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(248, 113, 113, 0.28);
+  background: rgba(127, 29, 29, 0.16);
+}
+
+.creator-public-identity-confirm strong {
+  display: block;
+  color: #fecaca;
+  font-size: 13px;
+}
+
 .platform-identity-row-main {
   display: grid;
   gap: 6px;
@@ -6326,6 +6360,15 @@ button.creator-public-identity-chip:focus-visible {
   .platform-identity-layout,
   .platform-identity-row {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .creator-public-identity-actions {
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  .creator-public-identity-detach-button {
+    width: 100%;
   }
 
   .badge-governance-status-strip,
