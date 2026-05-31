@@ -4478,21 +4478,19 @@ h3 {
 }
 
 .creator-public-identity-chip .chip-icon {
+  display: inline-block;
   width: 13px;
   height: 13px;
-  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
   vertical-align: middle;
   margin: 0 1px;
-}
-
-/* Exact color match for primary yellow chips (#FEF3C7) */
-.creator-public-identity-chip.is-primary .chip-icon {
-  filter: brightness(0) saturate(100%) invert(100%) sepia(35%) saturate(500%) hue-rotate(8deg) brightness(1.35);
-}
-
-/* Exact color match for secondary chips (#DFF7FF) */
-.creator-public-identity-chip .chip-icon {
-  filter: brightness(0) saturate(100%) invert(100%) sepia(12%) saturate(400%) hue-rotate(195deg) brightness(1.32);
+  flex-shrink: 0;
 }
 
 .creator-public-identity-chip.is-primary {
