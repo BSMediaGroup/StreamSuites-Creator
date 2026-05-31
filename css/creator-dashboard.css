@@ -4478,13 +4478,21 @@ h3 {
 }
 
 .creator-public-identity-chip .chip-icon {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   flex-shrink: 0;
   vertical-align: middle;
   margin: 0 1px;
-  /* Tint black SVGs to match the previous muted label color */
-  filter: brightness(0) saturate(100%) invert(88%) sepia(6%) saturate(180%) hue-rotate(200deg) brightness(1.08);
+}
+
+/* Yellow-tinted icons for primary (yellow) chips */
+.creator-public-identity-chip.is-primary .chip-icon {
+  filter: brightness(0) saturate(100%) invert(82%) sepia(45%) saturate(650%) hue-rotate(2deg) brightness(1.15);
+}
+
+/* Cool blue-gray tint for secondary chips */
+.creator-public-identity-chip .chip-icon {
+  filter: brightness(0) saturate(100%) invert(90%) sepia(8%) saturate(280%) hue-rotate(195deg) brightness(1.08);
 }
 
 .creator-public-identity-chip.is-primary {
