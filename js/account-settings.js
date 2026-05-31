@@ -1701,7 +1701,7 @@
         identity.source_channel_scope ? `Scope: ${identity.source_channel_scope}` : "",
       ].filter(Boolean).join(" · ");
       const chipMarkup = identity.primary
-        ? `<span class="creator-public-identity-chip is-primary" title="${escapeHtml(chipTitle)}"><span aria-hidden="true">Locked</span>${escapeHtml(identity.identity_code)}<em>Primary</em></span>`
+        ? `<span class="creator-public-identity-chip is-primary" title="${escapeHtml(chipTitle)}"><img src="/assets/icons/ui/padlockclosed.svg" class="chip-icon" alt="Locked">${escapeHtml(identity.identity_code)}<img src="/assets/icons/ui/star.svg" class="chip-icon" alt="Primary"></span>`
         : `<span class="creator-public-identity-chip is-secondary${removable ? "" : " is-locked"}" title="${escapeHtml(chipTitle)}">${escapeHtml(identity.identity_code)}<em>${removable ? "Secondary" : "Assigned"}</em></span>`;
       const blockedReason = identity.primary
         ? "Primary ID"
