@@ -4,7 +4,7 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 
 ## Release State
 
-- README state prepared for `v0.4.2-alpha`.
+- README state prepared for `v0.5.0-alpha`.
 - Runtime-displayed version/build labels are consumed from `https://admin.streamsuites.app/runtime/exports/version.json`.
 - This repo is a static frontend that hydrates from authoritative runtime and Auth API services and does not own backend state.
 - Cloudflare deep-link handling now uses only valid exact route rewrites for Creator shell paths, plus a route-scoped Pages Function fallback for the same known paths, so nested Creator URLs no longer depend on invalid wildcard rewrites being honored.
@@ -107,7 +107,7 @@ StreamSuites-Creator/
 ├── favicon.ico
 ├── index.html
 ├── changelog/
-│   └── v0.4.2-alpha.md
+│   └── v0.5.0-CHANGELOG.md
 ├── scripts/
 │   └── validate-pages-routing.ps1
 ├── login/

@@ -4,7 +4,7 @@
   "heartbeat": "2026-05-25T09:23:48.974377Z",
   "runtime": {
     "project": "StreamSuites\u2122 Runtime",
-    "version": "0.4.2-alpha",
+    "version": "0.5.0-alpha",
     "build": "2026.05.25+001"
   },
   "system": {

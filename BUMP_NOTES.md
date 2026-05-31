@@ -1,6 +1,25 @@
 # Bump Notes
 
-## CURRENT VER= 0.4.2-alpha / PENDING VER= 0.4.3-alpha
+## RELEASED / PACKAGED: 0.4.2-alpha
+
+Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.5.0-alpha` section below.
+
+## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
+
+## Release Prep — v0.5.0-alpha
+
+- BUMP_NOTES.md updated with proper `RELEASED / PACKAGED: 0.4.2-alpha` archiving following the runtime pattern.
+- Detailed v0.5.0-CHANGELOG.md created in the `changelog/` directory.
+- Wheel system, trigger management, and account identity work from the cycle captured in the new changelog.
+- Runtime snapshot mirrors and shared state version references aligned where present.
+- Master `v0.5.0-PROJECT-CHANGELOG.md` published in the main runtime repo.
+
+### Files / Areas Touched
+
+- `BUMP_NOTES.md`
+- `changelog/v0.5.0-CHANGELOG.md` (new)
+- `README.md`
+- `shared/state/version.json` and related runtime snapshots
 
 - Restored obvious Creator-facing detach controls in the `/account` "Public IDs assigned to this account" section. Secondary public IDs marked `removable_by_account_owner` by Runtime/Auth now show an explicit `DETACH PUBLIC ID` row button, while primary/protected/locked IDs show clear non-detachable status instead of an action.
 - Detach now uses an inline confirmation panel with a reason/note field, Cancel and Confirm Detach actions, disabled saving state, inline feedback, and refreshes the assigned identity list from the existing Runtime/Auth `DELETE /api/account/public-identities/{identity_code}` response after success.
