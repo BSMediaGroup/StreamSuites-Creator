@@ -4477,6 +4477,16 @@ h3 {
   color: rgba(226, 232, 240, 0.74);
 }
 
+.creator-public-identity-chip .chip-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin: 0 1px;
+  /* Tint black SVGs to match the previous muted label color */
+  filter: brightness(0) saturate(100%) invert(88%) sepia(6%) saturate(180%) hue-rotate(200deg) brightness(1.08);
+}
+
 .creator-public-identity-chip.is-primary {
   border-color: rgba(250, 204, 21, 0.38);
   background: rgba(250, 204, 21, 0.12);
