@@ -6,6 +6,10 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
 
+- Added the Creator Twitch integration attachment flow backed by Runtime/Auth. The Twitch platform detail page now starts the new creator-scoped OAuth flow, renders broadcaster identity, granted/missing scopes, redacted token posture, bot-target readiness, and same-account test-mode status, and exposes verify/disconnect actions through Runtime/Auth only.
+- Updated Creator Twitch copy from identity-only/future wording to channel attachment language while preserving Kick integration behavior and keeping OAuth/token storage out of Creator.
+- Human note: creators can now attach or reconnect their Twitch broadcaster channel and see exactly what is still missing for bot readiness without Creator becoming a Twitch token authority.
+
 ## Release Prep — v0.5.0-alpha
 
 - BUMP_NOTES.md updated with proper `RELEASED / PACKAGED: 0.4.2-alpha` archiving following the runtime pattern.

@@ -76,22 +76,22 @@
       authProvider: "twitch",
       oauthCapable: true,
       planned: false,
-      actionableTitle: "OAuth linkage and workspace",
+      actionableTitle: "Broadcaster channel attachment",
       actionSummary:
-        "Link Twitch OAuth for identity, then use the workspace form to keep channel details and external setup posture current.",
+        "Attach the creator's Twitch broadcaster channel through Runtime/Auth OAuth so bot deployment can resolve a real target.",
       enables: [
-        "Differentiates linked identity from deeper chat or runtime control readiness.",
-        "Provides a real place to manage public channel metadata and setup posture.",
-        "Keeps trigger readiness visible without pretending chat deployment already exists."
+        "Stores Twitch broadcaster identity and token posture in Runtime/Auth without exposing secrets.",
+        "Shows required scopes, token expiry posture, and same-account test mode readiness.",
+        "Lets Admin bot deployment target the creator-attached Twitch channel."
       ],
       limitations: [
-        "Twitch OAuth identity linkage is not the same as runtime bot-chat capability.",
-        "Full chat deployment still depends on later backend/runtime expansion."
+        "A global bot account is still the preferred long-term send architecture.",
+        "Same-account test mode is only eligible when the attached token has channel and chat bot scopes."
       ],
       setupChecklist: [
-        "Link the Twitch identity intended for creator operations.",
-        "Confirm the public channel handle and URL used by the creator surface.",
-        "Track any external bot or provider-console work separately until backend readiness expands."
+        "Attach or reconnect the Twitch broadcaster channel for this creator account.",
+        "Confirm channel:bot is granted for broadcaster authorization.",
+        "Use Refresh/Verify after reconnecting or changing Twitch app scopes."
       ]
     },
     kick: {
@@ -148,6 +148,7 @@
     platform: "",
     integration: null,
     kickStatus: null,
+    twitchStatus: null,
     cleanup: [],
     loadToken: 0,
     busy: false
@@ -983,7 +984,7 @@
       return `${API_BASE}/api/creator/integrations/kick/oauth/start`;
     }
     if (normalized === "twitch") {
-      return `${API_BASE}/oauth/twitch/start?surface=creator&mode=link&return_to=${encodeURIComponent(returnTo)}`;
+      return `${API_BASE}/api/creator/integrations/twitch/auth/start?return_to=${encodeURIComponent(returnTo)}`;
     }
     if (normalized === "x") {
       return `${API_BASE}/auth/x/start?surface=creator&mode=link&return_to=${encodeURIComponent(returnTo)}`;
@@ -1033,7 +1034,7 @@
         }
       });
     });
-    queryAll("[data-platform-connect-provider], [data-platform-refresh-detail], [data-platform-remove-workspace], [data-kick-reconcile=\"true\"], [data-kick-channel-save=\"true\"], [data-kick-disconnect=\"true\"], [data-rumble-secret-open=\"true\"], [data-rumble-secret-remove-inline=\"true\"], [data-rumble-bot-autodeploy-toggle=\"true\"]").forEach((button) => {
+    queryAll("[data-platform-connect-provider], [data-platform-refresh-detail], [data-platform-remove-workspace], [data-kick-reconcile=\"true\"], [data-kick-channel-save=\"true\"], [data-kick-disconnect=\"true\"], [data-twitch-verify=\"true\"], [data-twitch-disconnect=\"true\"], [data-rumble-secret-open=\"true\"], [data-rumble-secret-remove-inline=\"true\"], [data-rumble-bot-autodeploy-toggle=\"true\"]").forEach((button) => {
       if (button instanceof HTMLButtonElement) {
         button.disabled = state.busy;
       }
@@ -1364,6 +1365,95 @@
     `;
   }
 
+  function twitchStatus() {
+    return state.twitchStatus && typeof state.twitchStatus === "object" ? state.twitchStatus : null;
+  }
+
+  function renderTwitchActions(integration) {
+    const container = query("[data-platform-actions=\"true\"]");
+    const summary = query("[data-platform-action-summary=\"true\"]");
+    if (!(container instanceof HTMLElement)) return;
+    const status = twitchStatus();
+    const channel = status?.channel || {};
+    const readiness = status?.readiness || {};
+    const scopes = status?.scopes || {};
+    const token = status?.token || {};
+    const connected = Boolean(status?.connected || channel.attached);
+    if (summary instanceof HTMLElement) {
+      summary.textContent = "Twitch broadcaster attachment, token posture, scopes, and bot target eligibility are loaded from Runtime/Auth with secrets redacted.";
+    }
+    const missingReasons = Array.isArray(readiness.missing_reasons) ? readiness.missing_reasons : [];
+    const presentScopes = [
+      ...(Array.isArray(scopes.broadcaster_present) ? scopes.broadcaster_present : []),
+      ...(Array.isArray(scopes.bot_present) ? scopes.bot_present : []),
+    ];
+    container.innerHTML = `
+      ${renderChatIdentityPanel(integration)}
+      <div class="platform-management-block">
+        <div class="platform-management-block-head">
+          <strong>Twitch channel attachment</strong>
+          <span class="status-pill ${connected ? "success" : "warning"}">${escapeHtml(connected ? "Connected" : "Not connected")}</span>
+        </div>
+        <p class="account-note">
+          Connect the Twitch broadcaster channel that belongs to this creator account. Runtime/Auth owns OAuth state, token exchange, refresh, and secret storage.
+        </p>
+        <div class="platform-actions">
+          <button class="creator-button ${connected ? "secondary" : "primary"}" type="button" data-platform-connect-provider="twitch">
+            ${escapeHtml(connected ? "Reconnect Twitch Channel" : "Attach Twitch Channel")}
+          </button>
+          <button class="creator-button secondary" type="button" data-twitch-verify="true">Refresh/Verify</button>
+          ${connected ? '<button class="creator-button danger" type="button" data-twitch-disconnect="true">Disconnect</button>' : ""}
+          <a class="creator-button secondary" href="/triggers">Review triggers</a>
+        </div>
+        <div class="platform-inline-note">
+          No Twitch access tokens, refresh tokens, client secrets, or auth codes are stored in Creator or rendered in the DOM.
+        </div>
+      </div>
+      <div class="platform-management-block">
+        <div class="platform-management-block-head">
+          <strong>Broadcaster identity</strong>
+          <span class="status-pill ${channel.broadcaster_user_id ? "success" : "warning"}">${escapeHtml(channel.broadcaster_user_id ? "Resolved" : "Missing")}</span>
+        </div>
+        <ul class="platform-management-checklist">
+          <li>Login: ${escapeHtml(channel.broadcaster_login || "not linked")}</li>
+          <li>Display name: ${escapeHtml(channel.broadcaster_display_name || "not linked")}</li>
+          <li>Broadcaster user ID: ${escapeHtml(channel.broadcaster_user_id || "not linked")}</li>
+          <li>Public URL: ${escapeHtml(channel.public_url || "not linked")}</li>
+        </ul>
+      </div>
+      <div class="platform-management-block">
+        <div class="platform-management-block-head">
+          <strong>Scopes and token posture</strong>
+          <span class="status-pill ${scopes.channel_bot_scope_present ? "success" : "warning"}">${escapeHtml(scopes.channel_bot_scope_present ? "channel:bot present" : "channel:bot missing")}</span>
+        </div>
+        <ul class="platform-management-checklist">
+          <li>Requested scopes: ${escapeHtml((scopes.requested || []).join(", ") || "not reported")}</li>
+          <li>Granted scopes: ${escapeHtml(Array.from(new Set(presentScopes)).sort().join(", ") || "not reported")}</li>
+          <li>Missing broadcaster scopes: ${escapeHtml((scopes.missing_broadcaster || []).join(", ") || "none")}</li>
+          <li>Missing same-account bot scopes: ${escapeHtml((scopes.missing_bot || []).join(", ") || "none")}</li>
+          <li>Access token: ${escapeHtml(token.access_token_present ? "present in Runtime/Auth" : "not present")}</li>
+          <li>Refresh token: ${escapeHtml(token.refresh_token_present ? "present in Runtime/Auth" : "not present")}</li>
+          <li>Expires at: ${escapeHtml(token.expires_at || "not reported")}</li>
+        </ul>
+      </div>
+      <div class="platform-management-block">
+        <div class="platform-management-block-head">
+          <strong>Bot target readiness</strong>
+          <span class="status-pill ${readiness.bot_target_eligible ? "success" : "warning"}">${escapeHtml(readiness.bot_target_eligible ? "Eligible" : "Blocked")}</span>
+        </div>
+        <ul class="platform-management-checklist">
+          <li>Mode: ${escapeHtml(readiness.mode || "unavailable")}</li>
+          <li>Global bot token configured: ${escapeHtml(readiness.global_bot?.configured ? "yes" : "no")}</li>
+          <li>Creator channel attached: ${escapeHtml(readiness.creator_channel?.attached ? "yes" : "no")}</li>
+          <li>Same-account test mode usable: ${escapeHtml(readiness.same_account_test?.usable ? "yes" : "no")}</li>
+        </ul>
+        <ul class="platform-management-checklist">
+          ${(missingReasons.length ? missingReasons : ["Twitch channel is eligible as a runtime bot target."]).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ul>
+      </div>
+    `;
+  }
+
   function renderWorkspaceForm(integration) {
     const defaults = workspaceDefaults(integration);
     const setupState = defaults.external_setup_state || "not_started";
@@ -1612,6 +1702,10 @@
       renderKickActions(integration);
       return;
     }
+    if (state.platform === "twitch") {
+      renderTwitchActions(integration);
+      return;
+    }
     renderNonRumbleActions(integration);
   }
 
@@ -1805,6 +1899,19 @@
       } else {
         state.kickStatus = null;
       }
+      if (state.platform === "twitch") {
+        try {
+          state.twitchStatus = await requestJson(`${API_BASE}/api/creator/integrations/twitch/status`, {
+            method: "GET",
+            timeoutMs: DETAIL_TIMEOUT_MS
+          });
+        } catch (err) {
+          state.twitchStatus = null;
+          setActionStatus(err?.message || "Twitch readiness status is temporarily unavailable.", "warning");
+        }
+      } else {
+        state.twitchStatus = null;
+      }
       if (token !== state.loadToken) return;
       renderIntegration(payload?.integration || null);
     } catch (err) {
@@ -1896,6 +2003,63 @@
       window.location.assign(`${API_BASE}/api/creator/integrations/kick/oauth/start`);
     } catch (err) {
       setActionStatus(err?.message || "Unable to start Kick OAuth.", "danger");
+      setBusy(false);
+    }
+  }
+
+  async function startTwitchOAuth() {
+    setBusy(true);
+    setActionStatus("Starting Twitch channel attachment...", "neutral");
+    try {
+      const payload = await requestJson(oauthStartUrl("twitch"), {
+        method: "POST",
+        timeoutMs: SAVE_TIMEOUT_MS,
+        body: JSON.stringify({})
+      });
+      if (payload?.authorization_url) {
+        window.location.assign(payload.authorization_url);
+        return;
+      }
+      setActionStatus("Runtime/Auth did not return a Twitch authorization URL.", "danger");
+    } catch (err) {
+      setActionStatus(err?.message || "Unable to start Twitch OAuth.", "danger");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function verifyTwitch() {
+    setBusy(true);
+    setActionStatus("Refreshing Twitch readiness from runtime/Auth...", "neutral");
+    try {
+      state.twitchStatus = await requestJson(`${API_BASE}/api/creator/integrations/twitch/verify`, {
+        method: "POST",
+        timeoutMs: SAVE_TIMEOUT_MS,
+        body: JSON.stringify({})
+      });
+      await loadIntegration();
+      setActionStatus("Twitch readiness refreshed.", "success");
+    } catch (err) {
+      setActionStatus(err?.message || "Unable to refresh Twitch readiness.", "danger");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function disconnectTwitch() {
+    setBusy(true);
+    setActionStatus("Disconnecting Twitch channel in runtime/Auth...", "neutral");
+    try {
+      state.twitchStatus = await requestJson(`${API_BASE}/api/creator/integrations/twitch/disconnect`, {
+        method: "POST",
+        timeoutMs: SAVE_TIMEOUT_MS,
+        body: JSON.stringify({})
+      });
+      await loadIntegration();
+      setActionStatus("Twitch disconnected. Runtime/Auth cleared stored Twitch OAuth token material.", "success");
+    } catch (err) {
+      setActionStatus(err?.message || "Unable to disconnect Twitch.", "danger");
+    } finally {
       setBusy(false);
     }
   }
@@ -2108,6 +2272,10 @@
         void startKickOAuth();
         return;
       }
+      if (provider === "twitch") {
+        void startTwitchOAuth();
+        return;
+      }
       const url = oauthStartUrl(provider);
       if (url) {
         window.location.assign(url);
@@ -2137,6 +2305,20 @@
     if (kickDisconnectButton instanceof HTMLButtonElement) {
       if (window.confirm("Disconnect Kick? Runtime/Auth will clear stored Kick OAuth token material.")) {
         void disconnectKick();
+      }
+      return;
+    }
+
+    const twitchVerifyButton = target.closest("[data-twitch-verify=\"true\"]");
+    if (twitchVerifyButton instanceof HTMLButtonElement) {
+      void verifyTwitch();
+      return;
+    }
+
+    const twitchDisconnectButton = target.closest("[data-twitch-disconnect=\"true\"]");
+    if (twitchDisconnectButton instanceof HTMLButtonElement) {
+      if (window.confirm("Disconnect Twitch? Runtime/Auth will clear stored Twitch OAuth token material.")) {
+        void disconnectTwitch();
       }
       return;
     }
