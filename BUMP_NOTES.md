@@ -6,6 +6,9 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
 
+- Confirmed the Creator Twitch Reconnect control stays on the OAuth-start path while Runtime/Auth now forces Twitch verification/approval with `force_verify=true`; Verify/Refresh remains a status-only action and Disconnect remains separate.
+- Human note: reconnecting Twitch from Creator should open Twitch authorization instead of doing a background refresh, while Creator still never stores or renders token material.
+
 - Added the Creator Twitch integration attachment flow backed by Runtime/Auth. The Twitch platform detail page now starts the new creator-scoped OAuth flow, renders broadcaster identity, granted/missing scopes, redacted token posture, bot-target readiness, and same-account test-mode status, and exposes verify/disconnect actions through Runtime/Auth only.
 - Updated Creator Twitch copy from identity-only/future wording to channel attachment language while preserving Kick integration behavior and keeping OAuth/token storage out of Creator.
 - Human note: creators can now attach or reconnect their Twitch broadcaster channel and see exactly what is still missing for bot readiness without Creator becoming a Twitch token authority.
