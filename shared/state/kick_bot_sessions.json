@@ -1,6 +1,6 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-06-02T00:41:51.378094Z",
+  "generated_at": "2026-06-02T11:55:42.103217Z",
   "provider": "kick",
   "count": 2,
   "summary": {
@@ -74,7 +74,7 @@
         "target_source": "manual_channel",
         "target_input": "streamsuites",
         "target_normalized": "streamsuites",
-        "target_last_changed_at": 1780358860,
+        "target_last_changed_at": 1780399359,
         "target_changed_by": "creator",
         "auto_deploy_reason": "subscription_pending",
         "integration_connected": true,
@@ -120,7 +120,7 @@
             "client_secret_present": true,
             "access_token_present": true,
             "refresh_token_present": true,
-            "token_expires_at": 1780366060,
+            "token_expires_at": 1780406558,
             "scopes": [
               "channel:read",
               "chat:write",
@@ -139,11 +139,11 @@
             ]
           }
         },
-        "last_evaluated_at": "2026-06-02T00:41:56.271416Z"
+        "last_evaluated_at": "2026-06-02T11:55:47.107506Z"
       },
-      "last_evaluated_at": "2026-06-02T00:41:51.378094Z",
-      "last_attach_attempt_at": "2026-06-02T00:41:51.378094Z",
-      "last_heartbeat_at": "2026-06-02T00:41:51.378094Z",
+      "last_evaluated_at": "2026-06-02T11:55:42.103217Z",
+      "last_attach_attempt_at": "2026-06-02T11:55:42.103217Z",
+      "last_heartbeat_at": "2026-06-02T11:55:42.103217Z",
       "last_dispatch_attempt_at": null,
       "last_dispatch_success_at": null,
       "last_dispatch_error": null,
@@ -193,8 +193,8 @@
       ],
       "subscription_next_step": "Wait for the first Kick webhook chat event.",
       "webhook_subscription_id": null,
-      "last_subscription_attempt_at": "2026-06-02T00:41:56.343417Z",
-      "last_subscription_success_at": "2026-06-02T00:41:56.343417Z",
+      "last_subscription_attempt_at": "2026-06-02T11:55:47.173280Z",
+      "last_subscription_success_at": "2026-06-02T11:55:47.173280Z",
       "last_subscription_error": null,
       "visible_in_admin": true,
       "actionable": true,
@@ -203,7 +203,7 @@
       "target_source": "manual_channel",
       "target_input": "streamsuites",
       "target_normalized": "streamsuites",
-      "target_last_changed_at": "1780358860",
+      "target_last_changed_at": "1780399359",
       "target_changed_by": "creator",
       "transport_capabilities": {
         "can_listen": true,
@@ -217,7 +217,7 @@
       }
     },
     {
-      "session_id": "kick-auto-1da8407ddf005cf3",
+      "session_id": "kick-auto-6fea0bebd8dfc1c8",
       "platform": "kick",
       "session_kind": "auto",
       "creator_account_id": "aa4359f0-b243-42de-bbf4-dbab8cbaa09c",
@@ -237,11 +237,11 @@
       "readiness_status": "awaiting_first_webhook_event",
       "resolved_target": {
         "platform": "kick",
-        "raw": "danielclancy",
+        "raw": "streamsuites",
         "kind": "channel_slug",
-        "identifier": "danielclancy",
-        "channel_slug": "danielclancy",
-        "channel_url": "https://kick.com/danielclancy",
+        "identifier": "streamsuites",
+        "channel_slug": "streamsuites",
+        "channel_url": "https://kick.com/streamsuites",
         "stream_url": null,
         "chatroom_id": null
       },
@@ -262,9 +262,9 @@
         "creator_opt_in": null,
         "credential_source": "oauth_integration",
         "target_source": "manual_channel",
-        "target_input": "danielclancy",
-        "target_normalized": "danielclancy",
-        "target_last_changed_at": 1780358870,
+        "target_input": "streamsuites",
+        "target_normalized": "streamsuites",
+        "target_last_changed_at": 1780397193,
         "target_changed_by": "creator",
         "auto_deploy_reason": "subscription_pending",
         "integration_connected": true,
@@ -275,11 +275,11 @@
         "creator_identifiable": true,
         "resolved_target": {
           "platform": "kick",
-          "raw": "danielclancy",
+          "raw": "streamsuites",
           "kind": "channel_slug",
-          "identifier": "danielclancy",
-          "channel_slug": "danielclancy",
-          "channel_url": "https://kick.com/danielclancy",
+          "identifier": "streamsuites",
+          "channel_slug": "streamsuites",
+          "channel_url": "https://kick.com/streamsuites",
           "stream_url": null,
           "chatroom_id": null
         },
@@ -310,15 +310,15 @@
             "client_secret_present": true,
             "access_token_present": true,
             "refresh_token_present": true,
-            "token_expires_at": 1780366070,
+            "token_expires_at": 1780404392,
             "scopes": [
               "channel:read",
               "chat:write",
               "events:subscribe",
               "user:read"
             ],
-            "broadcaster_user_id": "1872330",
-            "channel_slug": "danielclancy",
+            "broadcaster_user_id": "91644603",
+            "channel_slug": "streamsuites",
             "webhook_public_url_present": true,
             "webhook_secret_present": false,
             "bot_user_id": null,
@@ -329,11 +329,11 @@
             ]
           }
         },
-        "last_evaluated_at": "2026-06-02T00:42:03.852392Z"
+        "last_evaluated_at": "2026-06-02T11:55:55.217044Z"
       },
-      "last_evaluated_at": "2026-06-02T00:41:51.378094Z",
-      "last_attach_attempt_at": "2026-06-02T00:41:51.378094Z",
-      "last_heartbeat_at": "2026-06-02T00:41:51.378094Z",
+      "last_evaluated_at": "2026-06-02T11:55:42.103217Z",
+      "last_attach_attempt_at": "2026-06-02T11:55:42.103217Z",
+      "last_heartbeat_at": "2026-06-02T11:55:42.103217Z",
       "last_dispatch_attempt_at": null,
       "last_dispatch_success_at": null,
       "last_dispatch_error": null,
@@ -383,17 +383,17 @@
       ],
       "subscription_next_step": "Wait for the first Kick webhook chat event.",
       "webhook_subscription_id": null,
-      "last_subscription_attempt_at": "2026-06-02T00:42:03.914893Z",
-      "last_subscription_success_at": "2026-06-02T00:42:03.914893Z",
+      "last_subscription_attempt_at": "2026-06-02T11:55:55.338198Z",
+      "last_subscription_success_at": "2026-06-02T11:55:55.338198Z",
       "last_subscription_error": null,
       "visible_in_admin": true,
       "actionable": true,
       "session_origin": "auto_configured",
       "configuration_state": "connected",
       "target_source": "manual_channel",
-      "target_input": "danielclancy",
-      "target_normalized": "danielclancy",
-      "target_last_changed_at": "1780358870",
+      "target_input": "streamsuites",
+      "target_normalized": "streamsuites",
+      "target_last_changed_at": "1780397193",
       "target_changed_by": "creator",
       "transport_capabilities": {
         "can_listen": true,
