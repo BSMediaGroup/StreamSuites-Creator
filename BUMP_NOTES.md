@@ -6,6 +6,9 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
 
+- Corrected stale Creator shared-state mirrors and route-validation fallback payloads that still reported `0.4.2-alpha`; runtime/export data remains the source of truth.
+- Human note: Creator fallback version display should now match `v0.5.0-alpha` instead of the old `v0.4.2-alpha` cycle.
+
 - Confirmed the Creator Twitch Reconnect control stays on the OAuth-start path while Runtime/Auth now forces Twitch verification/approval with `force_verify=true`; Verify/Refresh remains a status-only action and Disconnect remains separate.
 - Human note: reconnecting Twitch from Creator should open Twitch authorization instead of doing a background refresh, while Creator still never stores or renders token material.
 

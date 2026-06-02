@@ -98,7 +98,7 @@ async (page) => {
     status: { indicator: 'none', description: 'All Systems Operational' }
   };
 
-  const versionPayload = { version: '0.4.2-alpha', build: 'route-validation' };
+  const versionPayload = { version: '0.5.0-alpha', build: 'route-validation' };
   const emptyObject = {};
 
   await page.context().route('**/auth/session', async (route) => {
