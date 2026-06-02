@@ -1,6 +1,6 @@
 {
   "schema_version": "v1",
-  "generated_at": "2026-06-02T11:56:01.127631Z",
+  "generated_at": "2026-06-02T18:20:54.025832Z",
   "provider": "rumble",
   "count": 2,
   "summary": {
@@ -76,8 +76,8 @@
           "creator_status_unknown",
           "sample_browse_live_request_failed"
         ],
-        "last_live_status_checked_at": "2026-06-02T11:54:35.803371Z",
-        "last_evaluated_at": "2026-06-02T11:56:02.939304Z",
+        "last_live_status_checked_at": "2026-06-02T18:20:30.874775Z",
+        "last_evaluated_at": "2026-06-02T18:20:55.783821Z",
         "authoritative_identity": {
           "source": "creator_integration",
           "selected_fields": {
@@ -120,7 +120,7 @@
           "stale": false,
           "error": "sample_browse_live_request_failed",
           "export_status": "fresh",
-          "export_checked_at": "2026-06-02T11:54:39.335467Z"
+          "export_checked_at": "2026-06-02T18:20:34.506592Z"
         },
         "discovery": {
           "matched": true,
@@ -132,7 +132,7 @@
           "stop_reason": "sample_browse_live_request_failed",
           "stop_detail": "blocked_http_403",
           "export_status": "fresh",
-          "export_checked_at": "2026-06-02T11:54:38.759686Z",
+          "export_checked_at": "2026-06-02T18:20:33.895465Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -145,18 +145,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-06-02T11:56:01.127631Z",
+      "last_evaluated_at": "2026-06-02T18:20:54.025832Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-06-02T10:56:28.252809Z",
+      "last_transition_at": "2026-06-02T17:37:46.243514Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-06-02T11:56:01.127631Z",
+      "stopped_at": "2026-06-02T18:20:54.025832Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-06-02T11:56:01.127631Z",
+        "at": "2026-06-02T18:20:54.025832Z",
         "message": "Managed Rumble transport was already stopped."
       },
       "visible_in_admin": true,
@@ -226,8 +226,8 @@
           "creator_status_unknown",
           "sample_browse_live_request_failed"
         ],
-        "last_live_status_checked_at": "2026-06-02T11:54:35.803371Z",
-        "last_evaluated_at": "2026-06-02T11:56:03.486029Z",
+        "last_live_status_checked_at": "2026-06-02T18:20:30.874775Z",
+        "last_evaluated_at": "2026-06-02T18:20:56.300051Z",
         "authoritative_identity": {
           "source": "creator_integration",
           "selected_fields": {
@@ -270,7 +270,7 @@
           "stale": false,
           "error": "sample_browse_live_request_failed",
           "export_status": "fresh",
-          "export_checked_at": "2026-06-02T11:54:39.335467Z"
+          "export_checked_at": "2026-06-02T18:20:34.506592Z"
         },
         "discovery": {
           "matched": true,
@@ -282,7 +282,7 @@
           "stop_reason": "sample_browse_live_request_failed",
           "stop_detail": "blocked_http_403",
           "export_status": "fresh",
-          "export_checked_at": "2026-06-02T11:54:38.759686Z",
+          "export_checked_at": "2026-06-02T18:20:33.895465Z",
           "pages_succeeded": 0,
           "pages_requested": 10,
           "streams_resolved": 0
@@ -295,18 +295,18 @@
       ],
       "transport_capabilities": {},
       "manual_override_active": false,
-      "last_evaluated_at": "2026-06-02T11:56:01.127631Z",
+      "last_evaluated_at": "2026-06-02T18:20:54.025832Z",
       "last_attach_attempt_at": null,
       "last_attach_success_at": null,
       "last_transport_heartbeat_at": null,
       "last_heartbeat_at": null,
-      "last_transition_at": "2026-06-02T10:56:28.252809Z",
+      "last_transition_at": "2026-06-02T17:37:46.243514Z",
       "desired_since": null,
       "started_at": null,
-      "stopped_at": "2026-06-02T11:56:01.127631Z",
+      "stopped_at": "2026-06-02T18:20:54.025832Z",
       "last_event": {
         "type": "transport_stopped",
-        "at": "2026-06-02T11:56:01.127631Z",
+        "at": "2026-06-02T18:20:54.025832Z",
         "message": "Managed Rumble transport was already stopped."
       },
       "visible_in_admin": true,
