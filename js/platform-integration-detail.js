@@ -984,7 +984,7 @@
       return `${API_BASE}/api/creator/integrations/kick/oauth/start`;
     }
     if (normalized === "twitch") {
-      return `${API_BASE}/api/creator/integrations/twitch/auth/start?return_to=${encodeURIComponent(returnTo)}`;
+      return `${API_BASE}/api/creator/integrations/twitch/auth/start?return_to=${encodeURIComponent(returnTo)}&force_verify=true`;
     }
     if (normalized === "x") {
       return `${API_BASE}/auth/x/start?surface=creator&mode=link&return_to=${encodeURIComponent(returnTo)}`;
@@ -1795,7 +1795,9 @@
         : integration?.channel_handle || integration?.public_url || "Not saved",
       auth: humanizeAuthMode(integration?.auth_mode),
       checked: formatTimestamp(integration?.last_checked_at),
-      triggers: `${integration?.deployment?.enabled_trigger_count || 0} enabled`,
+      triggers: state.platform === "twitch"
+        ? `${integration?.deployment?.enabled_trigger_count || 0} enabled implemented`
+        : `${integration?.deployment?.enabled_trigger_count || 0} enabled`,
       deploy: integration?.deployment?.can_deploy ? "Ready" : "Blocked"
     };
     Object.entries(stats).forEach(([key, value]) => {

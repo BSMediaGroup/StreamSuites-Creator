@@ -6,6 +6,10 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
 
+- Made Creator Twitch reconnect requests explicitly ask Runtime/Auth for forced Twitch OAuth verification while keeping Refresh/Verify as the non-OAuth status action.
+- Clarified the Twitch trigger statistic as enabled implemented trigger rows so Creator does not imply unimplemented Twitch triggers are available.
+- Human note: creators should see Twitch Reconnect open Twitch authorization again, and the trigger count should read as the current implemented Runtime/Auth trigger footing rather than future module coverage.
+
 - Corrected stale Creator shared-state mirrors and route-validation fallback payloads that still reported `0.4.2-alpha`; runtime/export data remains the source of truth.
 - Human note: Creator fallback version display should now match `v0.5.0-alpha` instead of the old `v0.4.2-alpha` cycle.
 
