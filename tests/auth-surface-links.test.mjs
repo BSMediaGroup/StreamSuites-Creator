@@ -49,11 +49,16 @@ test("creator auth consumes normalized runtime image metadata with fallback", ()
   assert.match(authJs, /provider_picture/);
   assert.match(authJs, /profile_photo_url/);
   assert.match(authJs, /public_avatar_url/);
+  assert.match(authJs, /function isUsableProfileImageUrl\(value\)/);
+  assert.match(authJs, /profileMedia\.provider_picture/);
+  assert.match(authJs, /media\.provider_picture/);
+  assert.match(authJs, /find\(isUsableProfileImageUrl\)/);
+  assert.match(authJs, /!source\.includes\("\/assets\/icons\/ui\/profile\.svg"\)/);
   assert.match(authJs, /const imageContract = normalizedImageContract\(sessionSource, payload\)/);
   assert.match(authJs, /avatar: imageContract\.avatarUrl/);
   assert.match(authJs, /imageVersion: imageContract\.imageVersion/);
   assert.match(authJs, /imageEl\.onerror = \(\) => \{/);
-  const stableImageHelper = authJs.match(/function stableImageUrl\(url, cacheKey\)[\s\S]*?\n  }\n\n  function normalizedImageContract/)?.[0] || "";
+  const stableImageHelper = authJs.match(/function stableImageUrl\(url, cacheKey\)[\s\S]*?\n  }\n\n  function isUsableProfileImageUrl/)?.[0] || "";
   assert.doesNotMatch(stableImageHelper, /Date\.now\(\)/);
   assert.match(stableImageHelper, /parsed\.origin !== window\.location\.origin\) return source/);
 });

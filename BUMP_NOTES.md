@@ -6,6 +6,9 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
 
+- Restored Creator header/account/profile avatar rendering with custom/provider/legacy image compatibility.
+- Creator image helpers now accept nested provider/profile media aliases, preserve custom/uploaded preference, and keep fallback icons visual-only.
+
 - Emergency hotfixed Creator header/account/profile image rendering with normalized plus legacy Runtime/Auth image field support.
 - Creator image hydration now preserves custom/uploaded preference, allows provider pictures when no custom image exists, and avoids cache-query mutation on external provider URLs.
 - Human note: Creator header and account/profile previews should show real saved/provider avatars again, with fallback kept visual-only.
