@@ -686,6 +686,7 @@
     if (!source || !key || source.startsWith("data:") || source.startsWith("blob:")) return source;
     try {
       const parsed = new URL(source, window.location.origin);
+      if (/^https?:\/\//i.test(source) && parsed.origin !== window.location.origin) return source;
       if (!parsed.searchParams.has("v")) parsed.searchParams.set("v", key);
       return parsed.origin === window.location.origin && source.startsWith("/")
         ? `${parsed.pathname}${parsed.search}${parsed.hash}`
@@ -698,20 +699,20 @@
   function normalizedImageContract(source = {}, fallback = {}) {
     const profileMedia = source?.profile_media || source?.profileMedia || {};
     const image = source?.image || profileMedia.avatar || {};
-    const avatarUrl = coerceText(
-      image.avatar_url ||
-        image.profile_image_url ||
-        image.url ||
-        profileMedia.avatar_url ||
-        profileMedia.profile_image_url ||
-        source?.profile_image_url ||
-        source?.profileImageUrl ||
-        source?.avatar_url ||
-        source?.avatarUrl ||
-        source?.avatar ||
-        fallback?.avatar ||
-        ""
-    );
+    const media = source?.media || {};
+    const fallbackProfileMedia = fallback?.profile_media || fallback?.profileMedia || {};
+    const fallbackImage = fallback?.image || fallbackProfileMedia.avatar || {};
+    const avatarUrl = [
+      image.avatar_url, image.profile_image_url, image.url, image.image_url, image.picture,
+      profileMedia.avatar_url, profileMedia.profile_image_url, profileMedia.profile_photo_url, profileMedia.public_url,
+      media.avatar_url, media.profile_image_url,
+      source?.profile_image_url, source?.profileImageUrl, source?.profile_photo_url, source?.profilePhotoUrl,
+      source?.avatar_url, source?.avatarUrl, source?.avatar, source?.picture, source?.image_url, source?.imageUrl,
+      source?.provider_avatar_url, source?.providerAvatarUrl, source?.provider_picture, source?.providerPicture,
+      source?.display_avatar_url, source?.displayAvatarUrl, source?.public_avatar_url, source?.publicAvatarUrl,
+      fallbackImage.avatar_url, fallbackImage.profile_image_url, fallbackProfileMedia.avatar_url, fallbackProfileMedia.profile_image_url,
+      fallback?.avatar_url, fallback?.avatarUrl, fallback?.avatar, fallback?.picture
+    ].map(coerceText).find(Boolean) || "";
     const imageVersion = coerceText(
       image.image_version ||
         image.cache_key ||

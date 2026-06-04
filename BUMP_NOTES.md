@@ -6,6 +6,10 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
 
+- Emergency hotfixed Creator header/account/profile image rendering with normalized plus legacy Runtime/Auth image field support.
+- Creator image hydration now preserves custom/uploaded preference, allows provider pictures when no custom image exists, and avoids cache-query mutation on external provider URLs.
+- Human note: Creator header and account/profile previews should show real saved/provider avatars again, with fallback kept visual-only.
+
 - Creator header/auth state and account profile media previews now consume Runtime/Auth normalized image/profile media fields with stable cache keys before legacy avatar aliases.
 - Preserved custom/uploaded image preference in account profile hydration and added one-shot broken-image fallback behavior without mutating saved avatar state.
 - Human note: Creator avatar/profile media previews should remain stable after refresh and should fall back visually when a remote image is unavailable.
