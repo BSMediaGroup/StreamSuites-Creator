@@ -1,11 +1,11 @@
 {
   "schema_version": "v1",
   "provider": "rumble",
-  "generated_at": "2026-06-03T19:12:13.748146Z",
+  "generated_at": "2026-06-04T13:29:24.684609Z",
   "scan": {
-    "started_at": "2026-06-03T19:12:11.340015Z",
-    "completed_at": "2026-06-03T19:12:13.748146Z",
-    "duration_ms": 2408,
+    "started_at": "2026-06-04T13:29:22.255421Z",
+    "completed_at": "2026-06-04T13:29:24.684609Z",
+    "duration_ms": 2429,
     "pages_requested": 10,
     "pages_succeeded": 0,
     "browse_entries_found": 0,
@@ -50,7 +50,7 @@
       "live_url": null,
       "viewer_count": null,
       "started_at": null,
-      "last_checked_at": "2026-06-03T19:12:11.340015Z",
+      "last_checked_at": "2026-06-04T13:29:22.255421Z",
       "stream_key": null,
       "numeric_video_id": null,
       "embed_id": null,
@@ -89,8 +89,8 @@
               "url": "https://rumble.com/browse/live?page=1",
               "final_url": "https://rumble.com/browse/live?page=1",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -121,13 +121,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "114cc877ee48ddca",
+                "response_length": 5832,
+                "body_sha256_16": "21e5f5f97553df81",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102103ae52f58-LAX"
+                  "cf-ray": "a067493de8b0498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -163,8 +163,8 @@
               "url": "https://rumble.com/browse/live?page=2",
               "final_url": "https://rumble.com/browse/live?page=2",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -195,13 +195,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "c3b342a65b6db874",
+                "response_length": 5832,
+                "body_sha256_16": "046d7fab6b89cc24",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a061020f3a152f58-LAX"
+                  "cf-ray": "a067493cfdea498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -237,8 +237,8 @@
               "url": "https://rumble.com/browse/live?page=3",
               "final_url": "https://rumble.com/browse/live?page=3",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5811,
+              "response_length": 5811,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -269,13 +269,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "e7b1cd4e17910c1b",
+                "response_length": 5811,
+                "body_sha256_16": "e49b5199299dd2b5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102103ae02f58-LAX"
+                  "cf-ray": "a067493de8a8498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -311,8 +311,8 @@
               "url": "https://rumble.com/browse/live?page=4",
               "final_url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -343,13 +343,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "dabf66ca1390827d",
+                "response_length": 5832,
+                "body_sha256_16": "7e4cdc11a4db7721",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102103ae42f58-LAX"
+                  "cf-ray": "a067493de8ae498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -385,8 +385,8 @@
               "url": "https://rumble.com/browse/live?page=5",
               "final_url": "https://rumble.com/browse/live?page=5",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -417,13 +417,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "290980562e3b3436",
+                "response_length": 5832,
+                "body_sha256_16": "a64153d174a3da9a",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102104af52f58-LAX"
+                  "cf-ray": "a067493e08ed498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -459,8 +459,8 @@
               "url": "https://rumble.com/browse/live?page=6",
               "final_url": "https://rumble.com/browse/live?page=6",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -491,13 +491,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "da0f91b2a63dfba2",
+                "response_length": 5832,
+                "body_sha256_16": "8ae462554be3be0d",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102114bc82f58-LAX"
+                  "cf-ray": "a067493efb3d498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -533,8 +533,8 @@
               "url": "https://rumble.com/browse/live?page=7",
               "final_url": "https://rumble.com/browse/live?page=7",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -565,13 +565,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "4abe7d208d05a4e0",
+                "response_length": 5832,
+                "body_sha256_16": "d0bdaec4a7119499",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102115bdc2f58-LAX"
+                  "cf-ray": "a067493f0b61498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -607,8 +607,8 @@
               "url": "https://rumble.com/browse/live?page=8",
               "final_url": "https://rumble.com/browse/live?page=8",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -639,13 +639,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "57317528557b1cc0",
+                "response_length": 5832,
+                "body_sha256_16": "acb97e1de7154ce4",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102117c042f58-LAX"
+                  "cf-ray": "a067493f3bbe498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -681,8 +681,8 @@
               "url": "https://rumble.com/browse/live?page=9",
               "final_url": "https://rumble.com/browse/live?page=9",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -713,13 +713,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "aa8089915a2c9f96",
+                "response_length": 5832,
+                "body_sha256_16": "c21d4f62e4228cdb",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102118c0f2f58-LAX"
+                  "cf-ray": "a067493f4be8498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -755,8 +755,8 @@
               "url": "https://rumble.com/browse/live?page=10",
               "final_url": "https://rumble.com/browse/live?page=10",
               "status_code": 403,
-              "response_size": 5841,
-              "response_length": 5841,
+              "response_size": 5835,
+              "response_length": 5835,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -787,13 +787,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5841,
-                "body_sha256_16": "78f0e006886acf97",
+                "response_length": 5835,
+                "body_sha256_16": "aed784cf270c5ef5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102125cbb2f58-LAX"
+                  "cf-ray": "a06749401e7e498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -842,7 +842,7 @@
               "url": "https://rumble.com/browse/live?page=1",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=1",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -851,7 +851,7 @@
               "url": "https://rumble.com/browse/live?page=2",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=2",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -860,7 +860,7 @@
               "url": "https://rumble.com/browse/live?page=3",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=3",
-              "response_length": 5817,
+              "response_length": 5811,
               "blocked": true,
               "error": null
             },
@@ -869,7 +869,7 @@
               "url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=4",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -878,7 +878,7 @@
               "url": "https://rumble.com/browse/live?page=5",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=5",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -887,7 +887,7 @@
               "url": "https://rumble.com/browse/live?page=6",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=6",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -896,7 +896,7 @@
               "url": "https://rumble.com/browse/live?page=7",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=7",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -905,7 +905,7 @@
               "url": "https://rumble.com/browse/live?page=8",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=8",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -914,7 +914,7 @@
               "url": "https://rumble.com/browse/live?page=9",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=9",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -923,7 +923,7 @@
               "url": "https://rumble.com/browse/live?page=10",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=10",
-              "response_length": 5841,
+              "response_length": 5835,
               "blocked": true,
               "error": null
             }
@@ -996,12 +996,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5871,
-                  "body_sha256_16": "2d7cccffff70152b",
+                  "body_sha256_16": "fd544e9ce9a4a2c4",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610215b84d2f58-LAX"
+                    "cf-ray": "a06749435e61498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1075,12 +1075,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5862,
-                  "body_sha256_16": "ae9b32fc65252e3f",
+                  "body_sha256_16": "74192e9733ff6b9f",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610216d9672f58-LAX"
+                    "cf-ray": "a067494488f9498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1154,12 +1154,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5814,
-                  "body_sha256_16": "44ebb8e3b42bd544",
+                  "body_sha256_16": "84e5235fd87ad9ea",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610217ea6c2f58-LAX"
+                    "cf-ray": "a0674945cbff498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1233,12 +1233,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5805,
-                  "body_sha256_16": "0a11d7e98af4ac5f",
+                  "body_sha256_16": "c558e6220b256f03",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610218fb362f58-LAX"
+                    "cf-ray": "a0674946de7e498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1375,8 +1375,8 @@
             "url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
             "final_url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
             "status_code": 403,
-            "response_size": 6215,
-            "response_length": 6215,
+            "response_size": 6209,
+            "response_length": 6209,
             "content_type": "text/html; charset=UTF-8",
             "http_version": "HTTP/2",
             "blocked": true,
@@ -1401,13 +1401,13 @@
               "session_mode_used": false,
               "cookie_material_present": false,
               "authenticated_probe_attempted": false,
-              "response_length": 6215,
-              "body_sha256_16": "411714ecfa596c5c",
+              "response_length": 6209,
+              "body_sha256_16": "1ad9f59d9c4a46ae",
               "headers": {
                 "content-type": "text/html; charset=UTF-8",
                 "cf-mitigated": "challenge",
                 "server": "cloudflare",
-                "cf-ray": "a061021a1c312f58-LAX"
+                "cf-ray": "a0674947e941498f-LAX"
               },
               "markers": {
                 "cloudflare_just_a_moment": true,
@@ -1449,8 +1449,8 @@
         },
         "watch_resolution": null,
         "freshness": {
-          "scan_started_at": "2026-06-03T19:12:11.340015Z",
-          "status_checked_at": "2026-06-03T19:12:11.340015Z"
+          "scan_started_at": "2026-06-04T13:29:22.255421Z",
+          "status_checked_at": "2026-06-04T13:29:22.255421Z"
         },
         "decision_summary": {
           "selected_creator_url": "https://rumble.com/user/danielclancy",
@@ -1509,7 +1509,7 @@
       "live_url": null,
       "viewer_count": null,
       "started_at": null,
-      "last_checked_at": "2026-06-03T19:12:11.340015Z",
+      "last_checked_at": "2026-06-04T13:29:22.255421Z",
       "stream_key": null,
       "numeric_video_id": null,
       "embed_id": null,
@@ -1548,8 +1548,8 @@
               "url": "https://rumble.com/browse/live?page=1",
               "final_url": "https://rumble.com/browse/live?page=1",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -1580,13 +1580,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "114cc877ee48ddca",
+                "response_length": 5832,
+                "body_sha256_16": "21e5f5f97553df81",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102103ae52f58-LAX"
+                  "cf-ray": "a067493de8b0498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1622,8 +1622,8 @@
               "url": "https://rumble.com/browse/live?page=2",
               "final_url": "https://rumble.com/browse/live?page=2",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -1654,13 +1654,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "c3b342a65b6db874",
+                "response_length": 5832,
+                "body_sha256_16": "046d7fab6b89cc24",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a061020f3a152f58-LAX"
+                  "cf-ray": "a067493cfdea498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1696,8 +1696,8 @@
               "url": "https://rumble.com/browse/live?page=3",
               "final_url": "https://rumble.com/browse/live?page=3",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5811,
+              "response_length": 5811,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -1728,13 +1728,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "e7b1cd4e17910c1b",
+                "response_length": 5811,
+                "body_sha256_16": "e49b5199299dd2b5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102103ae02f58-LAX"
+                  "cf-ray": "a067493de8a8498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1770,8 +1770,8 @@
               "url": "https://rumble.com/browse/live?page=4",
               "final_url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -1802,13 +1802,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "dabf66ca1390827d",
+                "response_length": 5832,
+                "body_sha256_16": "7e4cdc11a4db7721",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102103ae42f58-LAX"
+                  "cf-ray": "a067493de8ae498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1844,8 +1844,8 @@
               "url": "https://rumble.com/browse/live?page=5",
               "final_url": "https://rumble.com/browse/live?page=5",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -1876,13 +1876,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "290980562e3b3436",
+                "response_length": 5832,
+                "body_sha256_16": "a64153d174a3da9a",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102104af52f58-LAX"
+                  "cf-ray": "a067493e08ed498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1918,8 +1918,8 @@
               "url": "https://rumble.com/browse/live?page=6",
               "final_url": "https://rumble.com/browse/live?page=6",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -1950,13 +1950,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "da0f91b2a63dfba2",
+                "response_length": 5832,
+                "body_sha256_16": "8ae462554be3be0d",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102114bc82f58-LAX"
+                  "cf-ray": "a067493efb3d498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1992,8 +1992,8 @@
               "url": "https://rumble.com/browse/live?page=7",
               "final_url": "https://rumble.com/browse/live?page=7",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -2024,13 +2024,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "4abe7d208d05a4e0",
+                "response_length": 5832,
+                "body_sha256_16": "d0bdaec4a7119499",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102115bdc2f58-LAX"
+                  "cf-ray": "a067493f0b61498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -2066,8 +2066,8 @@
               "url": "https://rumble.com/browse/live?page=8",
               "final_url": "https://rumble.com/browse/live?page=8",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -2098,13 +2098,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "57317528557b1cc0",
+                "response_length": 5832,
+                "body_sha256_16": "acb97e1de7154ce4",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102117c042f58-LAX"
+                  "cf-ray": "a067493f3bbe498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -2140,8 +2140,8 @@
               "url": "https://rumble.com/browse/live?page=9",
               "final_url": "https://rumble.com/browse/live?page=9",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -2172,13 +2172,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "aa8089915a2c9f96",
+                "response_length": 5832,
+                "body_sha256_16": "c21d4f62e4228cdb",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102118c0f2f58-LAX"
+                  "cf-ray": "a067493f4be8498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -2214,8 +2214,8 @@
               "url": "https://rumble.com/browse/live?page=10",
               "final_url": "https://rumble.com/browse/live?page=10",
               "status_code": 403,
-              "response_size": 5841,
-              "response_length": 5841,
+              "response_size": 5835,
+              "response_length": 5835,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -2246,13 +2246,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5841,
-                "body_sha256_16": "78f0e006886acf97",
+                "response_length": 5835,
+                "body_sha256_16": "aed784cf270c5ef5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102125cbb2f58-LAX"
+                  "cf-ray": "a06749401e7e498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -2301,7 +2301,7 @@
               "url": "https://rumble.com/browse/live?page=1",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=1",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -2310,7 +2310,7 @@
               "url": "https://rumble.com/browse/live?page=2",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=2",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -2319,7 +2319,7 @@
               "url": "https://rumble.com/browse/live?page=3",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=3",
-              "response_length": 5817,
+              "response_length": 5811,
               "blocked": true,
               "error": null
             },
@@ -2328,7 +2328,7 @@
               "url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=4",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -2337,7 +2337,7 @@
               "url": "https://rumble.com/browse/live?page=5",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=5",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -2346,7 +2346,7 @@
               "url": "https://rumble.com/browse/live?page=6",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=6",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -2355,7 +2355,7 @@
               "url": "https://rumble.com/browse/live?page=7",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=7",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -2364,7 +2364,7 @@
               "url": "https://rumble.com/browse/live?page=8",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=8",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -2373,7 +2373,7 @@
               "url": "https://rumble.com/browse/live?page=9",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=9",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -2382,7 +2382,7 @@
               "url": "https://rumble.com/browse/live?page=10",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=10",
-              "response_length": 5841,
+              "response_length": 5835,
               "blocked": true,
               "error": null
             }
@@ -2455,12 +2455,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5862,
-                  "body_sha256_16": "58cd32c0dd566cc5",
+                  "body_sha256_16": "d3908e7f633fada3",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610215b8522f58-LAX"
+                    "cf-ray": "a06749435e63498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -2534,12 +2534,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5871,
-                  "body_sha256_16": "439f02bb85d0fab2",
+                  "body_sha256_16": "c1389c103e662904",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610217098f2f58-LAX"
+                    "cf-ray": "a067494478cb498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -2613,12 +2613,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5805,
-                  "body_sha256_16": "7a4dff9bdd572abd",
+                  "body_sha256_16": "1942150ea897cb2b",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a06102181a952f58-LAX"
+                    "cf-ray": "a06749459b56498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -2692,12 +2692,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5814,
-                  "body_sha256_16": "8791fbc888d45a18",
+                  "body_sha256_16": "c7d5fae4ef02c355",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a06102192b622f58-LAX"
+                    "cf-ray": "a0674946be1a498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -2834,8 +2834,8 @@
             "url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
             "final_url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
             "status_code": 403,
-            "response_size": 6215,
-            "response_length": 6215,
+            "response_size": 6209,
+            "response_length": 6209,
             "content_type": "text/html; charset=UTF-8",
             "http_version": "HTTP/2",
             "blocked": true,
@@ -2860,13 +2860,13 @@
               "session_mode_used": false,
               "cookie_material_present": false,
               "authenticated_probe_attempted": false,
-              "response_length": 6215,
-              "body_sha256_16": "4673caf51f512c0d",
+              "response_length": 6209,
+              "body_sha256_16": "e2187195c3938b90",
               "headers": {
                 "content-type": "text/html; charset=UTF-8",
                 "cf-mitigated": "challenge",
                 "server": "cloudflare",
-                "cf-ray": "a061021a3c632f58-LAX"
+                "cf-ray": "a0674947e925498f-LAX"
               },
               "markers": {
                 "cloudflare_just_a_moment": true,
@@ -2908,8 +2908,8 @@
         },
         "watch_resolution": null,
         "freshness": {
-          "scan_started_at": "2026-06-03T19:12:11.340015Z",
-          "status_checked_at": "2026-06-03T19:12:11.340015Z"
+          "scan_started_at": "2026-06-04T13:29:22.255421Z",
+          "status_checked_at": "2026-06-04T13:29:22.255421Z"
         },
         "decision_summary": {
           "selected_creator_url": "https://rumble.com/c/StreamSuites",
@@ -2968,7 +2968,7 @@
       "live_url": null,
       "viewer_count": null,
       "started_at": null,
-      "last_checked_at": "2026-06-03T19:12:11.340015Z",
+      "last_checked_at": "2026-06-04T13:29:22.255421Z",
       "stream_key": null,
       "numeric_video_id": null,
       "embed_id": null,
@@ -3007,8 +3007,8 @@
               "url": "https://rumble.com/browse/live?page=1",
               "final_url": "https://rumble.com/browse/live?page=1",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3039,13 +3039,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "114cc877ee48ddca",
+                "response_length": 5832,
+                "body_sha256_16": "21e5f5f97553df81",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102103ae52f58-LAX"
+                  "cf-ray": "a067493de8b0498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3081,8 +3081,8 @@
               "url": "https://rumble.com/browse/live?page=2",
               "final_url": "https://rumble.com/browse/live?page=2",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3113,13 +3113,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "c3b342a65b6db874",
+                "response_length": 5832,
+                "body_sha256_16": "046d7fab6b89cc24",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a061020f3a152f58-LAX"
+                  "cf-ray": "a067493cfdea498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3155,8 +3155,8 @@
               "url": "https://rumble.com/browse/live?page=3",
               "final_url": "https://rumble.com/browse/live?page=3",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5811,
+              "response_length": 5811,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3187,13 +3187,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "e7b1cd4e17910c1b",
+                "response_length": 5811,
+                "body_sha256_16": "e49b5199299dd2b5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102103ae02f58-LAX"
+                  "cf-ray": "a067493de8a8498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3229,8 +3229,8 @@
               "url": "https://rumble.com/browse/live?page=4",
               "final_url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3261,13 +3261,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "dabf66ca1390827d",
+                "response_length": 5832,
+                "body_sha256_16": "7e4cdc11a4db7721",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102103ae42f58-LAX"
+                  "cf-ray": "a067493de8ae498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3303,8 +3303,8 @@
               "url": "https://rumble.com/browse/live?page=5",
               "final_url": "https://rumble.com/browse/live?page=5",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3335,13 +3335,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "290980562e3b3436",
+                "response_length": 5832,
+                "body_sha256_16": "a64153d174a3da9a",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102104af52f58-LAX"
+                  "cf-ray": "a067493e08ed498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3377,8 +3377,8 @@
               "url": "https://rumble.com/browse/live?page=6",
               "final_url": "https://rumble.com/browse/live?page=6",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3409,13 +3409,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "da0f91b2a63dfba2",
+                "response_length": 5832,
+                "body_sha256_16": "8ae462554be3be0d",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102114bc82f58-LAX"
+                  "cf-ray": "a067493efb3d498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3451,8 +3451,8 @@
               "url": "https://rumble.com/browse/live?page=7",
               "final_url": "https://rumble.com/browse/live?page=7",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3483,13 +3483,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "4abe7d208d05a4e0",
+                "response_length": 5832,
+                "body_sha256_16": "d0bdaec4a7119499",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102115bdc2f58-LAX"
+                  "cf-ray": "a067493f0b61498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3525,8 +3525,8 @@
               "url": "https://rumble.com/browse/live?page=8",
               "final_url": "https://rumble.com/browse/live?page=8",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3557,13 +3557,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "57317528557b1cc0",
+                "response_length": 5832,
+                "body_sha256_16": "acb97e1de7154ce4",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102117c042f58-LAX"
+                  "cf-ray": "a067493f3bbe498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3599,8 +3599,8 @@
               "url": "https://rumble.com/browse/live?page=9",
               "final_url": "https://rumble.com/browse/live?page=9",
               "status_code": 403,
-              "response_size": 5817,
-              "response_length": 5817,
+              "response_size": 5832,
+              "response_length": 5832,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3631,13 +3631,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5817,
-                "body_sha256_16": "aa8089915a2c9f96",
+                "response_length": 5832,
+                "body_sha256_16": "c21d4f62e4228cdb",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102118c0f2f58-LAX"
+                  "cf-ray": "a067493f4be8498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3673,8 +3673,8 @@
               "url": "https://rumble.com/browse/live?page=10",
               "final_url": "https://rumble.com/browse/live?page=10",
               "status_code": 403,
-              "response_size": 5841,
-              "response_length": 5841,
+              "response_size": 5835,
+              "response_length": 5835,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3705,13 +3705,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5841,
-                "body_sha256_16": "78f0e006886acf97",
+                "response_length": 5835,
+                "body_sha256_16": "aed784cf270c5ef5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a06102125cbb2f58-LAX"
+                  "cf-ray": "a06749401e7e498f-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3760,7 +3760,7 @@
               "url": "https://rumble.com/browse/live?page=1",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=1",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -3769,7 +3769,7 @@
               "url": "https://rumble.com/browse/live?page=2",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=2",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -3778,7 +3778,7 @@
               "url": "https://rumble.com/browse/live?page=3",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=3",
-              "response_length": 5817,
+              "response_length": 5811,
               "blocked": true,
               "error": null
             },
@@ -3787,7 +3787,7 @@
               "url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=4",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -3796,7 +3796,7 @@
               "url": "https://rumble.com/browse/live?page=5",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=5",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -3805,7 +3805,7 @@
               "url": "https://rumble.com/browse/live?page=6",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=6",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -3814,7 +3814,7 @@
               "url": "https://rumble.com/browse/live?page=7",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=7",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -3823,7 +3823,7 @@
               "url": "https://rumble.com/browse/live?page=8",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=8",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -3832,7 +3832,7 @@
               "url": "https://rumble.com/browse/live?page=9",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=9",
-              "response_length": 5817,
+              "response_length": 5832,
               "blocked": true,
               "error": null
             },
@@ -3841,7 +3841,7 @@
               "url": "https://rumble.com/browse/live?page=10",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=10",
-              "response_length": 5841,
+              "response_length": 5835,
               "blocked": true,
               "error": null
             }
@@ -3914,12 +3914,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5871,
-                  "body_sha256_16": "08602748cb84aa94",
+                  "body_sha256_16": "a7fd6db91ed68749",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610215b8542f58-LAX"
+                    "cf-ray": "a06749435e67498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -3993,12 +3993,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5862,
-                  "body_sha256_16": "e8a4db91ee78af19",
+                  "body_sha256_16": "320c204187d2905a",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610216d95c2f58-LAX"
+                    "cf-ray": "a067494478be498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -4072,12 +4072,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5814,
-                  "body_sha256_16": "f0e563a04f95600c",
+                  "body_sha256_16": "046fd3f8404413d7",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610217da5a2f58-LAX"
+                    "cf-ray": "a06749458b33498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -4114,8 +4114,8 @@
                 "url": "https://rumble.com/c/danielclancy",
                 "final_url": "https://rumble.com/c/danielclancy",
                 "status_code": 403,
-                "response_size": 5784,
-                "response_length": 5784,
+                "response_size": 5805,
+                "response_length": 5805,
                 "content_type": "text/html; charset=UTF-8",
                 "http_version": "HTTP/2",
                 "blocked": true,
@@ -4150,13 +4150,13 @@
                   "session_mode_used": false,
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
-                  "response_length": 5784,
-                  "body_sha256_16": "337e405ce9e61908",
+                  "response_length": 5805,
+                  "body_sha256_16": "2036c898930bd300",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0610218eb212f58-LAX"
+                    "cf-ray": "a0674946be18498f-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -4238,8 +4238,8 @@
                 "url": "https://rumble.com/c/danielclancy",
                 "status_code": 403,
                 "final_url": "https://rumble.com/c/danielclancy",
-                "response_size": 5784,
-                "response_length": 5784,
+                "response_size": 5805,
+                "response_length": 5805,
                 "blocked": true,
                 "error": null
               }
@@ -4293,8 +4293,8 @@
             "url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
             "final_url": "https://rumble.com/-livestream-api/get-data?key=%3Credacted%3E",
             "status_code": 403,
-            "response_size": 6215,
-            "response_length": 6215,
+            "response_size": 6209,
+            "response_length": 6209,
             "content_type": "text/html; charset=UTF-8",
             "http_version": "HTTP/2",
             "blocked": true,
@@ -4319,13 +4319,13 @@
               "session_mode_used": false,
               "cookie_material_present": false,
               "authenticated_probe_attempted": false,
-              "response_length": 6215,
-              "body_sha256_16": "b693adce6c0be044",
+              "response_length": 6209,
+              "body_sha256_16": "809bcc8e373d196f",
               "headers": {
                 "content-type": "text/html; charset=UTF-8",
                 "cf-mitigated": "challenge",
                 "server": "cloudflare",
-                "cf-ray": "a0610219fc182f58-LAX"
+                "cf-ray": "a0674947c8df498f-LAX"
               },
               "markers": {
                 "cloudflare_just_a_moment": true,
@@ -4367,8 +4367,8 @@
         },
         "watch_resolution": null,
         "freshness": {
-          "scan_started_at": "2026-06-03T19:12:11.340015Z",
-          "status_checked_at": "2026-06-03T19:12:11.340015Z"
+          "scan_started_at": "2026-06-04T13:29:22.255421Z",
+          "status_checked_at": "2026-06-04T13:29:22.255421Z"
         },
         "decision_summary": {
           "selected_creator_url": "https://rumble.com/user/danielclancy",
