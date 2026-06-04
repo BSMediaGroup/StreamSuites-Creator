@@ -40,3 +40,16 @@ test("creator auth uses the runtime turnstile config as the single widget visibi
   assert.match(authJs, /if \(!authTurnstile\.enabled \|\| !ui\?\.slot\)/);
   assert.match(authJs, /if \(!authTurnstile\.enabled\) return "";/);
 });
+
+test("creator auth consumes normalized runtime image metadata with fallback", () => {
+  const authJs = read("js/auth.js");
+
+  assert.match(authJs, /function normalizedImageContract\(source = \{\}, fallback = \{\}\)/);
+  assert.match(authJs, /function stableImageUrl\(url, cacheKey\)/);
+  assert.match(authJs, /const imageContract = normalizedImageContract\(sessionSource, payload\)/);
+  assert.match(authJs, /avatar: imageContract\.avatarUrl/);
+  assert.match(authJs, /imageVersion: imageContract\.imageVersion/);
+  assert.match(authJs, /imageEl\.onerror = \(\) => \{/);
+  const stableImageHelper = authJs.match(/function stableImageUrl\(url, cacheKey\)[\s\S]*?\n  }\n\n  function normalizedImageContract/)?.[0] || "";
+  assert.doesNotMatch(stableImageHelper, /Date\.now\(\)/);
+});

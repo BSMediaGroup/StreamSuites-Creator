@@ -305,6 +305,57 @@
     return typeof value === "string" ? value.trim() : "";
   }
 
+  function stableImageUrl(url, cacheKey) {
+    const source = coerceText(url);
+    const key = coerceText(cacheKey);
+    if (!source || !key || source.startsWith("data:") || source.startsWith("blob:")) return source;
+    try {
+      const parsed = new URL(source, window.location.origin);
+      if (!parsed.searchParams.has("v")) parsed.searchParams.set("v", key);
+      return parsed.origin === window.location.origin && source.startsWith("/")
+        ? `${parsed.pathname}${parsed.search}${parsed.hash}`
+        : parsed.toString();
+    } catch (_) {
+      return source;
+    }
+  }
+
+  function normalizedImageContract(source = {}, fallback = {}) {
+    const profileMedia = source?.profile_media || source?.profileMedia || {};
+    const image = source?.image || profileMedia.avatar || {};
+    const avatarUrl = coerceText(
+      image.avatar_url ||
+        image.profile_image_url ||
+        image.url ||
+        profileMedia.avatar_url ||
+        profileMedia.profile_image_url ||
+        source?.profile_image_url ||
+        source?.profileImageUrl ||
+        source?.avatar_url ||
+        source?.avatarUrl ||
+        fallback?.avatar_url ||
+        fallback?.avatar ||
+        ""
+    );
+    const imageVersion = coerceText(
+      image.image_version ||
+        image.cache_key ||
+        profileMedia.image_version ||
+        profileMedia.cache_key ||
+        source?.image_version ||
+        source?.imageVersion ||
+        fallback?.imageVersion ||
+        ""
+    );
+    return {
+      avatarUrl: stableImageUrl(avatarUrl, imageVersion),
+      rawAvatarUrl: avatarUrl,
+      imageVersion,
+      avatarSource: coerceText(image.avatar_source || image.source || profileMedia.avatar_source || source?.avatar_source || source?.avatarSource),
+      fallbackInitial: coerceText(image.fallback_display_initial || profileMedia.fallback_display_initial || source?.fallback_display_initial || source?.fallbackDisplayInitial)
+    };
+  }
+
   function formatBadgeLabel(value) {
     const text = coerceText(value) || "unknown";
     return text
@@ -2631,12 +2682,19 @@
 
   function normalizeProfilePayload(payload) {
     const profile = payload?.profile && typeof payload.profile === "object" ? payload.profile : payload;
+    const imageContract = normalizedImageContract(profile);
     return {
       public_slug: coerceText(profile?.public_slug || profile?.slug),
       slug_aliases: Array.isArray(profile?.slug_aliases) ? profile.slug_aliases.map((item) => coerceText(item)).filter(Boolean) : [],
       user_code: coerceText(profile?.user_code),
       display_name: coerceText(profile?.display_name),
-      avatar_url: coerceText(profile?.avatar_url),
+      avatar_url: imageContract.avatarUrl || coerceText(profile?.avatar_url),
+      raw_avatar_url: imageContract.rawAvatarUrl,
+      image_version: imageContract.imageVersion,
+      avatar_source: imageContract.avatarSource,
+      fallback_display_initial: imageContract.fallbackInitial,
+      image: profile?.image || profile?.profile_media?.avatar || null,
+      profile_media: profile?.profile_media || profile?.profileMedia || null,
       avatar_media: profile?.avatar_media && typeof profile.avatar_media === "object" ? { ...profile.avatar_media } : null,
       creator_capable: profile?.creator_capable === true,
       public_surface_account_type: coerceText(profile?.public_surface_account_type),

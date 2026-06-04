@@ -25,6 +25,18 @@ test("creator account page mounts the grouped social links editor shell", () => 
   assert.match(accountJs, /Existing non-canonical keys stay preserved on save/);
 });
 
+test("creator account profile media consumes normalized runtime image metadata", () => {
+  const accountJs = read("js/account-settings.js");
+
+  assert.match(accountJs, /function normalizedImageContract\(source = \{\}, fallback = \{\}\)/);
+  assert.match(accountJs, /const imageContract = normalizedImageContract\(profile\)/);
+  assert.match(accountJs, /avatar_url: imageContract\.avatarUrl \|\| coerceText\(profile\?\.avatar_url\)/);
+  assert.match(accountJs, /raw_avatar_url: imageContract\.rawAvatarUrl/);
+  assert.match(accountJs, /profile_media: profile\?\.profile_media \|\| profile\?\.profileMedia \|\| null/);
+  const stableImageHelper = accountJs.match(/function stableImageUrl\(url, cacheKey\)[\s\S]*?\n  }\n\n  function normalizedImageContract/)?.[0] || "";
+  assert.doesNotMatch(stableImageHelper, /Date\.now\(\)/);
+});
+
 test("creator account social editor uses the shared canonical platform registry", () => {
   const helperJs = read("js/social-platforms.js");
   const accountJs = read("js/account-settings.js");

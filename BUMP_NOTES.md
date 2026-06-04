@@ -6,6 +6,10 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
 
+- Creator header/auth state and account profile media previews now consume Runtime/Auth normalized image/profile media fields with stable cache keys before legacy avatar aliases.
+- Preserved custom/uploaded image preference in account profile hydration and added one-shot broken-image fallback behavior without mutating saved avatar state.
+- Human note: Creator avatar/profile media previews should remain stable after refresh and should fall back visually when a remote image is unavailable.
+
 - Made Creator Twitch reconnect requests explicitly ask Runtime/Auth for forced Twitch OAuth verification while keeping Refresh/Verify as the non-OAuth status action.
 - Clarified the Twitch trigger statistic as enabled implemented trigger rows so Creator does not imply unimplemented Twitch triggers are available.
 - Human note: creators should see Twitch Reconnect open Twitch authorization again, and the trigger count should read as the current implemented Runtime/Auth trigger footing rather than future module coverage.
