@@ -1,11 +1,11 @@
 {
   "schema_version": "v1",
   "provider": "rumble",
-  "generated_at": "2026-06-05T19:20:47.483252Z",
+  "generated_at": "2026-06-11T12:36:59.991103Z",
   "scan": {
-    "started_at": "2026-06-05T19:20:45.059637Z",
-    "completed_at": "2026-06-05T19:20:47.483252Z",
-    "duration_ms": 2423,
+    "started_at": "2026-06-11T12:36:57.095671Z",
+    "completed_at": "2026-06-11T12:36:59.991103Z",
+    "duration_ms": 2895,
     "pages_requested": 10,
     "pages_succeeded": 0,
     "browse_entries_found": 0,
@@ -50,7 +50,7 @@
       "live_url": null,
       "viewer_count": null,
       "started_at": null,
-      "last_checked_at": "2026-06-05T19:20:45.059637Z",
+      "last_checked_at": "2026-06-11T12:36:57.095671Z",
       "stream_key": null,
       "numeric_video_id": null,
       "embed_id": null,
@@ -122,12 +122,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "b9cff20d964fd443",
+                "body_sha256_16": "2fe09337b8f3b4cf",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895959b22b8c-LAX"
+                  "cf-ray": "a0a0aa1b4e7aa708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -196,12 +196,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "14e0198e3f303b2a",
+                "body_sha256_16": "4aea8d8bf0a59769",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895868de2b8c-LAX"
+                  "cf-ray": "a0a0aa1a5c03a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -270,12 +270,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "55f377fca50885bb",
+                "body_sha256_16": "91f6b9203df84c06",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895959ab2b8c-LAX"
+                  "cf-ray": "a0a0aa1b4e73a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -311,8 +311,8 @@
               "url": "https://rumble.com/browse/live?page=4",
               "final_url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
-              "response_size": 5832,
-              "response_length": 5832,
+              "response_size": 5811,
+              "response_length": 5811,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -343,13 +343,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5832,
-                "body_sha256_16": "db20dc8569a3aef8",
+                "response_length": 5811,
+                "body_sha256_16": "ad1982649bfc770d",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895959b02b8c-LAX"
+                  "cf-ray": "a0a0aa1b4e78a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -418,12 +418,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "b36b8277fdfb520a",
+                "body_sha256_16": "d5ddf17f83e3d476",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895989df2b8c-LAX"
+                  "cf-ray": "a0a0aa1b6ec3a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -492,12 +492,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "41d69ea0f9b8906d",
+                "body_sha256_16": "6c4246a2ff90932c",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895a6acd2b8c-LAX"
+                  "cf-ray": "a0a0aa1f6823a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -566,12 +566,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "222091b2d9694772",
+                "body_sha256_16": "1c584628ef672706",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895a7ae12b8c-LAX"
+                  "cf-ray": "a0a0aa1f6829a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -640,12 +640,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "76a6f4fe21493687",
+                "body_sha256_16": "c5e5a3a1aaf9c317",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895aab0a2b8c-LAX"
+                  "cf-ray": "a0a0aa1f6833a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -714,12 +714,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "3859ecfe75723d4d",
+                "body_sha256_16": "52e74f33b93f21a5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895aab172b8c-LAX"
+                  "cf-ray": "a0a0aa1f6836a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -788,12 +788,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5835,
-                "body_sha256_16": "cc6d2f04bce42a4d",
+                "body_sha256_16": "685835281a4bcf6c",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895b7bca2b8c-LAX"
+                  "cf-ray": "a0a0aa206aaaa708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -869,7 +869,7 @@
               "url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=4",
-              "response_length": 5832,
+              "response_length": 5811,
               "blocked": true,
               "error": null
             },
@@ -996,12 +996,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5871,
-                  "body_sha256_16": "70e04389953f35f4",
+                  "body_sha256_16": "809cf0115076edfb",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a071895f1f4e2b8c-LAX"
+                    "cf-ray": "a0a0aa23cad2a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1075,12 +1075,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5862,
-                  "body_sha256_16": "bb8a75485dd65d09",
+                  "body_sha256_16": "1c9b94aa9db104fe",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a071896038682b8c-LAX"
+                    "cf-ray": "a0a0aa24ed65a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1154,12 +1154,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5814,
-                  "body_sha256_16": "d1afc01e9549fea0",
+                  "body_sha256_16": "fcd90a886f9ab297",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a071896159652b8c-LAX"
+                    "cf-ray": "a0a0aa25ffa3a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1233,12 +1233,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5805,
-                  "body_sha256_16": "cb803a111d3134a4",
+                  "body_sha256_16": "4ff913ac318857d5",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a07189626a642b8c-LAX"
+                    "cf-ray": "a0a0aa270a03a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -1402,12 +1402,12 @@
               "cookie_material_present": false,
               "authenticated_probe_attempted": false,
               "response_length": 6209,
-              "body_sha256_16": "5df059203fe20b8f",
+              "body_sha256_16": "a8da798fd69fb736",
               "headers": {
                 "content-type": "text/html; charset=UTF-8",
                 "cf-mitigated": "challenge",
                 "server": "cloudflare",
-                "cf-ray": "a07189637b8d2b8c-LAX"
+                "cf-ray": "a0a0aa282d4aa708-LAX"
               },
               "markers": {
                 "cloudflare_just_a_moment": true,
@@ -1449,8 +1449,8 @@
         },
         "watch_resolution": null,
         "freshness": {
-          "scan_started_at": "2026-06-05T19:20:45.059637Z",
-          "status_checked_at": "2026-06-05T19:20:45.059637Z"
+          "scan_started_at": "2026-06-11T12:36:57.095671Z",
+          "status_checked_at": "2026-06-11T12:36:57.095671Z"
         },
         "decision_summary": {
           "selected_creator_url": "https://rumble.com/user/danielclancy",
@@ -1509,7 +1509,7 @@
       "live_url": null,
       "viewer_count": null,
       "started_at": null,
-      "last_checked_at": "2026-06-05T19:20:45.059637Z",
+      "last_checked_at": "2026-06-11T12:36:57.095671Z",
       "stream_key": null,
       "numeric_video_id": null,
       "embed_id": null,
@@ -1581,12 +1581,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "b9cff20d964fd443",
+                "body_sha256_16": "2fe09337b8f3b4cf",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895959b22b8c-LAX"
+                  "cf-ray": "a0a0aa1b4e7aa708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1655,12 +1655,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "14e0198e3f303b2a",
+                "body_sha256_16": "4aea8d8bf0a59769",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895868de2b8c-LAX"
+                  "cf-ray": "a0a0aa1a5c03a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1729,12 +1729,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "55f377fca50885bb",
+                "body_sha256_16": "91f6b9203df84c06",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895959ab2b8c-LAX"
+                  "cf-ray": "a0a0aa1b4e73a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1770,8 +1770,8 @@
               "url": "https://rumble.com/browse/live?page=4",
               "final_url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
-              "response_size": 5832,
-              "response_length": 5832,
+              "response_size": 5811,
+              "response_length": 5811,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -1802,13 +1802,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5832,
-                "body_sha256_16": "db20dc8569a3aef8",
+                "response_length": 5811,
+                "body_sha256_16": "ad1982649bfc770d",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895959b02b8c-LAX"
+                  "cf-ray": "a0a0aa1b4e78a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1877,12 +1877,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "b36b8277fdfb520a",
+                "body_sha256_16": "d5ddf17f83e3d476",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895989df2b8c-LAX"
+                  "cf-ray": "a0a0aa1b6ec3a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -1951,12 +1951,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "41d69ea0f9b8906d",
+                "body_sha256_16": "6c4246a2ff90932c",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895a6acd2b8c-LAX"
+                  "cf-ray": "a0a0aa1f6823a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -2025,12 +2025,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "222091b2d9694772",
+                "body_sha256_16": "1c584628ef672706",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895a7ae12b8c-LAX"
+                  "cf-ray": "a0a0aa1f6829a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -2099,12 +2099,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "76a6f4fe21493687",
+                "body_sha256_16": "c5e5a3a1aaf9c317",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895aab0a2b8c-LAX"
+                  "cf-ray": "a0a0aa1f6833a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -2173,12 +2173,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "3859ecfe75723d4d",
+                "body_sha256_16": "52e74f33b93f21a5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895aab172b8c-LAX"
+                  "cf-ray": "a0a0aa1f6836a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -2247,12 +2247,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5835,
-                "body_sha256_16": "cc6d2f04bce42a4d",
+                "body_sha256_16": "685835281a4bcf6c",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895b7bca2b8c-LAX"
+                  "cf-ray": "a0a0aa206aaaa708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -2328,7 +2328,7 @@
               "url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=4",
-              "response_length": 5832,
+              "response_length": 5811,
               "blocked": true,
               "error": null
             },
@@ -2455,12 +2455,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5862,
-                  "body_sha256_16": "3a4b2a45783814a9",
+                  "body_sha256_16": "b6144f16353d7c4d",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a071895f1f502b8c-LAX"
+                    "cf-ray": "a0a0aa23cad5a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -2534,12 +2534,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5871,
-                  "body_sha256_16": "7932f7a54a46c25e",
+                  "body_sha256_16": "51c27d3e9d056dd4",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0718960587c2b8c-LAX"
+                    "cf-ray": "a0a0aa24dd40a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -2613,12 +2613,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5805,
-                  "body_sha256_16": "beef0cfbea666401",
+                  "body_sha256_16": "afbb04f8422ba80c",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0718961697c2b8c-LAX"
+                    "cf-ray": "a0a0aa25df55a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -2692,12 +2692,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5814,
-                  "body_sha256_16": "1812d9fab79dddfd",
+                  "body_sha256_16": "0a5b43505477ae3b",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a07189627a7e2b8c-LAX"
+                    "cf-ray": "a0a0aa2709ffa708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -2861,12 +2861,12 @@
               "cookie_material_present": false,
               "authenticated_probe_attempted": false,
               "response_length": 6209,
-              "body_sha256_16": "669d329c0880387c",
+              "body_sha256_16": "1eb3e5bf7b858457",
               "headers": {
                 "content-type": "text/html; charset=UTF-8",
                 "cf-mitigated": "challenge",
                 "server": "cloudflare",
-                "cf-ray": "a07189638ba42b8c-LAX"
+                "cf-ray": "a0a0aa280d09a708-LAX"
               },
               "markers": {
                 "cloudflare_just_a_moment": true,
@@ -2908,8 +2908,8 @@
         },
         "watch_resolution": null,
         "freshness": {
-          "scan_started_at": "2026-06-05T19:20:45.059637Z",
-          "status_checked_at": "2026-06-05T19:20:45.059637Z"
+          "scan_started_at": "2026-06-11T12:36:57.095671Z",
+          "status_checked_at": "2026-06-11T12:36:57.095671Z"
         },
         "decision_summary": {
           "selected_creator_url": "https://rumble.com/c/StreamSuites",
@@ -2968,7 +2968,7 @@
       "live_url": null,
       "viewer_count": null,
       "started_at": null,
-      "last_checked_at": "2026-06-05T19:20:45.059637Z",
+      "last_checked_at": "2026-06-11T12:36:57.095671Z",
       "stream_key": null,
       "numeric_video_id": null,
       "embed_id": null,
@@ -3040,12 +3040,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "b9cff20d964fd443",
+                "body_sha256_16": "2fe09337b8f3b4cf",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895959b22b8c-LAX"
+                  "cf-ray": "a0a0aa1b4e7aa708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3114,12 +3114,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "14e0198e3f303b2a",
+                "body_sha256_16": "4aea8d8bf0a59769",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895868de2b8c-LAX"
+                  "cf-ray": "a0a0aa1a5c03a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3188,12 +3188,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "55f377fca50885bb",
+                "body_sha256_16": "91f6b9203df84c06",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895959ab2b8c-LAX"
+                  "cf-ray": "a0a0aa1b4e73a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3229,8 +3229,8 @@
               "url": "https://rumble.com/browse/live?page=4",
               "final_url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
-              "response_size": 5832,
-              "response_length": 5832,
+              "response_size": 5811,
+              "response_length": 5811,
               "content_type": "text/html; charset=UTF-8",
               "http_version": "HTTP/2",
               "blocked": true,
@@ -3261,13 +3261,13 @@
                 "session_mode_used": false,
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
-                "response_length": 5832,
-                "body_sha256_16": "db20dc8569a3aef8",
+                "response_length": 5811,
+                "body_sha256_16": "ad1982649bfc770d",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895959b02b8c-LAX"
+                  "cf-ray": "a0a0aa1b4e78a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3336,12 +3336,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "b36b8277fdfb520a",
+                "body_sha256_16": "d5ddf17f83e3d476",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895989df2b8c-LAX"
+                  "cf-ray": "a0a0aa1b6ec3a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3410,12 +3410,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "41d69ea0f9b8906d",
+                "body_sha256_16": "6c4246a2ff90932c",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895a6acd2b8c-LAX"
+                  "cf-ray": "a0a0aa1f6823a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3484,12 +3484,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "222091b2d9694772",
+                "body_sha256_16": "1c584628ef672706",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895a7ae12b8c-LAX"
+                  "cf-ray": "a0a0aa1f6829a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3558,12 +3558,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "76a6f4fe21493687",
+                "body_sha256_16": "c5e5a3a1aaf9c317",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895aab0a2b8c-LAX"
+                  "cf-ray": "a0a0aa1f6833a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3632,12 +3632,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5832,
-                "body_sha256_16": "3859ecfe75723d4d",
+                "body_sha256_16": "52e74f33b93f21a5",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895aab172b8c-LAX"
+                  "cf-ray": "a0a0aa1f6836a708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3706,12 +3706,12 @@
                 "cookie_material_present": false,
                 "authenticated_probe_attempted": false,
                 "response_length": 5835,
-                "body_sha256_16": "cc6d2f04bce42a4d",
+                "body_sha256_16": "685835281a4bcf6c",
                 "headers": {
                   "content-type": "text/html; charset=UTF-8",
                   "cf-mitigated": "challenge",
                   "server": "cloudflare",
-                  "cf-ray": "a071895b7bca2b8c-LAX"
+                  "cf-ray": "a0a0aa206aaaa708-LAX"
                 },
                 "markers": {
                   "cloudflare_just_a_moment": true,
@@ -3787,7 +3787,7 @@
               "url": "https://rumble.com/browse/live?page=4",
               "status_code": 403,
               "final_url": "https://rumble.com/browse/live?page=4",
-              "response_length": 5832,
+              "response_length": 5811,
               "blocked": true,
               "error": null
             },
@@ -3914,12 +3914,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5871,
-                  "body_sha256_16": "33280a88c8567bd6",
+                  "body_sha256_16": "ee9b032cdeb5b7fa",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a071895f1f542b8c-LAX"
+                    "cf-ray": "a0a0aa23cad6a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -3993,12 +3993,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5862,
-                  "body_sha256_16": "6deb2cf177fd5ef3",
+                  "body_sha256_16": "d448a74979b88abd",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a0718960285d2b8c-LAX"
+                    "cf-ray": "a0a0aa250d9da708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -4072,12 +4072,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5814,
-                  "body_sha256_16": "6ac49b117da7db97",
+                  "body_sha256_16": "93dc79f1c14364e4",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a071896149562b8c-LAX"
+                    "cf-ray": "a0a0aa261fe4a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -4151,12 +4151,12 @@
                   "cookie_material_present": false,
                   "authenticated_probe_attempted": false,
                   "response_length": 5805,
-                  "body_sha256_16": "480e64262f69dab2",
+                  "body_sha256_16": "d0216390cab45002",
                   "headers": {
                     "content-type": "text/html; charset=UTF-8",
                     "cf-mitigated": "challenge",
                     "server": "cloudflare",
-                    "cf-ray": "a07189624a4c2b8c-LAX"
+                    "cf-ray": "a0a0aa271a36a708-LAX"
                   },
                   "markers": {
                     "cloudflare_just_a_moment": true,
@@ -4320,12 +4320,12 @@
               "cookie_material_present": false,
               "authenticated_probe_attempted": false,
               "response_length": 6209,
-              "body_sha256_16": "3dd8f99016e2ff3e",
+              "body_sha256_16": "d3d695de043d76ea",
               "headers": {
                 "content-type": "text/html; charset=UTF-8",
                 "cf-mitigated": "challenge",
                 "server": "cloudflare",
-                "cf-ray": "a07189635b6e2b8c-LAX"
+                "cf-ray": "a0a0aa283d74a708-LAX"
               },
               "markers": {
                 "cloudflare_just_a_moment": true,
@@ -4367,8 +4367,8 @@
         },
         "watch_resolution": null,
         "freshness": {
-          "scan_started_at": "2026-06-05T19:20:45.059637Z",
-          "status_checked_at": "2026-06-05T19:20:45.059637Z"
+          "scan_started_at": "2026-06-11T12:36:57.095671Z",
+          "status_checked_at": "2026-06-11T12:36:57.095671Z"
         },
         "decision_summary": {
           "selected_creator_url": "https://rumble.com/user/danielclancy",
