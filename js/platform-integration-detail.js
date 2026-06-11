@@ -981,7 +981,7 @@
     if (!normalized) return "";
     const returnTo = `${window.location.origin}/integrations/${state.platform}`;
     if (normalized === "kick") {
-      return `${API_BASE}/api/creator/integrations/kick/oauth/start`;
+      return `${API_BASE}/api/creator/integrations/kick/oauth/start?return_to=${encodeURIComponent(returnTo)}&force_verify=true`;
     }
     if (normalized === "twitch") {
       return `${API_BASE}/api/creator/integrations/twitch/auth/start?return_to=${encodeURIComponent(returnTo)}&force_verify=true`;
@@ -1994,7 +1994,7 @@
     setBusy(true);
     setActionStatus("Starting Kick OAuth setup...", "neutral");
     try {
-      const payload = await requestJson(`${API_BASE}/api/creator/integrations/kick/oauth/start`, {
+      const payload = await requestJson(oauthStartUrl("kick"), {
         method: "GET",
         timeoutMs: SAVE_TIMEOUT_MS
       });
@@ -2002,7 +2002,7 @@
         window.location.assign(payload.authorization_url);
         return;
       }
-      window.location.assign(`${API_BASE}/api/creator/integrations/kick/oauth/start`);
+      throw new Error("Runtime/Auth did not return a Kick authorization URL.");
     } catch (err) {
       setActionStatus(err?.message || "Unable to start Kick OAuth.", "danger");
       setBusy(false);
