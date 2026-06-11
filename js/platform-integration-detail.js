@@ -1306,7 +1306,7 @@
     const nextSteps = Array.isArray(status?.next_steps) ? status.next_steps : [];
     const channelValue = status?.channel_slug || status?.channel_url || "";
     const identityWarning = connected && !status?.channel_link_saved
-      ? `<div class="platform-inline-note" data-tone="warning">Kick connected, but StreamSuites could not automatically detect the channel. Enter your Kick channel slug below or click Refresh/Recheck.</div>`
+      ? `<div class="platform-inline-note" data-tone="warning">Kick OAuth is not attached because Runtime/Auth could not confirm the authenticated Kick channel. Reconnect Kick and complete authorization again.</div>`
       : "";
     container.innerHTML = `
       ${renderChatIdentityPanel(integration)}
@@ -1343,7 +1343,7 @@
           </label>
         </div>
         <div class="platform-actions">
-          <button class="creator-button primary" type="button" data-kick-channel-save="true">Save channel target</button>
+          <button class="creator-button primary" type="button" data-kick-channel-save="true" ${connected ? "" : "disabled"}>Save channel target</button>
         </div>
         <ul class="platform-management-checklist">
           <li>Channel slug: ${escapeHtml(status?.channel_slug || status?.account?.channel_slug || "not resolved")}</li>
@@ -2085,6 +2085,10 @@
   }
 
   async function saveKickChannelTarget() {
+    if (!kickStatus()?.connected) {
+      setActionStatus("Connect Kick through OAuth before saving a channel target.", "warning");
+      return;
+    }
     const input = query("[data-kick-channel-input=\"true\"]");
     const channelSlug = input instanceof HTMLInputElement ? input.value.trim() : "";
     if (!channelSlug) {
@@ -2424,9 +2428,9 @@
       const params = new URLSearchParams(window.location.search || "");
       if (params.get("connected") === "1") {
         if (params.get("warning") === "channel_unresolved") {
-          setActionStatus("Kick connected, but StreamSuites could not automatically detect the channel. Enter your Kick channel slug below or click Refresh/Recheck.", "warning");
+          setActionStatus("Kick OAuth did not attach because Runtime/Auth could not confirm the authenticated channel.", "warning");
         } else {
-          setActionStatus("Kick OAuth connected. Loading redacted readiness from runtime/Auth...", "success");
+          setActionStatus("Kick OAuth attached to the authenticated channel. Loading redacted readiness from runtime/Auth...", "success");
         }
       } else if (params.get("error")) {
         setActionStatus(`Kick OAuth did not complete: ${humanizeLabel(params.get("error"))}.`, "warning");

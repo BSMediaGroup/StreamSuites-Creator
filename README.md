@@ -176,6 +176,7 @@ StreamSuites-Creator/
 ├── tests/
 │   ├── account-social-editor.test.mjs
 │   ├── auth-surface-links.test.mjs
+│   ├── kick-oauth-authority.test.mjs
 │   ├── notifications-authority.test.mjs
 │   ├── triggers-runtime-authority.test.mjs
 │   └── wheels-authority.test.mjs

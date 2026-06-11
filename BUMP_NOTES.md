@@ -6,6 +6,9 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
 
+- Emergency Kick reconnect hardening: the Kick integration page keeps the Runtime/Auth `force_verify=true` OAuth start path, disables manual channel-target save until Kick is connected, and no longer presents unresolved-channel OAuth returns as successful connections.
+- Human note: Creator stays a thin consumer; a successful Kick connection is shown only after Runtime/Auth persists a real authenticated channel target.
+
 - Creator Kick OAuth reconnect restore: the Kick integration page now requests a fresh Runtime/Auth authorization URL with a return target and `force_verify=true` instead of navigating to the OAuth-start JSON endpoint as a silent fallback.
 - Forced `streamsuites` regression fix support: Creator no longer contributes a stale/background reconnect path; it displays Runtime/Auth's redacted attached channel state and surfaces exact OAuth-start errors when Runtime/Auth cannot produce an authorization URL.
 - Kick disconnect/reconnect UI truth: disconnect remains Runtime/Auth-owned and reconnect visibly starts Kick OAuth or shows the start failure, so Creator does not leave the page in a fake connected state or store token/channel authority locally.
