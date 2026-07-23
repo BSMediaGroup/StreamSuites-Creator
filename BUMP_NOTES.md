@@ -1,10 +1,16 @@
 # Bump Notes
 
-## RELEASED / PACKAGED: 0.4.2-alpha
+## RELEASED / PACKAGED: 0.5.0-alpha
 
-Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.5.0-alpha` section below.
+Packaged / released and no longer the active pending bucket. Preserve new notes for the open `0.5.4-alpha` section below.
 
-## CURRENT VER= 0.5.0-alpha / PENDING VER= 0.5.1-alpha
+## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
+
+### 2026-07-24 - Shared version-sync preparation
+
+- Opened `0.5.4-alpha` as the active Consumer-facing version marker.
+- No auth, identity, or integration behavior changes are included in this docs-only cycle.
+- Kept `0.5.0-alpha` as the prior released anchor for this repo.
 
 - Emergency Kick reconnect hardening: the Kick integration page keeps the Runtime/Auth `force_verify=true` OAuth start path, disables manual channel-target save until Kick is connected, and no longer presents unresolved-channel OAuth returns as successful connections.
 - Human note: Creator stays a thin consumer; a successful Kick connection is shown only after Runtime/Auth persists a real authenticated channel target.
