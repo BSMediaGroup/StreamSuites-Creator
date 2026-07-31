@@ -177,11 +177,29 @@ h6 {
   letter-spacing: -0.015em;
 }
 
-.creator-title {
+#app-nav .creator-title {
   font-family: var(--ss-font-display);
   font-size: 1rem;
-  font-weight: var(--ss-weight-display-semibold);
-  font-variation-settings: "wdth" 96;
+  font-weight: var(--ss-weight-display-bold);
+  font-variation-settings: "wdth" 100;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+
+#app-nav .creator-dashboard-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-height: 17px;
+  margin: 0;
+  padding: 3px 5px;
+  box-sizing: border-box;
+  font-family: var(--ss-font-display);
+  font-size: 0.55rem;
+  font-weight: var(--ss-weight-body);
+  font-variation-settings: "wdth" 94;
+  letter-spacing: 0.06em;
   line-height: 1;
 }
 

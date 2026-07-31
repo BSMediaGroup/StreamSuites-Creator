@@ -6,6 +6,18 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-01 - Creator sidebar typography and chip correction
+
+#### Technical notes
+
+- Corrected the Creator sidebar title selector specificity so the rendered `StreamSuites™` text now resolves to the repo-local Tektur variable font instead of being overridden by the shared Geist heading rule.
+- Matched the Public shell's bold full-width Tektur title settings and replaced the inherited 24px badge minimum with the Public shell's centered 17px subheading-chip geometry.
+- Updated the focused source regression to require the high-specificity Tektur title rule and the centered chip dimensions. No routes, workflows, palette, Runtime/Auth contracts, canonical state, or files changed outside the Creator presentation/docs/test scope, and nothing was removed.
+
+#### Human-readable summary
+
+The Creator sidebar title now visibly uses the same StreamSuites Tektur branding as the Public shell, and `CREATOR DASHBOARD` is vertically centered inside its compact chip without the empty lower gap.
+
 ### 2026-08-01 - Creator sidebar branding alignment
 
 #### Technical notes
