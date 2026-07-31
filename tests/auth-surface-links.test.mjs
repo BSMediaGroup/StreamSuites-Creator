@@ -24,12 +24,21 @@ test("creator dropdown keeps the compact overview card and role-gated debug cont
   const html = read("index.html");
   const authJs = read("js/auth.js");
 
+  assert.match(html, /src="\/assets\/logos\/ssmainlogosq\.webp"/);
   assert.match(html, /data-account-details-panel/);
   assert.match(html, /data-account-detail-name/);
   assert.match(html, /data-account-detail-email/);
   assert.match(html, /data-account-detail-tier/);
   assert.match(authJs, /session\?\.creatorDebug\?\.adminCapable === true/);
   assert.match(authJs, /session\?\.creatorDebug\?\.developerCapable === true/);
+});
+
+test("creator sidebar brand keeps the Studio-family font and left-aligned square mark", () => {
+  const css = read("css/studio-first-system.css");
+
+  assert.match(css, /\.creator-title\s*\{[\s\S]*font-family:\s*var\(--ss-font-display\);[\s\S]*font-variation-settings:\s*"wdth" 96;[\s\S]*line-height:\s*1;/);
+  assert.match(css, /#app-nav \.ss-sidebar-brand \.header-left a\s*\{[\s\S]*justify-content:\s*flex-start;[\s\S]*gap:\s*10px;/);
+  assert.match(css, /#app-nav \.ss-sidebar-brand \.creator-logo-img\s*\{[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;[\s\S]*object-fit:\s*contain;/);
 });
 
 test("creator auth uses the runtime turnstile config as the single widget visibility gate", () => {

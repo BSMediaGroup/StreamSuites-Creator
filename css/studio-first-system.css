@@ -178,7 +178,40 @@ h6 {
 }
 
 .creator-title {
+  font-family: var(--ss-font-display);
   font-size: 1rem;
+  font-weight: var(--ss-weight-display-semibold);
+  font-variation-settings: "wdth" 96;
+  line-height: 1;
+}
+
+html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand {
+  padding: 12px 14px 13px;
+}
+
+html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .header-left {
+  width: 100%;
+  min-width: 0;
+}
+
+html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .header-left a {
+  max-width: 100%;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .creator-logo-img {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  align-self: auto;
+  object-fit: contain;
+}
+
+html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand .creator-brand-text {
+  min-width: 0;
+  gap: 4px;
 }
 
 .creator-topbar-page-title {

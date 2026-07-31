@@ -6,6 +6,18 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-01 - Creator sidebar branding alignment
+
+#### Technical notes
+
+- Replaced the Creator sidebar's former `/assets/logos/ssnewcon.webp` mark with the supplied `/assets/logos/ssmainlogosq.webp` square StreamSuites logo.
+- Corrected the expanded brand container to use a stable 44px square logo slot, left-aligned content, consistent spacing, and the shared Tektur product-title role while preserving the icon-only collapsed rail.
+- Added focused source assertions for the requested asset, font role, expanded alignment, and logo sizing. No routes, Runtime/Auth contracts, workflows, palette, or canonical state changed, and no files were removed.
+
+#### Human-readable summary
+
+The Creator sidebar branding now lines up cleanly with the other StreamSuites surfaces and uses the requested main square logo without changing the recently established Creator color scheme.
+
 ### 2026-07-31 - Studio-first Creator presentation
 
 #### Technical notes
