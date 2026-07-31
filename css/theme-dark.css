@@ -2,14 +2,14 @@
 
 @font-face {
   font-family: "RechargeBd";
-  src: url("https://raw.githubusercontent.com/BSMediaGroup/Resources/master/FONTS/Recharge%20Bd.otf")
+  src: url("../assets/fonts/Tektur-VariableFont_wdth,wght.ttf") format("truetype")
        format("opentype");
   font-weight: 700;
 }
 
 @font-face {
   font-family: "SuiGenerisRg";
-  src: url("https://raw.githubusercontent.com/BSMediaGroup/Resources/master/FONTS/Sui%20Generis%20Rg.otf")
+  src: url("../assets/fonts/Geist-Regular.ttf") format("truetype")
        format("opentype");
   font-weight: 400;
 }

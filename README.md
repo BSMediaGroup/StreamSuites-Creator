@@ -9,6 +9,14 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 - This repo is a static frontend that hydrates from authoritative runtime and Auth API services and does not own backend state.
 - Cloudflare deep-link handling now uses only valid exact route rewrites for Creator shell paths, plus a route-scoped Pages Function fallback for the same known paths, so nested Creator URLs no longer depend on invalid wildcard rewrites being honored.
 
+## Studio-first visual system
+
+- `css/studio-first-system.css` is the final presentation layer for the Creator shell, login, login-success, 404, and all route-loaded human-facing views. It preserves the existing Creator workflows while adding the shared graphite, restrained violet/blue edge, focus, table, form, dialog, status, empty-state, responsive, and reduced-motion language.
+- Tektur is used for product and top-level view identity, Geist Sans for body copy and controls, and IBM Plex Mono for statuses, timestamps, metric values, IDs, and technical metadata. The repo-local sources are `assets/fonts/Tektur-VariableFont_wdth,wght.ttf`, `assets/fonts/Geist-{Light,Regular,Medium,SemiBold,Bold,ExtraBold}.ttf`, and `assets/fonts/mono/IBMPlexMono-{Light,Regular,Medium,SemiBold,Bold}.ttf`.
+- Font hashes match the approved read-only Public sources. Genuine Geist and IBM Plex Mono licenses remain at `assets/fonts/GEISTMONOOFL.txt` and `assets/fonts/mono/IBMPLEXMONOOFL.txt`; no genuine local Tektur license file has been found, which remains a publication blocker.
+- The overview now positions Creator as the operations companion to Browser Studio and native StudioApp. Runtime/Auth still owns sessions, destinations, integrations, alerts, automation/shared state, analytics contracts, public identity, and mutations; path, hash/query compatibility, OAuth, role gates, and fallbacks are unchanged.
+- The new file is listed in the repository tree below. Existing validation remains `node --test tests/*.test.mjs`; the repository has no package build step.
+
 ## Scope & Authority
 
 - This repo is the creator-facing dashboard shell, not a backend authority.
@@ -135,6 +143,7 @@ StreamSuites-Creator/
 │   ├── layout.css
 │   ├── overrides.css
 │   ├── status-widget.css
+│   ├── studio-first-system.css
 │   ├── theme-dark.css
 │   └── updates.css
 ├── data/

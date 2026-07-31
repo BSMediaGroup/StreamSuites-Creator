@@ -6,6 +6,20 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-07-31 - Studio-first Creator presentation
+
+#### Technical notes
+
+- Added `css/studio-first-system.css` as the final presentation layer for the current Creator SPA, login, login-success, and not-found surfaces.
+- Remapped inherited Recharge/Sui Generis family aliases to the approved local Tektur/Geist files so refreshed pages make no external or legacy font requests.
+- Applied the shared local font roles (Tektur display, Geist Sans interface, IBM Plex Mono technical data), clearer focus states, restrained responsive density, and reduced-motion handling while preserving existing routes, Runtime/Auth-backed state, controls, and modules.
+- Updated the overview copy to position Creator as the operational companion to Browser Studio and StudioApp; no new backend capability, token, session, or canonical state was introduced.
+- No version/build authority changed. Publication remains blocked on locating and confirming the redistribution license text for the supplied Tektur binary; no matching license was present in the approved local repositories or reference bundle.
+
+#### Human-readable summary
+
+Creator now feels visibly related to Studio while retaining its familiar operational layout and all existing account, integration, trigger, and settings workflows.
+
 ### 2026-07-24 - Shared version-sync preparation
 
 - Opened `0.5.4-alpha` as the active Consumer-facing version marker.
