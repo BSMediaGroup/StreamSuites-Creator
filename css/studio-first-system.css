@@ -178,12 +178,14 @@ h6 {
 }
 
 #app-nav .creator-title {
-  font-family: var(--ss-font-display);
-  font-size: 1rem;
-  font-weight: var(--ss-weight-display-bold);
-  font-variation-settings: "wdth" 100;
-  letter-spacing: -0.025em;
+  font-family: "Tektur", "Geist Sans", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  font-size: 1.02rem;
+  font-weight: var(--ss-weight-display-semibold);
+  font-stretch: 96%;
+  font-variation-settings: "wdth" 96, "wght" 600;
+  letter-spacing: -0.02em;
   line-height: 1;
+  text-rendering: optimizeLegibility;
 }
 
 #app-nav .creator-dashboard-badge {
@@ -191,16 +193,25 @@ h6 {
   align-items: center;
   justify-content: center;
   align-self: flex-start;
-  min-height: 17px;
+  width: fit-content;
+  height: 18px;
+  min-height: 18px;
   margin: 0;
-  padding: 3px 5px;
+  padding: 2px 6px;
   box-sizing: border-box;
-  font-family: var(--ss-font-display);
-  font-size: 0.55rem;
-  font-weight: var(--ss-weight-body);
-  font-variation-settings: "wdth" 94;
-  letter-spacing: 0.06em;
   line-height: 1;
+}
+
+#app-nav .creator-dashboard-badge-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ss-font-mono);
+  font-size: 0.53rem;
+  font-weight: var(--ss-weight-mono-medium);
+  letter-spacing: 0.075em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 html:not(.ss-sidebar-collapsed) body:not(.ss-sidebar-collapsed) #app-nav .ss-sidebar-brand {
@@ -318,7 +329,7 @@ pre,
 
 .card:hover,
 .card:focus-within {
-  border-color: rgba(167, 217, 255, 0.27);
+  border-color: rgba(190, 160, 242, 0.3);
   box-shadow: var(--creator-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 

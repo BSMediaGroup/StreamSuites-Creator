@@ -33,11 +33,15 @@ test("creator dropdown keeps the compact overview card and role-gated debug cont
   assert.match(authJs, /session\?\.creatorDebug\?\.developerCapable === true/);
 });
 
-test("creator sidebar brand keeps the Studio-family font and left-aligned square mark", () => {
+test("creator sidebar brand uses direct Tektur axes and optically centered chip text", () => {
+  const html = read("index.html");
   const css = read("css/studio-first-system.css");
 
-  assert.match(css, /#app-nav \.creator-title\s*\{[\s\S]*font-family:\s*var\(--ss-font-display\);[\s\S]*font-weight:\s*var\(--ss-weight-display-bold\);[\s\S]*font-variation-settings:\s*"wdth" 100;[\s\S]*letter-spacing:\s*-0\.025em;[\s\S]*line-height:\s*1;/);
-  assert.match(css, /#app-nav \.creator-dashboard-badge\s*\{[\s\S]*align-items:\s*center;[\s\S]*justify-content:\s*center;[\s\S]*min-height:\s*17px;[\s\S]*padding:\s*3px 5px;[\s\S]*font-family:\s*var\(--ss-font-display\);[\s\S]*line-height:\s*1;/);
+  assert.match(html, /studio-first-system\.css\?v=20260801-creator-visual-polish/);
+  assert.match(html, /class="creator-dashboard-badge-text">CREATOR DASHBOARD<\/span>/);
+  assert.match(css, /#app-nav \.creator-title\s*\{[\s\S]*font-family:\s*"Tektur"[\s\S]*font-weight:\s*var\(--ss-weight-display-semibold\);[\s\S]*font-stretch:\s*96%;[\s\S]*font-variation-settings:\s*"wdth" 96, "wght" 600;[\s\S]*line-height:\s*1;/);
+  assert.match(css, /#app-nav \.creator-dashboard-badge\s*\{[\s\S]*align-items:\s*center;[\s\S]*justify-content:\s*center;[\s\S]*height:\s*18px;[\s\S]*padding:\s*2px 6px;[\s\S]*line-height:\s*1;/);
+  assert.match(css, /#app-nav \.creator-dashboard-badge-text\s*\{[\s\S]*display:\s*inline-flex;[\s\S]*align-items:\s*center;[\s\S]*font-family:\s*var\(--ss-font-mono\);[\s\S]*line-height:\s*1;/);
   assert.match(css, /#app-nav \.ss-sidebar-brand \.header-left a\s*\{[\s\S]*justify-content:\s*flex-start;[\s\S]*gap:\s*10px;/);
   assert.match(css, /#app-nav \.ss-sidebar-brand \.creator-logo-img\s*\{[\s\S]*width:\s*44px;[\s\S]*height:\s*44px;[\s\S]*object-fit:\s*contain;/);
 });

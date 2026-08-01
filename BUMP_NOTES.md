@@ -6,6 +6,20 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-01 - Major Creator visual polish and verified brand loading
+
+#### Technical notes
+
+- Deepened the existing Creator presentation in place on the suite's muted black/steel-blue foundation, limiting Creator-specific violet/plum/indigo to selected navigation, primary actions, and restrained highlight trim. Added deliberate content widths and spacing, clearer hero/section hierarchy, layered cards, improved forms/tables/dialogs, bounded route motion, responsive refinements, and reduced-motion fallbacks across the existing route-loaded views.
+- Made the `StreamSuites™` title rule self-contained with the real repo-local `Tektur` family plus explicit weight 600/width 96 axes. Added a bounded revision to the final presentation stylesheet URL because the repo has no service worker or Cache Storage layer to invalidate and stale CSS was the remaining normal-reload risk.
+- Rebuilt the `CREATOR DASHBOARD` chip around an 18px flex container and inner IBM Plex Mono text line for stable optical centering. The focused source regression now locks the exact family, axes, revision key, and two-layer chip geometry.
+- Preserved every route, view structure, ID, event binding, auth/API call, Runtime/Auth authority boundary, field, query/hash/deep-link behavior, logo asset, workflow, and responsive navigation contract. No JavaScript application behavior, canonical version/build authority, deployment configuration, or sibling repository changed, and no file was created or removed.
+- Publication remains blocked on locating and reviewing genuine redistribution license text for the supplied Tektur binary; no license text was fabricated and the required family was not substituted.
+
+#### Human-readable summary
+
+Creator now feels less flat and mechanical while keeping the same dashboard and controls. The product title loads through a direct Tektur rule, and the dashboard chip is centered by its actual text line instead of font-box luck.
+
 ### 2026-08-01 - Creator sidebar typography and chip correction
 
 #### Technical notes
