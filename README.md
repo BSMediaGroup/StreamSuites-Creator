@@ -24,6 +24,7 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 - Session, role, tier, public-profile policy, trigger registry, integration posture, and readiness evaluation remain runtime/Auth-owned in `StreamSuites`.
 - The creator UI is allowed to initiate supported account and integration workflows, but it must stay within the backend contracts that already exist.
 - Public profile and FindMeHere outcomes shown here are authoritative reflections of runtime/Auth state, not creator-local truth.
+- The footer status widget keeps Atlassian's public Status API as official state. Its fully expanded panel also reads Runtime/Auth's sanitized public diagnostics projection for exactly two configured Atlassian custom metrics: measured Core API response time and explicitly deferred Studio Room Readiness. Diagnostics remain optional, read-only, and unable to override official state.
 
 ## Repo-Scoped Flowchart
 

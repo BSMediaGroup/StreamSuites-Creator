@@ -6,6 +6,18 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-09 - Expanded Creator widget custom metrics
+
+#### Technical notes
+
+- Added a compact two-card Atlassian custom-metrics section to the existing fully expanded Creator status widget. Core API response time displays only a finite measured Runtime/Auth diagnostic value, while Studio Room Readiness preserves the explicit deferred state and genuine-transaction explanation.
+- Added a bounded optional GET of Runtime/Auth's sanitized public status diagnostics alongside the official public Atlassian summary read. Missing diagnostics produce unavailable cards and never fail or reinterpret Atlassian status; no Manage API, API key, write method, local authority, route, dependency, version/build value, deployment configuration, or new file was introduced.
+- Added viewport-bounded scrolling, responsive metric stacking, and focused source regression coverage without changing the collapsed pill, footer mount, auth, dashboard routes, or existing incident/component expansion behavior.
+
+#### Human-readable summary
+
+The expanded Creator footer status now shows Core API response time and the honest deferred Studio Room Readiness metric in the same place as service details.
+
 ### 2026-08-01 - Major Creator visual polish and verified brand loading
 
 #### Technical notes

@@ -20,6 +20,24 @@ test("creator login uses the collapsed alternate surface section", () => {
   assert.match(css, /ss-auth-surface-links__icon--public/);
 });
 
+test("creator expanded status widget presents the two read-only custom metrics", () => {
+  const script = read("js/status-widget.js");
+  const css = read("css/status-widget.css");
+
+  assert.match(script, /api\.streamsuites\.app\/api\/public\/status\/diagnostics/);
+  assert.match(script, /Atlassian custom metrics/);
+  assert.match(script, /Core API response time/);
+  assert.match(script, /Studio Room Readiness/);
+  assert.match(script, /core_api_response_time/);
+  assert.match(script, /studio_room_readiness/);
+  assert.match(script, /diagnosticsStale/);
+  assert.match(script, /Number\(coreValue\) >= 0/);
+  assert.match(script, /Sanitized Runtime\/Auth projection/);
+  assert.doesNotMatch(script, /manage\.statuspage|api[_-]?key|method:\s*["'](?:POST|PUT|PATCH|DELETE)/i);
+  assert.match(css, /\.ss-status-metrics-grid/);
+  assert.match(css, /\.ss-status-metric\[data-state='deferred'\]/);
+});
+
 test("creator dropdown keeps the compact overview card and role-gated debug control", () => {
   const html = read("index.html");
   const authJs = read("js/auth.js");

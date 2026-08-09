@@ -1,5 +1,6 @@
 (() => {
   const API_URL = "https://v0hwlmly3pd2.statuspage.io/api/v2/summary.json";
+  const DIAGNOSTICS_URL = "https://api.streamsuites.app/api/public/status/diagnostics";
   const STATUS_URL = "https://streamsuites.statuspage.io/";
   const ROOT_ID = "ss-status-indicator";
   const DETAILS_ID = "ss-status-details";
@@ -121,6 +122,19 @@
     return `${slice}...`;
   };
 
+  const formatRelative = (value) => {
+    const timestamp = Date.parse(value || "");
+    if (!Number.isFinite(timestamp)) return "at an unavailable time";
+    const delta = Date.now() - timestamp;
+    const absolute = Math.abs(delta);
+    for (const [unit, size] of [["day", 86400000], ["hour", 3600000], ["minute", 60000]]) {
+      if (absolute >= size) {
+        return new Intl.RelativeTimeFormat(undefined, { numeric: "auto" }).format(-Math.round(delta / size), unit);
+      }
+    }
+    return "just now";
+  };
+
   const buildSection = (titleText, items) => {
     const section = document.createElement("div");
     section.className = "ss-status-section";
@@ -170,6 +184,69 @@
     return link;
   };
 
+  const createMetricsSection = (diagnostics, { stale = false } = {}) => {
+    const metrics = diagnostics?.metrics;
+    const core = metrics?.core_api_response_time;
+    const studio = metrics?.studio_room_readiness;
+    const coreValue = core?.value_ms;
+    const coreObserved = core?.state === "observed" && coreValue != null && Number.isFinite(Number(coreValue)) && Number(coreValue) >= 0;
+    const studioValue = studio?.value;
+    const studioObserved = studio?.state === "observed" && studioValue != null && Number.isFinite(Number(studioValue));
+    const studioDeferred = studio?.state === "deferred";
+    const section = document.createElement("section");
+    section.className = "ss-status-section ss-status-metrics";
+    const heading = document.createElement("div");
+    heading.className = "ss-status-section-title";
+    heading.textContent = "Atlassian custom metrics";
+    const source = document.createElement("p");
+    source.className = "ss-status-metrics-source";
+    source.textContent = "Sanitized Runtime/Auth projection · read only";
+    const grid = document.createElement("div");
+    grid.className = "ss-status-metrics-grid";
+
+    const createCard = ({ key, title, value, state, detail }) => {
+      const card = document.createElement("article");
+      card.className = "ss-status-metric";
+      card.dataset.metric = key;
+      card.dataset.state = state;
+      const head = document.createElement("div");
+      head.className = "ss-status-metric-head";
+      const name = document.createElement("h3");
+      name.textContent = title;
+      const stateEl = document.createElement("span");
+      stateEl.className = "ss-status-metric-state";
+      stateEl.textContent = state === "observed" ? "Observed" : state === "stale" ? "Stale reading" : state === "deferred" ? "Deferred" : "Unavailable";
+      head.append(name, stateEl);
+      const valueEl = document.createElement("strong");
+      valueEl.className = "ss-status-metric-value";
+      valueEl.textContent = value;
+      const detailEl = document.createElement("p");
+      detailEl.className = "ss-status-metric-detail";
+      detailEl.textContent = detail;
+      card.append(head, valueEl, detailEl);
+      return card;
+    };
+
+    grid.append(
+      createCard({
+        key: "core-api-response-time",
+        title: "Core API response time",
+        value: coreObserved ? `${Math.round(Number(coreValue))} ms` : "Unavailable",
+        state: coreObserved ? (stale ? "stale" : "observed") : "unavailable",
+        detail: coreObserved ? `Measured ${formatRelative(core.last_checked)}.` : core?.state === "awaiting_measured_data" ? "Awaiting a measured Core API observation." : "No measured Core API value is available.",
+      }),
+      createCard({
+        key: "studio-room-readiness",
+        title: "Studio Room Readiness",
+        value: studioDeferred ? "Deferred" : studioObserved ? String(studioValue) : "Unavailable",
+        state: studioDeferred ? "deferred" : studioObserved ? (stale ? "stale" : "observed") : "unavailable",
+        detail: studioDeferred ? truncateText(studio.reason || "A genuine Studio room readiness transaction is not available yet.", 170) : studioObserved ? "Latest measured readiness value." : "No genuine Studio room readiness observation is available.",
+      })
+    );
+    section.append(heading, source, grid);
+    return section;
+  };
+
   const computeFallbackIndicator = (components) => {
     if (components.some((component) => component.status === "major_outage")) {
       return "major";
@@ -194,17 +271,17 @@
     return computeFallbackIndicator(components);
   };
 
-  const setUnavailable = () => {
+  const setUnavailable = (diagnostics, { diagnosticsStale = false } = {}) => {
     root.dataset.state = "unknown";
     label.textContent = "UNKNOWN";
     details.innerHTML = "";
     const summary = document.createElement("div");
     summary.className = "ss-status-summary";
     summary.textContent = "Status unavailable.";
-    details.append(summary, createLink());
+    details.append(summary, createMetricsSection(diagnostics, { stale: diagnosticsStale }), createLink());
   };
 
-  const updateWidget = (summary) => {
+  const updateWidget = (summary, diagnostics, { diagnosticsStale = false } = {}) => {
     const components = Array.isArray(summary?.components) ? summary.components : [];
     const incidents = Array.isArray(summary?.incidents) ? summary.incidents : [];
     const maintenances = Array.isArray(summary?.scheduled_maintenances)
@@ -225,6 +302,7 @@
     summaryEl.className = "ss-status-summary";
     summaryEl.textContent = description;
     details.appendChild(summaryEl);
+    details.appendChild(createMetricsSection(diagnostics, { stale: diagnosticsStale }));
 
     if (impactedComponents.length) {
       const items = impactedComponents.map((component) =>
@@ -274,22 +352,41 @@
     }
   };
 
+  let lastSuccessfulDiagnostics = null;
+
+  const fetchJson = async (url, signal) => {
+    const response = await fetch(url, {
+      signal,
+      cache: "no-store",
+      credentials: "omit",
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) throw new Error(`status fetch failed (${response.status})`);
+    return response.json();
+  };
+
   const fetchStatus = async () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
+    let diagnostics = lastSuccessfulDiagnostics;
+    let diagnosticsStale = Boolean(lastSuccessfulDiagnostics);
 
     try {
-      const response = await fetch(API_URL, {
-        signal: controller.signal,
-        cache: "no-store",
-        headers: { Accept: "application/json" },
-      });
-
-      if (!response.ok) throw new Error("status fetch failed");
-      const data = await response.json();
-      updateWidget(data);
+      const results = await Promise.allSettled([
+        fetchJson(API_URL, controller.signal),
+        fetchJson(DIAGNOSTICS_URL, controller.signal),
+      ]);
+      const diagnosticsResponse = results[1].status === "fulfilled" ? results[1].value : null;
+      const liveDiagnostics = diagnosticsResponse?.available && diagnosticsResponse?.diagnostics
+        ? diagnosticsResponse.diagnostics
+        : null;
+      if (liveDiagnostics) lastSuccessfulDiagnostics = liveDiagnostics;
+      diagnostics = liveDiagnostics || lastSuccessfulDiagnostics;
+      diagnosticsStale = Boolean(diagnostics && (!liveDiagnostics || diagnosticsResponse?.stale));
+      if (results[0].status !== "fulfilled") throw results[0].reason;
+      updateWidget(results[0].value, diagnostics, { diagnosticsStale });
     } catch (error) {
-      setUnavailable();
+      setUnavailable(diagnostics, { diagnosticsStale });
     } finally {
       clearTimeout(timeout);
     }
