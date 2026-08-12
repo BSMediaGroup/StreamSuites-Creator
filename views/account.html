@@ -549,7 +549,7 @@
                     <span class="account-section-title-icon" style="--account-section-title-icon:url('/assets/icons/ui/addlink.svg');" aria-hidden="true"></span>
                     <span>Public content &amp; share links</span>
                   </h3>
-                  <p>Bio, socials, and truthful saved URLs for each public surface.</p>
+                  <p>Concise bio, expanded About story, socials, and truthful saved URLs for each public surface.</p>
                 </div>
                 <span class="status-pill subtle">
                   <span class="status-dot"></span>Authoritative URLs
@@ -557,18 +557,47 @@
               </div>
               <div class="account-section-stack">
                 <div class="account-field-grid account-stack-fields">
-                  <div class="account-field">
-                    <span class="account-field-label">Bio / about</span>
+                  <div class="account-profile-story-grid">
+                  <div class="account-field account-story-field account-story-field--bio">
+                    <span class="account-story-intent">Identity header</span>
+                    <span class="account-field-label">Bio</span>
                     <textarea
                       class="account-field-input account-field-textarea"
-                      rows="5"
+                      rows="4"
                       maxlength="1200"
-                      placeholder="Tell viewers who you are, what you stream, and where to follow you."
+                      placeholder="A concise introduction for the identity hero."
                       data-profile-field="true"
                       data-profile-bio="true"
                     ></textarea>
-                    <span class="account-field-note">Saved to the authoritative public profile payload.</span>
+                    <span class="account-field-note">Appears beside your avatar in the public identity header.</span>
                   </div>
+                  <div class="account-field account-story-field account-story-field--about">
+                    <span class="account-story-intent">Expanded profile story</span>
+                    <span class="account-field-label">About</span>
+                    <textarea
+                      class="account-field-input account-field-textarea account-field-textarea--about"
+                      rows="9"
+                      maxlength="6000"
+                      placeholder="Tell your fuller story, introduce your work, and give visitors more context."
+                      data-profile-field="true"
+                      data-profile-about="true"
+                    ></textarea>
+                    <span class="account-field-note">Renders as the separate About section beneath the public profile hero.</span>
+                  </div>
+                  </div>
+                  <section class="account-inline-subsection account-streamsuites-theme-editor" data-profile-theme-editor="true">
+                    <div class="account-inline-subsection-top">
+                      <div>
+                        <span class="account-story-intent">StreamSuites public profile</span>
+                        <h4>Feature gradient</h4>
+                        <p>Theme the header emblem, hero spine, feature tints, and primary actions with one coordinated palette.</p>
+                      </div>
+                      <span class="status-pill subtle" data-profile-theme-selection="true">Violet Blue</span>
+                    </div>
+                    <fieldset class="account-profile-theme-options" data-profile-theme-options="true">
+                      <legend class="sr-only">StreamSuites public profile theme</legend>
+                    </fieldset>
+                  </section>
                   <section class="account-inline-subsection social-links-editor" data-social-links-editor="true">
                     <div class="account-inline-subsection-top social-links-editor-top">
                       <div>

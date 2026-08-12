@@ -6,6 +6,18 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-13 - Expanded profile story and StreamSuites theme presets
+
+#### Technical notes
+
+- Split Creator `/account` profile copy into the concise hero Bio and the separate expanded About story exposed by Runtime/Auth, with distinct intent, sizing, draft tracking, reset handling, and save payloads.
+- Added an eleven-option StreamSuites public-profile theme picker with polished responsive swatches for colour, mixed, slate, greytone, and frosted-silver palettes. The selected Runtime-backed preset is included in dirty-state comparison and save/reset hydration, and the local StreamSuites preview reflects both the theme accents and separate About content.
+- Preserved the existing FindMeHere theme contract as an independent surface, plus all media uploads, canonical social links, custom links, visibility, identity, auth, route, and Runtime authority boundaries. No deployment, version/build change, file creation, or removal was performed.
+
+#### Human-readable summary
+
+The account editor now makes it obvious what appears as the short profile Bio versus the fuller About story, and creators can choose a coordinated StreamSuites page finish from vivid colour mixes through understated slate and silver options.
+
 ### 2026-08-09 - Expanded Creator widget custom metrics
 
 #### Technical notes

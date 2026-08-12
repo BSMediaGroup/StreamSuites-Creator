@@ -25,6 +25,39 @@ test("creator account page mounts the grouped social links editor shell", () => 
   assert.match(accountJs, /Existing non-canonical keys stay preserved on save/);
 });
 
+test("creator account editor keeps Bio and expanded About as separate Runtime-backed fields", () => {
+  const html = read("views/account.html");
+  const accountJs = read("js/account-settings.js");
+  const css = read("css/creator-dashboard.css");
+
+  assert.match(html, /data-profile-bio="true"/);
+  assert.match(html, /data-profile-about="true"/);
+  assert.match(html, /Identity header/);
+  assert.match(html, /Expanded profile story/);
+  assert.match(accountJs, /aboutInput: document\.querySelector\("\[data-profile-about\]"\)/);
+  assert.match(accountJs, /about: coerceText\(profile\?\.about/);
+  assert.match(accountJs, /about: coerceText\(els\.aboutInput\?\.value\)/);
+  assert.match(accountJs, /about: draft\.about/);
+  assert.match(css, /\.account-profile-story-grid/);
+});
+
+test("creator account editor persists polished StreamSuites profile theme presets", () => {
+  const html = read("views/account.html");
+  const accountJs = read("js/account-settings.js");
+  const css = read("css/creator-dashboard.css");
+
+  assert.match(html, /data-profile-theme-options="true"/);
+  assert.match(html, /header emblem, hero spine, feature tints/);
+  assert.match(accountJs, /key: "violet_blue"/);
+  assert.match(accountJs, /key: "dark_slate"/);
+  assert.match(accountJs, /key: "neutral_greytone"/);
+  assert.match(accountJs, /key: "frosted_silver"/);
+  assert.match(accountJs, /streamsuites_theme_preset: draft\.streamsuites_theme_preset/);
+  assert.match(accountJs, /renderProfileThemeOptions\(\)/);
+  assert.match(css, /\.account-profile-theme-options/);
+  assert.match(css, /\.account-profile-theme-option:has\(input:checked\)/);
+});
+
 test("creator account profile media consumes normalized runtime image metadata", () => {
   const accountJs = read("js/account-settings.js");
 

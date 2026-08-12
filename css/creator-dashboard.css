@@ -2211,6 +2211,185 @@ h3 {
   grid-template-columns: minmax(0, 1fr);
 }
 
+.account-profile-story-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.account-story-field {
+  position: relative;
+  align-content: start;
+  gap: 9px;
+  overflow: hidden;
+  border: 1px solid rgba(164, 143, 237, 0.16);
+  border-radius: 15px;
+  padding: 16px;
+  background:
+    linear-gradient(145deg, rgba(104, 75, 194, 0.08), transparent 52%),
+    rgba(15, 17, 25, 0.72);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.account-story-field::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: linear-gradient(180deg, #9c70f3, rgba(82, 126, 225, 0.18));
+}
+
+.account-story-field--about::before {
+  background: linear-gradient(180deg, #6876ef, rgba(151, 91, 226, 0.2));
+}
+
+.account-story-intent {
+  color: rgba(164, 143, 237, 0.78);
+  font: 700 10px/1.2 var(--creator-mono-font);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.account-story-field .account-field-textarea {
+  min-height: 118px;
+  line-height: 1.55;
+}
+
+.account-story-field .account-field-textarea--about {
+  min-height: 214px;
+}
+
+.account-streamsuites-theme-editor {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(157, 132, 238, 0.18);
+  background:
+    radial-gradient(circle at 94% 0%, rgba(111, 83, 210, 0.1), transparent 31%),
+    rgba(12, 14, 21, 0.72);
+}
+
+.account-streamsuites-theme-editor::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(159, 126, 255, 0.55), rgba(84, 174, 255, 0.32), transparent);
+  pointer-events: none;
+}
+
+.account-profile-theme-options {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.account-profile-theme-option {
+  position: relative;
+  min-width: 0;
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  align-items: center;
+  gap: 11px;
+  overflow: hidden;
+  padding: 11px;
+  border: 1px solid rgba(174, 169, 198, 0.13);
+  border-radius: 13px;
+  color: rgba(233, 232, 242, 0.86);
+  background: rgba(8, 10, 16, 0.7);
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.account-profile-theme-option:hover,
+.account-profile-theme-option:has(input:focus-visible) {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--profile-theme-b) 52%, transparent);
+  background: rgba(20, 22, 31, 0.9);
+}
+
+.account-profile-theme-option:has(input:checked) {
+  border-color: color-mix(in srgb, var(--profile-theme-b) 65%, white 9%);
+  background: linear-gradient(140deg, color-mix(in srgb, var(--profile-theme-a) 14%, transparent), rgba(18, 20, 29, 0.94));
+  box-shadow: inset 3px 0 var(--profile-theme-b), 0 10px 25px color-mix(in srgb, var(--profile-theme-a) 9%, transparent);
+}
+
+.account-profile-theme-option > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.account-profile-theme-swatch {
+  width: 50px;
+  height: 50px;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.42), transparent 28%),
+    linear-gradient(135deg, var(--profile-theme-a), var(--profile-theme-b) 52%, var(--profile-theme-c));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.22), 0 8px 20px color-mix(in srgb, var(--profile-theme-a) 17%, transparent);
+}
+
+.account-profile-theme-copy {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.account-profile-theme-copy strong {
+  color: #f4f2fa;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.account-profile-theme-copy small {
+  color: rgba(190, 192, 210, 0.6);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.account-profile-theme-state {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  opacity: 0;
+  padding: 3px 5px;
+  border-radius: 999px;
+  color: #fff;
+  background: color-mix(in srgb, var(--profile-theme-b) 38%, rgba(12, 14, 21, 0.9));
+  font: 700 8px/1 var(--creator-mono-font);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.account-profile-theme-option:has(input:checked) .account-profile-theme-state {
+  opacity: 1;
+}
+
+@media (max-width: 900px) {
+  .account-profile-story-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-profile-theme-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .account-profile-theme-options {
+    grid-template-columns: 1fr;
+  }
+}
+
 .account-paired-fields,
 .custom-link-row-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3722,6 +3901,7 @@ h3 {
 }
 
 .account-preview-canvas .profile-card {
+  position: relative;
   display: grid;
   gap: 12px;
   padding: 16px;
@@ -3731,6 +3911,22 @@ h3 {
     rgba(11, 17, 28, 0.92);
   border-radius: 18px;
   box-shadow: 0 22px 52px rgba(0, 0, 0, 0.3);
+}
+
+.account-preview-canvas .account-streamsuites-preview .profile-card {
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--account-preview-profile-b) 26%, transparent);
+  background:
+    radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--account-preview-profile-b) 12%, transparent), transparent 30%),
+    linear-gradient(180deg, rgba(18, 20, 31, 0.97), rgba(10, 12, 20, 0.95));
+}
+
+.account-preview-canvas .account-streamsuites-preview .profile-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--account-preview-profile-b), var(--account-preview-profile-a) 58%, var(--account-preview-profile-c));
 }
 
 .account-preview-canvas .profile-cover {
@@ -9103,6 +9299,14 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
   --creator-btn-secondary-2: #0c121a;
   --creator-btn-secondary-border: rgba(198, 213, 230, 0.2);
   --creator-btn-focus-ring: rgba(184, 156, 255, 0.36);
+}
+
+.account-preview-canvas .account-streamsuites-preview .creator-avatar {
+  background: linear-gradient(140deg, var(--account-preview-profile-b), var(--account-preview-profile-c));
+}
+
+.account-preview-canvas .account-streamsuites-preview .profile-inline-header h3 {
+  color: color-mix(in srgb, var(--account-preview-profile-b) 54%, #f4f8ff);
 }
 
 body {

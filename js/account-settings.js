@@ -80,6 +80,30 @@
   });
   const DEFAULT_ACCENT_COLOR = "#6ad6ff";
   const DEFAULT_BUTTON_COLOR = "#3f8bff";
+  const PROFILE_THEME_PRESETS = Object.freeze([
+    Object.freeze({ key: "violet_blue", label: "Violet Blue", description: "Signature violet and electric blue", colors: ["#6257ff", "#9b63ed", "#55b8ff"] }),
+    Object.freeze({ key: "crimson_magenta", label: "Crimson Magenta", description: "Deep red with vivid magenta", colors: ["#ef355d", "#e83fb5", "#8f4cff"] }),
+    Object.freeze({ key: "emerald_cyan", label: "Emerald Cyan", description: "Fresh emerald with cool cyan", colors: ["#16b878", "#28d7aa", "#36bce8"] }),
+    Object.freeze({ key: "gold_amber", label: "Gold Amber", description: "Warm gold with polished amber", colors: ["#f0b83e", "#ffcf5c", "#f07a36"] }),
+    Object.freeze({ key: "royal_blue", label: "Royal Blue", description: "Saturated blue with indigo depth", colors: ["#3568ff", "#5398ff", "#634cff"] }),
+    Object.freeze({ key: "magenta_violet", label: "Magenta Violet", description: "Electric magenta with rich violet", colors: ["#ed3fd3", "#bc4bff", "#7356ff"] }),
+    Object.freeze({ key: "red_gold", label: "Red Gold", description: "Crimson energy with a gold finish", colors: ["#e64149", "#f2783d", "#f5c84f"] }),
+    Object.freeze({ key: "green_gold", label: "Green Gold", description: "Emerald contrast with warm gold", colors: ["#24b879", "#67c45a", "#e4bd47"] }),
+    Object.freeze({ key: "dark_slate", label: "Dark Slate", description: "Deep architectural slate tones", colors: ["#202938", "#3b4658", "#5f6b7a"] }),
+    Object.freeze({ key: "neutral_greytone", label: "Neutral Greytone", description: "Balanced graphite and soft grey", colors: ["#565a62", "#858a94", "#afb4bd"] }),
+    Object.freeze({ key: "frosted_silver", label: "Frosted Silver", description: "Cool luminous silver and ice", colors: ["#8c9baa", "#c3ced8", "#eef4f7"] })
+  ]);
+  const PROFILE_THEME_PRESET_KEYS = new Set(PROFILE_THEME_PRESETS.map((preset) => preset.key));
+
+  function normalizeProfileThemePreset(value) {
+    const normalized = coerceText(value || "violet_blue").toLowerCase().replace(/-/g, "_");
+    return PROFILE_THEME_PRESET_KEYS.has(normalized) ? normalized : "violet_blue";
+  }
+
+  function getProfileThemePreset(value) {
+    const key = normalizeProfileThemePreset(value);
+    return PROFILE_THEME_PRESETS.find((preset) => preset.key === key) || PROFILE_THEME_PRESETS[0];
+  }
   const ACCOUNT_SECTION_TAB_LABELS = Object.freeze({
     "account-section-core": "Profile",
     "account-section-public": "Public",
@@ -598,6 +622,51 @@
     return URL.createObjectURL(file);
   }
 
+  function syncProfileThemeSelection() {
+    const els = getProfileElements();
+    const selected = els.themeOptionInputs.find((input) => input instanceof HTMLInputElement && input.checked);
+    const preset = getProfileThemePreset(selected?.value || state.profile?.streamsuites_theme_preset);
+    if (els.themeSelection instanceof HTMLElement) els.themeSelection.textContent = preset.label;
+  }
+
+  function renderProfileThemeOptions() {
+    const host = document.querySelector("[data-profile-theme-options]");
+    if (!(host instanceof HTMLElement)) return;
+    host.replaceChildren();
+    PROFILE_THEME_PRESETS.forEach((preset) => {
+      const option = document.createElement("label");
+      option.className = "account-profile-theme-option";
+      option.style.setProperty("--profile-theme-a", preset.colors[0]);
+      option.style.setProperty("--profile-theme-b", preset.colors[1]);
+      option.style.setProperty("--profile-theme-c", preset.colors[2]);
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "streamsuites_theme_preset";
+      input.value = preset.key;
+      input.checked = preset.key === "violet_blue";
+      input.dataset.profileThemePreset = preset.key;
+      input.dataset.profileField = "true";
+
+      const swatch = document.createElement("span");
+      swatch.className = "account-profile-theme-swatch";
+      swatch.setAttribute("aria-hidden", "true");
+      const copy = document.createElement("span");
+      copy.className = "account-profile-theme-copy";
+      const title = document.createElement("strong");
+      title.textContent = preset.label;
+      const description = document.createElement("small");
+      description.textContent = preset.description;
+      copy.append(title, description);
+      const stateLabel = document.createElement("span");
+      stateLabel.className = "account-profile-theme-state";
+      stateLabel.textContent = "Selected";
+      option.append(input, swatch, copy, stateLabel);
+      host.appendChild(option);
+    });
+    syncProfileThemeSelection();
+  }
+
   function getProfileElements() {
     return {
       loadPill: document.querySelector("[data-profile-load-pill]"),
@@ -657,6 +726,10 @@
       findmeThemeShowBackgroundInput: document.querySelector("[data-findme-theme-show-background]"),
       findmeThemeCustomCssInput: document.querySelector("[data-findme-theme-custom-css]"),
       bioInput: document.querySelector("[data-profile-bio]"),
+      aboutInput: document.querySelector("[data-profile-about]"),
+      themeOptionsHost: document.querySelector("[data-profile-theme-options]"),
+      themeSelection: document.querySelector("[data-profile-theme-selection]"),
+      themeOptionInputs: Array.from(document.querySelectorAll("[data-profile-theme-preset]")),
       linkInputs: Array.from(document.querySelectorAll("[data-profile-link]")),
       socialLinksEditor: document.querySelector("[data-social-links-editor]"),
       socialLinksSummary: document.querySelector("[data-social-links-summary]"),
@@ -2729,6 +2802,8 @@
       background_image_url: coerceText(profile?.background_image_url),
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme || profile?.findMeHereTheme || profile?.profile_theme || profile?.profileTheme),
       bio: coerceText(profile?.bio),
+      about: coerceText(profile?.about || profile?.about_story || profile?.aboutStory),
+      streamsuites_theme_preset: normalizeProfileThemePreset(profile?.streamsuites_theme_preset || profile?.streamsuitesThemePreset),
       social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
       custom_links: normalizeCustomLinks(profile?.custom_links || profile?.customLinks),
       badges: Array.isArray(profile?.badges) ? profile.badges : [],
@@ -3731,6 +3806,8 @@
     const accentColor = theme.page_accent_color || DEFAULT_ACCENT_COLOR;
     const buttonColor = theme.button_color || theme.page_accent_color || DEFAULT_BUTTON_COLOR;
     const bio = draft.bio || coerceText(state.profile?.bio) || "No public bio saved yet.";
+    const about = draft.about || coerceText(state.profile?.about) || "No expanded About story saved yet.";
+    const streamsuitesTheme = getProfileThemePreset(draft.streamsuites_theme_preset);
     const socialEntries = (SOCIAL_PLATFORMS?.getOrderedEntries?.(draft.social_links) || Object.entries(draft.social_links || {}).map(([key, url]) => ({ key, url })))
       .filter((entry) => coerceText(entry.url))
       .slice(0, 6)
@@ -3746,6 +3823,7 @@
     }));
     return {
       accentColor,
+      about,
       avatarUrl,
       backgroundImageUrl,
       bio,
@@ -3767,6 +3845,7 @@
           session?.role || ""
         ) || [],
       streamsuitesShareUrl: slug ? `https://streamsuites.app/u/${encodeURIComponent(slug)}` : "",
+      streamsuitesTheme,
       subtitle,
       theme,
       tierLabel,
@@ -3829,7 +3908,7 @@
   function buildStreamSuitesPreviewMarkup(model) {
     const socialMarkup = buildPreviewSocialMarkup(model.socialEntries, "social-icon-btn");
     return `
-      <article class="account-preview-frame account-streamsuites-preview" style="--account-preview-accent:${escapeHtml(model.accentColor)};">
+      <article class="account-preview-frame account-streamsuites-preview" data-profile-theme="${escapeHtml(model.streamsuitesTheme.key)}" style="--account-preview-profile-a:${escapeHtml(model.streamsuitesTheme.colors[0])};--account-preview-profile-b:${escapeHtml(model.streamsuitesTheme.colors[1])};--account-preview-profile-c:${escapeHtml(model.streamsuitesTheme.colors[2])};">
         <article class="profile-card profile-card-expanded">
           <div class="profile-cover">
             <img src="${escapeHtml(model.coverImageUrl || "/assets/placeholders/defaultprofilecover.webp")}" alt="${escapeHtml(model.displayName)} cover" loading="lazy" decoding="async" />
@@ -3852,6 +3931,10 @@
             <h3>Bio</h3>
           </div>
           <p class="profile-bio-text">${escapeHtml(model.bio)}</p>
+          <div class="profile-inline-header">
+            <h3>About</h3>
+          </div>
+          <p class="profile-bio-text profile-about-text">${escapeHtml(model.about)}</p>
           <div class="profile-inline-header">
             <h3>Share Links</h3>
           </div>
@@ -4075,6 +4158,10 @@
       background_image_url: coerceText(els.backgroundImageInput?.value),
       findmehere_theme: normalizeFindmeTheme(theme),
       bio: coerceText(els.bioInput?.value),
+      about: coerceText(els.aboutInput?.value),
+      streamsuites_theme_preset: normalizeProfileThemePreset(
+        els.themeOptionInputs.find((input) => input instanceof HTMLInputElement && input.checked)?.value || profile.streamsuites_theme_preset
+      ),
       social_links: socialLinks,
       custom_links: getSanitizedCustomLinks(),
     };
@@ -4098,6 +4185,8 @@
       background_image_url: coerceText(draft.background_image_url),
       findmehere_theme: normalizeFindmeTheme(draft.findmehere_theme),
       bio: coerceText(draft.bio),
+      about: coerceText(draft.about),
+      streamsuites_theme_preset: normalizeProfileThemePreset(draft.streamsuites_theme_preset),
       social_links: getComparableSocialLinks(draft.social_links),
       custom_links: (draft.custom_links || []).map((item) => ({ ...item })),
     };
@@ -4124,6 +4213,8 @@
       background_image_url: coerceText(profile?.background_image_url),
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme),
       bio: coerceText(profile?.bio),
+      about: coerceText(profile?.about),
+      streamsuites_theme_preset: normalizeProfileThemePreset(profile?.streamsuites_theme_preset),
       social_links: getComparableSocialLinks(profile?.social_links),
       custom_links: normalizeCustomLinks(profile?.custom_links).map(({ staged_icon, ...item }) => ({ ...item })),
     };
@@ -4358,6 +4449,15 @@
     if (els.bioInput instanceof HTMLTextAreaElement) {
       els.bioInput.value = normalized.bio;
     }
+    if (els.aboutInput instanceof HTMLTextAreaElement) {
+      els.aboutInput.value = normalized.about;
+    }
+    els.themeOptionInputs.forEach((input) => {
+      if (input instanceof HTMLInputElement) input.checked = input.value === normalized.streamsuites_theme_preset;
+    });
+    if (els.themeSelection instanceof HTMLElement) {
+      els.themeSelection.textContent = getProfileThemePreset(normalized.streamsuites_theme_preset).label;
+    }
     const normalizedSocialLinks = normalizeSocialLinksForUi(normalized.social_links);
     els.linkInputs.forEach((input) => {
       const key = normalizeSocialPlatformKey(input.getAttribute("data-profile-link") || "");
@@ -4513,6 +4613,8 @@
         background_image_url: backgroundDataUrl || draft.background_image_url,
         findmehere_theme: draftTheme,
         bio: draft.bio,
+        about: draft.about,
+        streamsuites_theme_preset: draft.streamsuites_theme_preset,
         social_links: draft.social_links,
         custom_links: draft.custom_links,
       };
@@ -4956,6 +5058,9 @@
       const eventName = field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement ? "input" : "change";
       field.addEventListener(eventName, renderPreviewSurface);
       field.addEventListener("change", renderPreviewSurface);
+      if (field instanceof HTMLInputElement && field.matches("[data-profile-theme-preset]")) {
+        field.addEventListener("change", syncProfileThemeSelection);
+      }
     });
     els.saveButtons.forEach((button) => {
       if (button instanceof HTMLButtonElement) {
@@ -4992,6 +5097,7 @@
 
   async function init() {
     if (!hasAccountSettingsSurface()) return;
+    renderProfileThemeOptions();
     renderSocialLinksEditor();
     wireProviderButtons();
     wireEmailChange();
