@@ -6,6 +6,18 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-13 - Runtime-validated video About editor
+
+#### Technical notes
+
+- Extended `/account` with an accessible text/video About selector, provider-specific guidance for YouTube, Rumble, and Kick live channels, authenticated Runtime/Auth validate/preview, explicit removal, and preserved inactive text/video values. The existing Bio remains separate and unchanged.
+- Creator sends only the provider and source URL and renders only the normalized preview returned by Runtime/Auth. The iframe is created through DOM APIs with lazy loading, fullscreen support, strict referrer policy, no client-added autoplay, responsive themed containment, and a narrow Pages CSP frame allowlist.
+- All 29 Creator Node tests passed, including the new video About contract. No deployment, version/build change, commit, or push was performed.
+
+#### Human-readable summary
+
+Creators can safely preview and choose a written About story or one supported video directly from Account settings, with clear provider guidance and no pasted embed-code workflow.
+
 ### 2026-08-13 - Expanded profile story and StreamSuites theme presets
 
 #### Technical notes

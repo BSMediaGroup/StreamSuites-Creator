@@ -24,6 +24,7 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 - Session, role, tier, public-profile policy, trigger registry, integration posture, and readiness evaluation remain runtime/Auth-owned in `StreamSuites`.
 - The creator UI is allowed to initiate supported account and integration workflows, but it must stay within the backend contracts that already exist.
 - Public profile and FindMeHere outcomes shown here are authoritative reflections of runtime/Auth state, not creator-local truth.
+- The `/account` About editor can select preserved text or one Runtime/Auth-validated YouTube video/live, Rumble video/live, or Kick live-channel source. Creator sends only the chosen provider and source URL, previews the authoritative response, never accepts raw iframe markup, and does not own the saved player URL.
 - The footer status widget keeps Atlassian's public Status API as official state. Its fully expanded panel also reads Runtime/Auth's sanitized public diagnostics projection for exactly two configured Atlassian custom metrics: measured Core API response time and explicitly deferred Studio Room Readiness. Diagnostics remain optional, read-only, and unable to override official state.
 
 ## Repo-Scoped Flowchart
@@ -106,6 +107,7 @@ The flowchart above keeps the creator repo grounded in its current contract-cons
 ```text
 StreamSuites-Creator/
 ├── .gitignore
+├── _headers
 ├── _redirects
 ├── 404.html
 ├── BUMP_NOTES.md
@@ -185,12 +187,15 @@ StreamSuites-Creator/
 │       ├── version-stamp.js
 │       └── versioning.js
 ├── tests/
+│   ├── account-about-video.test.mjs
 │   ├── account-social-editor.test.mjs
 │   ├── auth-surface-links.test.mjs
 │   ├── kick-oauth-authority.test.mjs
 │   ├── notifications-authority.test.mjs
 │   ├── triggers-runtime-authority.test.mjs
 │   └── wheels-authority.test.mjs
+├── output/
+│   └── playwright/           # Local browser validation evidence; not deployed runtime assets
 └── views/
     ├── account.html
     ├── integrations.html

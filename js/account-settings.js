@@ -22,6 +22,7 @@
   const AUTH_UNLINK_ENDPOINT = `${API_BASE}/api/account/auth-methods/unlink`;
   const EMAIL_CHANGE_REQUEST_ENDPOINT = `${API_BASE}/api/account/email/change/request`;
   const PUBLIC_PROFILE_ENDPOINT = `${API_BASE}/api/public/profile/me`;
+  const PUBLIC_PROFILE_ABOUT_VIDEO_RESOLVE_ENDPOINT = `${API_BASE}/api/public/profile/about-video/resolve`;
   const AVATAR_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/avatar`;
   const COVER_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/cover`;
   const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
@@ -104,6 +105,59 @@
   function getProfileThemePreset(value) {
     const key = normalizeProfileThemePreset(value);
     return PROFILE_THEME_PRESETS.find((preset) => preset.key === key) || PROFILE_THEME_PRESETS[0];
+  }
+  const ABOUT_VIDEO_PROVIDER_FALLBACKS = Object.freeze([
+    Object.freeze({ key: "youtube", label: "YouTube Video / Livestream", provider_label: "YouTube", kind: "video", helper_text: "Paste a specific YouTube video, livestream, Short, or embed URL.", example_url: "https://www.youtube.com/watch?v=uPfbuo6iP6Y", external_action_label: "Watch on YouTube", iframe_allow: "autoplay; encrypted-media; picture-in-picture; web-share; fullscreen" }),
+    Object.freeze({ key: "rumble", label: "Rumble Video / Livestream", provider_label: "Rumble", kind: "video", helper_text: "Paste a Rumble watch URL or a direct Rumble iframe URL.", example_url: "https://rumble.com/v7e1oni-birthday-attempt-3.html", external_action_label: "Watch on Rumble", iframe_allow: "autoplay; encrypted-media; picture-in-picture; fullscreen" }),
+    Object.freeze({ key: "kick", label: "Kick Live Channel", provider_label: "Kick", kind: "channel", helper_text: "Paste a Kick livestream channel URL. Kick VOD URLs are not supported.", example_url: "https://kick.com/yourchannel", external_action_label: "Open Kick channel", iframe_allow: "autoplay; encrypted-media; picture-in-picture; fullscreen" })
+  ]);
+  const ABOUT_VIDEO_PROVIDER_KEYS = new Set(ABOUT_VIDEO_PROVIDER_FALLBACKS.map((item) => item.key));
+
+  function normalizeAboutMode(value) {
+    return coerceText(value || "text").toLowerCase() === "video" ? "video" : "text";
+  }
+
+  function normalizeAboutVideoProviderOptions(value) {
+    const supplied = Array.isArray(value) ? value : [];
+    const byKey = new Map(supplied.filter((item) => item && ABOUT_VIDEO_PROVIDER_KEYS.has(coerceText(item.key).toLowerCase())).map((item) => [coerceText(item.key).toLowerCase(), item]));
+    return ABOUT_VIDEO_PROVIDER_FALLBACKS.map((fallback) => ({ ...fallback, ...(byKey.get(fallback.key) || {}), key: fallback.key }));
+  }
+
+  function normalizeAboutVideoProjection(value) {
+    if (!value || typeof value !== "object") return null;
+    const provider = coerceText(value.provider).toLowerCase();
+    const resourceId = coerceText(value.resource_id || value.resourceId);
+    const sourceUrl = coerceText(value.source_url || value.sourceUrl);
+    const embedUrl = coerceText(value.embed_url || value.embedUrl);
+    if (!ABOUT_VIDEO_PROVIDER_KEYS.has(provider) || !resourceId || !sourceUrl || !embedUrl) return null;
+    let source = null;
+    let embed = null;
+    try {
+      source = new URL(sourceUrl);
+      embed = new URL(embedUrl);
+    } catch (_error) {
+      return null;
+    }
+    if (source.protocol !== "https:" || embed.protocol !== "https:" || source.username || source.password || source.port || embed.username || embed.password || embed.port) return null;
+    const host = embed.hostname.toLowerCase();
+    const sourceHost = source.hostname.toLowerCase();
+    const safe =
+      (provider === "youtube" && /^[A-Za-z0-9_-]{11}$/.test(resourceId) && sourceHost === "www.youtube.com" && host === "www.youtube.com" && embed.pathname === `/embed/${resourceId}` && !embed.search) ||
+      (provider === "rumble" && /^[A-Za-z0-9]{3,64}$/.test(resourceId) && sourceHost === "rumble.com" && host === "rumble.com" && embed.pathname.replace(/\/$/, "") === `/embed/${resourceId}` && Array.from(embed.searchParams.keys()).every((key) => key === "pub")) ||
+      (provider === "kick" && /^[a-z0-9_][a-z0-9_-]{1,24}$/.test(resourceId) && sourceHost === "kick.com" && host === "player.kick.com" && embed.pathname === `/${resourceId}` && embed.searchParams.get("autoplay") === "false" && Array.from(embed.searchParams.keys()).every((key) => key === "autoplay"));
+    if (!safe) return null;
+    const option = normalizeAboutVideoProviderOptions([]).find((item) => item.key === provider);
+    return {
+      provider,
+      provider_label: coerceText(value.provider_label || value.providerLabel || option?.provider_label || provider),
+      source_url: sourceUrl,
+      embed_url: embedUrl,
+      resource_id: resourceId,
+      kind: coerceText(value.kind || option?.kind || "video"),
+      title: coerceText(value.title),
+      iframe_allow: coerceText(value.iframe_allow || value.iframeAllow || option?.iframe_allow || "fullscreen"),
+      external_action_label: coerceText(value.external_action_label || value.externalActionLabel || option?.external_action_label || "Open on provider")
+    };
   }
   const ACCOUNT_SECTION_TAB_LABELS = Object.freeze({
     "account-section-core": "Profile",
@@ -200,6 +254,8 @@
     scopedRollupLoading: false,
     scopedRollupSaving: false,
     scopedRollupSettings: null,
+    aboutVideoPreview: null,
+    removeAboutVideo: false,
   };
 
   function showToast(message, tone = "info", options = {}) {
@@ -728,6 +784,16 @@
       findmeThemeCustomCssInput: document.querySelector("[data-findme-theme-custom-css]"),
       bioInput: document.querySelector("[data-profile-bio]"),
       aboutInput: document.querySelector("[data-profile-about]"),
+      aboutModeInputs: Array.from(document.querySelectorAll("[data-profile-about-mode]")),
+      aboutVideoEditor: document.querySelector("[data-profile-about-video-editor]"),
+      aboutVideoProviderSelector: document.querySelector("[data-profile-about-provider-selector]"),
+      aboutVideoProviderInputs: Array.from(document.querySelectorAll("[data-profile-about-provider]")),
+      aboutVideoUrlInput: document.querySelector("[data-profile-about-video-url]"),
+      aboutVideoHelp: document.querySelector("[data-profile-about-video-help]"),
+      aboutVideoValidateButton: document.querySelector("[data-profile-about-video-validate]"),
+      aboutVideoRemoveButton: document.querySelector("[data-profile-about-video-remove]"),
+      aboutVideoStatus: document.querySelector("[data-profile-about-video-status]"),
+      aboutVideoPreview: document.querySelector("[data-profile-about-video-preview]"),
       themeOptionsHost: document.querySelector("[data-profile-theme-options]"),
       themeSelection: document.querySelector("[data-profile-theme-selection]"),
       themeOptionInputs: Array.from(document.querySelectorAll("[data-profile-theme-preset]")),
@@ -2804,6 +2870,9 @@
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme || profile?.findMeHereTheme || profile?.profile_theme || profile?.profileTheme),
       bio: coerceText(profile?.bio),
       about: coerceText(profile?.about || profile?.about_story || profile?.aboutStory),
+      about_mode: normalizeAboutMode(profile?.about_mode || profile?.aboutMode),
+      about_video: normalizeAboutVideoProjection(profile?.about_video || profile?.aboutVideo),
+      about_video_providers: normalizeAboutVideoProviderOptions(profile?.about_video_providers || profile?.aboutVideoProviders),
       streamsuites_theme_preset: normalizeProfileThemePreset(profile?.streamsuites_theme_preset || profile?.streamsuitesThemePreset),
       social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
       custom_links: normalizeCustomLinks(profile?.custom_links || profile?.customLinks),
@@ -2814,6 +2883,150 @@
     };
   }
 
+  function selectedAboutVideoProvider() {
+    const input = document.querySelector('[data-profile-about-provider]:checked');
+    return input instanceof HTMLInputElement ? coerceText(input.value).toLowerCase() : "youtube";
+  }
+
+  function selectedAboutMode() {
+    const input = document.querySelector('[data-profile-about-mode]:checked');
+    return input instanceof HTMLInputElement ? normalizeAboutMode(input.value) : "text";
+  }
+
+  function syncAboutVideoEditorVisibility() {
+    const els = getProfileElements();
+    if (els.aboutVideoEditor instanceof HTMLElement) {
+      els.aboutVideoEditor.hidden = selectedAboutMode() !== "video";
+    }
+  }
+
+  function syncAboutVideoHelp() {
+    const els = getProfileElements();
+    const options = normalizeAboutVideoProviderOptions(state.profile?.about_video_providers);
+    const selected = options.find((item) => item.key === selectedAboutVideoProvider()) || options[0];
+    if (els.aboutVideoHelp instanceof HTMLElement) {
+      els.aboutVideoHelp.textContent = `${selected.helper_text} Example: ${selected.example_url}`;
+    }
+    if (els.aboutVideoUrlInput instanceof HTMLInputElement) {
+      els.aboutVideoUrlInput.placeholder = selected.example_url;
+    }
+  }
+
+  function clearAboutVideoPreview(message = "") {
+    const els = getProfileElements();
+    state.aboutVideoPreview = null;
+    if (els.aboutVideoPreview instanceof HTMLElement) els.aboutVideoPreview.replaceChildren();
+    if (els.aboutVideoStatus instanceof HTMLElement) {
+      els.aboutVideoStatus.textContent = message;
+      delete els.aboutVideoStatus.dataset.tone;
+    }
+  }
+
+  function renderAboutVideoPreview(video) {
+    const normalized = normalizeAboutVideoProjection(video);
+    const els = getProfileElements();
+    if (!normalized || !(els.aboutVideoPreview instanceof HTMLElement)) return;
+    els.aboutVideoPreview.replaceChildren();
+    const frame = document.createElement("div");
+    frame.className = "account-about-video-frame";
+    const iframe = document.createElement("iframe");
+    iframe.src = normalized.embed_url;
+    iframe.title = normalized.title || `${normalized.provider_label} About video preview`;
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
+    iframe.allow = normalized.iframe_allow;
+    iframe.allowFullscreen = true;
+    frame.appendChild(iframe);
+    const link = document.createElement("a");
+    link.className = "account-about-video-source-link";
+    link.href = normalized.source_url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = normalized.external_action_label;
+    els.aboutVideoPreview.append(frame, link);
+  }
+
+  function renderAboutVideoEditor(profile) {
+    const els = getProfileElements();
+    if (!(els.aboutVideoProviderSelector instanceof HTMLFieldSetElement)) return;
+    const legend = els.aboutVideoProviderSelector.querySelector("legend");
+    els.aboutVideoProviderSelector.replaceChildren();
+    if (legend) els.aboutVideoProviderSelector.appendChild(legend);
+    const options = normalizeAboutVideoProviderOptions(profile?.about_video_providers);
+    const selectedProvider = profile?.about_video?.provider || options[0].key;
+    options.forEach((provider) => {
+      const label = document.createElement("label");
+      label.className = "account-about-provider-option";
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "account_about_video_provider";
+      input.value = provider.key;
+      input.checked = provider.key === selectedProvider;
+      input.dataset.profileAboutProvider = provider.key;
+      const icon = document.createElement("img");
+      icon.className = "account-about-provider-icon";
+      icon.src = `/assets/icons/${provider.key}.svg`;
+      icon.alt = "";
+      icon.setAttribute("aria-hidden", "true");
+      const copy = document.createElement("span");
+      copy.textContent = provider.label;
+      label.append(input, icon, copy);
+      els.aboutVideoProviderSelector.appendChild(label);
+    });
+    getProfileElements().aboutModeInputs.forEach((input) => {
+      if (input instanceof HTMLInputElement) input.checked = input.value === normalizeAboutMode(profile?.about_mode);
+    });
+    if (els.aboutVideoUrlInput instanceof HTMLInputElement) {
+      els.aboutVideoUrlInput.value = coerceText(profile?.about_video?.source_url);
+    }
+    state.aboutVideoPreview = null;
+    state.removeAboutVideo = false;
+    if (els.aboutVideoPreview instanceof HTMLElement) els.aboutVideoPreview.replaceChildren();
+    if (els.aboutVideoStatus instanceof HTMLElement) {
+      els.aboutVideoStatus.textContent = profile?.about_video
+        ? "Saved video loaded. Validate to open a fresh preview, or save unchanged to revalidate server-side."
+        : "Enter a provider URL, then validate it through Runtime/Auth.";
+      delete els.aboutVideoStatus.dataset.tone;
+    }
+    syncAboutVideoHelp();
+    syncAboutVideoEditorVisibility();
+  }
+
+  async function validateAboutVideoPreview() {
+    const els = getProfileElements();
+    if (!(els.aboutVideoUrlInput instanceof HTMLInputElement) || !(els.aboutVideoValidateButton instanceof HTMLButtonElement)) return;
+    els.aboutVideoValidateButton.disabled = true;
+    if (els.aboutVideoStatus instanceof HTMLElement) {
+      els.aboutVideoStatus.textContent = selectedAboutVideoProvider() === "rumble" ? "Resolving Rumble’s safe iframe player…" : "Validating provider URL…";
+      delete els.aboutVideoStatus.dataset.tone;
+    }
+    if (els.aboutVideoPreview instanceof HTMLElement) els.aboutVideoPreview.replaceChildren();
+    try {
+      const response = await requestJson(PUBLIC_PROFILE_ABOUT_VIDEO_RESOLVE_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify({ provider: selectedAboutVideoProvider(), source_url: coerceText(els.aboutVideoUrlInput.value) }),
+      });
+      const resolved = normalizeAboutVideoProjection(response?.about_video);
+      if (!resolved) throw new Error("Runtime/Auth did not return a safe video preview.");
+      state.aboutVideoPreview = resolved;
+      state.removeAboutVideo = false;
+      els.aboutVideoUrlInput.value = resolved.source_url;
+      renderAboutVideoPreview(resolved);
+      if (els.aboutVideoStatus instanceof HTMLElement) {
+        els.aboutVideoStatus.textContent = `${resolved.provider_label} preview validated. Save profile changes to publish it.`;
+        els.aboutVideoStatus.dataset.tone = "success";
+      }
+    } catch (err) {
+      state.aboutVideoPreview = null;
+      if (els.aboutVideoStatus instanceof HTMLElement) {
+        els.aboutVideoStatus.textContent = err?.message || "Video preview could not be validated.";
+        els.aboutVideoStatus.dataset.tone = "danger";
+      }
+    } finally {
+      els.aboutVideoValidateButton.disabled = false;
+    }
+  }
+
   function setProfileBusy(busy) {
     const els = getProfileElements();
     els.profileFields.forEach((field) => {
@@ -2822,6 +3035,8 @@
         field.disabled = busy || locked;
       }
     });
+    if (els.aboutVideoValidateButton instanceof HTMLButtonElement) els.aboutVideoValidateButton.disabled = busy || !state.profile;
+    if (els.aboutVideoRemoveButton instanceof HTMLButtonElement) els.aboutVideoRemoveButton.disabled = busy || !state.profile;
     els.saveButtons.forEach((button) => {
       if (button instanceof HTMLButtonElement) {
         button.disabled = busy || !state.profile;
@@ -3808,6 +4023,7 @@
     const buttonColor = theme.button_color || theme.page_accent_color || DEFAULT_BUTTON_COLOR;
     const bio = draft.bio || coerceText(state.profile?.bio) || "No public bio saved yet.";
     const about = draft.about || coerceText(state.profile?.about) || "No expanded About story saved yet.";
+    const aboutMode = normalizeAboutMode(draft.about_mode);
     const streamsuitesTheme = getProfileThemePreset(draft.streamsuites_theme_preset);
     const socialEntries = (SOCIAL_PLATFORMS?.getOrderedEntries?.(draft.social_links) || Object.entries(draft.social_links || {}).map(([key, url]) => ({ key, url })))
       .filter((entry) => coerceText(entry.url))
@@ -3825,6 +4041,7 @@
     return {
       accentColor,
       about,
+      aboutMode,
       avatarUrl,
       backgroundImageUrl,
       bio,
@@ -3935,7 +4152,7 @@
           <div class="profile-inline-header">
             <h3>About</h3>
           </div>
-          <p class="profile-bio-text profile-about-text">${escapeHtml(model.about)}</p>
+          <p class="profile-bio-text profile-about-text">${escapeHtml(model.aboutMode === "video" ? "Video About selected. Use the validated player preview in the editor above." : model.about)}</p>
           <div class="profile-inline-header">
             <h3>Share Links</h3>
           </div>
@@ -4160,6 +4377,10 @@
       findmehere_theme: normalizeFindmeTheme(theme),
       bio: coerceText(els.bioInput?.value),
       about: coerceText(els.aboutInput?.value),
+      about_mode: selectedAboutMode(),
+      about_video_provider: selectedAboutVideoProvider(),
+      about_video_source_url: coerceText(els.aboutVideoUrlInput?.value),
+      remove_about_video: state.removeAboutVideo,
       streamsuites_theme_preset: normalizeProfileThemePreset(
         els.themeOptionInputs.find((input) => input instanceof HTMLInputElement && input.checked)?.value || profile.streamsuites_theme_preset
       ),
@@ -4187,6 +4408,10 @@
       findmehere_theme: normalizeFindmeTheme(draft.findmehere_theme),
       bio: coerceText(draft.bio),
       about: coerceText(draft.about),
+      about_mode: normalizeAboutMode(draft.about_mode),
+      about_video_provider: coerceText(draft.about_video_provider),
+      about_video_source_url: coerceText(draft.about_video_source_url),
+      remove_about_video: draft.remove_about_video === true,
       streamsuites_theme_preset: normalizeProfileThemePreset(draft.streamsuites_theme_preset),
       social_links: getComparableSocialLinks(draft.social_links),
       custom_links: (draft.custom_links || []).map((item) => ({ ...item })),
@@ -4215,6 +4440,10 @@
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme),
       bio: coerceText(profile?.bio),
       about: coerceText(profile?.about),
+      about_mode: normalizeAboutMode(profile?.about_mode),
+      about_video_provider: coerceText(profile?.about_video?.provider),
+      about_video_source_url: coerceText(profile?.about_video?.source_url),
+      remove_about_video: false,
       streamsuites_theme_preset: normalizeProfileThemePreset(profile?.streamsuites_theme_preset),
       social_links: getComparableSocialLinks(profile?.social_links),
       custom_links: normalizeCustomLinks(profile?.custom_links).map(({ staged_icon, ...item }) => ({ ...item })),
@@ -4453,6 +4682,7 @@
     if (els.aboutInput instanceof HTMLTextAreaElement) {
       els.aboutInput.value = normalized.about;
     }
+    renderAboutVideoEditor(normalized);
     els.themeOptionInputs.forEach((input) => {
       if (input instanceof HTMLInputElement) input.checked = input.value === normalized.streamsuites_theme_preset;
     });
@@ -4615,10 +4845,17 @@
         findmehere_theme: draftTheme,
         bio: draft.bio,
         about: draft.about,
+        about_mode: draft.about_mode,
         streamsuites_theme_preset: draft.streamsuites_theme_preset,
         social_links: draft.social_links,
         custom_links: draft.custom_links,
       };
+      if (draft.remove_about_video) {
+        payload.remove_about_video = true;
+      } else if (draft.about_video_source_url) {
+        payload.about_video_provider = draft.about_video_provider;
+        payload.about_video_source_url = draft.about_video_source_url;
+      }
       const response = await requestJson(PUBLIC_PROFILE_ENDPOINT, {
         method: "POST",
         body: JSON.stringify(payload),
@@ -4690,6 +4927,43 @@
     if (state.controlsWired) return;
     state.controlsWired = true;
     const els = getProfileElements();
+    els.aboutModeInputs.forEach((input) => {
+      if (!(input instanceof HTMLInputElement)) return;
+      input.addEventListener("change", () => {
+        syncAboutVideoEditorVisibility();
+        renderPreviewSurface();
+      });
+    });
+    if (els.aboutVideoProviderSelector instanceof HTMLFieldSetElement) {
+      els.aboutVideoProviderSelector.addEventListener("change", (event) => {
+        if (!(event.target instanceof HTMLInputElement) || !event.target.matches("[data-profile-about-provider]")) return;
+        state.removeAboutVideo = false;
+        syncAboutVideoHelp();
+        clearAboutVideoPreview("Provider changed. Validate the URL again before previewing.");
+      });
+    }
+    if (els.aboutVideoUrlInput instanceof HTMLInputElement) {
+      els.aboutVideoUrlInput.addEventListener("input", () => {
+        state.removeAboutVideo = false;
+        clearAboutVideoPreview(els.aboutVideoUrlInput.value.trim() ? "URL changed. Validate again before previewing." : "Enter a provider URL, then validate it through Runtime/Auth.");
+      });
+    }
+    if (els.aboutVideoValidateButton instanceof HTMLButtonElement) {
+      els.aboutVideoValidateButton.addEventListener("click", validateAboutVideoPreview);
+    }
+    if (els.aboutVideoRemoveButton instanceof HTMLButtonElement) {
+      els.aboutVideoRemoveButton.addEventListener("click", () => {
+        state.removeAboutVideo = true;
+        state.aboutVideoPreview = null;
+        if (els.aboutVideoUrlInput instanceof HTMLInputElement) els.aboutVideoUrlInput.value = "";
+        if (els.aboutVideoPreview instanceof HTMLElement) els.aboutVideoPreview.replaceChildren();
+        if (els.aboutVideoStatus instanceof HTMLElement) {
+          els.aboutVideoStatus.textContent = "Configured video will be removed when you save. Your written About is unchanged.";
+          els.aboutVideoStatus.dataset.tone = "success";
+        }
+        renderPreviewSurface();
+      });
+    }
     if (els.displayNameInput instanceof HTMLInputElement) {
       els.displayNameInput.addEventListener("input", () => {
         renderIdentityFeedback();

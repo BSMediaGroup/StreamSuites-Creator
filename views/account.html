@@ -583,6 +583,33 @@
                       data-profile-about="true"
                     ></textarea>
                     <span class="account-field-note">Renders as the separate About section beneath the public profile hero.</span>
+                    <fieldset class="account-about-mode-selector" data-profile-about-mode-selector="true">
+                      <legend class="account-field-label">About presentation</legend>
+                      <label class="account-about-mode-option">
+                        <input type="radio" name="account_about_mode" value="text" data-profile-about-mode="text" data-profile-field="true" checked />
+                        <span><strong>Text</strong><small>Show your expanded written About</small></span>
+                      </label>
+                      <label class="account-about-mode-option">
+                        <input type="radio" name="account_about_mode" value="video" data-profile-about-mode="video" data-profile-field="true" />
+                        <span><strong>Video</strong><small>Show one validated provider player</small></span>
+                      </label>
+                    </fieldset>
+                    <section class="account-about-video-editor" data-profile-about-video-editor="true" hidden>
+                      <fieldset class="account-about-provider-selector" data-profile-about-provider-selector="true">
+                        <legend class="account-field-label">Supported platform</legend>
+                      </fieldset>
+                      <label class="account-field">
+                        <span class="account-field-label">Provider URL</span>
+                        <input class="account-field-input creator-mono" type="url" inputmode="url" autocomplete="url" spellcheck="false" data-profile-about-video-url="true" data-profile-field="true" aria-describedby="account-about-video-help" />
+                        <span class="account-field-note" id="account-about-video-help" data-profile-about-video-help="true"></span>
+                      </label>
+                      <div class="account-about-video-actions">
+                        <button class="button button-primary" type="button" data-profile-about-video-validate="true">Validate / Preview</button>
+                        <button class="button button-secondary" type="button" data-profile-about-video-remove="true">Remove configured video</button>
+                      </div>
+                      <p class="account-field-note account-about-video-status" data-profile-about-video-status="true" role="status" aria-live="polite"></p>
+                      <div class="account-about-video-preview" data-profile-about-video-preview="true"></div>
+                    </section>
                   </div>
                   </div>
                   <section class="account-inline-subsection account-streamsuites-theme-editor" data-profile-theme-editor="true">
