@@ -6,6 +6,11 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-13 - Deterministic Rumble About-player guidance
+
+- Updated the `/account` Rumble provider fallback to request the direct iframe URL copied from Rumble Share → Embed and show the correct `/embed/<player-id>/?pub=<publisher>` example. Runtime/Auth now validates that exact player shape without a provider network request; Creator still sends only the selected provider and URL, and never accepts iframe HTML or owns canonical profile state. No deployment, version/build change, commit, or push was performed.
+- Validation passed all 29 Creator Node tests and JavaScript syntax.
+
 ### 2026-08-13 - Runtime-validated video About editor
 
 #### Technical notes

@@ -108,7 +108,7 @@
   }
   const ABOUT_VIDEO_PROVIDER_FALLBACKS = Object.freeze([
     Object.freeze({ key: "youtube", label: "YouTube Video / Livestream", provider_label: "YouTube", kind: "video", helper_text: "Paste a specific YouTube video, livestream, Short, or embed URL.", example_url: "https://www.youtube.com/watch?v=uPfbuo6iP6Y", external_action_label: "Watch on YouTube", iframe_allow: "autoplay; encrypted-media; picture-in-picture; web-share; fullscreen" }),
-    Object.freeze({ key: "rumble", label: "Rumble Video / Livestream", provider_label: "Rumble", kind: "video", helper_text: "Paste a Rumble watch URL or a direct Rumble iframe URL.", example_url: "https://rumble.com/v7e1oni-birthday-attempt-3.html", external_action_label: "Watch on Rumble", iframe_allow: "autoplay; encrypted-media; picture-in-picture; fullscreen" }),
+    Object.freeze({ key: "rumble", label: "Rumble Video / Livestream", provider_label: "Rumble", kind: "video", helper_text: "Paste the direct Rumble iframe URL from Share → Embed. Watch-page IDs are not player IDs.", example_url: "https://rumble.com/embed/v7bv5ia/?pub=vmzw3", external_action_label: "Watch on Rumble", iframe_allow: "autoplay; encrypted-media; picture-in-picture; fullscreen" }),
     Object.freeze({ key: "kick", label: "Kick Live Channel", provider_label: "Kick", kind: "channel", helper_text: "Paste a Kick livestream channel URL. Kick VOD URLs are not supported.", example_url: "https://kick.com/yourchannel", external_action_label: "Open Kick channel", iframe_allow: "autoplay; encrypted-media; picture-in-picture; fullscreen" })
   ]);
   const ABOUT_VIDEO_PROVIDER_KEYS = new Set(ABOUT_VIDEO_PROVIDER_FALLBACKS.map((item) => item.key));

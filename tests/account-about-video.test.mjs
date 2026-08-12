@@ -19,6 +19,8 @@ test("Creator account editor uses Runtime/Auth for Text and Video About controls
   assert.match(app, /payload\.about_video_provider/);
   assert.match(app, /payload\.about_video_source_url/);
   assert.match(app, /payload\.remove_about_video/);
+  assert.match(app, /https:\/\/rumble\.com\/embed\/v7bv5ia\/\?pub=vmzw3/);
+  assert.doesNotMatch(app, /Paste a Rumble watch URL/);
   assert.doesNotMatch(app, /innerHTML\s*=\s*.*iframe/i);
 });
 
