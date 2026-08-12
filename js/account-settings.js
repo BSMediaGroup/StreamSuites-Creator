@@ -81,8 +81,9 @@
   const DEFAULT_ACCENT_COLOR = "#6ad6ff";
   const DEFAULT_BUTTON_COLOR = "#3f8bff";
   const PROFILE_THEME_PRESETS = Object.freeze([
-    Object.freeze({ key: "violet_blue", label: "Violet Blue", description: "Signature violet and electric blue", colors: ["#6257ff", "#9b63ed", "#55b8ff"] }),
+    Object.freeze({ key: "violet_blue", label: "Violet Blue", description: "Signature violet and electric blue", colors: ["#7468ff", "#a76ef2", "#709eff"] }),
     Object.freeze({ key: "crimson_magenta", label: "Crimson Magenta", description: "Deep red with vivid magenta", colors: ["#ef355d", "#e83fb5", "#8f4cff"] }),
+    Object.freeze({ key: "signal_red", label: "Signal Red", description: "Focused red with deep scarlet contrast", colors: ["#df2838", "#ff4655", "#861b2b"] }),
     Object.freeze({ key: "emerald_cyan", label: "Emerald Cyan", description: "Fresh emerald with cool cyan", colors: ["#16b878", "#28d7aa", "#36bce8"] }),
     Object.freeze({ key: "gold_amber", label: "Gold Amber", description: "Warm gold with polished amber", colors: ["#f0b83e", "#ffcf5c", "#f07a36"] }),
     Object.freeze({ key: "royal_blue", label: "Royal Blue", description: "Saturated blue with indigo depth", colors: ["#3568ff", "#5398ff", "#634cff"] }),

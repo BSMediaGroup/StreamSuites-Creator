@@ -11,7 +11,8 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 #### Technical notes
 
 - Split Creator `/account` profile copy into the concise hero Bio and the separate expanded About story exposed by Runtime/Auth, with distinct intent, sizing, draft tracking, reset handling, and save payloads.
-- Added an eleven-option StreamSuites public-profile theme picker with polished responsive swatches for colour, mixed, slate, greytone, and frosted-silver palettes. The selected Runtime-backed preset is included in dirty-state comparison and save/reset hydration, and the local StreamSuites preview reflects both the theme accents and separate About content.
+- Added a twelve-option StreamSuites public-profile theme picker with polished responsive swatches for colour, mixed, slate, greytone, and frosted-silver palettes, including a dedicated standalone Signal Red preset. The selected Runtime-backed preset is included in dirty-state comparison and save/reset hydration, and the local StreamSuites preview reflects both the theme accents and separate About content.
+- Updated the default Violet Blue picker swatch to match Public's brighter, less-cyan resting gradient while retaining the same Runtime preset key and default-selection contract.
 - Preserved the existing FindMeHere theme contract as an independent surface, plus all media uploads, canonical social links, custom links, visibility, identity, auth, route, and Runtime authority boundaries. No deployment, version/build change, file creation, or removal was performed.
 
 #### Human-readable summary

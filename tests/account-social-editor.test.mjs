@@ -49,6 +49,7 @@ test("creator account editor persists polished StreamSuites profile theme preset
   assert.match(html, /data-profile-theme-options="true"/);
   assert.match(html, /header emblem, hero spine, feature tints/);
   assert.match(accountJs, /key: "violet_blue"/);
+  assert.match(accountJs, /key: "signal_red"/);
   assert.match(accountJs, /key: "dark_slate"/);
   assert.match(accountJs, /key: "neutral_greytone"/);
   assert.match(accountJs, /key: "frosted_silver"/);
