@@ -8,8 +8,8 @@
 }
 
 @font-face {
-  font-family: "SuiGenerisRg";
-  src: url("../assets/fonts/Geist-Regular.ttf") format("truetype")
+  font-family: "Blinker";
+  src: url("../assets/fonts/body/Blinker-Regular.ttf") format("truetype")
        format("opentype");
   font-weight: 400;
 }

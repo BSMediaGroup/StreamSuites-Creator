@@ -58,6 +58,70 @@
 }
 
 @font-face {
+  font-family: "Blinker";
+  src: url("/assets/fonts/body/Blinker-Thin.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Blinker";
+  src: url("/assets/fonts/body/Blinker-ExtraLight.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Blinker";
+  src: url("/assets/fonts/body/Blinker-Light.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Blinker";
+  src: url("/assets/fonts/body/Blinker-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Blinker";
+  src: url("/assets/fonts/body/Blinker-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Blinker";
+  src: url("/assets/fonts/body/Blinker-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Blinker";
+  src: url("/assets/fonts/body/Blinker-ExtraBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Blinker";
+  src: url("/assets/fonts/body/Blinker-Black.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "IBM Plex Mono";
   src: url("/assets/fonts/mono/IBMPlexMono-Light.ttf") format("truetype");
   font-style: normal;
@@ -99,7 +163,8 @@
 
 :root {
   --ss-font-display: "Tektur", "Geist Sans", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
-  --ss-font-ui: "Geist Sans", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --ss-font-heading-ui: "Geist Sans", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --ss-font-ui: "Blinker", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
   --ss-font-mono: "IBM Plex Mono", "Cascadia Mono", Consolas, Menlo, Monaco, monospace;
   --ss-weight-body: 400;
   --ss-weight-ui-medium: 500;
@@ -149,14 +214,14 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--ss-font-ui);
+  font-family: var(--ss-font-heading-ui);
   font-weight: var(--ss-weight-ui-semibold);
   letter-spacing: -0.01em;
 }
 
 .creator-app :is(h1, h2, h3, h4, h5, h6),
 .creator-auth-page :is(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--ss-font-ui);
+  font-family: var(--ss-font-heading-ui);
   font-weight: var(--ss-weight-ui-semibold);
   letter-spacing: -0.01em;
 }

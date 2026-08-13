@@ -6,6 +6,17 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-14 - Blinker body typography
+
+#### Technical notes
+
+- Registered the local Blinker fixed faces at 100/200/300/400/600/700/800/900 with `font-display: swap`, changed the centralized `--ss-font-ui`/Creator body role and retained legacy body aliases to Blinker, and left existing 500 declarations to normal CSS nearest-face selection.
+- Preserved Tektur display/title roles, Geist Sans non-display heading and display-fallback roles, IBM Plex Mono technical roles, all sizing/spacing/layout, routes, auth/API behavior, and Runtime/Auth authority. No version change, deployment, commit, or push was performed.
+
+#### Human-readable summary
+
+Creator body copy, controls, and normal interface text now use the bundled Blinker family; headings and technical text retain their existing families.
+
 ### 2026-08-14 - Authoritative profile-media replacement and failure recovery
 
 - Removed synthetic avatar/cover/background cache queries and alternate persisted media shapes. Exact legacy CDN/API version paths normalize once to the direct query-free canonical Public media URL, while data/blob values and arbitrary or private hosts remain rejected for persisted profile state.

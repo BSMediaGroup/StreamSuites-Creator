@@ -564,7 +564,7 @@
 
 .auth-view[data-auth-view-panel="login"] .auth-switch-link,
 .auth-view[data-auth-view-panel="signup"] .auth-switch-link {
-  font-family: "SuiGenerisRg", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: "Blinker", system-ui, -apple-system, "Segoe UI", sans-serif;
   font-weight: 400;
 }
 
@@ -695,7 +695,7 @@
 }
 
 .auth-primary-submit {
-  font-family: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+  font-family: "RechargeBd", "Geist Sans", system-ui, sans-serif;
 }
 
 .auth-status {
@@ -769,7 +769,7 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: rgba(214, 226, 255, 0.7);
-  font-family: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+  font-family: "RechargeBd", "Geist Sans", system-ui, sans-serif;
 }
 
 .ss-auth-name {
@@ -826,7 +826,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-family: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+  font-family: "RechargeBd", "Geist Sans", system-ui, sans-serif;
   color: var(--text-secondary);
 }
 

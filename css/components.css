@@ -239,7 +239,7 @@
   min-width: 120px;
   transition: 0.8s;
   user-select: none;
-  font-family: "SuiGenerisRg", "Segoe UI", system-ui, sans-serif;
+  font-family: "Blinker", "Segoe UI", system-ui, sans-serif;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1130,7 +1130,7 @@
 }
 
 .chat-window-sample .chat-title {
-  font-family: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+  font-family: "RechargeBd", "Geist Sans", system-ui, sans-serif;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 1rem;
@@ -1160,7 +1160,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 6px 10px;
-  font-family: "SuiGenerisRg", system-ui, sans-serif;
+  font-family: "Blinker", system-ui, sans-serif;
   font-size: 0.9rem;
   cursor: pointer;
 }
@@ -1245,7 +1245,7 @@
   padding: 12px;
   border-radius: 10px;
   font-size: 1rem;
-  font-family: "SuiGenerisRg", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: "Blinker", system-ui, -apple-system, "Segoe UI", sans-serif;
   letter-spacing: 0.02em;
   line-height: 1.32;
   resize: none;
@@ -1434,7 +1434,7 @@
   padding: 2px 8px;
   border-radius: 999px;
   font-size: 10.5px;
-  font-family: "SuiGenerisRg", sans-serif;
+  font-family: "Blinker", sans-serif;
   letter-spacing: 0.06em;
   line-height: 1.2;
   text-transform: uppercase;

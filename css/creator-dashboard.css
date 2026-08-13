@@ -12,8 +12,8 @@
   --creator-success: #5bcf73;
   --creator-radius: 18px;
   --creator-shadow: 0 24px 60px rgba(4, 8, 20, 0.55);
-  --creator-font: "SuiGenerisRg", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --creator-heading: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+  --creator-font: "Blinker", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --creator-heading: "RechargeBd", "Geist Sans", system-ui, sans-serif;
   --creator-scroll-track: #0d1118;
   --creator-scroll-thumb: #2b3444;
   --creator-scroll-thumb-hover: #3a465e;
@@ -986,7 +986,7 @@ h3 {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #ddd;
-  font-family: "SuiGenerisRg", system-ui, sans-serif;
+  font-family: "Blinker", system-ui, sans-serif;
   text-transform: uppercase;
 }
 
@@ -8652,7 +8652,7 @@ body.ss-sidebar-collapsed .sidebar-collapse-toggle-icon {
   top: 0;
   transform: translateX(-50%);
   white-space: nowrap;
-  font: 11px "SuiGeneris", "SuiGenerisRg", monospace;
+  font: 11px "Blinker", monospace;
   color: #d6d9de;
   background: rgba(18, 22, 28, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.18);

@@ -12,9 +12,9 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 ## Studio-first visual system
 
 - `css/studio-first-system.css` remains the final presentation layer for the Creator shell, login, login-success, 404, and all route-loaded human-facing views. `css/creator-dashboard.css` keeps the same muted black/steel-blue foundation used across the suite, with Creator-specific violet/plum/indigo limited to selected navigation, primary controls, and restrained highlight trim. It also supplies the roomier information hierarchy, cards, forms, tables, dialogs, route transitions, responsive treatment, and reduced-motion fallback without changing any workflow or route.
-- Tektur is used for product and top-level view identity, Geist Sans for body copy and controls, and IBM Plex Mono for statuses, timestamps, metric values, IDs, and technical metadata. The repo-local sources are `assets/fonts/Tektur-VariableFont_wdth,wght.ttf`, `assets/fonts/Geist-{Light,Regular,Medium,SemiBold,Bold,ExtraBold}.ttf`, and `assets/fonts/mono/IBMPlexMono-{Light,Regular,Medium,SemiBold,Bold}.ttf`.
+- Tektur is used for product and top-level view identity, Blinker for body copy and controls, retained Geist Sans for the existing non-display heading and display-fallback roles, and IBM Plex Mono for statuses, timestamps, metric values, IDs, and technical metadata. The repo-local Blinker sources are `assets/fonts/body/Blinker-{Thin,ExtraLight,Light,Regular,SemiBold,Bold,ExtraBold,Black}.ttf` at fixed weights 100/200/300/400/600/700/800/900.
 - The Creator sidebar brand uses the repo-local `assets/logos/ssmainlogosq.webp` square mark, with a stable 44px slot and left-aligned title/badge grouping in the expanded shell. Its title declares the real local Tektur family directly at weight 600 and width 96, while the 18px subheading chip uses an inner IBM Plex Mono text line for stable optical centering; the collapsed rail remains icon-only. The final stylesheet URL carries a bounded presentation revision so normal and hard reloads cannot pair the current HTML with the earlier cached title rule.
-- Font hashes match the approved read-only Public sources. Genuine Geist and IBM Plex Mono licenses remain at `assets/fonts/GEISTMONOOFL.txt` and `assets/fonts/mono/IBMPLEXMONOOFL.txt`; no genuine local Tektur license file has been found, which remains a publication blocker.
+- Font hashes match the approved Public sources. The Blinker license is `assets/fonts/body/BLINKEROFL.txt`; genuine Geist and IBM Plex Mono licenses remain at `assets/fonts/GEISTMONOOFL.txt` and `assets/fonts/mono/IBMPLEXMONOOFL.txt`. No genuine local Tektur license file has been found, which remains a publication blocker.
 - The overview now positions Creator as the operations companion to Browser Studio and native StudioApp. Runtime/Auth still owns sessions, destinations, integrations, alerts, automation/shared state, analytics contracts, public identity, and mutations; path, hash/query compatibility, OAuth, role gates, and fallbacks are unchanged.
 - No file was created or removed for the 2026-08 polish milestone, so the repository tree remains unchanged. Existing validation remains `node --test tests/*.test.mjs`; the repository has no package build step.
 
@@ -141,7 +141,7 @@ StreamSuites-Creator/
 │   │   └── ss-profile-hovercard.css
 │   ├── js/
 │   │   └── ss-profile-hovercard.js
-│   └── [backgrounds, fonts, icons, illustrations, logos, placeholders, including icons/wheelarrow.svg, placeholders/wheelcenterdefault.webp, icons/ui/ss-admin.svg, ss-creator.svg, ss-developer.svg, ss-public.svg]
+│   └── [backgrounds, fonts including fonts/body/Blinker fixed faces, icons, illustrations, logos, placeholders, including icons/wheelarrow.svg, placeholders/wheelcenterdefault.webp, icons/ui/ss-admin.svg, ss-creator.svg, ss-developer.svg, ss-public.svg]
 ├── css/
 │   ├── base.css
 │   ├── components.css

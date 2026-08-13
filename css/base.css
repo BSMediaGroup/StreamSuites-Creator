@@ -10,8 +10,8 @@
 }
 
 @font-face {
-  font-family: "SuiGenerisRg";
-  src: url("../assets/fonts/Geist-Regular.ttf") format("truetype")
+  font-family: "Blinker";
+  src: url("../assets/fonts/body/Blinker-Regular.ttf") format("truetype")
     format("opentype");
   font-style: normal;
   font-weight: 400;
@@ -31,7 +31,7 @@
 }
 
 body {
-  font-family: "SuiGenerisRg", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: "Blinker", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 h1,
@@ -40,6 +40,6 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "RechargeBd", "SuiGenerisRg", system-ui, sans-serif;
+  font-family: "RechargeBd", "Geist Sans", system-ui, sans-serif;
   font-weight: 700;
 }
