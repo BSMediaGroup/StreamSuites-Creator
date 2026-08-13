@@ -15,11 +15,16 @@ test("Creator account editor uses Runtime/Auth for Markdown and optional video c
   assert.match(html, /data-profile-about-video-file="true"/);
   assert.match(html, /data-profile-about-video-validate="true"/);
   assert.match(html, /data-profile-about-video-remove="true"/);
+  assert.match(html, /data-profile-about-enabled="true"/);
+  assert.match(html, /hide About text, video, navigation, and the public card without deleting the saved story/);
   assert.match(app, /PUBLIC_PROFILE_ABOUT_VIDEO_RESOLVE_ENDPOINT/);
   assert.match(app, /function normalizeAboutVideoProjection/);
   assert.match(app, /iframe = document\.createElement\("iframe"\)/);
   assert.match(app, /iframe\.loading = "lazy"/);
   assert.match(app, /about_video_source_type: draft\.about_video_source_type/);
+  assert.match(app, /about_enabled: draft\.about_enabled/);
+  assert.match(app, /about_enabled: profile\?\.about_enabled !== false/);
+  assert.match(app, /els\.aboutEnabledInput\.checked = normalized\.about_enabled !== false/);
   assert.match(app, /PUBLIC_PROFILE_ABOUT_PREVIEW_ENDPOINT/);
   assert.match(app, /PUBLIC_PROFILE_ABOUT_VIDEO_UPLOAD_ENDPOINT/);
   assert.match(app, /applyMarkdownAction/);
@@ -50,4 +55,5 @@ test("Creator About video editor preserves the existing theme language and respo
   assert.match(css, /\.account-about-video-frame\s*\{[\s\S]*aspect-ratio:\s*16\s*\/\s*9/);
   assert.match(css, /var\(--profile-theme-b/);
   assert.match(css, /\.account-about-provider-selector\s*\{[\s\S]*grid-template-columns/);
+  assert.match(css, /\.account-about-visibility-control\s*\{/);
 });

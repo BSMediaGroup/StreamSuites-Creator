@@ -866,6 +866,7 @@
       findmeThemeCustomCssInput: document.querySelector("[data-findme-theme-custom-css]"),
       bioInput: document.querySelector("[data-profile-bio]"),
       aboutInput: document.querySelector("[data-profile-about]"),
+      aboutEnabledInput: document.querySelector("[data-profile-about-enabled]"),
       aboutModeInputs: Array.from(document.querySelectorAll("[data-profile-about-source]")),
       aboutMarkdownToolbar: document.querySelector("[data-profile-markdown-toolbar]"),
       aboutMarkdownPreviewButton: document.querySelector("[data-profile-markdown-preview-button]"),
@@ -3079,6 +3080,7 @@
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme || profile?.findMeHereTheme || profile?.profile_theme || profile?.profileTheme),
       bio: coerceText(profile?.bio),
       about: coerceText(profile?.about || profile?.about_story || profile?.aboutStory),
+      about_enabled: profile?.about_enabled !== false && profile?.aboutEnabled !== false,
       about_mode: normalizeAboutMode(profile?.about_mode || profile?.aboutMode),
       about_video: normalizeAboutVideoProjection(profile?.about_video || profile?.aboutVideo),
       about_video_providers: normalizeAboutVideoProviderOptions(profile?.about_video_providers || profile?.aboutVideoProviders),
@@ -4771,6 +4773,7 @@
       findmehere_theme: normalizeFindmeTheme(theme),
       bio: coerceText(els.bioInput?.value),
       about: coerceText(els.aboutInput?.value),
+      about_enabled: els.aboutEnabledInput instanceof HTMLInputElement ? els.aboutEnabledInput.checked : true,
       about_mode: selectedAboutMode(),
       about_video_enabled: selectedAboutVideoSource() !== "none",
       about_video_source_type: selectedAboutVideoSource() === "none" ? "" : selectedAboutVideoSource(),
@@ -4805,6 +4808,7 @@
       findmehere_theme: normalizeFindmeTheme(draft.findmehere_theme),
       bio: coerceText(draft.bio),
       about: coerceText(draft.about),
+      about_enabled: draft.about_enabled !== false,
       about_mode: normalizeAboutMode(draft.about_mode),
       about_video_enabled: draft.about_video_enabled === true,
       about_video_source_type: coerceText(draft.about_video_source_type),
@@ -4839,6 +4843,7 @@
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme),
       bio: coerceText(profile?.bio),
       about: coerceText(profile?.about),
+      about_enabled: profile?.about_enabled !== false,
       about_mode: normalizeAboutMode(profile?.about_mode),
       about_video_enabled: Boolean(profile?.about_video),
       about_video_source_type: coerceText(profile?.about_video?.source_type),
@@ -5083,6 +5088,9 @@
     if (els.aboutInput instanceof HTMLTextAreaElement) {
       els.aboutInput.value = normalized.about;
     }
+    if (els.aboutEnabledInput instanceof HTMLInputElement) {
+      els.aboutEnabledInput.checked = normalized.about_enabled !== false;
+    }
     renderAboutVideoEditor(normalized);
     els.themeOptionInputs.forEach((input) => {
       if (input instanceof HTMLInputElement) input.checked = input.value === normalized.streamsuites_theme_preset;
@@ -5264,6 +5272,7 @@
         findmehere_theme: draftTheme,
         bio: draft.bio,
         about: draft.about,
+        about_enabled: draft.about_enabled,
         about_mode: draft.about_mode,
         about_video_enabled: draft.about_video_enabled,
         about_video_source_type: draft.about_video_source_type,

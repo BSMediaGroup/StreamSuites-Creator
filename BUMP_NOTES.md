@@ -6,6 +6,11 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-14 - Public About visibility control
+
+- Added the Runtime/Auth-backed `about_enabled` control to the existing `/account` Bio & About editor. Legacy or omitted values default visible; disabling sends only the visibility choice and retains the written Markdown and configured video for later re-enablement.
+- Included the flag in normalized profile state, form hydration, dirty-state snapshots, and the existing public-profile save payload. Creator remains a client of Runtime/Auth and does not introduce local profile authority. No deployment, version/build change, commit, or push was performed.
+
 ### 2026-08-14 - Blinker body typography
 
 #### Technical notes
