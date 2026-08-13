@@ -3012,7 +3012,7 @@
       if (state.customLinks.length < CUSTOM_LINK_MAX_ITEMS) {
         optionsMarkup.push(`
           <button class="social-links-add-option social-links-add-option--custom" type="button" data-social-link-add-custom="true">
-            <img src="${escapeHtml(CUSTOM_LINK_FALLBACK_ICON)}" alt="" aria-hidden="true" />
+            <img class="custom-link-fallback-icon" src="${escapeHtml(CUSTOM_LINK_FALLBACK_ICON)}" alt="" aria-hidden="true" />
             <span>Custom link</span>
             <small>${CUSTOM_LINK_MAX_ITEMS - state.customLinks.length} remaining</small>
           </button>
@@ -4330,7 +4330,7 @@
           <article class="social-link-detail-card custom-link-card" data-custom-link-row="${escapeHtml(item.id)}">
             <div class="social-link-detail-head">
               <span class="social-link-detail-brand">
-                <span class="custom-link-icon-preview"><img src="${escapeHtml(iconPreview)}" alt="" loading="lazy" decoding="async" /></span>
+                <span class="custom-link-icon-preview"><img${item.staged_icon || item.icon_url ? "" : ' class="custom-link-fallback-icon"'} src="${escapeHtml(iconPreview)}" alt="" loading="lazy" decoding="async" /></span>
                 <strong>${escapeHtml(item.label || `Custom link ${index + 1}`)}</strong>
               </span>
               <button class="creator-button secondary social-link-remove-button" type="button" data-custom-link-remove="${escapeHtml(item.id)}" ${disabledAttr}>Remove</button>

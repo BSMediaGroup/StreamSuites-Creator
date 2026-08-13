@@ -8,10 +8,11 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ### 2026-08-13 - Vimeo About embeds and compact social-link editing
 
+- Corrected the hard-coded black fallback Custom link globe for the dark Creator editor. Only fallback instances in the Add Link menu and custom detail cards receive the light treatment; uploaded user icons and canonical platform logos retain their original colors.
 - Replaced only the `/account` About option for Kick live channels with Vimeo video/player URLs. Creator sends the selected Vimeo source to Runtime/Auth, renders only its canonical preview (including the required unlisted privacy hash), and now limits the About frame policy to YouTube, direct Rumble, and Vimeo. Broader Kick integration, OAuth, destination, and live-status surfaces are unchanged.
 - Rebuilt Social links around currently defined URL detail cards and one compact `Add link` menu of unused provider icons and labels. Standard providers remain single-instance. Custom links can be added repeatedly up to the Runtime/Auth maximum of six; their SVG, PNG, BMP, or WebP icon chooser appears immediately below the new custom card, with the existing fallback retained when no icon is selected.
 - Removed the former always-visible empty platform grid, search/filter chrome, and separate duplicate custom-link subsection because the new menu owns those actions in less space. Runtime/Auth remains the sole profile authority. No deployment, version/build change, commit, or push was performed.
-- Validation passed JavaScript syntax and all 29 Creator Node tests. A deterministic authenticated Chromium fixture rendered the defined-link cards, unused-platform Add Link menu, Vimeo-without-Kick About options, repeatable custom cards, exact icon file filter, and the 390px responsive card wrap with zero document or section overflow and no console errors.
+- Validation passed JavaScript syntax and all 29 Creator Node tests. A deterministic authenticated Chromium fixture rendered the defined-link cards, unused-platform Add Link menu, Vimeo-without-Kick About options, repeatable custom cards, exact icon file filter, and the 390px responsive card wrap with zero document or section overflow and no console errors. Separate rendered menu/card evidence confirms the default fallback globe remains present and legible whenever no optional custom icon is set.
 
 ### 2026-08-13 - Markdown story and optional uploaded About video
 

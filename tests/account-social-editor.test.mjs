@@ -34,6 +34,10 @@ test("creator account page mounts the compact saved-links editor and add menu", 
   assert.match(css, /\.social-links-add-menu/);
   assert.match(css, /\.social-links-add-option/);
   assert.match(css, /\.custom-link-icon-options/);
+  assert.match(accountJs, /custom-link-fallback-icon/);
+  assert.match(accountJs, /return item\?\.staged_icon\?\.previewUrl \|\| coerceText\(item\?\.icon_url\) \|\| CUSTOM_LINK_FALLBACK_ICON/);
+  assert.match(accountJs, /item\.staged_icon \|\| item\.icon_url \? "" : ' class="custom-link-fallback-icon"'/);
+  assert.match(css, /\.custom-link-fallback-icon\s*\{[\s\S]*?filter: brightness\(0\) invert\(1\)/);
   assert.match(css, /\.social-link-detail-head \{[\s\S]*?flex-wrap: wrap;/);
 });
 

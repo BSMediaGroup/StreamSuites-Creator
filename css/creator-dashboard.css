@@ -4139,6 +4139,11 @@ h3 {
   object-fit: contain;
 }
 
+.custom-link-fallback-icon {
+  filter: brightness(0) invert(1);
+  opacity: 0.82;
+}
+
 .custom-link-icon-options {
   padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
