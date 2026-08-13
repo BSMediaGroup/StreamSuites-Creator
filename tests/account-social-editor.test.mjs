@@ -9,20 +9,32 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
 }
 
-test("creator account page mounts the grouped social links editor shell", () => {
+test("creator account page mounts the compact saved-links editor and add menu", () => {
   const html = read("views/account.html");
   const accountJs = read("js/account-settings.js");
   const css = read("css/creator-dashboard.css");
 
   assert.match(html, /data-social-links-editor="true"/);
-  assert.match(html, /data-social-links-search="true"/);
-  assert.match(html, /data-social-links-filter="configured"/);
-  assert.match(html, /data-social-links-first-class-list="true"/);
-  assert.match(html, /data-social-links-extended-toggle="true"/);
-  assert.match(html, /Configured links/);
+  assert.match(html, /data-social-links-current-list="true"/);
+  assert.match(html, /data-social-links-add-toggle="true"/);
+  assert.match(html, /data-social-links-add-menu="true"/);
+  assert.match(html, /data-social-links-add-options="true"/);
+  assert.match(html, /Defined links/);
+  assert.doesNotMatch(html, /data-social-links-search=/);
+  assert.doesNotMatch(html, /data-social-links-filter=/);
+  assert.doesNotMatch(html, /data-social-links-first-class-list=/);
   assert.match(accountJs, /renderSocialLinksEditor/);
-  assert.match(accountJs, /data-social-links-jump/);
-  assert.match(accountJs, /Existing non-canonical keys stay preserved on save/);
+  assert.match(accountJs, /data-social-link-add-platform/);
+  assert.match(accountJs, /data-social-link-add-custom/);
+  assert.match(accountJs, /data-social-link-remove/);
+  assert.match(accountJs, /const CUSTOM_LINK_MAX_ITEMS = 6/);
+  assert.match(accountJs, /Select an SVG, PNG, BMP, or WebP icon/);
+  assert.match(accountJs, /accept="\.svg,\.png,\.bmp,\.webp,image\/svg\+xml,image\/png,image\/bmp,image\/webp"/);
+  assert.match(css, /\.social-links-current-list/);
+  assert.match(css, /\.social-links-add-menu/);
+  assert.match(css, /\.social-links-add-option/);
+  assert.match(css, /\.custom-link-icon-options/);
+  assert.match(css, /\.social-link-detail-head \{[\s\S]*?flex-wrap: wrap;/);
 });
 
 test("creator account editor keeps Bio and expanded About as separate Runtime-backed fields", () => {

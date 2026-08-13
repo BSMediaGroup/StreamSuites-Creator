@@ -23,6 +23,8 @@
   const EMAIL_CHANGE_REQUEST_ENDPOINT = `${API_BASE}/api/account/email/change/request`;
   const PUBLIC_PROFILE_ENDPOINT = `${API_BASE}/api/public/profile/me`;
   const PUBLIC_PROFILE_ABOUT_VIDEO_RESOLVE_ENDPOINT = `${API_BASE}/api/public/profile/about-video/resolve`;
+  const PUBLIC_PROFILE_ABOUT_PREVIEW_ENDPOINT = `${API_BASE}/api/public/profile/about/preview`;
+  const PUBLIC_PROFILE_ABOUT_VIDEO_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/about-video/upload`;
   const AVATAR_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/avatar`;
   const COVER_UPLOAD_ENDPOINT = `${API_BASE}/api/public/profile/media/cover`;
   const CREATOR_INTEGRATIONS_ENDPOINT = `${API_BASE}/api/creator/integrations`;
@@ -48,17 +50,17 @@
       ? SOCIAL_PLATFORMS.ORDER.slice()
       : ["website", "x", "youtube", "twitch", "discord", "instagram", "tiktok"]
   );
-  const CUSTOM_LINK_MAX_ITEMS = 8;
+  const CUSTOM_LINK_MAX_ITEMS = 6;
   const CUSTOM_LINK_LABEL_MAX_LENGTH = 80;
   const CUSTOM_LINK_ICON_MAX_BYTES = 256 * 1024;
   const CUSTOM_LINK_FALLBACK_ICON = "/assets/icons/ui/portal.svg";
   const CUSTOM_LINK_ALLOWED_MIME_TYPES = Object.freeze([
     "image/svg+xml",
     "image/png",
+    "image/bmp",
     "image/webp",
-    "image/gif",
-    "image/jpeg",
   ]);
+  const CUSTOM_LINK_ALLOWED_EXTENSIONS = Object.freeze([".svg", ".png", ".bmp", ".webp"]);
   const HEX_COLOR_RE = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
   const FINDMEHERE_THEME_DEFAULTS = Object.freeze({
     header_branding: Object.freeze({
@@ -109,7 +111,7 @@
   const ABOUT_VIDEO_PROVIDER_FALLBACKS = Object.freeze([
     Object.freeze({ key: "youtube", label: "YouTube Video / Livestream", provider_label: "YouTube", kind: "video", helper_text: "Paste a specific YouTube video, livestream, Short, or embed URL.", example_url: "https://www.youtube.com/watch?v=uPfbuo6iP6Y", external_action_label: "Watch on YouTube", iframe_allow: "autoplay; encrypted-media; picture-in-picture; web-share; fullscreen" }),
     Object.freeze({ key: "rumble", label: "Rumble Video / Livestream", provider_label: "Rumble", kind: "video", helper_text: "Paste the direct Rumble iframe URL from Share → Embed. Watch-page IDs are not player IDs.", example_url: "https://rumble.com/embed/v7bv5ia/?pub=vmzw3", external_action_label: "Watch on Rumble", iframe_allow: "autoplay; encrypted-media; picture-in-picture; fullscreen" }),
-    Object.freeze({ key: "kick", label: "Kick Live Channel", provider_label: "Kick", kind: "channel", helper_text: "Paste a Kick livestream channel URL. Kick VOD URLs are not supported.", example_url: "https://kick.com/yourchannel", external_action_label: "Open Kick channel", iframe_allow: "autoplay; encrypted-media; picture-in-picture; fullscreen" })
+    Object.freeze({ key: "vimeo", label: "Vimeo Video / Livestream", provider_label: "Vimeo", kind: "video", helper_text: "Paste a specific Vimeo video or player URL. Unlisted links must include their privacy hash.", example_url: "https://vimeo.com/76979871", external_action_label: "Watch on Vimeo", iframe_allow: "autoplay; encrypted-media; picture-in-picture; fullscreen" })
   ]);
   const ABOUT_VIDEO_PROVIDER_KEYS = new Set(ABOUT_VIDEO_PROVIDER_FALLBACKS.map((item) => item.key));
 
@@ -125,6 +127,34 @@
 
   function normalizeAboutVideoProjection(value) {
     if (!value || typeof value !== "object") return null;
+    const sourceType = coerceText(value.source_type || value.sourceType || "embed").toLowerCase();
+    if (sourceType === "upload") {
+      let url = coerceText(value.url || value.public_url || value.publicUrl);
+      const mimeType = coerceText(value.mime_type || value.mimeType).toLowerCase();
+      try {
+        const parsed = new URL(url);
+        const directApiPath = /^\/u\/[A-Za-z0-9]{7}\/about-video\/[a-f0-9]{32}\.(mp4|webm)$/.test(parsed.pathname);
+        const publicProxyPath = /^\/profile-media\/u\/[A-Za-z0-9]{7}\/about-video\/[a-f0-9]{32}\.(mp4|webm)$/.test(parsed.pathname);
+        if (
+          parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.port || !["video/mp4", "video/webm"].includes(mimeType) ||
+          !((parsed.hostname === "api.streamsuites.app" && directApiPath) || (parsed.hostname === "streamsuites.app" && publicProxyPath))
+        ) return null;
+        if (parsed.hostname === "api.streamsuites.app") {
+          parsed.hostname = "streamsuites.app";
+          parsed.pathname = `/profile-media${parsed.pathname}`;
+        }
+        url = parsed.toString();
+      } catch (_error) {
+        return null;
+      }
+      return {
+        source_type: "upload",
+        url,
+        mime_type: mimeType,
+        title: coerceText(value.title || "About video"),
+        file_size: Number(value.file_size || value.fileSize || 0),
+      };
+    }
     const provider = coerceText(value.provider).toLowerCase();
     const resourceId = coerceText(value.resource_id || value.resourceId);
     const sourceUrl = coerceText(value.source_url || value.sourceUrl);
@@ -141,14 +171,32 @@
     if (source.protocol !== "https:" || embed.protocol !== "https:" || source.username || source.password || source.port || embed.username || embed.password || embed.port) return null;
     const host = embed.hostname.toLowerCase();
     const sourceHost = source.hostname.toLowerCase();
+    const vimeoSourceParts = source.pathname.split("/").filter(Boolean);
+    const vimeoSourceHash = vimeoSourceParts.length === 2 ? vimeoSourceParts[1] : "";
+    const vimeoEmbedHashes = embed.searchParams.getAll("h");
     const safe =
       (provider === "youtube" && /^[A-Za-z0-9_-]{11}$/.test(resourceId) && sourceHost === "www.youtube.com" && host === "www.youtube.com" && embed.pathname === `/embed/${resourceId}` && !embed.search) ||
       (provider === "rumble" && /^[A-Za-z0-9]{3,64}$/.test(resourceId) && sourceHost === "rumble.com" && host === "rumble.com" && embed.pathname.replace(/\/$/, "") === `/embed/${resourceId}` && Array.from(embed.searchParams.keys()).every((key) => key === "pub")) ||
-      (provider === "kick" && /^[a-z0-9_][a-z0-9_-]{1,24}$/.test(resourceId) && sourceHost === "kick.com" && host === "player.kick.com" && embed.pathname === `/${resourceId}` && embed.searchParams.get("autoplay") === "false" && Array.from(embed.searchParams.keys()).every((key) => key === "autoplay"));
+      (
+        provider === "vimeo" &&
+        /^[1-9][0-9]{0,19}$/.test(resourceId) &&
+        sourceHost === "vimeo.com" &&
+        host === "player.vimeo.com" &&
+        vimeoSourceParts[0] === resourceId &&
+        (vimeoSourceParts.length === 1 || (vimeoSourceParts.length === 2 && /^[A-Za-z0-9_-]{6,64}$/.test(vimeoSourceHash))) &&
+        embed.pathname === `/video/${resourceId}` &&
+        !source.search &&
+        Array.from(embed.searchParams.keys()).every((key) => key === "h") &&
+        (
+          (vimeoSourceParts.length === 1 && vimeoEmbedHashes.length === 0) ||
+          (vimeoSourceParts.length === 2 && vimeoEmbedHashes.length === 1 && vimeoEmbedHashes[0] === vimeoSourceHash)
+        )
+      );
     if (!safe) return null;
     const option = normalizeAboutVideoProviderOptions([]).find((item) => item.key === provider);
     return {
       provider,
+      source_type: "embed",
       provider_label: coerceText(value.provider_label || value.providerLabel || option?.provider_label || provider),
       source_url: sourceUrl,
       embed_url: embedUrl,
@@ -236,9 +284,8 @@
     accountTabsOverflowQueued: false,
     previewMode: "streamsuites",
     customLinks: [],
-    socialEditorFilter: "all",
-    socialEditorQuery: "",
-    socialEditorExtendedOpen: false,
+    socialLinkDrafts: {},
+    socialEditorAddOpen: false,
     platformIdentities: [],
     platformIdentitiesLoading: false,
     platformIdentitiesSaving: false,
@@ -256,6 +303,8 @@
     scopedRollupSettings: null,
     aboutVideoPreview: null,
     removeAboutVideo: false,
+    aboutVideoFile: null,
+    aboutVideoObjectUrl: "",
   };
 
   function showToast(message, tone = "info", options = {}) {
@@ -405,11 +454,30 @@
   function isUsableProfileImageUrl(value) {
     const source = coerceText(value);
     if (!source) return false;
-    if (source.startsWith("data:") || source.startsWith("blob:")) return true;
-    if (/^https?:\/\//i.test(source)) return true;
-    if (source.startsWith("//")) return true;
-    if (source.startsWith("/") && !source.includes("/assets/icons/ui/profile.svg")) return true;
-    return false;
+    if (source.startsWith("/") && !source.startsWith("//")) return !source.includes("..") && !source.includes("/assets/icons/ui/profile.svg");
+    try {
+      const parsed = new URL(source);
+      const host = parsed.hostname.toLowerCase();
+      const unsafeHost = host === "localhost" || host.endsWith(".local") || /^127\./.test(host) || /^10\./.test(host) || /^192\.168\./.test(host) || /^172\.(1[6-9]|2\d|3[01])\./.test(host) || host === "::1";
+      return parsed.protocol === "https:" && !unsafeHost && !parsed.username && !parsed.password;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function canonicalProfileMediaUrl(value) {
+    const source = coerceText(value);
+    if (!isUsableProfileImageUrl(source)) return "";
+    try {
+      const parsed = new URL(source, window.location.origin);
+      if (["cdn.streamsuites.app", "api.streamsuites.app"].includes(parsed.hostname) && /^\/u\/[A-Za-z0-9]{7}\/(avatar|cover|background|logo)\/v[1-9]\d*\.webp$/.test(parsed.pathname)) {
+        parsed.hostname = "streamsuites.app";
+        parsed.pathname = `/profile-media${parsed.pathname}`;
+      }
+      return parsed.origin === window.location.origin && source.startsWith("/") ? `${parsed.pathname}${parsed.search}${parsed.hash}` : parsed.toString();
+    } catch (_error) {
+      return "";
+    }
   }
 
   function normalizedImageContract(source = {}, fallback = {}) {
@@ -444,8 +512,8 @@
         ""
     );
     return {
-      avatarUrl: stableImageUrl(avatarUrl, imageVersion),
-      rawAvatarUrl: avatarUrl,
+      avatarUrl: stableImageUrl(canonicalProfileMediaUrl(avatarUrl), imageVersion),
+      rawAvatarUrl: canonicalProfileMediaUrl(avatarUrl),
       imageVersion,
       avatarSource: coerceText(image.avatar_source || image.source || profileMedia.avatar_source || source?.avatar_source || source?.avatarSource),
       fallbackInitial: coerceText(image.fallback_display_initial || profileMedia.fallback_display_initial || source?.fallback_display_initial || source?.fallbackDisplayInitial)
@@ -672,6 +740,27 @@
       .slice(0, CUSTOM_LINK_MAX_ITEMS);
   }
 
+  function validateCustomLinkDrafts() {
+    for (let index = 0; index < state.customLinks.length; index += 1) {
+      const item = state.customLinks[index];
+      const label = coerceText(item?.label);
+      const url = coerceText(item?.url);
+      const hasAnyValue = !!(label || url || item?.icon_url || item?.staged_icon);
+      if (!hasAnyValue) return `Custom link ${index + 1} needs a label and destination URL, or it must be removed.`;
+      if (!label || !url) return `Custom link ${index + 1} needs both a label and destination URL.`;
+      if (url.startsWith("/") && !url.startsWith("//")) continue;
+      try {
+        const parsed = new URL(url);
+        if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password) {
+          return `Custom link ${index + 1} must use a valid HTTP(S) or site-relative destination.`;
+        }
+      } catch (_error) {
+        return `Custom link ${index + 1} must use a valid HTTP(S) or site-relative destination.`;
+      }
+    }
+    return "";
+  }
+
   function readFileAsObjectUrl(file) {
     if (!(file instanceof File)) {
       throw new Error("No file selected.");
@@ -784,7 +873,10 @@
       findmeThemeCustomCssInput: document.querySelector("[data-findme-theme-custom-css]"),
       bioInput: document.querySelector("[data-profile-bio]"),
       aboutInput: document.querySelector("[data-profile-about]"),
-      aboutModeInputs: Array.from(document.querySelectorAll("[data-profile-about-mode]")),
+      aboutModeInputs: Array.from(document.querySelectorAll("[data-profile-about-source]")),
+      aboutMarkdownToolbar: document.querySelector("[data-profile-markdown-toolbar]"),
+      aboutMarkdownPreviewButton: document.querySelector("[data-profile-markdown-preview-button]"),
+      aboutMarkdownPreview: document.querySelector("[data-profile-markdown-preview]"),
       aboutVideoEditor: document.querySelector("[data-profile-about-video-editor]"),
       aboutVideoProviderSelector: document.querySelector("[data-profile-about-provider-selector]"),
       aboutVideoProviderInputs: Array.from(document.querySelectorAll("[data-profile-about-provider]")),
@@ -794,26 +886,22 @@
       aboutVideoRemoveButton: document.querySelector("[data-profile-about-video-remove]"),
       aboutVideoStatus: document.querySelector("[data-profile-about-video-status]"),
       aboutVideoPreview: document.querySelector("[data-profile-about-video-preview]"),
+      aboutUploadEditor: document.querySelector("[data-profile-about-upload-editor]"),
+      aboutUploadInput: document.querySelector("[data-profile-about-video-file]"),
+      aboutUploadHelp: document.querySelector("[data-profile-about-upload-help]"),
+      aboutUploadPreview: document.querySelector("[data-profile-about-upload-preview]"),
+      aboutUploadClearButton: document.querySelector("[data-profile-about-upload-clear]"),
       themeOptionsHost: document.querySelector("[data-profile-theme-options]"),
       themeSelection: document.querySelector("[data-profile-theme-selection]"),
       themeOptionInputs: Array.from(document.querySelectorAll("[data-profile-theme-preset]")),
       linkInputs: Array.from(document.querySelectorAll("[data-profile-link]")),
       socialLinksEditor: document.querySelector("[data-social-links-editor]"),
       socialLinksSummary: document.querySelector("[data-social-links-summary]"),
-      socialLinksSearchInput: document.querySelector("[data-social-links-search]"),
-      socialLinksFilters: document.querySelector("[data-social-links-filters]"),
-      socialLinksActiveList: document.querySelector("[data-social-links-active-list]"),
-      socialLinksActiveNote: document.querySelector("[data-social-links-active-note]"),
-      socialLinksFirstClassCount: document.querySelector("[data-social-links-first-class-count]"),
-      socialLinksFirstClassList: document.querySelector("[data-social-links-first-class-list]"),
-      socialLinksExtendedToggle: document.querySelector("[data-social-links-extended-toggle]"),
-      socialLinksExtendedNote: document.querySelector("[data-social-links-extended-note]"),
-      socialLinksExtendedCount: document.querySelector("[data-social-links-extended-count]"),
-      socialLinksExtendedPanels: document.querySelector("[data-social-links-extended-panels]"),
-      socialLinksPreservedNote: document.querySelector("[data-social-links-preserved-note]"),
+      socialLinksAddToggle: document.querySelector("[data-social-links-add-toggle]"),
+      socialLinksCurrentList: document.querySelector("[data-social-links-current-list]"),
+      socialLinksAddMenu: document.querySelector("[data-social-links-add-menu]"),
+      socialLinksAddOptions: document.querySelector("[data-social-links-add-options]"),
       customLinksList: document.querySelector("[data-custom-links-list]"),
-      customLinksSummary: document.querySelector("[data-custom-links-summary]"),
-      customLinkAddButton: document.querySelector("[data-custom-link-add]"),
       identityInputs: Array.from(document.querySelectorAll("[data-profile-identity-input]")),
       saveButtons: Array.from(document.querySelectorAll("[data-profile-save]")),
       resetButtons: Array.from(document.querySelectorAll("[data-profile-reset]")),
@@ -2710,7 +2798,7 @@
     };
   }
 
-  function renderSocialLinksEditor(options = {}) {
+  function renderLegacyGroupedSocialLinksEditor(options = {}) {
     const els = getProfileElements();
     if (!(els.socialLinksEditor instanceof HTMLElement)) return;
     const panels = buildSocialEditorPanels();
@@ -2835,6 +2923,134 @@
     resolved.scrollIntoView({ block: "center", behavior: "smooth" });
   }
 
+  function getAvailableSocialRegistry() {
+    const registry = Array.isArray(SOCIAL_PLATFORMS?.REGISTRY)
+      ? SOCIAL_PLATFORMS.REGISTRY
+      : KNOWN_SOCIAL_KEYS.map((key) => ({ key, label: getSocialPlatformLabel(key), icon: getSocialPlatformIcon(key) }));
+    return registry.filter((entry) => entry?.key && entry.key !== "custom");
+  }
+
+  function getOrderedSocialDraftEntries() {
+    const draft = state.socialLinkDrafts && typeof state.socialLinkDrafts === "object" ? state.socialLinkDrafts : {};
+    const orderedKeys = getAvailableSocialRegistry()
+      .map((entry) => entry.key)
+      .filter((key) => Object.prototype.hasOwnProperty.call(draft, key));
+    Object.keys(draft).forEach((key) => {
+      if (!orderedKeys.includes(key)) orderedKeys.push(key);
+    });
+    return orderedKeys.map((key) => ({ key, value: coerceText(draft[key]) }));
+  }
+
+  function buildCurrentSocialLinkCard(entry) {
+    const key = entry.key;
+    return `
+      <article class="social-link-detail-card" data-social-link-card="${escapeHtml(key)}">
+        <div class="social-link-detail-head">
+          <span class="social-link-detail-brand">
+            <img src="${escapeHtml(getSocialPlatformIcon(key))}" alt="" aria-hidden="true" />
+            <strong>${escapeHtml(getSocialPlatformLabel(key))}</strong>
+          </span>
+          <button class="creator-button secondary social-link-remove-button" type="button" data-social-link-remove="${escapeHtml(key)}">Remove</button>
+        </div>
+        <label class="account-field social-link-detail-field">
+          <span class="account-field-label">Profile URL</span>
+          <input
+            class="account-field-input creator-mono"
+            type="url"
+            inputmode="url"
+            autocomplete="url"
+            spellcheck="false"
+            placeholder="${escapeHtml(getSocialPlatformPlaceholder(key))}"
+            value="${escapeHtml(entry.value)}"
+            data-profile-link="${escapeHtml(key)}"
+            data-profile-field="true"
+            ${state.savingProfile || !state.profile ? "disabled" : ""}
+          />
+        </label>
+      </article>
+    `;
+  }
+
+  function renderSocialLinksEditor(options = {}) {
+    const els = getProfileElements();
+    if (!(els.socialLinksEditor instanceof HTMLElement)) return;
+    const entries = getOrderedSocialDraftEntries();
+    const configuredCount = entries.filter((entry) => entry.value).length + state.customLinks.length;
+    if (els.socialLinksSummary instanceof HTMLElement) {
+      els.socialLinksSummary.textContent = `${configuredCount} defined · ${state.customLinks.length}/${CUSTOM_LINK_MAX_ITEMS} custom`;
+    }
+    if (els.socialLinksAddToggle instanceof HTMLButtonElement) {
+      els.socialLinksAddToggle.textContent = state.socialEditorAddOpen ? "Close menu" : "Add link";
+      els.socialLinksAddToggle.setAttribute("aria-expanded", state.socialEditorAddOpen ? "true" : "false");
+      els.socialLinksAddToggle.disabled = state.savingProfile || !state.profile;
+    }
+    if (els.socialLinksCurrentList instanceof HTMLElement) {
+      els.socialLinksCurrentList.innerHTML = entries.length
+        ? entries.map((entry) => buildCurrentSocialLinkCard(entry)).join("")
+        : state.customLinks.length
+          ? ""
+          : `
+            <div class="social-links-empty-state social-links-empty-state--defined">
+              <strong>No links defined yet</strong>
+              <span>Use Add link to choose a platform or create a custom destination.</span>
+            </div>
+          `;
+    }
+    if (els.socialLinksAddMenu instanceof HTMLElement) {
+      els.socialLinksAddMenu.hidden = !state.socialEditorAddOpen;
+    }
+    if (els.socialLinksAddOptions instanceof HTMLElement) {
+      const available = getAvailableSocialRegistry().filter(
+        (entry) => !Object.prototype.hasOwnProperty.call(state.socialLinkDrafts, entry.key)
+      );
+      const optionsMarkup = available.map((entry) => `
+        <button class="social-links-add-option" type="button" data-social-link-add-platform="${escapeHtml(entry.key)}">
+          <img src="${escapeHtml(entry.icon || getSocialPlatformIcon(entry.key))}" alt="" aria-hidden="true" />
+          <span>${escapeHtml(entry.label || getSocialPlatformLabel(entry.key))}</span>
+        </button>
+      `);
+      if (state.customLinks.length < CUSTOM_LINK_MAX_ITEMS) {
+        optionsMarkup.push(`
+          <button class="social-links-add-option social-links-add-option--custom" type="button" data-social-link-add-custom="true">
+            <img src="${escapeHtml(CUSTOM_LINK_FALLBACK_ICON)}" alt="" aria-hidden="true" />
+            <span>Custom link</span>
+            <small>${CUSTOM_LINK_MAX_ITEMS - state.customLinks.length} remaining</small>
+          </button>
+        `);
+      }
+      els.socialLinksAddOptions.innerHTML = optionsMarkup.length
+        ? optionsMarkup.join("")
+        : '<p class="social-links-menu-empty">Every platform is defined and the custom-link limit has been reached.</p>';
+    }
+    renderCustomLinksEditor();
+    const focusKey = coerceText(options.focusKey);
+    const focusCustomId = coerceText(options.focusCustomId);
+    if (focusKey || focusCustomId) {
+      window.requestAnimationFrame(() => {
+        const selector = focusKey
+          ? `[data-profile-link="${focusKey}"]`
+          : `[data-custom-link-input="label"][data-custom-link-id="${focusCustomId}"]`;
+        const input = document.querySelector(selector);
+        if (input instanceof HTMLInputElement) input.focus({ preventScroll: true });
+      });
+    }
+  }
+
+  function addCustomLinkDraft() {
+    if (state.customLinks.length >= CUSTOM_LINK_MAX_ITEMS) {
+      showToast(`Custom links are limited to ${CUSTOM_LINK_MAX_ITEMS}.`, "warning", {
+        key: "creator-custom-links-limit",
+        title: "Limit reached",
+      });
+      return;
+    }
+    const next = normalizeCustomLinkItem({});
+    state.customLinks = [...state.customLinks, next];
+    state.socialEditorAddOpen = false;
+    renderSocialLinksEditor({ focusCustomId: next.id });
+    renderPreviewSurface();
+  }
+
   function normalizeProfilePayload(payload) {
     const profile = payload?.profile && typeof payload.profile === "object" ? payload.profile : payload;
     const imageContract = normalizedImageContract(profile);
@@ -2864,15 +3080,22 @@
       findmehere_profile_url: coerceText(profile?.findmehere_profile_url),
       findmehere_share_url: coerceText(profile?.findmehere_share_url),
       findmehere_status_reason: coerceText(profile?.findmehere_status_reason),
-      cover_image_url: coerceText(profile?.cover_image_url || profile?.banner_image_url),
+      cover_image_url: canonicalProfileMediaUrl(profile?.cover_image_url || profile?.banner_image_url),
       cover_media: profile?.cover_media && typeof profile.cover_media === "object" ? { ...profile.cover_media } : null,
-      background_image_url: coerceText(profile?.background_image_url),
+      background_image_url: canonicalProfileMediaUrl(profile?.background_image_url),
       findmehere_theme: normalizeFindmeTheme(profile?.findmehere_theme || profile?.findMeHereTheme || profile?.profile_theme || profile?.profileTheme),
       bio: coerceText(profile?.bio),
       about: coerceText(profile?.about || profile?.about_story || profile?.aboutStory),
       about_mode: normalizeAboutMode(profile?.about_mode || profile?.aboutMode),
       about_video: normalizeAboutVideoProjection(profile?.about_video || profile?.aboutVideo),
       about_video_providers: normalizeAboutVideoProviderOptions(profile?.about_video_providers || profile?.aboutVideoProviders),
+      about_video_upload: {
+        enabled: (profile?.about_video_upload || profile?.aboutVideoUpload)?.enabled === true,
+        max_bytes: Math.max(0, Number((profile?.about_video_upload || profile?.aboutVideoUpload)?.max_bytes || (profile?.about_video_upload || profile?.aboutVideoUpload)?.maxBytes || 0)),
+        mime_types: Array.isArray((profile?.about_video_upload || profile?.aboutVideoUpload)?.mime_types || (profile?.about_video_upload || profile?.aboutVideoUpload)?.mimeTypes)
+          ? ((profile?.about_video_upload || profile?.aboutVideoUpload).mime_types || (profile?.about_video_upload || profile?.aboutVideoUpload).mimeTypes).filter((item) => ["video/mp4", "video/webm"].includes(coerceText(item)))
+          : [],
+      },
       streamsuites_theme_preset: normalizeProfileThemePreset(profile?.streamsuites_theme_preset || profile?.streamsuitesThemePreset),
       social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
       custom_links: normalizeCustomLinks(profile?.custom_links || profile?.customLinks),
@@ -2889,14 +3112,22 @@
   }
 
   function selectedAboutMode() {
-    const input = document.querySelector('[data-profile-about-mode]:checked');
-    return input instanceof HTMLInputElement ? normalizeAboutMode(input.value) : "text";
+    return selectedAboutVideoSource() === "none" ? "text" : "video";
+  }
+
+  function selectedAboutVideoSource() {
+    const input = document.querySelector('[data-profile-about-source]:checked');
+    const source = input instanceof HTMLInputElement ? coerceText(input.value).toLowerCase() : "none";
+    return ["none", "embed", "upload"].includes(source) ? source : "none";
   }
 
   function syncAboutVideoEditorVisibility() {
     const els = getProfileElements();
     if (els.aboutVideoEditor instanceof HTMLElement) {
-      els.aboutVideoEditor.hidden = selectedAboutMode() !== "video";
+      els.aboutVideoEditor.hidden = selectedAboutVideoSource() !== "embed";
+    }
+    if (els.aboutUploadEditor instanceof HTMLElement) {
+      els.aboutUploadEditor.hidden = selectedAboutVideoSource() !== "upload";
     }
   }
 
@@ -2922,6 +3153,92 @@
     }
   }
 
+  function clearStagedAboutVideo() {
+    if (state.aboutVideoObjectUrl) URL.revokeObjectURL(state.aboutVideoObjectUrl);
+    state.aboutVideoObjectUrl = "";
+    state.aboutVideoFile = null;
+    const els = getProfileElements();
+    if (els.aboutUploadInput instanceof HTMLInputElement) els.aboutUploadInput.value = "";
+    if (els.aboutUploadPreview instanceof HTMLElement) els.aboutUploadPreview.replaceChildren();
+  }
+
+  function appendSanitizedMarkdownProjection(container, renderedHtml) {
+    const allowed = new Set(["P", "H2", "H3", "STRONG", "EM", "S", "BLOCKQUOTE", "UL", "OL", "LI", "CODE", "PRE", "A", "HR"]);
+    const parsed = new DOMParser().parseFromString(coerceText(renderedHtml), "text/html");
+    const appendNode = (source, target) => {
+      if (source.nodeType === Node.TEXT_NODE) {
+        target.appendChild(document.createTextNode(source.textContent || ""));
+        return;
+      }
+      if (source.nodeType !== Node.ELEMENT_NODE || !allowed.has(source.tagName)) return;
+      const node = document.createElement(source.tagName.toLowerCase());
+      if (source.tagName === "A") {
+        try {
+          const href = new URL(source.getAttribute("href") || "");
+          if (!["http:", "https:"].includes(href.protocol) || href.username || href.password) return;
+          node.href = href.toString();
+          node.target = "_blank";
+          node.rel = "noopener noreferrer";
+        } catch (_error) {
+          return;
+        }
+      }
+      Array.from(source.childNodes).forEach((child) => appendNode(child, node));
+      target.appendChild(node);
+    };
+    Array.from(parsed.body.childNodes).forEach((node) => appendNode(node, container));
+  }
+
+  function applyMarkdownAction(textarea, action) {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = textarea.value.slice(start, end);
+    const wrap = (before, after = before, placeholder = "text") => {
+      const content = selected || placeholder;
+      textarea.setRangeText(`${before}${content}${after}`, start, end, "select");
+      textarea.setSelectionRange(start + before.length, start + before.length + content.length);
+    };
+    const line = (prefix, ordered = false) => {
+      const content = selected || "List item";
+      textarea.setRangeText(content.split(/\r?\n/).map((item, index) => `${ordered ? `${index + 1}. ` : prefix}${item}`).join("\n"), start, end, "select");
+    };
+    if (action === "bold") wrap("**");
+    else if (action === "italic") wrap("_");
+    else if (action === "strike") wrap("~~");
+    else if (action === "code") wrap("`");
+    else if (action === "link") wrap("[", "](https://example.com)", "link text");
+    else if (action === "h2") line("## ");
+    else if (action === "h3") line("### ");
+    else if (action === "quote") line("> ");
+    else if (action === "bullets") line("- ");
+    else if (action === "numbered") line("", true);
+    else if (action === "rule") textarea.setRangeText(`${start ? "\n" : ""}---\n`, start, end, "end");
+    textarea.dispatchEvent(new Event("input", { bubbles: true }));
+    textarea.focus();
+  }
+
+  async function previewAboutMarkdown() {
+    const els = getProfileElements();
+    if (!(els.aboutInput instanceof HTMLTextAreaElement) || !(els.aboutMarkdownPreview instanceof HTMLElement)) return;
+    if (els.aboutMarkdownPreviewButton instanceof HTMLButtonElement) els.aboutMarkdownPreviewButton.disabled = true;
+    els.aboutMarkdownPreview.hidden = false;
+    els.aboutMarkdownPreview.replaceChildren(document.createTextNode("Rendering preview…"));
+    try {
+      const payload = await requestJson(PUBLIC_PROFILE_ABOUT_PREVIEW_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify({ about: els.aboutInput.value.slice(0, 6000) }),
+      });
+      els.aboutMarkdownPreview.replaceChildren();
+      appendSanitizedMarkdownProjection(els.aboutMarkdownPreview, payload?.about_html);
+      if (!els.aboutMarkdownPreview.childNodes.length) els.aboutMarkdownPreview.appendChild(document.createTextNode("Nothing to preview yet."));
+    } catch (err) {
+      els.aboutMarkdownPreview.replaceChildren(document.createTextNode(err?.message || "Preview failed."));
+      els.aboutMarkdownPreview.dataset.tone = "danger";
+    } finally {
+      if (els.aboutMarkdownPreviewButton instanceof HTMLButtonElement) els.aboutMarkdownPreviewButton.disabled = false;
+    }
+  }
+
   function renderAboutVideoPreview(video) {
     const normalized = normalizeAboutVideoProjection(video);
     const els = getProfileElements();
@@ -2929,6 +3246,17 @@
     els.aboutVideoPreview.replaceChildren();
     const frame = document.createElement("div");
     frame.className = "account-about-video-frame";
+    if (normalized.source_type === "upload") {
+      const player = document.createElement("video");
+      player.src = normalized.url;
+      player.controls = true;
+      player.preload = "metadata";
+      player.className = "account-about-uploaded-video";
+      player.appendChild(document.createTextNode("Your browser does not support this uploaded About video."));
+      frame.appendChild(player);
+      els.aboutVideoPreview.appendChild(frame);
+      return;
+    }
     const iframe = document.createElement("iframe");
     iframe.src = normalized.embed_url;
     iframe.title = normalized.title || `${normalized.provider_label} About video preview`;
@@ -2973,14 +3301,16 @@
       label.append(input, icon, copy);
       els.aboutVideoProviderSelector.appendChild(label);
     });
+    const selectedSource = profile?.about_video?.source_type === "upload" ? "upload" : profile?.about_video ? "embed" : "none";
     getProfileElements().aboutModeInputs.forEach((input) => {
-      if (input instanceof HTMLInputElement) input.checked = input.value === normalizeAboutMode(profile?.about_mode);
+      if (input instanceof HTMLInputElement) input.checked = input.value === selectedSource;
     });
     if (els.aboutVideoUrlInput instanceof HTMLInputElement) {
       els.aboutVideoUrlInput.value = coerceText(profile?.about_video?.source_url);
     }
     state.aboutVideoPreview = null;
     state.removeAboutVideo = false;
+    clearStagedAboutVideo();
     if (els.aboutVideoPreview instanceof HTMLElement) els.aboutVideoPreview.replaceChildren();
     if (els.aboutVideoStatus instanceof HTMLElement) {
       els.aboutVideoStatus.textContent = profile?.about_video
@@ -2990,6 +3320,13 @@
     }
     syncAboutVideoHelp();
     syncAboutVideoEditorVisibility();
+    if (profile?.about_video?.source_type === "upload") renderAboutVideoPreview(profile.about_video);
+    if (els.aboutUploadHelp instanceof HTMLElement) {
+      const maxBytes = Math.max(0, Number(profile?.about_video_upload?.max_bytes || 0));
+      els.aboutUploadHelp.textContent = maxBytes
+        ? `Maximum ${(maxBytes / (1024 * 1024)).toLocaleString(undefined, { maximumFractionDigits: 1 })} MiB. Embeds are recommended to reduce storage use.`
+        : "Embeds are recommended to reduce storage use.";
+    }
   }
 
   async function validateAboutVideoPreview() {
@@ -3865,7 +4202,7 @@
     });
   }
 
-  function renderCustomLinksEditor() {
+  function renderLegacyCustomLinksEditor() {
     const els = getProfileElements();
     if (!(els.customLinksList instanceof HTMLElement)) return;
 
@@ -3960,15 +4297,90 @@
                       <input
                         class="account-field-input"
                         type="file"
-                        accept="image/svg+xml,image/png,image/webp,image/gif,image/jpeg"
+                        accept=".svg,.png,.bmp,.webp,image/svg+xml,image/png,image/bmp,image/webp"
                         data-custom-link-file="${escapeHtml(item.id)}"
                         ${disabledAttr}
                       />
                       <button class="creator-button secondary" type="button" data-custom-link-clear-icon="${escapeHtml(item.id)}" ${disabledAttr}>Clear icon</button>
                     </div>
-                    <span class="account-field-note">Accepted: SVG, PNG, WEBP, GIF, JPG, or JPEG.</span>
+                    <span class="account-field-note">Accepted: SVG, PNG, BMP, or WebP.</span>
                   </div>
                 </div>
+              </div>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  function renderCustomLinksEditor() {
+    const els = getProfileElements();
+    if (!(els.customLinksList instanceof HTMLElement)) return;
+    if (!state.customLinks.length) {
+      els.customLinksList.replaceChildren();
+      return;
+    }
+    const disabledAttr = state.savingProfile || !state.profile ? "disabled" : "";
+    els.customLinksList.innerHTML = state.customLinks
+      .map((item, index) => {
+        const iconPreview = getCustomLinkIconPreviewUrl(item);
+        const stagedIconName = coerceText(item?.staged_icon?.filename);
+        return `
+          <article class="social-link-detail-card custom-link-card" data-custom-link-row="${escapeHtml(item.id)}">
+            <div class="social-link-detail-head">
+              <span class="social-link-detail-brand">
+                <span class="custom-link-icon-preview"><img src="${escapeHtml(iconPreview)}" alt="" loading="lazy" decoding="async" /></span>
+                <strong>${escapeHtml(item.label || `Custom link ${index + 1}`)}</strong>
+              </span>
+              <button class="creator-button secondary social-link-remove-button" type="button" data-custom-link-remove="${escapeHtml(item.id)}" ${disabledAttr}>Remove</button>
+            </div>
+            <div class="custom-link-row-grid">
+              <label class="account-field">
+                <span class="account-field-label">Link label</span>
+                <input
+                  class="account-field-input"
+                  type="text"
+                  maxlength="${CUSTOM_LINK_LABEL_MAX_LENGTH}"
+                  placeholder="Store, Media kit, Community"
+                  data-custom-link-input="label"
+                  data-custom-link-id="${escapeHtml(item.id)}"
+                  value="${escapeHtml(item.label)}"
+                  ${disabledAttr}
+                />
+              </label>
+              <label class="account-field">
+                <span class="account-field-label">Destination URL</span>
+                <input
+                  class="account-field-input creator-mono"
+                  type="url"
+                  inputmode="url"
+                  autocomplete="url"
+                  spellcheck="false"
+                  placeholder="https://example.com/destination"
+                  data-custom-link-input="url"
+                  data-custom-link-id="${escapeHtml(item.id)}"
+                  value="${escapeHtml(item.url)}"
+                  ${disabledAttr}
+                />
+              </label>
+            </div>
+            <div class="custom-link-icon-options">
+              <div class="custom-link-icon-copy">
+                <strong>Custom icon</strong>
+                <span>${stagedIconName ? `Staged: ${escapeHtml(stagedIconName)}` : "Optional · SVG preferred · PNG, BMP, and WebP supported · 256 KiB max"}</span>
+              </div>
+              <div class="custom-link-icon-actions">
+                <label class="creator-button secondary custom-link-icon-upload">
+                  ${item.icon_url || item.staged_icon ? "Replace icon" : "Choose icon"}
+                  <input
+                    type="file"
+                    accept=".svg,.png,.bmp,.webp,image/svg+xml,image/png,image/bmp,image/webp"
+                    data-custom-link-file="${escapeHtml(item.id)}"
+                    ${disabledAttr}
+                  />
+                </label>
+                ${item.icon_url || item.staged_icon ? `<button class="creator-button secondary" type="button" data-custom-link-clear-icon="${escapeHtml(item.id)}" ${disabledAttr}>Use fallback</button>` : ""}
               </div>
             </div>
           </article>
@@ -4152,7 +4564,8 @@
           <div class="profile-inline-header">
             <h3>About</h3>
           </div>
-          <p class="profile-bio-text profile-about-text">${escapeHtml(model.aboutMode === "video" ? "Video About selected. Use the validated player preview in the editor above." : model.about)}</p>
+          <p class="profile-bio-text profile-about-text">${escapeHtml(model.about || "No expanded About story yet.")}</p>
+          ${model.aboutMode === "video" ? '<p class="account-preview-note">Optional About video will appear alongside this story after Runtime/Auth validation.</p>' : ""}
           <div class="profile-inline-header">
             <h3>Share Links</h3>
           </div>
@@ -4327,24 +4740,12 @@
   function getEditableDraft() {
     const els = getProfileElements();
     const profile = state.profile || normalizeProfilePayload({});
-    const unknownLinks = {};
-    Object.entries(profile.social_links || {}).forEach(([key, value]) => {
-      if (!KNOWN_SOCIAL_KEYS.includes(normalizeSocialPlatformKey(key))) {
-        const text = coerceText(value);
-        if (text) {
-          unknownLinks[key] = text;
-        }
-      }
-    });
-
-    const socialLinks = { ...unknownLinks };
-    els.linkInputs.forEach((input) => {
-      const key = normalizeSocialPlatformKey(input.getAttribute("data-profile-link") || "");
-      const value = coerceText(input.value);
-      if (key && value) {
-        socialLinks[key] = value;
-      }
-    });
+    const socialLinks = Object.entries(state.socialLinkDrafts || {}).reduce((links, [rawKey, rawValue]) => {
+      const key = normalizeSocialPlatformKey(rawKey);
+      const value = coerceText(rawValue);
+      if (key && value) links[key] = value;
+      return links;
+    }, {});
 
     const theme = {
       header_branding: {
@@ -4378,6 +4779,8 @@
       bio: coerceText(els.bioInput?.value),
       about: coerceText(els.aboutInput?.value),
       about_mode: selectedAboutMode(),
+      about_video_enabled: selectedAboutVideoSource() !== "none",
+      about_video_source_type: selectedAboutVideoSource() === "none" ? "" : selectedAboutVideoSource(),
       about_video_provider: selectedAboutVideoProvider(),
       about_video_source_url: coerceText(els.aboutVideoUrlInput?.value),
       remove_about_video: state.removeAboutVideo,
@@ -4394,7 +4797,8 @@
       getStagedUpload("avatar")?.file ||
       getStagedUpload("cover")?.file ||
       getStagedUpload("background")?.file ||
-      getStagedUpload("logo")?.file
+      getStagedUpload("logo")?.file ||
+      state.aboutVideoFile
     );
   }
 
@@ -4409,6 +4813,8 @@
       bio: coerceText(draft.bio),
       about: coerceText(draft.about),
       about_mode: normalizeAboutMode(draft.about_mode),
+      about_video_enabled: draft.about_video_enabled === true,
+      about_video_source_type: coerceText(draft.about_video_source_type),
       about_video_provider: coerceText(draft.about_video_provider),
       about_video_source_url: coerceText(draft.about_video_source_url),
       remove_about_video: draft.remove_about_video === true,
@@ -4441,6 +4847,8 @@
       bio: coerceText(profile?.bio),
       about: coerceText(profile?.about),
       about_mode: normalizeAboutMode(profile?.about_mode),
+      about_video_enabled: Boolean(profile?.about_video),
+      about_video_source_type: coerceText(profile?.about_video?.source_type),
       about_video_provider: coerceText(profile?.about_video?.provider),
       about_video_source_url: coerceText(profile?.about_video?.source_url),
       remove_about_video: false,
@@ -4689,11 +5097,8 @@
     if (els.themeSelection instanceof HTMLElement) {
       els.themeSelection.textContent = getProfileThemePreset(normalized.streamsuites_theme_preset).label;
     }
-    const normalizedSocialLinks = normalizeSocialLinksForUi(normalized.social_links);
-    els.linkInputs.forEach((input) => {
-      const key = normalizeSocialPlatformKey(input.getAttribute("data-profile-link") || "");
-      input.value = coerceText(normalizedSocialLinks[key]);
-    });
+    state.socialLinkDrafts = { ...normalizeSocialLinksForUi(normalized.social_links) };
+    state.socialEditorAddOpen = false;
     renderSocialLinksEditor();
 
     renderSlugAliases(normalized);
@@ -4762,10 +5167,31 @@
     return requestForm(endpoint, formData);
   }
 
+  async function uploadStagedAboutVideo() {
+    if (!(state.aboutVideoFile instanceof File)) return null;
+    return requestJson(PUBLIC_PROFILE_ABOUT_VIDEO_UPLOAD_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": state.aboutVideoFile.type,
+        "X-Upload-Filename": state.aboutVideoFile.name,
+      },
+      body: state.aboutVideoFile,
+    });
+  }
+
   async function savePublicProfile() {
     if (!state.profile || state.savingProfile) return;
 
     const draft = getEditableDraft();
+    const customLinkValidationError = validateCustomLinkDrafts();
+    if (customLinkValidationError) {
+      setMessage("[data-profile-save-status=\"true\"]", customLinkValidationError, "warning");
+      showToast(customLinkValidationError, "warning", {
+        key: "creator-profile-custom-link-validation",
+        title: "Check custom link"
+      });
+      return;
+    }
     const slugValidation = validatePublicSlug(draft.public_slug_input);
     const savedSlug = coerceText(state.profile.public_slug);
     const slugChanged = slugValidation.valid && slugValidation.normalized !== savedSlug;
@@ -4846,20 +5272,31 @@
         bio: draft.bio,
         about: draft.about,
         about_mode: draft.about_mode,
+        about_video_enabled: draft.about_video_enabled,
+        about_video_source_type: draft.about_video_source_type,
         streamsuites_theme_preset: draft.streamsuites_theme_preset,
         social_links: draft.social_links,
         custom_links: draft.custom_links,
       };
-      if (draft.remove_about_video) {
+      if (draft.about_video_source_type === "upload" && !state.aboutVideoFile && state.profile?.about_video?.source_type !== "upload") {
+        throw new Error("Choose an MP4 or WebM file before saving.");
+      }
+      if (draft.remove_about_video || !draft.about_video_enabled) {
         payload.remove_about_video = true;
-      } else if (draft.about_video_source_url) {
+      } else if (draft.about_video_source_type === "embed" && draft.about_video_source_url) {
         payload.about_video_provider = draft.about_video_provider;
         payload.about_video_source_url = draft.about_video_source_url;
+      } else if (draft.about_video_source_type === "embed") {
+        throw new Error("Enter and validate an embed URL, or choose No video.");
       }
-      const response = await requestJson(PUBLIC_PROFILE_ENDPOINT, {
+      let response = await requestJson(PUBLIC_PROFILE_ENDPOINT, {
         method: "POST",
         body: JSON.stringify(payload),
       });
+      if (draft.about_video_source_type === "upload" && state.aboutVideoFile) {
+        setMessage("[data-profile-save-status=\"true\"]", "Uploading About video through Runtime/Auth...", "neutral");
+        response = await uploadStagedAboutVideo();
+      }
       applyProfile(response?.profile || response);
       if (window.StreamSuitesAuth?.loadSession) {
         try {
@@ -4930,10 +5367,57 @@
     els.aboutModeInputs.forEach((input) => {
       if (!(input instanceof HTMLInputElement)) return;
       input.addEventListener("change", () => {
+        state.removeAboutVideo = selectedAboutVideoSource() === "none";
         syncAboutVideoEditorVisibility();
         renderPreviewSurface();
       });
     });
+    if (els.aboutMarkdownToolbar instanceof HTMLElement && els.aboutInput instanceof HTMLTextAreaElement) {
+      els.aboutMarkdownToolbar.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-profile-markdown-action]");
+        if (!(button instanceof HTMLButtonElement)) return;
+        applyMarkdownAction(els.aboutInput, coerceText(button.dataset.profileMarkdownAction));
+      });
+    }
+    if (els.aboutMarkdownPreviewButton instanceof HTMLButtonElement) {
+      els.aboutMarkdownPreviewButton.addEventListener("click", () => void previewAboutMarkdown());
+    }
+    if (els.aboutUploadInput instanceof HTMLInputElement) {
+      els.aboutUploadInput.addEventListener("change", () => {
+        const file = els.aboutUploadInput.files?.[0] || null;
+        if (state.aboutVideoObjectUrl) URL.revokeObjectURL(state.aboutVideoObjectUrl);
+        state.aboutVideoObjectUrl = "";
+        state.aboutVideoFile = null;
+        if (els.aboutUploadPreview instanceof HTMLElement) els.aboutUploadPreview.replaceChildren();
+        if (!file) return;
+        const maxBytes = Math.max(0, Number(state.profile?.about_video_upload?.max_bytes || 0));
+        if (!["video/mp4", "video/webm"].includes(file.type)) {
+          if (els.aboutUploadPreview instanceof HTMLElement) els.aboutUploadPreview.textContent = "Choose an MP4 or WebM file.";
+          return;
+        }
+        if (maxBytes && file.size > maxBytes) {
+          if (els.aboutUploadPreview instanceof HTMLElement) els.aboutUploadPreview.textContent = `File exceeds the ${maxBytes.toLocaleString()} byte limit.`;
+          return;
+        }
+        state.aboutVideoFile = file;
+        state.aboutVideoObjectUrl = URL.createObjectURL(file);
+        state.removeAboutVideo = false;
+        if (els.aboutUploadPreview instanceof HTMLElement) {
+          const video = document.createElement("video");
+          video.controls = true;
+          video.preload = "metadata";
+          video.src = state.aboutVideoObjectUrl;
+          video.className = "account-about-uploaded-video";
+          const note = document.createElement("p");
+          note.className = "account-field-note";
+          note.textContent = `${file.name} · ${file.size.toLocaleString()} bytes`;
+          els.aboutUploadPreview.replaceChildren(video, note);
+        }
+      });
+    }
+    if (els.aboutUploadClearButton instanceof HTMLButtonElement) {
+      els.aboutUploadClearButton.addEventListener("click", clearStagedAboutVideo);
+    }
     if (els.aboutVideoProviderSelector instanceof HTMLFieldSetElement) {
       els.aboutVideoProviderSelector.addEventListener("change", (event) => {
         if (!(event.target instanceof HTMLInputElement) || !event.target.matches("[data-profile-about-provider]")) return;
@@ -4961,6 +5445,9 @@
           els.aboutVideoStatus.textContent = "Configured video will be removed when you save. Your written About is unchanged.";
           els.aboutVideoStatus.dataset.tone = "success";
         }
+        const noneInput = document.querySelector('[data-profile-about-source="none"]');
+        if (noneInput instanceof HTMLInputElement) noneInput.checked = true;
+        syncAboutVideoEditorVisibility();
         renderPreviewSurface();
       });
     }
@@ -5191,35 +5678,44 @@
         renderSocialLinksEditor();
       });
     }
+    if (els.socialLinksAddToggle instanceof HTMLButtonElement) {
+      els.socialLinksAddToggle.addEventListener("click", () => {
+        state.socialEditorAddOpen = !state.socialEditorAddOpen;
+        renderSocialLinksEditor();
+      });
+    }
     if (els.socialLinksEditor instanceof HTMLElement) {
       els.socialLinksEditor.addEventListener("click", (event) => {
         const target = event.target instanceof HTMLElement ? event.target : null;
-        const clearButton = target?.closest("[data-social-link-clear]");
-        if (clearButton instanceof HTMLButtonElement) {
-          const key = clearButton.getAttribute("data-social-link-clear") || "";
-          const input = document.querySelector(`[data-profile-link="${key}"]`);
-          if (input instanceof HTMLInputElement) {
-            input.value = "";
+        const addPlatform = target?.closest("[data-social-link-add-platform]");
+        if (addPlatform instanceof HTMLButtonElement) {
+          const key = normalizeSocialPlatformKey(addPlatform.getAttribute("data-social-link-add-platform"));
+          if (key && !Object.prototype.hasOwnProperty.call(state.socialLinkDrafts, key)) {
+            state.socialLinkDrafts[key] = "";
+            state.socialEditorAddOpen = false;
           }
-          renderSocialLinksEditor();
+          renderSocialLinksEditor({ focusKey: key });
           renderPreviewSurface();
           return;
         }
-        const jumpButton = target?.closest("[data-social-links-jump]");
-        if (jumpButton instanceof HTMLButtonElement) {
-          const key = jumpButton.getAttribute("data-social-links-jump") || "";
-          focusSocialPlatformInput(key);
+        if (target?.closest("[data-social-link-add-custom]")) {
+          addCustomLinkDraft();
+          return;
+        }
+        const removeButton = target?.closest("[data-social-link-remove]");
+        if (removeButton instanceof HTMLButtonElement) {
+          const key = normalizeSocialPlatformKey(removeButton.getAttribute("data-social-link-remove"));
+          delete state.socialLinkDrafts[key];
+          renderSocialLinksEditor();
+          renderPreviewSurface();
+          return;
         }
       });
       els.socialLinksEditor.addEventListener("input", (event) => {
         if (!(event.target instanceof HTMLInputElement)) return;
         if (!event.target.matches("[data-profile-link]")) return;
-        renderPreviewSurface();
-      });
-      els.socialLinksEditor.addEventListener("change", (event) => {
-        if (!(event.target instanceof HTMLInputElement)) return;
-        if (!event.target.matches("[data-profile-link]")) return;
-        renderSocialLinksEditor({ keepFocus: true });
+        const key = normalizeSocialPlatformKey(event.target.getAttribute("data-profile-link"));
+        if (key) state.socialLinkDrafts[key] = coerceText(event.target.value);
         renderPreviewSurface();
       });
     }
@@ -5271,22 +5767,32 @@
         const file = target.files?.[0];
         if (!link || !file) return;
         try {
-          if (!CUSTOM_LINK_ALLOWED_MIME_TYPES.includes(String(file.type || "").toLowerCase())) {
-            throw new Error("Select an SVG, PNG, WEBP, GIF, JPG, or JPEG icon.");
+          const extension = `.${coerceText(file.name).split(".").pop().toLowerCase()}`;
+          const canonicalTypeByExtension = { ".svg": "image/svg+xml", ".png": "image/png", ".bmp": "image/bmp", ".webp": "image/webp" };
+          const suppliedType = String(file.type || "").toLowerCase();
+          const canonicalType = suppliedType === "image/x-ms-bmp"
+            ? "image/bmp"
+            : CUSTOM_LINK_ALLOWED_MIME_TYPES.includes(suppliedType)
+              ? suppliedType
+              : canonicalTypeByExtension[extension];
+          if (!canonicalType || !CUSTOM_LINK_ALLOWED_EXTENSIONS.includes(extension)) {
+            throw new Error("Select an SVG, PNG, BMP, or WebP icon.");
           }
           if (file.size > CUSTOM_LINK_ICON_MAX_BYTES) {
             throw new Error(`Selected icon exceeds the ${Math.round(CUSTOM_LINK_ICON_MAX_BYTES / 1024)} KB limit.`);
           }
+          const encoded = await readFileAsDataUrl(file);
+          const base64Payload = encoded.includes(",") ? encoded.slice(encoded.indexOf(",") + 1) : "";
           releaseCustomLinkIconDraft(link);
           link.staged_icon = {
             filename: file.name,
             previewUrl: readFileAsObjectUrl(file),
-            dataUrl: await readFileAsDataUrl(file),
-            type: file.type,
+            dataUrl: `data:${canonicalType};base64,${base64Payload}`,
+            type: canonicalType,
             size: file.size,
           };
           link.icon_url = "";
-          renderCustomLinksEditor();
+          renderSocialLinksEditor();
           renderPreviewSurface();
         } catch (err) {
           if (target instanceof HTMLInputElement) target.value = "";
@@ -5305,7 +5811,7 @@
           const link = findCustomLinkById(removeId);
           if (link) releaseCustomLinkIconDraft(link);
           state.customLinks = state.customLinks.filter((item) => item.id !== removeId);
-          renderCustomLinksEditor();
+          renderSocialLinksEditor();
           renderPreviewSurface();
           return;
         }
@@ -5316,7 +5822,7 @@
           releaseCustomLinkIconDraft(link);
           link.staged_icon = null;
           link.icon_url = "";
-          renderCustomLinksEditor();
+          renderSocialLinksEditor();
           renderPreviewSurface();
           return;
         }

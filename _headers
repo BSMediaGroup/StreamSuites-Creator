@@ -1,2 +1,2 @@
 /*
-  Content-Security-Policy: frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://rumble.com https://player.kick.com
+  Content-Security-Policy: frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://rumble.com https://player.vimeo.com; media-src 'self' blob: https://api.streamsuites.app https://streamsuites.app

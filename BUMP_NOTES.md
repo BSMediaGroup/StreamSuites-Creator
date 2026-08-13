@@ -6,6 +6,26 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-13 - Vimeo About embeds and compact social-link editing
+
+- Replaced only the `/account` About option for Kick live channels with Vimeo video/player URLs. Creator sends the selected Vimeo source to Runtime/Auth, renders only its canonical preview (including the required unlisted privacy hash), and now limits the About frame policy to YouTube, direct Rumble, and Vimeo. Broader Kick integration, OAuth, destination, and live-status surfaces are unchanged.
+- Rebuilt Social links around currently defined URL detail cards and one compact `Add link` menu of unused provider icons and labels. Standard providers remain single-instance. Custom links can be added repeatedly up to the Runtime/Auth maximum of six; their SVG, PNG, BMP, or WebP icon chooser appears immediately below the new custom card, with the existing fallback retained when no icon is selected.
+- Removed the former always-visible empty platform grid, search/filter chrome, and separate duplicate custom-link subsection because the new menu owns those actions in less space. Runtime/Auth remains the sole profile authority. No deployment, version/build change, commit, or push was performed.
+- Validation passed JavaScript syntax and all 29 Creator Node tests. A deterministic authenticated Chromium fixture rendered the defined-link cards, unused-platform Add Link menu, Vimeo-without-Kick About options, repeatable custom cards, exact icon file filter, and the 390px responsive card wrap with zero document or section overflow and no console errors.
+
+### 2026-08-13 - Markdown story and optional uploaded About video
+
+#### Technical notes
+
+- Changed `/account` About authoring from a mutually exclusive text/video choice to an always-preserved Markdown story plus an independent optional video source. The formatting toolbar keeps selection/focus behavior, and preview content is reconstructed from Runtime/Auth's sanitized projection rather than inserted as arbitrary HTML.
+- Added MP4/WebM staging with the Runtime-advertised upload limit, local object-URL preview and cleanup, explicit clearing, and authenticated raw-byte upload after the canonical profile save. Existing YouTube, direct Rumble, and Kick embed guidance remains available as the alternative video source.
+- Hardened saved avatar, cover, and background URL handling to HTTPS/root-relative public resources and the stable same-origin `streamsuites.app/profile-media` projection, including exact legacy CDN/API-path normalization. Data/blob values, credentialed URLs, local/private hosts, and unsupported uploaded-video projections fail closed.
+- Extended the Creator CSP for backward-compatible API-hosted media and local staged video previews. Runtime/Auth remains the sole profile/media authority; no deployment, version/build change, commit, or push was performed.
+
+#### Human-readable summary
+
+Creators can format their public story, preview the safe result, and optionally add either a supported embed or an uploaded MP4/WebM without sacrificing the written About content.
+
 ### 2026-08-13 - Deterministic Rumble About-player guidance
 
 - Updated the `/account` Rumble provider fallback to request the direct iframe URL copied from Rumble Share → Embed and show the correct `/embed/<player-id>/?pub=<publisher>` example. Runtime/Auth now validates that exact player shape without a provider network request; Creator still sends only the selected provider and URL, and never accepts iframe HTML or owns canonical profile state. No deployment, version/build change, commit, or push was performed.
