@@ -4,7 +4,7 @@
   function resolveApiBaseUrl() {
     const host = (window.location.hostname || "").toLowerCase();
     if (host === "localhost" || host === "127.0.0.1") {
-      return "http://127.0.0.1:18087";
+      return `http://${host}:18087`;
     }
     return "https://api.streamsuites.app";
   }
@@ -680,19 +680,26 @@
     return "";
   }
 
-  function stableImageUrl(url, cacheKey) {
+  function canonicalProfileMediaUrl(url) {
     const source = coerceText(url);
-    const key = coerceText(cacheKey);
-    if (!source || !key || source.startsWith("data:") || source.startsWith("blob:")) return source;
+    if (!source || source.startsWith("data:") || source.startsWith("blob:")) return "";
     try {
       const parsed = new URL(source, window.location.origin);
-      if (/^https?:\/\//i.test(source) && parsed.origin !== window.location.origin) return source;
-      if (!parsed.searchParams.has("v")) parsed.searchParams.set("v", key);
+      if (["cdn.streamsuites.app", "api.streamsuites.app"].includes(parsed.hostname) && /^\/u\/[A-Za-z0-9]{7}\/(avatar|cover|background|logo)\/v[1-9]\d*\.webp$/.test(parsed.pathname)) {
+        parsed.protocol = "https:";
+        parsed.hostname = "streamsuites.app";
+        parsed.port = "";
+        parsed.pathname = `/profile-media${parsed.pathname}`;
+      }
+      if (parsed.hostname === "streamsuites.app" && /^\/profile-media\/u\/[A-Za-z0-9]{7}\/(avatar|cover|background|logo)\/v[1-9]\d*\.webp$/.test(parsed.pathname)) {
+        parsed.search = "";
+        parsed.hash = "";
+      }
       return parsed.origin === window.location.origin && source.startsWith("/")
         ? `${parsed.pathname}${parsed.search}${parsed.hash}`
         : parsed.toString();
-    } catch (_) {
-      return source;
+    } catch (_error) {
+      return "";
     }
   }
 
@@ -738,8 +745,8 @@
         ""
     );
     return {
-      avatarUrl: stableImageUrl(avatarUrl, imageVersion),
-      rawAvatarUrl: avatarUrl,
+      avatarUrl: canonicalProfileMediaUrl(avatarUrl),
+      rawAvatarUrl: canonicalProfileMediaUrl(avatarUrl),
       imageVersion,
       avatarSource: coerceText(image.avatar_source || image.source || profileMedia.avatar_source || source?.avatar_source || source?.avatarSource),
       fallbackInitial: coerceText(image.fallback_display_initial || profileMedia.fallback_display_initial || source?.fallback_display_initial || source?.fallbackDisplayInitial)

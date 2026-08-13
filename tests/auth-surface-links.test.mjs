@@ -77,7 +77,9 @@ test("creator auth consumes normalized runtime image metadata with fallback", ()
   const authJs = read("js/auth.js");
 
   assert.match(authJs, /function normalizedImageContract\(source = \{\}, fallback = \{\}\)/);
-  assert.match(authJs, /function stableImageUrl\(url, cacheKey\)/);
+  assert.match(authJs, /function canonicalProfileMediaUrl\(url\)/);
+  assert.doesNotMatch(authJs, /function stableImageUrl\(/);
+  assert.doesNotMatch(authJs, /searchParams\.set\("v"/);
   assert.match(authJs, /provider_picture/);
   assert.match(authJs, /profile_photo_url/);
   assert.match(authJs, /public_avatar_url/);
@@ -90,7 +92,6 @@ test("creator auth consumes normalized runtime image metadata with fallback", ()
   assert.match(authJs, /avatar: imageContract\.avatarUrl/);
   assert.match(authJs, /imageVersion: imageContract\.imageVersion/);
   assert.match(authJs, /imageEl\.onerror = \(\) => \{/);
-  const stableImageHelper = authJs.match(/function stableImageUrl\(url, cacheKey\)[\s\S]*?\n  }\n\n  function isUsableProfileImageUrl/)?.[0] || "";
-  assert.doesNotMatch(stableImageHelper, /Date\.now\(\)/);
-  assert.match(stableImageHelper, /parsed\.origin !== window\.location\.origin\) return source/);
+  assert.match(authJs, /avatarUrl: canonicalProfileMediaUrl\(avatarUrl\)/);
+  assert.match(authJs, /parsed\.search = ""/);
 });

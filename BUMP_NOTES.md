@@ -6,6 +6,12 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-14 - Authoritative profile-media replacement and failure recovery
+
+- Removed synthetic avatar/cover/background cache queries and alternate persisted media shapes. Exact legacy CDN/API version paths normalize once to the direct query-free canonical Public media URL, while data/blob values and arbitrary or private hosts remain rejected for persisted profile state.
+- Failed account-profile saves now revoke staged avatar, cover, background, and logo object URLs, clear their file inputs, and rehydrate the last Runtime/Auth profile instead of leaving an unsaved preview that looks successful. Local Auth selection now preserves the actual loopback hostname (`localhost` or `127.0.0.1`) so isolated same-site browser validation does not weaken production's media policy.
+- Validation passed all 29 Creator Node tests and JavaScript syntax checks. Authenticated installed Edge checks rendered the real replaced avatar and cover on `/account` at 1440×900 and 390×844 with exact v3 query-free URLs, successful image decoding, zero media/page/console errors, and zero horizontal overflow. No deployment, version/build change, commit, or push was performed.
+
 ### 2026-08-13 - Vimeo About embeds and compact social-link editing
 
 - Corrected the hard-coded black fallback Custom link globe for the dark Creator editor. Only fallback instances in the Add Link menu and custom detail cards receive the light treatment; uploaded user icons and canonical platform logos retain their original colors.

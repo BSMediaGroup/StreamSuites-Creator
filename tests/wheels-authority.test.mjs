@@ -29,7 +29,7 @@ test("creator shell wires the new wheels route through the existing SPA shell", 
   assert.match(authProxy, /DEFAULT_LOCAL_AUTH_API_ORIGIN = "http:\/\/127\.0\.0\.1:18087"/);
   assert.match(authProxy, /requestHost === "127\.0\.0\.1" \|\| requestHost === "localhost"/);
   assert.match(authJs, /function resolveApiBaseUrl\(\)/);
-  assert.match(authJs, /return "http:\/\/127\.0\.0\.1:18087";/);
+  assert.match(authJs, /return `http:\/\/\$\{host\}:18087`;/);
 });
 
 test("creator wheels editor talks only to the authoritative runtime/Auth wheel endpoints", () => {

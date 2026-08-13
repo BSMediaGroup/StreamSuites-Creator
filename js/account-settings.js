@@ -435,22 +435,6 @@
     return typeof value === "string" ? value.trim() : "";
   }
 
-  function stableImageUrl(url, cacheKey) {
-    const source = coerceText(url);
-    const key = coerceText(cacheKey);
-    if (!source || !key || source.startsWith("data:") || source.startsWith("blob:")) return source;
-    try {
-      const parsed = new URL(source, window.location.origin);
-      if (/^https?:\/\//i.test(source) && parsed.origin !== window.location.origin) return source;
-      if (!parsed.searchParams.has("v")) parsed.searchParams.set("v", key);
-      return parsed.origin === window.location.origin && source.startsWith("/")
-        ? `${parsed.pathname}${parsed.search}${parsed.hash}`
-        : parsed.toString();
-    } catch (_) {
-      return source;
-    }
-  }
-
   function isUsableProfileImageUrl(value) {
     const source = coerceText(value);
     if (!source) return false;
@@ -459,7 +443,10 @@
       const parsed = new URL(source);
       const host = parsed.hostname.toLowerCase();
       const unsafeHost = host === "localhost" || host.endsWith(".local") || /^127\./.test(host) || /^10\./.test(host) || /^192\.168\./.test(host) || /^172\.(1[6-9]|2\d|3[01])\./.test(host) || host === "::1";
-      return parsed.protocol === "https:" && !unsafeHost && !parsed.username && !parsed.password;
+      const localLoopback = parsed.protocol === "http:"
+        && ["localhost", "127.0.0.1"].includes(window.location.hostname)
+        && ["localhost", "127.0.0.1"].includes(host);
+      return ((parsed.protocol === "https:" && !unsafeHost) || localLoopback) && !parsed.username && !parsed.password;
     } catch (_error) {
       return false;
     }
@@ -471,8 +458,14 @@
     try {
       const parsed = new URL(source, window.location.origin);
       if (["cdn.streamsuites.app", "api.streamsuites.app"].includes(parsed.hostname) && /^\/u\/[A-Za-z0-9]{7}\/(avatar|cover|background|logo)\/v[1-9]\d*\.webp$/.test(parsed.pathname)) {
+        parsed.protocol = "https:";
         parsed.hostname = "streamsuites.app";
+        parsed.port = "";
         parsed.pathname = `/profile-media${parsed.pathname}`;
+      }
+      if (parsed.hostname === "streamsuites.app" && /^\/profile-media\/u\/[A-Za-z0-9]{7}\/(avatar|cover|background|logo)\/v[1-9]\d*\.webp$/.test(parsed.pathname)) {
+        parsed.search = "";
+        parsed.hash = "";
       }
       return parsed.origin === window.location.origin && source.startsWith("/") ? `${parsed.pathname}${parsed.search}${parsed.hash}` : parsed.toString();
     } catch (_error) {
@@ -512,7 +505,7 @@
         ""
     );
     return {
-      avatarUrl: stableImageUrl(canonicalProfileMediaUrl(avatarUrl), imageVersion),
+      avatarUrl: canonicalProfileMediaUrl(avatarUrl),
       rawAvatarUrl: canonicalProfileMediaUrl(avatarUrl),
       imageVersion,
       avatarSource: coerceText(image.avatar_source || image.source || profileMedia.avatar_source || source?.avatar_source || source?.avatarSource),
@@ -5333,6 +5326,18 @@
         });
       }
     } catch (err) {
+      clearStagedUpload("avatar");
+      clearStagedUpload("cover");
+      clearStagedUpload("background");
+      clearStagedUpload("logo");
+      try {
+        const authoritative = await requestJson(PUBLIC_PROFILE_ENDPOINT, { method: "GET" });
+        applyProfile(authoritative?.profile || authoritative);
+      } catch (_refreshError) {
+        renderMediaUploadStatus();
+        updateAvatarPreview();
+        renderPreviewSurface();
+      }
       setStatusPill(getProfileElements().loadPill, "Profile save failed", "warning");
       setMessage("[data-profile-save-status=\"true\"]", "");
       showToast(err?.message || "Unable to save public profile settings.", "danger", {

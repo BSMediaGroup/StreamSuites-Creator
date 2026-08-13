@@ -91,9 +91,13 @@ test("creator account profile media consumes normalized runtime image metadata",
   assert.match(accountJs, /avatar_url: imageContract\.avatarUrl \|\| coerceText\(profile\?\.avatar_url\)/);
   assert.match(accountJs, /raw_avatar_url: imageContract\.rawAvatarUrl/);
   assert.match(accountJs, /profile_media: profile\?\.profile_media \|\| profile\?\.profileMedia \|\| null/);
-  const stableImageHelper = accountJs.match(/function stableImageUrl\(url, cacheKey\)[\s\S]*?\n  }\n\n  function isUsableProfileImageUrl/)?.[0] || "";
-  assert.doesNotMatch(stableImageHelper, /Date\.now\(\)/);
-  assert.match(stableImageHelper, /parsed\.origin !== window\.location\.origin\) return source/);
+  assert.doesNotMatch(accountJs, /function stableImageUrl\(/);
+  assert.match(accountJs, /\(parsed\.protocol === "https:" && !unsafeHost\) \|\| localLoopback/);
+  assert.doesNotMatch(accountJs, /searchParams\.set\("v"/);
+  assert.match(accountJs, /avatarUrl: canonicalProfileMediaUrl\(avatarUrl\)/);
+  assert.match(accountJs, /parsed\.search = ""/);
+  assert.match(accountJs, /clearStagedUpload\("avatar"\)/);
+  assert.match(accountJs, /URL\.revokeObjectURL\(existing\.previewUrl\)/);
 });
 
 test("creator account social editor uses the shared canonical platform registry", () => {
