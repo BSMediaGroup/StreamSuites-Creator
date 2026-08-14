@@ -57,12 +57,15 @@ test("creator account editor keeps Bio and expanded About as separate Runtime-ba
   assert.match(css, /\.account-profile-story-grid/);
 });
 
-test("creator account editor persists polished StreamSuites profile theme presets", () => {
+test("creator account editor persists independent StreamSuites profile tone and theme settings", () => {
   const html = read("views/account.html");
   const accountJs = read("js/account-settings.js");
   const css = read("css/creator-dashboard.css");
 
   assert.match(html, /data-profile-theme-options="true"/);
+  assert.match(html, /data-profile-tone-options="true"/);
+  assert.match(html, /Tone \/ mode/);
+  assert.match(html, /Every theme works with both tones/);
   assert.match(html, /header emblem, hero spine, feature tints/);
   assert.match(accountJs, /key: "violet_blue"/);
   assert.match(accountJs, /key: "signal_red"/);
@@ -70,7 +73,16 @@ test("creator account editor persists polished StreamSuites profile theme preset
   assert.match(accountJs, /key: "neutral_greytone"/);
   assert.match(accountJs, /key: "frosted_silver"/);
   assert.match(accountJs, /streamsuites_theme_preset: draft\.streamsuites_theme_preset/);
+  assert.match(accountJs, /streamsuites_theme_tone: draft\.streamsuites_theme_tone/);
+  assert.match(accountJs, /function normalizeProfileThemeTone\(value\)/);
+  assert.match(accountJs, /streamsuites_theme_tone: normalizeProfileThemeTone\(profile\?\.streamsuites_theme_tone/);
+  assert.match(accountJs, /renderProfileToneOptions\(\)/);
+  assert.match(accountJs, /dataset\.profileToneOption = tone\.key/);
+  assert.match(accountJs, /data-profile-tone="\$\{escapeHtml\(model\.streamsuitesTone\.key\)\}"/);
   assert.match(accountJs, /renderProfileThemeOptions\(\)/);
+  assert.match(css, /\.account-profile-tone-options/);
+  assert.match(css, /\.account-profile-tone-option:has\(input:checked\)/);
+  assert.match(css, /\.account-streamsuites-preview\[data-profile-tone="light"\]/);
   assert.match(css, /\.account-profile-theme-options/);
   assert.match(css, /\.account-profile-theme-option:has\(input:checked\)/);
 });

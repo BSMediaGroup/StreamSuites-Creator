@@ -6,6 +6,12 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-15 - Independent public-profile tone editor
+
+- Extended the existing Creator `/account` StreamSuites appearance editor with a separate Dark/Light tone picker alongside the existing twelve accent themes. The editor hydrates, previews, dirty-checks, resets, and saves Runtime/Auth's authoritative `streamsuites_theme_tone` field independently from `streamsuites_theme_preset`; omitted or invalid values remain Dark, and Violet Blue remains the default accent.
+- Kept the Creator dashboard shell itself dark while the embedded StreamSuites profile preview reflects the selected tone and palette together. Existing profile, media, About, social, FindMeHere, route, auth, and API behavior is unchanged. No source files were created, removed, or renamed; four deterministic desktop/mobile QA images were retained under `output/playwright/`. No deployment, version/build change, commit, or push was performed.
+- Validation passed JavaScript syntax, all 29 Creator Node tests, and `git diff --check`. Deterministic Chromium checks at 1440×1000 and 390×844 confirmed Dark/Violet Blue hydration, Light/Violet Blue selection, Light/Signal Red composition, synchronized status labels and preview attributes, and zero document/editor horizontal overflow.
+
 ### 2026-08-14 - Public About visibility control
 
 - Added the Runtime/Auth-backed `about_enabled` control to the existing `/account` Bio & About editor. Legacy or omitted values default visible; disabling sends only the visibility choice and retains the written Markdown and configured video for later re-enablement.

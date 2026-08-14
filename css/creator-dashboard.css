@@ -2546,6 +2546,159 @@ h3 {
   pointer-events: none;
 }
 
+.account-profile-appearance-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.account-profile-style-heading {
+  display: grid;
+  gap: 5px;
+}
+
+.account-profile-style-heading h5,
+.account-profile-style-heading p {
+  margin: 0;
+}
+
+.account-profile-style-heading h5 {
+  color: #f4f2fa;
+  font-size: 13px;
+}
+
+.account-profile-style-heading p {
+  color: rgba(190, 192, 210, 0.68);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.account-profile-tone-options {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.account-profile-tone-option {
+  position: relative;
+  min-width: 0;
+  min-height: 70px;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  overflow: hidden;
+  padding: 9px 10px;
+  border: 1px solid rgba(174, 169, 198, 0.13);
+  border-radius: 13px;
+  color: rgba(233, 232, 242, 0.86);
+  background: rgba(8, 10, 16, 0.7);
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.account-profile-tone-option:hover,
+.account-profile-tone-option:has(input:focus-visible) {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--profile-theme-b, #a76ef2) 52%, transparent);
+  background: rgba(20, 22, 31, 0.9);
+}
+
+.account-profile-tone-option:has(input:checked) {
+  border-color: color-mix(in srgb, var(--profile-theme-b, #a76ef2) 65%, white 9%);
+  background: linear-gradient(140deg, color-mix(in srgb, var(--profile-theme-a, #7468ff) 14%, transparent), rgba(18, 20, 29, 0.94));
+  box-shadow: inset 3px 0 var(--profile-theme-b, #a76ef2);
+}
+
+.account-profile-tone-option > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.account-profile-tone-preview {
+  width: 54px;
+  height: 44px;
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9px;
+  background: #0b0d13;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.account-profile-tone-option[data-tone-option="light"] .account-profile-tone-preview {
+  border-color: rgba(42, 49, 66, 0.2);
+  background: #edf0f6;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.88);
+}
+
+.account-profile-tone-preview-header {
+  height: 9px;
+  display: block;
+  border-bottom: 1px solid color-mix(in srgb, var(--profile-theme-b, #a76ef2) 28%, transparent);
+  background: color-mix(in srgb, var(--profile-theme-a, #7468ff) 12%, #151821);
+}
+
+.account-profile-tone-option[data-tone-option="light"] .account-profile-tone-preview-header {
+  background: color-mix(in srgb, var(--profile-theme-a, #7468ff) 10%, #fff);
+}
+
+.account-profile-tone-preview-card {
+  width: 36px;
+  height: 21px;
+  display: block;
+  margin: 7px auto 0;
+  border-left: 2px solid var(--profile-theme-b, #a76ef2);
+  border-radius: 4px;
+  background: #1b1e28;
+}
+
+.account-profile-tone-option[data-tone-option="light"] .account-profile-tone-preview-card {
+  background: #fff;
+  box-shadow: 0 2px 7px rgba(39, 45, 60, 0.12);
+}
+
+.account-profile-tone-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.account-profile-tone-copy strong {
+  color: #f4f2fa;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.account-profile-tone-copy small {
+  color: rgba(190, 192, 210, 0.6);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.account-profile-tone-state {
+  opacity: 0;
+  padding: 3px 5px;
+  border-radius: 999px;
+  color: #fff;
+  background: color-mix(in srgb, var(--profile-theme-b, #a76ef2) 38%, rgba(12, 14, 21, 0.9));
+  font: 700 8px/1 var(--creator-mono-font);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.account-profile-tone-option:has(input:checked) .account-profile-tone-state {
+  opacity: 1;
+}
+
 .account-profile-theme-options {
   min-width: 0;
   display: grid;
@@ -2657,6 +2810,7 @@ h3 {
 }
 
 @media (max-width: 560px) {
+  .account-profile-tone-options,
   .account-profile-theme-options {
     grid-template-columns: 1fr;
   }
@@ -4478,6 +4632,57 @@ h3 {
   inset: 0 auto 0 0;
   width: 3px;
   background: linear-gradient(180deg, var(--account-preview-profile-b), var(--account-preview-profile-a) 58%, var(--account-preview-profile-c));
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] .profile-card {
+  border-color: color-mix(in srgb, var(--account-preview-profile-b) 28%, rgba(52, 60, 76, 0.16));
+  background:
+    radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--account-preview-profile-b) 10%, transparent), transparent 30%),
+    linear-gradient(180deg, #ffffff, #f2f4f8);
+  box-shadow: 0 18px 42px rgba(45, 53, 70, 0.14);
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] .profile-cover {
+  border-color: rgba(55, 64, 82, 0.18);
+  background: #e6e9f0;
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] :where(.creator-name, .profile-inline-header h3) {
+  color: color-mix(in srgb, var(--account-preview-profile-b) 44%, #202431);
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] :where(.creator-meta-bottom, .profile-bio-text, .account-preview-note) {
+  color: #667085;
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] .social-icon-btn {
+  border-color: rgba(55, 64, 82, 0.16);
+  color: #303746;
+  background: #ffffff;
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] .profile-share-option {
+  border-color: rgba(55, 64, 82, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] .profile-share-option-title {
+  color: #737d90;
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] .share-box {
+  border-color: rgba(55, 64, 82, 0.16);
+  background: #f7f8fb;
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] .share-link-text {
+  color: #4c5567;
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] .share-copy-btn {
+  border-color: color-mix(in srgb, var(--account-preview-profile-b) 32%, rgba(55, 64, 82, 0.16));
+  color: #303746;
+  background: color-mix(in srgb, var(--account-preview-profile-a) 8%, #ffffff);
 }
 
 .account-preview-canvas .profile-cover {
@@ -9858,6 +10063,10 @@ body.ss-sidebar-collapsed #app-nav .creator-nav-label-text {
 
 .account-preview-canvas .account-streamsuites-preview .profile-inline-header h3 {
   color: color-mix(in srgb, var(--account-preview-profile-b) 54%, #f4f8ff);
+}
+
+.account-preview-canvas .account-streamsuites-preview[data-profile-tone="light"] .profile-inline-header h3 {
+  color: color-mix(in srgb, var(--account-preview-profile-b) 44%, #202431);
 }
 
 body {

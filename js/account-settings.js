@@ -98,6 +98,10 @@
     Object.freeze({ key: "frosted_silver", label: "Frosted Silver", description: "Cool luminous silver and ice", colors: ["#8c9baa", "#c3ced8", "#eef4f7"] })
   ]);
   const PROFILE_THEME_PRESET_KEYS = new Set(PROFILE_THEME_PRESETS.map((preset) => preset.key));
+  const PROFILE_THEME_TONES = Object.freeze([
+    Object.freeze({ key: "dark", label: "Dark", description: "Deep neutral surfaces with high-contrast light type" }),
+    Object.freeze({ key: "light", label: "Light", description: "Soft pale surfaces with crisp dark type" })
+  ]);
 
   function normalizeProfileThemePreset(value) {
     const normalized = coerceText(value || "violet_blue").toLowerCase().replace(/-/g, "_");
@@ -107,6 +111,16 @@
   function getProfileThemePreset(value) {
     const key = normalizeProfileThemePreset(value);
     return PROFILE_THEME_PRESETS.find((preset) => preset.key === key) || PROFILE_THEME_PRESETS[0];
+  }
+
+  function normalizeProfileThemeTone(value) {
+    const normalized = coerceText(value || "dark").toLowerCase();
+    return normalized === "light" ? "light" : "dark";
+  }
+
+  function getProfileThemeTone(value) {
+    const key = normalizeProfileThemeTone(value);
+    return PROFILE_THEME_TONES.find((tone) => tone.key === key) || PROFILE_THEME_TONES[0];
   }
   const ABOUT_VIDEO_PROVIDER_FALLBACKS = Object.freeze([
     Object.freeze({ key: "youtube", label: "YouTube Video / Livestream", provider_label: "YouTube", kind: "video", helper_text: "Paste a specific YouTube video, livestream, Short, or embed URL.", example_url: "https://www.youtube.com/watch?v=uPfbuo6iP6Y", external_action_label: "Watch on YouTube", iframe_allow: "autoplay; encrypted-media; picture-in-picture; web-share; fullscreen" }),
@@ -764,8 +778,59 @@
   function syncProfileThemeSelection() {
     const els = getProfileElements();
     const selected = els.themeOptionInputs.find((input) => input instanceof HTMLInputElement && input.checked);
+    const selectedTone = els.toneOptionInputs.find((input) => input instanceof HTMLInputElement && input.checked);
     const preset = getProfileThemePreset(selected?.value || state.profile?.streamsuites_theme_preset);
+    const tone = getProfileThemeTone(selectedTone?.value || state.profile?.streamsuites_theme_tone);
+    if (els.themeEditor instanceof HTMLElement) {
+      els.themeEditor.style.setProperty("--profile-theme-a", preset.colors[0]);
+      els.themeEditor.style.setProperty("--profile-theme-b", preset.colors[1]);
+      els.themeEditor.style.setProperty("--profile-theme-c", preset.colors[2]);
+    }
     if (els.themeSelection instanceof HTMLElement) els.themeSelection.textContent = preset.label;
+    if (els.toneSelection instanceof HTMLElement) els.toneSelection.textContent = tone.label;
+  }
+
+  function renderProfileToneOptions() {
+    const host = document.querySelector("[data-profile-tone-options]");
+    if (!(host instanceof HTMLElement)) return;
+    host.replaceChildren();
+    PROFILE_THEME_TONES.forEach((tone) => {
+      const option = document.createElement("label");
+      option.className = "account-profile-tone-option";
+      option.dataset.toneOption = tone.key;
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "streamsuites_theme_tone";
+      input.value = tone.key;
+      input.checked = tone.key === "dark";
+      input.dataset.profileToneOption = tone.key;
+      input.dataset.profileField = "true";
+
+      const preview = document.createElement("span");
+      preview.className = "account-profile-tone-preview";
+      preview.setAttribute("aria-hidden", "true");
+      const previewHeader = document.createElement("span");
+      previewHeader.className = "account-profile-tone-preview-header";
+      const previewCard = document.createElement("span");
+      previewCard.className = "account-profile-tone-preview-card";
+      preview.append(previewHeader, previewCard);
+
+      const copy = document.createElement("span");
+      copy.className = "account-profile-tone-copy";
+      const title = document.createElement("strong");
+      title.textContent = tone.label;
+      const description = document.createElement("small");
+      description.textContent = tone.description;
+      copy.append(title, description);
+
+      const stateLabel = document.createElement("span");
+      stateLabel.className = "account-profile-tone-state";
+      stateLabel.textContent = "Selected";
+      option.append(input, preview, copy, stateLabel);
+      host.appendChild(option);
+    });
+    syncProfileThemeSelection();
   }
 
   function renderProfileThemeOptions() {
@@ -885,9 +950,13 @@
       aboutUploadHelp: document.querySelector("[data-profile-about-upload-help]"),
       aboutUploadPreview: document.querySelector("[data-profile-about-upload-preview]"),
       aboutUploadClearButton: document.querySelector("[data-profile-about-upload-clear]"),
+      themeEditor: document.querySelector("[data-profile-theme-editor]"),
       themeOptionsHost: document.querySelector("[data-profile-theme-options]"),
       themeSelection: document.querySelector("[data-profile-theme-selection]"),
       themeOptionInputs: Array.from(document.querySelectorAll("[data-profile-theme-preset]")),
+      toneOptionsHost: document.querySelector("[data-profile-tone-options]"),
+      toneSelection: document.querySelector("[data-profile-tone-selection]"),
+      toneOptionInputs: Array.from(document.querySelectorAll("[data-profile-tone-option]")),
       linkInputs: Array.from(document.querySelectorAll("[data-profile-link]")),
       socialLinksEditor: document.querySelector("[data-social-links-editor]"),
       socialLinksSummary: document.querySelector("[data-social-links-summary]"),
@@ -3092,6 +3161,7 @@
           : [],
       },
       streamsuites_theme_preset: normalizeProfileThemePreset(profile?.streamsuites_theme_preset || profile?.streamsuitesThemePreset),
+      streamsuites_theme_tone: normalizeProfileThemeTone(profile?.streamsuites_theme_tone || profile?.streamsuitesThemeTone),
       social_links: profile?.social_links && typeof profile.social_links === "object" ? { ...profile.social_links } : {},
       custom_links: normalizeCustomLinks(profile?.custom_links || profile?.customLinks),
       badges: Array.isArray(profile?.badges) ? profile.badges : [],
@@ -4432,6 +4502,7 @@
     const about = draft.about || coerceText(state.profile?.about) || "No expanded About story saved yet.";
     const aboutMode = normalizeAboutMode(draft.about_mode);
     const streamsuitesTheme = getProfileThemePreset(draft.streamsuites_theme_preset);
+    const streamsuitesTone = getProfileThemeTone(draft.streamsuites_theme_tone);
     const socialEntries = (SOCIAL_PLATFORMS?.getOrderedEntries?.(draft.social_links) || Object.entries(draft.social_links || {}).map(([key, url]) => ({ key, url })))
       .filter((entry) => coerceText(entry.url))
       .slice(0, 6)
@@ -4471,6 +4542,7 @@
         ) || [],
       streamsuitesShareUrl: slug ? `https://streamsuites.app/u/${encodeURIComponent(slug)}` : "",
       streamsuitesTheme,
+      streamsuitesTone,
       subtitle,
       theme,
       tierLabel,
@@ -4533,7 +4605,7 @@
   function buildStreamSuitesPreviewMarkup(model) {
     const socialMarkup = buildPreviewSocialMarkup(model.socialEntries, "social-icon-btn");
     return `
-      <article class="account-preview-frame account-streamsuites-preview" data-profile-theme="${escapeHtml(model.streamsuitesTheme.key)}" style="--account-preview-profile-a:${escapeHtml(model.streamsuitesTheme.colors[0])};--account-preview-profile-b:${escapeHtml(model.streamsuitesTheme.colors[1])};--account-preview-profile-c:${escapeHtml(model.streamsuitesTheme.colors[2])};">
+      <article class="account-preview-frame account-streamsuites-preview" data-profile-theme="${escapeHtml(model.streamsuitesTheme.key)}" data-profile-tone="${escapeHtml(model.streamsuitesTone.key)}" style="--account-preview-profile-a:${escapeHtml(model.streamsuitesTheme.colors[0])};--account-preview-profile-b:${escapeHtml(model.streamsuitesTheme.colors[1])};--account-preview-profile-c:${escapeHtml(model.streamsuitesTheme.colors[2])};">
         <article class="profile-card profile-card-expanded">
           <div class="profile-cover">
             <img src="${escapeHtml(model.coverImageUrl || "/assets/placeholders/defaultprofilecover.webp")}" alt="${escapeHtml(model.displayName)} cover" loading="lazy" decoding="async" />
@@ -4783,6 +4855,9 @@
       streamsuites_theme_preset: normalizeProfileThemePreset(
         els.themeOptionInputs.find((input) => input instanceof HTMLInputElement && input.checked)?.value || profile.streamsuites_theme_preset
       ),
+      streamsuites_theme_tone: normalizeProfileThemeTone(
+        els.toneOptionInputs.find((input) => input instanceof HTMLInputElement && input.checked)?.value || profile.streamsuites_theme_tone
+      ),
       social_links: socialLinks,
       custom_links: getSanitizedCustomLinks(),
     };
@@ -4816,6 +4891,7 @@
       about_video_source_url: coerceText(draft.about_video_source_url),
       remove_about_video: draft.remove_about_video === true,
       streamsuites_theme_preset: normalizeProfileThemePreset(draft.streamsuites_theme_preset),
+      streamsuites_theme_tone: normalizeProfileThemeTone(draft.streamsuites_theme_tone),
       social_links: getComparableSocialLinks(draft.social_links),
       custom_links: (draft.custom_links || []).map((item) => ({ ...item })),
     };
@@ -4851,6 +4927,7 @@
       about_video_source_url: coerceText(profile?.about_video?.source_url),
       remove_about_video: false,
       streamsuites_theme_preset: normalizeProfileThemePreset(profile?.streamsuites_theme_preset),
+      streamsuites_theme_tone: normalizeProfileThemeTone(profile?.streamsuites_theme_tone),
       social_links: getComparableSocialLinks(profile?.social_links),
       custom_links: normalizeCustomLinks(profile?.custom_links).map(({ staged_icon, ...item }) => ({ ...item })),
     };
@@ -5095,9 +5172,10 @@
     els.themeOptionInputs.forEach((input) => {
       if (input instanceof HTMLInputElement) input.checked = input.value === normalized.streamsuites_theme_preset;
     });
-    if (els.themeSelection instanceof HTMLElement) {
-      els.themeSelection.textContent = getProfileThemePreset(normalized.streamsuites_theme_preset).label;
-    }
+    els.toneOptionInputs.forEach((input) => {
+      if (input instanceof HTMLInputElement) input.checked = input.value === normalized.streamsuites_theme_tone;
+    });
+    syncProfileThemeSelection();
     state.socialLinkDrafts = { ...normalizeSocialLinksForUi(normalized.social_links) };
     state.socialEditorAddOpen = false;
     renderSocialLinksEditor();
@@ -5277,6 +5355,7 @@
         about_video_enabled: draft.about_video_enabled,
         about_video_source_type: draft.about_video_source_type,
         streamsuites_theme_preset: draft.streamsuites_theme_preset,
+        streamsuites_theme_tone: draft.streamsuites_theme_tone,
         social_links: draft.social_links,
         custom_links: draft.custom_links,
       };
@@ -5853,7 +5932,7 @@
       const eventName = field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement ? "input" : "change";
       field.addEventListener(eventName, renderPreviewSurface);
       field.addEventListener("change", renderPreviewSurface);
-      if (field instanceof HTMLInputElement && field.matches("[data-profile-theme-preset]")) {
+      if (field instanceof HTMLInputElement && field.matches("[data-profile-theme-preset], [data-profile-tone-option]")) {
         field.addEventListener("change", syncProfileThemeSelection);
       }
     });
@@ -5892,6 +5971,7 @@
 
   async function init() {
     if (!hasAccountSettingsSurface()) return;
+    renderProfileToneOptions();
     renderProfileThemeOptions();
     renderSocialLinksEditor();
     wireProviderButtons();
