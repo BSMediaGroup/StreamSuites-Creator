@@ -27,6 +27,7 @@ Creator-facing StreamSuites surface deployed to Cloudflare Pages at `https://cre
 - The `/account` About editor keeps the written Markdown story independent from an optional video and exposes Runtime/Auth's default-visible publication control. Turning About off hides the expanded visitor section without deleting saved text or media. Creator sends Markdown to Runtime/Auth for the authoritative sanitized preview and may select a validated YouTube/Rumble/Vimeo source or stage one MP4/WebM upload within the currently advertised 50 MiB default limit; Creator never accepts raw iframe markup or owns saved media/player authority. Embeds remain the recommended storage-conscious path.
 - The `/account` Social links editor renders only currently defined destinations as compact URL detail cards. `Add link` opens an unused-platform icon menu plus a repeatable Custom link action; standard platforms stay single-instance, while up to six custom destinations may carry an optional SVG, PNG, BMP, or WebP icon immediately beneath their card and otherwise retain the fallback icon with a dark-theme-safe light treatment. All values continue to save through Runtime/Auth.
 - The footer status widget keeps Atlassian's public Status API as official state. Its fully expanded panel also reads Runtime/Auth's sanitized public diagnostics projection for exactly two configured Atlassian custom metrics: measured Core API response time and explicitly deferred Studio Room Readiness. Diagnostics remain optional, read-only, and unable to override official state.
+- Successful Creator route loads report one privacy-minimal page view to Runtime/Auth through `js/page-view-telemetry.js`. The centralized hook sends only `surface=creator`, the canonical route family, and an ephemeral event ID after the view is ready; rerenders and equivalent route state are deduped, Beacon/fetch failure is silent, and account/settings/integration/form content never enters the payload.
 
 ## Repo-Scoped Flowchart
 
@@ -177,6 +178,7 @@ StreamSuites-Creator/
 │   ├── notifications.js
 │   ├── onboarding.js
 │   ├── platform-integration-detail.js
+│   ├── page-view-telemetry.js
 │   ├── routes.js
 │   ├── settings.js
 │   ├── social-platforms.js
@@ -195,6 +197,7 @@ StreamSuites-Creator/
 │   ├── auth-surface-links.test.mjs
 │   ├── kick-oauth-authority.test.mjs
 │   ├── notifications-authority.test.mjs
+│   ├── page-view-telemetry.test.mjs
 │   ├── triggers-runtime-authority.test.mjs
 │   └── wheels-authority.test.mjs
 ├── output/

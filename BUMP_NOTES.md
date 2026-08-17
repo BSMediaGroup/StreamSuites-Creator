@@ -6,6 +6,13 @@ Packaged / released and no longer the active pending bucket. Preserve new notes 
 
 ## CURRENT VER= 0.5.4-alpha / PENDING VER= 0.5.5-alpha
 
+### 2026-08-17 - Centralized Creator page-view aggregation
+
+- Added `js/page-view-telemetry.js` and one successful-route hook so Creator reports a single canonical route-family view to Runtime/Auth on initial load and real navigation. The asynchronous Beacon-first/keepalive fallback contains only `surface=creator`, normalized path, and an ephemeral event ID; account identity, settings content, integration IDs, form values, query/hash state, and credentials are excluded.
+- Repeated renders of the same route are deduped in memory and telemetry failure never changes navigation or auth behavior. Focused tests cover the Creator surface, canonical routes, one-event semantics, minimal payload, and silent failure. No route, API authority, version/build, deployment, commit, or push changed.
+
+Creator traffic now contributes to the real public Stats history without exposing Creator account content or slowing the dashboard.
+
 ### 2026-08-15 - Independent public-profile tone editor
 
 - Extended the existing Creator `/account` StreamSuites appearance editor with a separate Dark/Light tone picker alongside the existing twelve accent themes. The editor hydrates, previews, dirty-checks, resets, and saves Runtime/Auth's authoritative `streamsuites_theme_tone` field independently from `streamsuites_theme_preset`; omitted or invalid values remain Dark, and Violet Blue remains the default accent.

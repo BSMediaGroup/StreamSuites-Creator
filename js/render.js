@@ -415,6 +415,7 @@
       setActiveNavState(normalized);
       updateTopbarTitle(normalized);
       window.Versioning?.stampFooters?.();
+      window.StreamSuitesCreatorPageViews?.reportRoute?.(normalized);
     } catch (err) {
       console.error(`[Creator] Failed to load route "${normalized}"`, err);
       container.innerHTML = `
